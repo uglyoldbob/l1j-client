@@ -1,0 +1,4 @@
+client/documents/*
+updater/documents/*
+*.o
+*.exe
