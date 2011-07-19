@@ -1,0 +1,143 @@
+<HTML>
+  
+<!-- Mirrored from pds.twi.tudelft.nl/vakken/in101/labcourse/instruction-set/ by HTTrack Website Copier/3.x [XR&CO'2010], Thu, 30 Jun 2011 23:35:15 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=ISO-8859-1"><!-- /Added by HTTrack -->
+<HEAD>
+    <TITLE>Simplified PowerPC Instruction Set</TITLE>
+  </HEAD>
+  <BODY BACKGROUND=background.jpg>
+    <H1>Simplified PowerPC Instruction Set</H1>
+
+<P>Below, the instruction set for the PowerPC architecture is given. A lot of instructions were intentionally left out:</P>
+
+<UL>
+  <LI>Instructions for 64-bit Implementations Only</LI>
+  <LI>Floating Point Instructions</LI>
+  <LI>Supervisor-Level Instructions</LI>
+  <LI>I/O-specific Instructions</LI>
+  <LI>Instructions for Multiprocessor Support</LI>
+  <LI>Trap / System Call Instructions</LI>
+</UL>
+
+<P>This leaves 107 instructions: the <I>core</I> PowerPC Instruction Set.</P>
+
+<P>When following the links below, you will be taken to a page describing a (family of) instructions. Note that these descriptions are taken from the 64-bit version of the instruction set; bit numbering are different for some instructions on 32-bit implementations. The lab course software uses a 32-bit PowerPC emulator.</P>
+
+<P>The mnemonics column shows all valid forms of an instruction; it also shows simplified mnemonics in <I>italics</I>.</P>
+    <TABLE BGCOLOR=#FFFFCC BORDER=1>
+      <TR><TH>Instruction                      </TH><TH>Mnemonics                                        </TH><TH>Description                                   </TH></TR>
+      <TR><TD><A HREF=add.html      >add   </A></TD><TD>add / add. / addo / addo.                        </TD><TD>Add                                           </TD></TR>
+      <TR><TD><A HREF=addc.html     >addc  </A></TD><TD>addc / addc. / addco /addco.                     </TD><TD>Add Carrying                                  </TD></TR>
+      <TR><TD><A HREF=adde.html     >adde  </A></TD><TD>adde / adde. / addeo /addeo.                     </TD><TD>Add Extended                                  </TD></TR>
+      <TR><TD><A HREF=addi.html     >addi  </A></TD><TD>addi / <I>li</I> / <I>la</I> / <I>subi</I>       </TD><TD>Add Immediate                                 </TD></TR>
+      <TR><TD><A HREF=addic.html    >addic </A></TD><TD>addic / <I>subic</I>                             </TD><TD>Add Immediate Carrying                        </TD></TR>
+      <TR><TD><A HREF=addic-dot.html>addic.</A></TD><TD>addic. / <I>subic.</I>                           </TD><TD>Add Immediate Carrying and Record             </TD></TR>
+      <TR><TD><A HREF=addis.html    >addis </A></TD><TD>addis / <I>lis</I> / <I>subis</I>                </TD><TD>Add Immediate Shifted                         </TD></TR>
+      <TR><TD><A HREF=addme.html    >addme </A></TD><TD>addme / addme. / addmeo / addmeo.                </TD><TD>Add to Minus One Extended                     </TD></TR>
+      <TR><TD><A HREF=addze.html    >addze </A></TD><TD>addze / addze. / addzeo / addzeo.                </TD><TD>Add to Zero Extended                          </TD></TR>
+      <TR><TD><A HREF=and.html      >and   </A></TD><TD>and / and.                                       </TD><TD>AND                                           </TD></TR>
+      <TR><TD><A HREF=andc.html     >andc  </A></TD><TD>andc / andc.                                     </TD><TD>AND with Complement                           </TD></TR>
+      <TR><TD><A HREF=andi-dot.html >andi. </A></TD><TD>andi.                                            </TD><TD>AND Immediate                                 </TD></TR>
+      <TR><TD><A HREF=andis-dot.html>andis.</A></TD><TD>andis.                                           </TD><TD>AND Immediate Shifted                         </TD></TR>
+      <TR><TD><A HREF=b.html        >b     </A></TD><TD>b / ba / bl / bla                                </TD><TD>Branch                                        </TD></TR>
+      <TR><TD><A HREF=bc.html       >bc    </A></TD><TD>bc /bca / bcl bcla                               </TD><TD>Branch Conditional                            </TD></TR>
+      <TR><TD><A HREF=bcctr.html    >bcctr </A></TD><TD>bcctr / bcctrl                                   </TD><TD>Branch Conditional to Count Register          </TD></TR>
+      <TR><TD><A HREF=bclr.html     >bclr  </A></TD><TD>bclr / bclrl                                     </TD><TD>Branch Conditional to Link Register           </TD></TR>
+      <TR><TD><A HREF=cmp.html      >cmp   </A></TD><TD>cmp / <I>cmpw</I>                                </TD><TD>Compare                                       </TD></TR>
+      <TR><TD><A HREF=cmpi.html     >cmpi  </A></TD><TD>cmpi / <I>cmpwi</I>                              </TD><TD>Compare Immediate                             </TD></TR>
+      <TR><TD><A HREF=cmpl.html     >cmpl  </A></TD><TD>cmpl / <I>cmplw</I>                              </TD><TD>Compare Logical                               </TD></TR>
+      <TR><TD><A HREF=cmpli.html    >cmpli </A></TD><TD>cmpli / <I>cmplwi</I>                            </TD><TD>Compare Logical Immediate                     </TD></TR>
+      <TR><TD><A HREF=cntlzw.html   >cntlzw</A></TD><TD>cntlzw / cntlzw.                                 </TD><TD>Count Leading Zeros Word                      </TD></TR>
+      <TR><TD><A HREF=crand.html    >crand </A></TD><TD>crand                                            </TD><TD>Condition Register AND                        </TD></TR>
+      <TR><TD><A HREF=crandc.html   >crandc</A></TD><TD>crandc                                           </TD><TD>Condition Register AND with Complement        </TD></TR>
+      <TR><TD><A HREF=creqv.html    >creqv </A></TD><TD>creqv / <I>crset</I>                             </TD><TD>Condition Register Equivalent                 </TD></TR>
+      <TR><TD><A HREF=crnand.html   >crnand</A></TD><TD>crnand                                           </TD><TD>Condition Register NAND                       </TD></TR>
+      <TR><TD><A HREF=crnor.html    >crnor </A></TD><TD>crnor / <I>crnot</I>                             </TD><TD>Condition Register NOR                        </TD></TR>
+      <TR><TD><A HREF=cror.html     >cror  </A></TD><TD>cror  / <I>crmove</I>                            </TD><TD>Condition Register OR                         </TD></TR>
+      <TR><TD><A HREF=crorc.html    >crorc </A></TD><TD>crorc                                            </TD><TD>Condition Register OR with Complement         </TD></TR>
+      <TR><TD><A HREF=crxor.html    >crxor </A></TD><TD>crxor / <I>crclr</I>                             </TD><TD>Condition Register XOR                        </TD></TR>
+      <TR><TD><A HREF=divw.html     >divw  </A></TD><TD>divw / divw. / divwo / divwo.                    </TD><TD>Divide Word                                   </TD></TR>
+      <TR><TD><A HREF=divwu.html    >divwu </A></TD><TD>divwu / divwu. / divwuo / divwuo.                </TD><TD>Divide Word Unsigned                          </TD></TR>
+      <TR><TD><A HREF=eqv.html      >eqv   </A></TD><TD>eqv / eqv.                                       </TD><TD>Equivalent                                    </TD></TR>
+      <TR><TD><A HREF=extsb.html    >extsb </A></TD><TD>extsb / extsb.                                   </TD><TD>Extend Sign Byte                              </TD></TR>
+      <TR><TD><A HREF=extsh.html    >extsh </A></TD><TD>extsh / extsh.                                   </TD><TD>Extend Sign Half Word                         </TD></TR>
+      <TR><TD><A HREF=lbz.html      >lbz   </A></TD><TD>lbz                                              </TD><TD>Load Byte and Zero                            </TD></TR>
+      <TR><TD><A HREF=lbzu.html     >lbzu  </A></TD><TD>lbzu                                             </TD><TD>Load Byte and Zero with Update                </TD></TR>
+      <TR><TD><A HREF=lbzux.html    >lbzux </A></TD><TD>lbzux                                            </TD><TD>Load Byte and Zero with Update Indexed        </TD></TR>
+      <TR><TD><A HREF=lbzx.html     >lbzx  </A></TD><TD>lbzx                                             </TD><TD>Load Byte and Zero Indexed                    </TD></TR>
+      <TR><TD><A HREF=lha.html      >lha   </A></TD><TD>lha                                              </TD><TD>Load Half Word Algebraic                      </TD></TR>
+      <TR><TD><A HREF=lhau.html     >lhau  </A></TD><TD>lhau                                             </TD><TD>Load Half Word Algebraic with Update          </TD></TR>
+      <TR><TD><A HREF=lhaux.html    >lhaux </A></TD><TD>lhaux                                            </TD><TD>Load Half Word Algebraic with Update Indexed  </TD></TR>
+      <TR><TD><A HREF=lhax.html     >lhax  </A></TD><TD>lhax                                             </TD><TD>Load Half Word Algebraic Indexed              </TD></TR>
+      <TR><TD><A HREF=lhbrx.html    >lhbrx </A></TD><TD>lhbrx                                            </TD><TD>Load Half Word Byte-Reverse Indexed           </TD></TR>
+      <TR><TD><A HREF=lhz.html      >lhz   </A></TD><TD>lhz                                              </TD><TD>Load Half Word and Zero                       </TD></TR>
+      <TR><TD><A HREF=lhzu.html     >lhzu  </A></TD><TD>lhzu                                             </TD><TD>Load Half Word and Zero with Update           </TD></TR>
+      <TR><TD><A HREF=lhzux.html    >lhzux </A></TD><TD>lhzux                                            </TD><TD>Load Half Word and Zero with Update Indexed   </TD></TR>
+      <TR><TD><A HREF=lhzx.html     >lhzx  </A></TD><TD>lhzx                                             </TD><TD>Load Half Word and Zero Indexed               </TD></TR>
+      <TR><TD><A HREF=lmw.html      >lmw   </A></TD><TD>lmw                                              </TD><TD>Load Multiple Word                            </TD></TR>
+      <TR><TD><A HREF=lswi.html     >lswi  </A></TD><TD>lswi                                             </TD><TD>Load String Word Immediate                    </TD></TR>
+      <TR><TD><A HREF=lswx.html     >lswx  </A></TD><TD>lswx                                             </TD><TD>Load String Word Indexed                      </TD></TR>
+      <TR><TD><A HREF=lwbrx.html    >lwbrx </A></TD><TD>lwbrx                                            </TD><TD>Load Word Byte-Reversed Indexed               </TD></TR>
+      <TR><TD><A HREF=lwz.html      >lwz   </A></TD><TD>lwz                                              </TD><TD>Load Word and Zero                            </TD></TR>
+      <TR><TD><A HREF=lwzu.html     >lwzu  </A></TD><TD>lwzu                                             </TD><TD>Load Word and Zero with Update                </TD></TR>
+      <TR><TD><A HREF=lwzux.html    >lwzux </A></TD><TD>lwzux                                            </TD><TD>Load Word and Zero with Update Indexed        </TD></TR>
+      <TR><TD><A HREF=lwzx.html     >lwzx  </A></TD><TD>lwzx                                             </TD><TD>Load Word and Zero Indexed                    </TD></TR>
+      <TR><TD><A HREF=mcrf.html     >mcrf  </A></TD><TD>mcrf                                             </TD><TD>Move Condition Regisiter Field                </TD></TR>
+      <TR><TD><A HREF=mcrxr.html    >mcrxr </A></TD><TD>mcrxr                                            </TD><TD>Move to Condition Register from XER           </TD></TR>
+      <TR><TD><A HREF=mfcr.html     >mfcr  </A></TD><TD>mfcr                                             </TD><TD>Move from Condition Register                  </TD></TR>
+      <TR><TD><A HREF=mfspr.html    >mfspr </A></TD><TD>mfspr / <I>mfxer</I> / <I>mflr</I> / <I>mfctr</I></TD><TD>Move from Special-Purpose Register            </TD></TR>
+      <TR><TD><A HREF=mftb.html     >mftb  </A></TD><TD>mftb                                             </TD><TD>Move from Time Base                           </TD></TR>
+      <TR><TD><A HREF=mtcrf.html    >mtcrf </A></TD><TD>mtcrf                                            </TD><TD>Move to Condition Register Fields             </TD></TR>
+      <TR><TD><A HREF=mtspr.html    >mtspr </A></TD><TD>mtspr / <I>mtxer</I> / <I>mtlr</I> / <I>mtctr</I></TD><TD>Move to Special-Purpose Register              </TD></TR>
+      <TR><TD><A HREF=mulhw.html    >mulhw </A></TD><TD>mulhw / mulhw.                                   </TD><TD>Multiply High Word                            </TD></TR>
+      <TR><TD><A HREF=mulhwu.html   >mulhwu</A></TD><TD>mulhwu / mulhwu.                                 </TD><TD>Multiply High Word Unsigned                   </TD></TR>
+      <TR><TD><A HREF=mulli.html    >mulli </A></TD><TD>mulli                                            </TD><TD>Multiply Low Immediate                        </TD></TR>
+      <TR><TD><A HREF=mullw.html    >mullw </A></TD><TD>mullw / mullw. / mullwo / mullwo.                </TD><TD>Multiply Low Word                             </TD></TR>
+      <TR><TD><A HREF=nand.html     >nand  </A></TD><TD>nand / nand.                                     </TD><TD>NAND                                          </TD></TR>
+      <TR><TD><A HREF=neg.html      >neg   </A></TD><TD>neg / neg. / nego / nego.                        </TD><TD>Negate                                        </TD></TR>
+      <TR><TD><A HREF=nor.html      >nor   </A></TD><TD>nor /nor.                                        </TD><TD>NOR                                           </TD></TR>
+      <TR><TD><A HREF=or.html       >or    </A></TD><TD>or / or.                                         </TD><TD>OR                                            </TD></TR>
+      <TR><TD><A HREF=orc.html      >orc   </A></TD><TD>orc / orc.                                       </TD><TD>OR with Complement                            </TD></TR>
+      <TR><TD><A HREF=ori.html      >ori   </A></TD><TD>ori                                              </TD><TD>OR Immediate                                  </TD></TR>
+      <TR><TD><A HREF=oris.html     >oris  </A></TD><TD>oris                                             </TD><TD>OR Immediate Shifted                          </TD></TR>
+      <TR><TD><A HREF=rlwimi.html   >rlwimi</A></TD><TD>rlwimi / rlwimi. / <I>inslwi</I> / <I>insrwi</I> </TD><TD>Rotate Left Word Immediate then Mask Insert   </TD></TR>
+      <TR><TD><A HREF=rlwinm.html   >rlwinm</A></TD><TD>rlwinm / rlwinm. / <I>extlwi</I> / <I>extrwi</I><BR>
+                                                        <I>rotlwi</I> / <I>rotrwi</I> / <I>slwi</I> / <I>srwi</I><BR>
+                                                        <I>clrlwi</I> / <I>clrrwi</I> / <I>clrlslwi</I>  </TD><TD>Rotate Left Word Immediate then AND with Mask </TD></TR>
+      <TR><TD><A HREF=rlwnm.html    >rlwnm </A></TD><TD>rlwnm / rlwnm. / <I>rotlw</I>                    </TD><TD>Rotate Left Word then AND with Mask           </TD></TR>
+      <TR><TD><A HREF=slw.html      >slw   </A></TD><TD>slw / slw.                                       </TD><TD>Shift Left Word                               </TD></TR>
+      <TR><TD><A HREF=sraw.html     >sraw  </A></TD><TD>sraw /sraw.                                      </TD><TD>Shift Right Algebraic Word                    </TD></TR>
+      <TR><TD><A HREF=srawi.html    >srawi </A></TD><TD>srawi / srawi.                                   </TD><TD>Shift Right Algebraic Word Immediate          </TD></TR>
+      <TR><TD><A HREF=srw.html      >srw   </A></TD><TD>srw / srw.                                       </TD><TD>Shift Right Word                              </TD></TR>
+      <TR><TD><A HREF=stb.html      >stb   </A></TD><TD>stb                                              </TD><TD>Store Byte                                    </TD></TR>
+      <TR><TD><A HREF=stbu.html     >stbu  </A></TD><TD>stbu                                             </TD><TD>Store Byte with Update                        </TD></TR>
+      <TR><TD><A HREF=stbux.html    >stbux </A></TD><TD>stbux                                            </TD><TD>Store Byte with Update Indexed                </TD></TR>
+      <TR><TD><A HREF=stbx.html     >stbx  </A></TD><TD>stbx                                             </TD><TD>Store Byte Indexed                            </TD></TR>
+      <TR><TD><A HREF=sth.html      >sth   </A></TD><TD>sth                                              </TD><TD>Store Half Word                               </TD></TR>
+      <TR><TD><A HREF=sthbrx.html   >sthbrx</A></TD><TD>sthbrx                                           </TD><TD>Store Half Word Byte-Reverse Indexed          </TD></TR>
+      <TR><TD><A HREF=sthu.html     >sthu  </A></TD><TD>sthu                                             </TD><TD>Store Half Word with Update                   </TD></TR>
+      <TR><TD><A HREF=sthux.html    >sthux </A></TD><TD>sthux                                            </TD><TD>Store Half Word with Update Indexed           </TD></TR>
+      <TR><TD><A HREF=sthx.html     >sthx  </A></TD><TD>sthx                                             </TD><TD>Store Half Word Indexed                       </TD></TR>
+      <TR><TD><A HREF=stmw.html     >stmw  </A></TD><TD>stmw                                             </TD><TD>Store Multiple Word                           </TD></TR>
+      <TR><TD><A HREF=stswi.html    >stswi </A></TD><TD>stswi                                            </TD><TD>Store String Word Immediate                   </TD></TR>
+      <TR><TD><A HREF=stswx.html    >stswx </A></TD><TD>stswx                                            </TD><TD>Store String Word Indexed                     </TD></TR>
+      <TR><TD><A HREF=stw.html      >stw   </A></TD><TD>stw                                              </TD><TD>Store Word                                    </TD></TR>
+      <TR><TD><A HREF=stwbrx.html   >stwbrx</A></TD><TD>stwbrx                                           </TD><TD>Store Word Byte-Reverse Indexed               </TD></TR>
+      <TR><TD><A HREF=stwu.html     >stwu  </A></TD><TD>stwu                                             </TD><TD>Store Word with Update                        </TD></TR>
+      <TR><TD><A HREF=stwux.html    >stwux </A></TD><TD>stwux                                            </TD><TD>Store Word with Update Indexed                </TD></TR>
+      <TR><TD><A HREF=stwx.html     >stwx  </A></TD><TD>stwx                                             </TD><TD>Store Word Indexed                            </TD></TR>
+      <TR><TD><A HREF=subf.html     >subf  </A></TD><TD>subf / subf. / subfo / subfo. / <I>sub</I>       </TD><TD>Subtract From                                 </TD></TR>
+      <TR><TD><A HREF=subfc.html    >subfc </A></TD><TD>subfc / subfc. / subfco / subfco. / <I>subc</I>  </TD><TD>Subtract from Carrying                        </TD></TR>
+      <TR><TD><A HREF=subfe.html    >subfe </A></TD><TD>subfe / subfe. / subfeo. / subfeo.               </TD><TD>Subtrect from Extended                        </TD></TR>
+      <TR><TD><A HREF=subfic.html   >subfic</A></TD><TD>subfic                                           </TD><TD>Subtract from Immediate Carrying              </TD></TR>
+      <TR><TD><A HREF=subfme.html   >subfme</A></TD><TD>subfme / subfme. / subfmeo / subfmeo.            </TD><TD>Subtract from Minus One Extended              </TD></TR>
+      <TR><TD><A HREF=subfze.html   >subfze</A></TD><TD>subfze / subfze. / subfzeo / subfzeo.            </TD><TD>Subtract from Zero Extended                   </TD></TR>
+      <TR><TD><A HREF=xor.html      >xor   </A></TD><TD>xor / xor.                                       </TD><TD>XOR                                           </TD></TR>
+      <TR><TD><A HREF=xori.html     >xori  </A></TD><TD>xori                                             </TD><TD>XOR Immediate                                 </TD></TR>
+      <TR><TD><A HREF=xoris.html    >xoris </A></TD><TD>xoris                                            </TD><TD>XOR Immediate Shifted                         </TD></TR>
+    </TABLE>
+  </BODY>
+
+<!-- Mirrored from pds.twi.tudelft.nl/vakken/in101/labcourse/instruction-set/ by HTTrack Website Copier/3.x [XR&CO'2010], Thu, 30 Jun 2011 23:35:15 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=ISO-8859-1"><!-- /Added by HTTrack -->
+</HTML>
