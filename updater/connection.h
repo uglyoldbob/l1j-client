@@ -10,12 +10,14 @@ class connection
 	public:
 		connection(config* lcfg);
 		~connection();
-		int send(const void* msg, int len);
-		int recv(void *buf, int len);
+		int connection_ok();
+		int snd(const void* msg, int len);
+		int rcv(void *buf, int len);
 	private:
 		struct addrinfo *servinfo;  //used for connecting
 		struct addrinfo hints;
 		int sock;
+		int conn_ok;
 		
 		int get_addr(char* port, char *conto);
 		int make_connection();

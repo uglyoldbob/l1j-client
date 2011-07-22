@@ -9,15 +9,51 @@
 
 #include "connection.h"
 
-
-int connection::send(const void* msg, int len)
+int connection::connection_ok()
 {
-	return send(sock, msg, len, 0);
+	return conn_ok;
 }
 
-int connection::recv(void *buf, int len)
+int connection::snd(const void* msg, int len)
 {
-	return recv(sock, buf, len, 0);
+	char *buf;
+	int sent = 0;
+	int trans;
+	while (sent < len)
+	{
+		buf = (char*)msg;
+		buf = &buf[sent];
+		trans = send(sock, buf, len-sent, 0);
+		if (trans < 0)
+		{
+			printf("Error sending %d \n", errno);
+			throw 2;
+			return trans;
+		}
+		sent += trans;
+	}
+	return len;
+}
+
+int connection::rcv(void *buf, int len)
+{
+	int recvd = 0;
+	int trans;
+	char *temp;
+	while (recvd < len)
+	{
+		temp = (char*)buf;
+		temp = &temp[recvd];
+		trans = recv(sock, temp, len-recvd, 0);
+		if (trans < 0)
+		{
+			printf("Error receiving %d\n", errno);
+			throw 1;
+			return recvd;
+		}
+		recvd += trans;
+	}
+	return len;
 }
 
 int connection::make_connection()
@@ -48,7 +84,7 @@ int connection::make_connection()
 		fprintf(stderr, "client: failed to connect\n");
 		return 2;
 	}
-	
+	conn_ok = 1;
 	return 0;
 }
 
@@ -71,6 +107,7 @@ int connection::get_addr(char* port, char* conto)
 
 connection::connection(config* lcfg)
 {
+	conn_ok = 0;
 	sock = -1;
 	//TODO: implement error checking
 	get_addr(lcfg->get_port(), lcfg->get_addr(0));
