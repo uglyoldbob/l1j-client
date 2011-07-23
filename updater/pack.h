@@ -20,8 +20,8 @@ struct file_entry
 class pack
 {
 	public:
-		pack(char *name, int encrypted);
-		int add_file(char *file);
+		pack(const char *name, int encrypted);
+		int add_file(const char *file);
 		int sort();
 		
 		int detect_dupes();	//detects duplicate files
