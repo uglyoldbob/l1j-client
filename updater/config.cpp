@@ -3,7 +3,7 @@
 
 #include "config.h"
 
-char* config::get_port()
+const char* config::get_port()
 {
 	if (port[0] == 0)
 		return 0;
@@ -11,7 +11,7 @@ char* config::get_port()
 		return DEFAULT_PORT;
 }
 
-char* config::get_addr(int which)
+const char* config::get_addr(int which)
 {
 	switch (which)
 	{
@@ -54,7 +54,7 @@ int config::config_ok()
 	return 0;
 }
 
-config::config(char *cfile)
+config::config(const char *cfile)
 {
 	printf("Loading configuration data\n");
 	domain_name = new char[MAX_LINE_LENGTH];
