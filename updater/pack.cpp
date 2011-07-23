@@ -7,7 +7,6 @@
 void decrypt(unsigned char* buffer, unsigned char *buf2, unsigned int length);
 void encrypt(unsigned char* buffer, unsigned char *buf2, unsigned int length);
 
-
 int pack::load_index(int encrypted)
 {
 	index_buf = fopen(index_file, "rb");
@@ -162,7 +161,7 @@ pack::pack(const char *name, int encrypted)
 	file_data = 0;
 	
 	unsigned char key[] = {'~', '!', '@', '#', '%', '^', '$', '<'};
-	crypt.initialize(key);
+//	crypt.initialize(key);
 	load_index(encrypted);
 	load_data(encrypted);
 }

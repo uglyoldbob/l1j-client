@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-#include "des.h"
+//#include "des.h"
 
 #define FOLDER_PREFIX "./"
 #define DATA_EXT ".pak"
@@ -36,7 +36,7 @@ class pack
 		int num_files;
 		file_entry* files;	//the list of files
 		char** file_data;	//the contents for every file
-		des crypt;
+//		des crypt;
 		
 		int load_index(int encrypted);
 		int load_data(int encrypted);

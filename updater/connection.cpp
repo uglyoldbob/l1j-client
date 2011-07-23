@@ -1,11 +1,15 @@
-#include <arpa/inet.h>
+#if (_WIN32_WINNT < 0x0501)
+	#warning "_WIN32_NT < 0x501"
+	#undef _WIN32_WINNT
+	#define _WIN32_WINNT 0x501
+#endif
+
 #include <errno.h>
-#include <netdb.h>
 #include <stdio.h>
 #include <string.h>
-#include <sys/types.h>
-#include <sys/socket.h>
 #include <unistd.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
 
 #include "connection.h"
 
@@ -88,7 +92,7 @@ int connection::make_connection()
 	return 0;
 }
 
-int connection::get_addr(char* port, char* conto)
+int connection::get_addr(const char* port, const char* conto)
 {
 	int status;
 			
@@ -117,7 +121,7 @@ connection::connection(config* lcfg)
 connection::~connection()
 {
 	if (sock != -1)
-		close(sock);
+		closesocket(sock);
 	if (servinfo != 0)
 		freeaddrinfo(servinfo); // free the linked-list
 }

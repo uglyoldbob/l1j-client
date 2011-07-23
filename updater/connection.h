@@ -1,7 +1,8 @@
 #ifndef _CONNECTION_H_
 #define _CONNECTION_H_
 
-#include <netdb.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
 
 #include "config.h"
 
@@ -16,10 +17,10 @@ class connection
 	private:
 		struct addrinfo *servinfo;  //used for connecting
 		struct addrinfo hints;
-		int sock;
+		SOCKET sock;
 		int conn_ok;
 		
-		int get_addr(char* port, char *conto);
+		int get_addr(const char* port, const char *conto);
 		int make_connection();
 };
 
