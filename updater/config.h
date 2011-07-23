@@ -7,6 +7,8 @@
 #define DEFAULT_PORT "2003"
 #define DEFAULT_IP "127.0.0.1"
 
+char *get_string(const char* data);
+
 class config
 {
 	public:
