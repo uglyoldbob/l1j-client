@@ -6,27 +6,19 @@
 
 #define TRANSFER_AMOUNT 0x400
 
-int main (int argc, char **argv)
+unsigned long checksum = 0xdeadbeef;
+
+int pack_resources()
 {
-	config *main_config;
-	connection *server;
-	unsigned long checksum = 0xdeadbeef;
+	
+}
+
+int get_updates(connection* server)
+{
 	unsigned long temp;
 	long sign_temp;
-	
-	main_config = new config("Lineage.ini");
-	if (!main_config->config_ok())
-	{
-		delete main_config;
-		return 1;
-	}
-	else
-	{
-		printf("Configuration loaded successfully.\n");
-	}
-	
-	server = new connection(main_config);
-	
+	int status;	//> 0 means update occurred
+	status = 0;
 	try
 	{
 		if (server->connection_ok() == 1)
@@ -43,6 +35,7 @@ int main (int argc, char **argv)
 			{	//receive files
 				int num_files = sign_temp;
 				printf("Receiving %d files\n", num_files);
+				status = num_files;
 				unsigned char name_length;
 				unsigned long file_length;
 				unsigned char* file_buffer;
@@ -104,7 +97,44 @@ int main (int argc, char **argv)
 	catch(int e)
 	{
 		printf("An error occurred %d\n", e);
+		status = -1;
 	}
+	return status;
+}
+
+int main (int argc, char **argv)
+{
+	config *main_config;
+	connection *server;
+	
+	main_config = new config("Lineage.ini");
+	if (!main_config->config_ok())
+	{
+		delete main_config;
+		return 1;
+	}
+	else
+	{
+		printf("Configuration loaded successfully.\n");
+	}
+
+#if 1
+	pack *testme;
+	testme = new pack("Text", 1);
+	testme->detect_dupes();
+	delete testme;
+	testme = new pack("Tile", 0);
+	testme->detect_dupes();
+	delete testme;
+	return 0;
+#endif
+	
+	server = new connection(main_config);
+	if (get_updates(server) > 0)
+	{
+		printf("Packing resources\n");
+	}
+	
 	
 	delete server;
 	delete main_config;
