@@ -10,10 +10,10 @@
 class config
 {
 	public:
-		config(char* cfile);	//initialize and load all configuration data
+		config(const char* cfile);	//initialize and load all configuration data
 		int config_ok();	//1 means success
-		char* get_port();
-		char* get_addr(int which);
+		const char* get_port();
+		const char* get_addr(int which);
 	private:
 		int num_errors;
 		char* port;

@@ -88,7 +88,7 @@ int connection::make_connection()
 	return 0;
 }
 
-int connection::get_addr(char* port, char* conto)
+int connection::get_addr(const char* port, const char* conto)
 {
 	int status;
 			

@@ -137,7 +137,7 @@ int pack::load_data(int encrypted)
 	return 0;
 }
 
-pack::pack(char *name, int encrypted)
+pack::pack(const char *name, int encrypted)
 {
 	int size;
 	size = strlen(FOLDER_PREFIX) + strlen(name) + strlen(DATA_EXT) + 1;

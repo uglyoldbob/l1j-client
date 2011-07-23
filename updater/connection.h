@@ -19,7 +19,7 @@ class connection
 		int sock;
 		int conn_ok;
 		
-		int get_addr(char* port, char *conto);
+		int get_addr(const char* port, const char *conto);
 		int make_connection();
 };
 
