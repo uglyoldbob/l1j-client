@@ -107,23 +107,29 @@ int pack::detect_dupes()	//detects duplicate files
 					data_buf = fopen(data_file, "rb");
 				}
 				
-				filea = new unsigned char[files[i].size];
-				fseek(data_buf, files[i].offset, SEEK_SET);
-				fread(filea, 1, files[i].size, data_buf);
-				
-				fileb = new unsigned char[files[i].size];
-				fseek(data_buf, files[i+1].offset, SEEK_SET);
-				fread(fileb, 1, files[i].size, data_buf);
-				
-				if (memcmp(filea, fileb, files[i].size) == 0)
+				if (!( (files[i].size < 0) || 
+					 (files[i+1].size < 0) ||
+					 (files[i+1].offset < 0) ||
+					 (files[i+1].offset < 0)))
 				{
-					dupes++;
-					files[i].size = -1;
-					files[i].offset = -1;
-				}
-				delete [] filea;
-				delete [] fileb;
-			}			
+					filea = new unsigned char[files[i].size];
+					fseek(data_buf, files[i].offset, SEEK_SET);
+					fread(filea, 1, files[i].size, data_buf);
+				
+					fileb = new unsigned char[files[i].size];
+					fseek(data_buf, files[i+1].offset, SEEK_SET);
+					fread(fileb, 1, files[i].size, data_buf);
+				
+					if (memcmp(filea, fileb, files[i].size) == 0)
+					{
+						dupes++;
+						files[i].size = -1;
+						files[i].offset = -1;
+					}
+					delete [] filea;
+					delete [] fileb;
+				}			
+			}
 		}
 	}
 	if (dupes >= 0)
@@ -135,6 +141,7 @@ int pack::detect_dupes()	//detects duplicate files
 
 int pack::load_data(int encrypted)
 {
+	return 0;
 	if (index_buf == 0)
 	{
 		printf("The pack index has not been loaded\n");
@@ -206,11 +213,15 @@ void pack::open_data()
 
 pack::~pack()
 {
-	for (int i = 0; i < num_files; i++)
+	if (file_data != 0)
 	{
-		delete [] file_data[i];
+		for (int i = 0; i < num_files; i++)
+		{
+			if (file_data[i] != 0)
+				delete [] file_data[i];
+		}
+		delete [] file_data;
 	}
-	delete [] file_data;
 	
 	delete [] data_file;
 	delete [] temp_file;
