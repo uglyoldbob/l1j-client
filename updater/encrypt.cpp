@@ -3090,8 +3090,9 @@ static unsigned char REF5[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x00,
 						0x0A, 0x12, 0x04, 0x01, 0x0A, 0x12, 0x0C, 0x01,
 						0x0A, 0x10, 0x04, 0x21, 0x0A, 0x10, 0x0C, 0x21,
 						0x0A, 0x12, 0x04, 0x21, 0x0A, 0x12, 0x0C, 0x21};
-	
-static void print_buf(unsigned char *buf, unsigned int length, char *name)
+
+#if 0	
+static void print_buf(const unsigned char *buf, unsigned int length, const char *name)
 {
 	printf("%s: ", name);
 	int display_counter = 0;
@@ -3103,6 +3104,7 @@ static void print_buf(unsigned char *buf, unsigned int length, char *name)
 	}
 	printf("\n");
 }
+#endif
 						
 static void expand(unsigned char *arg1, unsigned char *arg2)
 {	//initializes arg2 (somehow)
@@ -3152,7 +3154,7 @@ static void perm32(unsigned char *arg1, unsigned char *arg2)
 //	print_buf(arg2, 4, "perm32_out");
 }
 
-static int f(unsigned char *arg1, unsigned int arg2, unsigned char *arg3)
+static void f(unsigned char *arg1, unsigned int arg2, unsigned char *arg3)
 {	//right, num, fret
 	unsigned char local1[16];
 	unsigned char local2[16];
@@ -3293,7 +3295,7 @@ static void decrypt_piece(unsigned char* buf, unsigned char* buf2)
 
 void decrypt(unsigned char* buffer, unsigned char *buf2, unsigned int length)
 {	//does the decryption
-	int numSets = (length & 0xFFFFFFF8 + 7) / 8;
+	int numSets = ((length & 0xFFFFFFF8) + 7) / 8;
 	if (length > 0)
 	{
 		unsigned int i;
@@ -3306,7 +3308,7 @@ void decrypt(unsigned char* buffer, unsigned char *buf2, unsigned int length)
 
 void encrypt(unsigned char *buffer, unsigned char *buf2, unsigned int length)
 {
-	int numSets = (length & 0xFFFFFFF8 + 7) / 8;
+	int numSets = ((length & 0xFFFFFFF8) + 7) / 8;
 	if (length > 0)
 	{
 		unsigned int i;
