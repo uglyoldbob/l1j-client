@@ -1,6 +1,6 @@
 LIN_OBJS = config.o connection.o encrypt.o main.o pack.o
 CC=g++
-DEBUG=-g
+DEBUG=-ggdb
 CFLAGS=-c $(DEBUG)
 LFLAGS=$(DEBUG)
 LDADD=

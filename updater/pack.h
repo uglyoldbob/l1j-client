@@ -40,6 +40,7 @@ class pack
 		
 		int load_index(int encrypted);
 		int load_data(int encrypted);
+		void open_data();
 };
 
 #endif
