@@ -7,8 +7,7 @@
 void decrypt(unsigned char* buffer, unsigned char *buf2, unsigned int length);
 void encrypt(unsigned char* buffer, unsigned char *buf2, unsigned int length);
 
-
-int pack::load_index(int encrypted)
+int pack::load_index()
 {
 	index_buf = fopen(index_file, "rb");
 	if (index_buf == 0)
@@ -42,12 +41,15 @@ int pack::load_index(int encrypted)
 	}
 	if (files[0].offset != 0)
 	{	//fix the first offset
-		printf("Fixing offset of the first file\n");
+		printf("Fixing offset of the first file %02lx%02lx%02lx%02lx\n", 
+			(files[0].offset>>16)&0xFF,
+			files[0].offset>>24, 
+			(files[0].offset>>8)&0xFF,
+			files[0].offset&0xFF);
 		files[0].offset = 0;
 	}
-	//also check the size of the last file
 	
-	for (int i = num_files-20; i < num_files; i++)
+	for (int i = 0; i < 20; i++)
 	{
 		if (files[i].name[19] != 0)
 		{
@@ -56,16 +58,16 @@ int pack::load_index(int encrypted)
 				printf("%02x:", files[i].name[j] & 0xFF);
 			}
 			printf("\n\t");
-			printf(" length %08x @ %08x\n", 
+			printf(" length %08x @ %08lx\n", 
 				files[i].size, files[i].offset);
 		}
 		else
 		{
-			printf("%s length %08x @ %08x\n", 
+			printf("%s length %08x @ %08lx\n", 
 				files[i].name, files[i].size, files[i].offset);
 		}
 	}
-#if 1
+
 	open_data();	//open the data file it is not already
 	int num_invalid = 0;
 	fseek(data_buf, 0, SEEK_END);
@@ -86,7 +88,7 @@ int pack::load_index(int encrypted)
 		//size+offset not too large
 	}
 	printf("There were %d invalid file entries detected\n", num_invalid);
-#endif
+
 	return 0;
 }
 
@@ -112,13 +114,8 @@ int pack::detect_dupes()	//detects duplicate files
 					 (files[i+1].offset < 0) ||
 					 (files[i+1].offset < 0)))
 				{
-					filea = new unsigned char[files[i].size];
-					fseek(data_buf, files[i].offset, SEEK_SET);
-					fread(filea, 1, files[i].size, data_buf);
-				
-					fileb = new unsigned char[files[i].size];
-					fseek(data_buf, files[i+1].offset, SEEK_SET);
-					fread(fileb, 1, files[i].size, data_buf);
+					filea = load_file(i);
+					fileb = load_file(i+1);
 				
 					if (memcmp(filea, fileb, files[i].size) == 0)
 					{
@@ -128,7 +125,7 @@ int pack::detect_dupes()	//detects duplicate files
 					}
 					delete [] filea;
 					delete [] fileb;
-				}			
+				}		
 			}
 		}
 	}
@@ -139,7 +136,7 @@ int pack::detect_dupes()	//detects duplicate files
 	return dupes;
 }
 
-int pack::load_data(int encrypted)
+int pack::load_data()
 {
 	return 0;
 	if (index_buf == 0)
@@ -175,9 +172,10 @@ int pack::load_data(int encrypted)
 	return 0;
 }
 
-pack::pack(const char *name, int encrypted)
+pack::pack(const char *name, int encrypt)
 {
 	int size;
+	encrypted = encrypt;
 	size = strlen(FOLDER_PREFIX) + strlen(name) + strlen(DATA_EXT) + 1;
 	data_file = new char[size];
 	sprintf(data_file, "%s%s%s", FOLDER_PREFIX, name, DATA_EXT);
@@ -199,16 +197,45 @@ pack::pack(const char *name, int encrypted)
 	temp_buf = 0;
 	file_data = 0;
 	
-	unsigned char key[] = {'~', '!', '@', '#', '%', '^', '$', '<'};
-	crypt.initialize(key);
-	load_index(encrypted);
-	load_data(encrypted);
+//	unsigned char key[] = {'~', '!', '@', '#', '%', '^', '$', '<'};
+//	crypt.initialize(key);
+	load_index();
+	load_data();
 }
 
 void pack::open_data()
 {
 	if (data_buf == 0)
 		data_buf = fopen(data_file, "rb");
+}
+
+unsigned char* pack::load_file(int which)
+{
+	unsigned char *buf;
+	open_data();
+	if ((which > 0) && (which < num_files))
+	{
+		if ((files[which].size > 0) && (files[which].offset > 0))
+		{
+			buf = new unsigned char[files[which].size+8];
+			fseek(data_buf, files[which].offset, SEEK_SET);
+			fread(buf, 1, files[which].size, data_buf);
+			if (encrypted == 1)
+			{
+				decrypt(buf, buf, files[which].size);
+			}
+		}
+		else
+		{
+			buf = (unsigned char *)0;
+		}
+	}
+	else
+	{
+		buf = (unsigned char *)0;
+	}
+	
+	return buf;
 }
 
 pack::~pack()

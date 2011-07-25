@@ -10,7 +10,7 @@ unsigned long checksum = 0xdeadbeef;
 
 int pack_resources()
 {
-	
+	return 0;
 }
 
 int get_updates(connection* server)
@@ -28,7 +28,7 @@ int get_updates(connection* server)
 			if (sign_temp < 0)
 			{
 				temp = -sign_temp;
-				printf("Protocol : %x, ServerId : %x\n", temp & 0xFFFF, temp>>16);
+				printf("Protocol : %lx, ServerId : %lx\n", temp & 0xFFFF, temp>>16);
 				server->rcv(&sign_temp, 4);
 			}
 			if (sign_temp > 0)
@@ -40,7 +40,6 @@ int get_updates(connection* server)
 				unsigned long file_length;
 				unsigned char* file_buffer;
 				char *filename;
-				char *actual_name;
 				for (int i = 0; i < num_files; i++)
 				{
 					server->rcv(&name_length, 1);
@@ -50,28 +49,28 @@ int get_updates(connection* server)
 					filename[name_length] = 0;
 					server->rcv(&file_length, 4);
 					file_buffer = new unsigned char[file_length];
-					printf("Downloading %s, %d bytes ...", filename, file_length);
+					printf("Downloading %s, %ld bytes ...", filename, file_length);
 					//do stuff so the file can be saved
 					char *dump_name;
 					dump_name = new char[name_length + 6];
 					sprintf(dump_name, "%s.gz", filename);
-					FILE *filedump = fopen(dump_name, "wb");
+//					FILE *filedump = fopen(dump_name, "wb");
 					while (file_length > 0)
 					{
 						if (file_length > TRANSFER_AMOUNT)
 						{
 							server->rcv(file_buffer, TRANSFER_AMOUNT);
-							fwrite(file_buffer, 1, TRANSFER_AMOUNT, filedump);
+//							fwrite(file_buffer, 1, TRANSFER_AMOUNT, filedump);
 							file_length -= TRANSFER_AMOUNT;
 						}
 						else
 						{
 							server->rcv(file_buffer, file_length);
-							fwrite(file_buffer, 1, file_length, filedump);
+//							fwrite(file_buffer, 1, file_length, filedump);
 							file_length = 0;
 						}
 					}
-					fclose(filedump);
+//					fclose(filedump);
 					printf(" done\n");
 					//todo: do something with this number (the new checksum)
 					server->rcv(&sign_temp, 4);
@@ -80,10 +79,10 @@ int get_updates(connection* server)
 					delete [] file_buffer;
 				}
 			}
-			unsigned long num_servers;
+			long num_servers;
 			unsigned short* num_users;
 			server->rcv(&num_servers, 4);
-			printf("There are %d servers: ", num_servers);
+			printf("There are %ld servers: ", num_servers);
 			num_servers = ntohl(num_servers);
 			num_users = new unsigned short[num_servers];
 			server->rcv(num_users, sizeof(num_users));
@@ -118,10 +117,12 @@ int main (int argc, char **argv)
 		printf("Configuration loaded successfully.\n");
 	}
 
-#if 1
+#if 0
 	pack *testme;
 	testme = new pack("Text", 1);
 	testme->detect_dupes();
+	int file = 11;
+	printf("\tFile number %d:\n\t%s\n", file, testme->load_file(11));
 	delete testme;
 	testme = new pack("Tile", 0);
 	testme->detect_dupes();
@@ -135,8 +136,17 @@ int main (int argc, char **argv)
 		printf("Packing resources\n");
 	}
 	
+	//begin game portion of client
+	if (server->change() == 0)
+	{
+	}
+	else
+	{
+		printf("Failed to connect to game server\n");
+	}
 	
-	delete server;
+
+	delete server;	
 	delete main_config;
 	return 0;
 }

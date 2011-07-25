@@ -13,6 +13,7 @@ class connection
 		int connection_ok();
 		int snd(const void* msg, int len);
 		int rcv(void *buf, int len);
+		int change();	//changes from update connection to game connection
 	private:
 		struct addrinfo *servinfo;  //used for connecting
 		struct addrinfo hints;

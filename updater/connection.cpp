@@ -14,6 +14,13 @@ int connection::connection_ok()
 	return conn_ok;
 }
 
+int connection::change()
+{
+	if (sock != -1)
+		close(sock);
+	return -1;
+}
+
 int connection::snd(const void* msg, int len)
 {
 	char *buf;
