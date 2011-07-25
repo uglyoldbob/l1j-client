@@ -106,10 +106,21 @@ int main (int argc, char **argv)
 	config *main_config;
 	connection *server;
 	
+	WSADATA wsaData;
+		
+	if (WSAStartup(MAKEWORD(2,2), &wsaData) != 0)
+	{
+		printf("WSAStartup failed!\n");
+//		perror("WSAStartup failed!\n");
+		return 1;
+	}
+	
 	main_config = new config("Lineage.ini");
 	if (!main_config->config_ok())
 	{
+		printf("ERROR Loading configuration file.\n");
 		delete main_config;
+		WSACleanup();
 		return 1;
 	}
 	else
@@ -127,6 +138,7 @@ int main (int argc, char **argv)
 	testme = new pack("Tile", 0);
 	testme->detect_dupes();
 	delete testme;
+	WSACleanup();
 	return 0;
 #endif
 	
@@ -137,6 +149,7 @@ int main (int argc, char **argv)
 	}
 	
 	//begin game portion of client
+
 	if (server->change() == 0)
 	{
 	}
@@ -144,9 +157,9 @@ int main (int argc, char **argv)
 	{
 		printf("Failed to connect to game server\n");
 	}
-	
 
 	delete server;	
 	delete main_config;
+	WSACleanup();
 	return 0;
 }

@@ -125,7 +125,7 @@ int pack::detect_dupes()	//detects duplicate files
 					}
 					delete [] filea;
 					delete [] fileb;
-				}		
+				}
 			}
 		}
 	}
@@ -203,12 +203,6 @@ pack::pack(const char *name, int encrypt)
 	load_data();
 }
 
-void pack::open_data()
-{
-	if (data_buf == 0)
-		data_buf = fopen(data_file, "rb");
-}
-
 unsigned char* pack::load_file(int which)
 {
 	unsigned char *buf;
@@ -236,6 +230,12 @@ unsigned char* pack::load_file(int which)
 	}
 	
 	return buf;
+}
+
+void pack::open_data()
+{
+	if (data_buf == 0)
+		data_buf = fopen(data_file, "rb");
 }
 
 pack::~pack()
