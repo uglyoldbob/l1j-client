@@ -8,7 +8,7 @@ LDADD=
 all: Lineage install
 
 install:
-	cp -f ./Lineage "/media/E03CC5AA3CC57BD2/Program Files/NCsoft/Lineage/"
+	cp -f ./Lineage "/Applications/Lineage.app/Contents/MacOS/"
 
 Lineage: $(LIN_OBJS)
 	$(CC) $(LFLAGS) $(LIN_OBJS) $(LDADD) -o Lineage

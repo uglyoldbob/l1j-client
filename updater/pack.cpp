@@ -114,6 +114,7 @@ int pack::detect_dupes()	//detects duplicate files
 					 (files[i+1].offset < 0) ||
 					 (files[i+1].offset < 0)))
 				{
+
 					filea = load_file(i);
 					fileb = load_file(i+1);
 				
@@ -125,7 +126,7 @@ int pack::detect_dupes()	//detects duplicate files
 					}
 					delete [] filea;
 					delete [] fileb;
-				}		
+				}
 			}
 		}
 	}
@@ -171,6 +172,7 @@ int pack::load_data()
 	}
 	return 0;
 }
+
 
 pack::pack(const char *name, int encrypt)
 {
