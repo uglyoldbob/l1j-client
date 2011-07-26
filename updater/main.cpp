@@ -23,13 +23,13 @@ int get_updates(connection* server)
 	{
 		if (server->connection_ok() == 1)
 		{
-			server->snd(&checksum, 4);
-			server->rcv(&sign_temp, 4);
+			server->snd_var(&checksum, 4);
+			server->rcv_var(&sign_temp, 4);
 			if (sign_temp < 0)
 			{
 				temp = -sign_temp;
 				printf("Protocol : %lx, ServerId : %lx\n", temp & 0xFFFF, temp>>16);
-				server->rcv(&sign_temp, 4);
+				server->rcv_var(&sign_temp, 4);
 			}
 			if (sign_temp > 0)
 			{	//receive files
@@ -47,7 +47,7 @@ int get_updates(connection* server)
 					filename = new char[name_length];
 					server->rcv(filename, name_length);
 					filename[name_length] = 0;
-					server->rcv(&file_length, 4);
+					server->rcv_var(&file_length, 4);
 					file_buffer = new unsigned char[file_length];
 					printf("Downloading %s, %ld bytes ...", filename, file_length);
 					//do stuff so the file can be saved
@@ -73,7 +73,7 @@ int get_updates(connection* server)
 //					fclose(filedump);
 					printf(" done\n");
 					//todo: do something with this number (the new checksum)
-					server->rcv(&sign_temp, 4);
+					server->rcv_var(&sign_temp, 4);
 					delete [] dump_name;
 					delete [] filename;
 					delete [] file_buffer;
@@ -81,11 +81,11 @@ int get_updates(connection* server)
 			}
 			long num_servers;
 			unsigned short* num_users;
-			server->rcv(&num_servers, 4);
+			server->rcv_var(&num_servers, 4);
 			printf("There are %ld servers: ", num_servers);
-			num_servers = ntohl(num_servers);
 			num_users = new unsigned short[num_servers];
-			server->rcv(num_users, sizeof(num_users));
+			for (int j = 0; j < num_servers; j++)
+				server->rcv_var(&num_users[j], 2);
 			for (int i = 0; i < num_servers; i++)
 			{
 				printf("%d, ", num_users[i]);
@@ -149,15 +149,16 @@ int main (int argc, char **argv)
 	}
 	
 	//begin game portion of client
-
-	if (server->change() == 0)
+	if (server->change() == 1)
 	{
+		printf("Connected to game server\n");
 	}
 	else
 	{
 		printf("Failed to connect to game server\n");
 	}
 
+	printf("Exiting client now\n");
 	delete server;	
 	delete main_config;
 	WSACleanup();

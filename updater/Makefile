@@ -1,4 +1,4 @@
-LIN_OBJS = config.o connection.o encrypt.o main.o pack.o
+LIN_OBJS = config.o connection.o encrypt.o main.o pack.o packet.o
 CC=g++
 DEBUG=-g
 CFLAGS=-c -Wall $(DEBUG)
