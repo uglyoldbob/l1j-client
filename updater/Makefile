@@ -2,14 +2,15 @@ LIN_OBJS = config.o connection.o encrypt.o main.o pack.o packet.o
 CC=g++
 DEBUG=-g
 CFLAGS=-c -Wall $(DEBUG)
-LFLAGS=$(DEBUG)
-LDADD=
+LFLAGS=$(DEBUG) --enable-stdcall-fixup -lws2_32 -lmswsock# -ladvapi32
+LDADD=ws2_32.dll mswsock.dll# advapi32.dll
 
 all: Lineage install
 
 install:
-//	cp -f ./Lineage "somewhere"
-	
+	cp -f ./Lineage "C:\Program Files\NCsoft\Lineage"
+	cp -f ./run.bat "C:\Program Files\NCsoft\Lineage"
+
 clean:
 	rm -f *.o Lineage
 

@@ -1,0 +1,2 @@
+call Lineage.exe
+pause
