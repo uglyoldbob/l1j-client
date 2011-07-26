@@ -130,7 +130,7 @@ int main (int argc, char **argv)
 	delete testme;
 	return 0;
 #endif
-	
+
 	server = new connection(main_config);
 	if (get_updates(server) > 0)
 	{

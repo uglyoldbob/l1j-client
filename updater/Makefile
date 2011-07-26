@@ -8,8 +8,9 @@ LDADD=
 all: Lineage install
 
 install:
-//	cp -f ./Lineage "somewhere"
-	
+	cp -f ./Lineage "/Applications/Lineage.app/Contents/MacOS"
+	cp -f ./Lineage.ini "/Applications/Lineage.app/Contents/MacOS"
+
 clean:
 	rm -f *.o Lineage
 

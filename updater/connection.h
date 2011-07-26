@@ -1,6 +1,12 @@
 #ifndef _CONNECTION_H_
 #define _CONNECTION_H_
 
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+
 #include "config.h"
 
 class connection
@@ -19,7 +25,7 @@ class connection
 		struct addrinfo *servinfo;  //used for connecting
 		struct addrinfo hints;
 		config *the_config;
-//		SOCKET sock;
+		int sock;
 		int conn_ok;
 		
 		int get_addr(const char* port, const char *conto);
