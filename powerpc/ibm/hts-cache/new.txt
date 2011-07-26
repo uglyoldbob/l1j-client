@@ -1,0 +1,3 @@
+date	size'/'remotesize	flags(request:Update,Range state:File response:Modified,Chunked,gZipped)	statuscode	status ('servermsg')	MIME	Etag|Date	URL	localfile	(from URL)
+12:14:23	1808/1808	---M--	200	added ('OK')	text/html	date:Wed,%2022%20Jun%202011%2017:15:56%20GMT	http://publib.boulder.ibm.com/infocenter/aix/v6r1/index.jsp?topic=/com.ibm.aix.aixassem/doc/alangref/addis.htm	C:/Documents%20and%20Settings/Administrator/My%20Documents/git/l1j_client/powerpc/ibm/publib.boulder.ibm.com/infocenter/aix/v6r1/index5b1f.html	(from )
+12:14:23	3481/3481	---M--	200	added ('OK')	text/plain	etag:%2251ab75-d99-720f2d40%22	http://publib.boulder.ibm.com/robots.txt		(from )

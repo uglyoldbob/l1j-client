@@ -1,0 +1,4 @@
+# HTTrack Website Copier Cookie File
+# This file format is compatible with Netscape cookies
+publib.boulder.ibm.com	TRUE	/help	FALSE	1999999999	JSESSIONID	yzc483vhh0au
+
