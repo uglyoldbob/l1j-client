@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <wchar.h>
 
 static const int MAX_LENGTH = 0x13fe;
 

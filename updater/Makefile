@@ -8,7 +8,8 @@ LDADD=
 all: Lineage install
 
 install:
-//	cp -f ./Lineage "somewhere"
+	cp -f ./Lineage ~/Lineage
+	cp -f ./Lineage.ini ~/Lineage
 	
 clean:
 	rm -f *.o Lineage
