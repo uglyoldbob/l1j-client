@@ -18,15 +18,16 @@ class config
 
 		int config_ok();	//1 means success
 		const char* get_port();
+		const char* get_game_port();
+		int get_num_names();
 		const char* get_addr(int which);
 	private:
 		int num_errors;
 		char* port;
 		char* game_port;
-		//int preference;	//used to determine which source to attempt first
-		//TODO: change from a single domain and single ip address to an array of hostname/ipaddresses
-		char* domain_name;	//primary source of data
-		char* ip_addr;		//secondary source of data
+		
+		char** names;
+		int num_names;
 };
 
 #endif

@@ -11,40 +11,30 @@ const char* config::get_port()
 		return DEFAULT_PORT;
 }
 
+const char* config::get_game_port()
+{
+	if (game_port[0] == 0)
+		return 0;
+	else
+		return DEFAULT_GAME_PORT;
+}
+
+
 const char* config::get_addr(int which)
 {
-	switch (which)
+	if (which < num_names)
 	{
-		case 0:
-			if (domain_name[0] == 0)
-			{
-				if (ip_addr[0] == 0)
-					return DEFAULT_IP;
-				else
-					return ip_addr;
-			}
-			else
-			{
-				return domain_name;
-			}
-			break;
-		case 1:
-			if (domain_name[0] == 0)
-			{
-				return 0;
-			}
-			else
-			{
-				if (ip_addr[0] == 0)
-					return DEFAULT_IP;
-				else
-					return ip_addr;
-			}
-			break;
-		default:
-			return 0;
-			break;
+		return names[which];
 	}
+	else
+	{
+		return DEFAULT_IP;
+	}
+}
+
+int config::get_num_names()
+{
+	return num_names;
 }
 
 int config::config_ok()
@@ -57,14 +47,12 @@ int config::config_ok()
 config::config(const char *cfile)
 {
 	printf("Loading configuration data\n");
-	domain_name = new char[MAX_LINE_LENGTH];
-	domain_name[0] = 0;
-	ip_addr = new char[MAX_LINE_LENGTH];
-	ip_addr[0] = 0;
 	port = new char[MAX_LINE_LENGTH];
 	port[0] = 0;
 	game_port = new char[MAX_LINE_LENGTH];
 	game_port[0] = 0;
+	char *all_names;
+	all_names = new char[MAX_LINE_LENGTH];
 
 	num_errors = 0;
 	
@@ -93,17 +81,36 @@ config::config(const char *cfile)
 				{
 					printf("Connect using game port number %s\n", game_port);
 				}
-				else if (sscanf(line_read, "Ip = %[^\t\n\r]", ip_addr) == 1)
+				else if (sscanf(line_read, "Names = %[^\t\n\r]", all_names) == 1)
 				{
-					printf("Server IP address is %s\n", ip_addr);
-				}
-				else if (sscanf(line_read, "DomainName = %[^\t\n\r]", domain_name) == 1)
-				{
-					printf("Server domain name is %s\n", domain_name);
+					printf("Server IP address is ");
+					num_names = 1;
+					for (unsigned int i = 0; i < strlen(all_names); i++)
+					{
+						if (all_names[i] == ',')
+							num_names++;
+					}
+					names = new char*[num_names];
+					char *temp_name;
+					temp_name = strtok(all_names, ",");
+					names[0] = new char[strlen(temp_name)+1];
+					strcpy(names[0], temp_name);
+					for (int j = 1; j < num_names; j++)
+					{
+						temp_name = strtok(NULL, ",");
+						names[j] = new char[strlen(temp_name)+1];
+						strcpy(names[j], temp_name);
+					}
+					printf(" (%d)", num_names);
+					for (int k = 0; k < num_names; k++)
+					{
+						printf("\n\t%s", names[k]);
+					}
+					printf("\n");
 				}
 				else
 				{
-					printf ("Error reading from line number: %d\n", line_number);
+					printf ("Error reading from line number: %d\n\t%s\n", line_number, line_read);
 					num_errors++;
 				}
 			}
@@ -132,10 +139,10 @@ config::config(const char *cfile)
 			strcpy(game_port, DEFAULT_GAME_PORT);
 			printf("WARNING: Using default game port %s\n", game_port);
 		}
-		if ((ip_addr[0] == 0) && (domain_name[0] == 0))
+		if (num_names == 0)
 		{
-			strcpy(ip_addr, DEFAULT_IP);
-			printf("WARNING: Using default ip address %s\n", ip_addr);
+			printf("ERROR: No names defined\n");
+			num_errors++;
 		}
 	}
 	else if (num_errors > 0)
@@ -147,8 +154,11 @@ config::config(const char *cfile)
 
 config::~config()
 {
-	delete [] domain_name;
-	delete [] ip_addr;
+	for (int i = 0; i < num_names; i++)
+	{
+		delete [] names[i];
+	}
+//	delete [] names;
 	delete [] port;
 	delete [] game_port;
 }
