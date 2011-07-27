@@ -2,11 +2,15 @@
 
 #include "config.h"
 #include "connection.h"
+#include "globals.h"
+#include "music.h"
 #include "pack.h"
+#include "packet.h"
 
 #define TRANSFER_AMOUNT 0x400
 
 unsigned long checksum = 0xdeadbeef;
+pack *textpack;
 
 int pack_resources()
 {
@@ -131,6 +135,8 @@ int main (int argc, char **argv)
 	return 0;
 #endif
 
+	textpack = new pack("Text", 1);
+	
 	server = new connection(main_config);
 	if (get_updates(server) > 0)
 	{
@@ -146,6 +152,14 @@ int main (int argc, char **argv)
 	{
 		printf("Failed to connect to game server\n");
 	}
+	
+	music game_music;
+	if (game_music.init() != 0)
+	{
+		//music failed
+		printf("STUB InitSound()\n");
+	}
+	packet bob(server);
 
 	printf("Exiting client now\n");
 	delete server;	
