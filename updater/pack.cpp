@@ -114,9 +114,9 @@ int pack::detect_dupes()	//detects duplicate files
 					 (files[i+1].offset < 0) ||
 					 (files[i+1].offset < 0)))
 				{
-
-					filea = load_file(i);
-					fileb = load_file(i+1);
+					//dont decrypt files to compare them
+					filea = load_file(i, 0);
+					fileb = load_file(i+1, 0);
 				
 					if (memcmp(filea, fileb, files[i].size) == 0)
 					{
@@ -205,7 +205,31 @@ pack::pack(const char *name, int encrypt)
 	load_data();
 }
 
-unsigned char* pack::load_file(int which)
+char *pack::load_file(char *name, int *size, int decrypting)
+{
+	char *ret_buf = (char*)0;
+	int i;
+	for (i = 0; i < num_files; i++)
+	{
+		if (strncmp(name, files[i].name, 20) == 0)
+		{
+			break;
+		}
+	}
+	if (i < num_files)
+	{
+		printf("Loading %s from %s\n", files[i].name, data_file);
+		*size = files[i].size;
+		ret_buf = (char*)load_file(i, decrypting);
+	}
+	else
+	{
+		printf("File %s not found\n", name);
+	}
+	return ret_buf;
+}
+
+unsigned char* pack::load_file(int which, int decrypting)
 {
 	unsigned char *buf;
 	open_data();
@@ -216,7 +240,7 @@ unsigned char* pack::load_file(int which)
 			buf = new unsigned char[files[which].size+8];
 			fseek(data_buf, files[which].offset, SEEK_SET);
 			fread(buf, 1, files[which].size, data_buf);
-			if (encrypted == 1)
+			if (decrypting == 1)
 			{
 				decrypt(buf, buf, files[which].size);
 			}

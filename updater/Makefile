@@ -1,4 +1,4 @@
-LIN_OBJS = config.o connection.o encrypt.o main.o pack.o packet.o
+LIN_OBJS = config.o connection.o encrypt.o main.o music.o pack.o packet.o unsorted.o
 CC=g++
 DEBUG=-g
 CFLAGS=-c -Wall $(DEBUG)
@@ -27,6 +27,15 @@ encrypt.o: encrypt.cpp
 
 main.o: main.cpp
 	$(CC) $(CFLAGS) main.cpp
+	
+music.o: music.cpp music.h
+	$(CC) $(CFLAGS) music.cpp
 
 pack.o: pack.cpp pack.h
 	$(CC) $(CFLAGS) pack.cpp
+
+packet.o: packet.cpp packet.h
+	$(CC) $(CFLAGS) packet.cpp
+	
+unsorted.o: unsorted.cpp unsorted.h
+	$(CC) $(CFLAGS) unsorted.cpp
