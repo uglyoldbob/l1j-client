@@ -28,7 +28,7 @@ int connection::change()
 	}
 	conn_ok = 0;
 	try_names(the_config->get_game_port());
-	return sock;
+	return conn_ok;
 }
 
 //TODO: implement a "waiting buffer" when sending fails ?
