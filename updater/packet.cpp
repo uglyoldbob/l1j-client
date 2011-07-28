@@ -22,7 +22,7 @@ int packet::assemble(char *buf, int max_length, const char *format, ...)
 	return length;
 }
 
-const unsigned char* packet::disassemble(unsigned char *buf, const char *format, ...)
+void packet::disassemble(unsigned char *buf, const char *format, ...)
 {
 	int i = 0;
 	int buf_offset = 0;
@@ -44,7 +44,7 @@ const unsigned char* packet::disassemble(unsigned char *buf, const char *format,
 				unsigned long *from = (unsigned long*)(&buf[buf_offset]);
 				buf_offset += 4;
 				unsigned long *store = va_arg(args, unsigned long *);
-				*store = *from;
+				*store = reverse(ntohl(*from));
 				break;
 			}
 			default:
@@ -104,8 +104,10 @@ int packet::assemble(char *send, int max_length, const char *format, va_list arr
 				long temp = va_arg(array, long);
 				if ((send_offset + 4) <= max_length)
 				{
-					long *set_me = (long*)(&send[send_offset]);
-					*set_me = temp;
+					send[send_offset+3] = temp>>24 & 0xFF;
+					send[send_offset+2] = temp>>16 & 0xFF;
+					send[send_offset+1] = temp>>8 & 0xFF;
+					send[send_offset] = temp & 0xFF;
 					send_offset += 4;
 				}
 				break;
@@ -115,8 +117,8 @@ int packet::assemble(char *send, int max_length, const char *format, va_list arr
 				short temp = va_arg(array, int) & 0xFFFF;
 				if ((send_offset + 2) <= max_length)
 				{
-					short *set_me = (short*)(&send[send_offset]);
-					*set_me = temp;
+					send[send_offset+1] = temp>>8 & 0xFF;
+					send[send_offset] = temp & 0xFF;
 					send_offset +=2;
 				}
 				break;
@@ -145,7 +147,6 @@ int packet::assemble(char *send, int max_length, const char *format, va_list arr
 
 void packet::sendPacket(const char* args, ...)
 {
-	printf("Sending a packet %s\n", args);
 	char sendbuf[MAX_LENGTH];
 	va_list temp_args;
 	va_start(temp_args, args);
@@ -168,9 +169,10 @@ void packet::sendPacket(const char* args, ...)
 
 void packet::getPacket(const char* args, ...)
 {
-	int length = 0;
-	server->rcv(&length, 2);
-	printf("Packet length %08x\n", length);
+	unsigned short length = 0;
+	server->rcv_var(&length, 2);
+	length = reverse(length);
+	printf("Packet length %04x\n", length);
 	if (length != 0)
 	{
 		if (packet_length == 0)
@@ -209,10 +211,17 @@ void packet::create_key(const unsigned long seed)
 	big_key[0] = (rotrParam>>13) | (rotrParam<<19);	//rotate right by 13 bits
 	big_key[1] = big_key[0] ^ big_key[1] ^ 0x7C72E993;
 	
-	//WARNING: possibly backwards here	
-	memcpy(encryptionKey, big_key, 8);
-	memcpy(decryptionKey, big_key, 8);
-	
+	encryptionKey[0] = (big_key[0]) & 0xFF;
+	encryptionKey[1] = (big_key[0]>>8) & 0xFF;
+	encryptionKey[2] = (big_key[0]>>16) & 0xFF;
+	encryptionKey[3] = (big_key[0]>>24) & 0xFF;
+	encryptionKey[4] = (big_key[1]) & 0xFF;
+	encryptionKey[5] = (big_key[1]>>8) & 0xFF;
+	encryptionKey[6] = (big_key[1]>>16) & 0xFF;
+	encryptionKey[7] = (big_key[1]>>24) & 0xFF;
+
+	memcpy(decryptionKey, encryptionKey, 8);
+
 	key_initialized = 1;
 }
 
@@ -231,9 +240,8 @@ void packet::encrypt()
 {
 	if (packet_data != 0)
 	{
-		printf("Encrypting data\n");
 		packet_data[2] ^= encryptionKey[0];
-
+		
 		for (int i = 3; i < packet_length; i++)
 		{
 			packet_data[i] ^= encryptionKey[i & 7] ^ packet_data[i-1];
@@ -243,6 +251,7 @@ void packet::encrypt()
 		packet_data[4] ^= encryptionKey[3] ^ packet_data[5];
 		packet_data[3] ^= encryptionKey[4] ^ packet_data[4];
 		packet_data[2] ^= encryptionKey[5] ^ packet_data[3];
+
 	}
 }
 
@@ -342,10 +351,8 @@ packet::~packet()
 
 void packet::keyPacket()
 {
-	unsigned long seed = packet_data[4]<<24 |
-		packet_data[3]<<16 |
-		packet_data[2]<<8 |
-		packet_data[1];
+	unsigned long seed;
+	disassemble(&packet_data[1], "d", &seed);
 	create_key(seed);
 	reset();
 	//loadFile("VersionInfo", &r1_40);
