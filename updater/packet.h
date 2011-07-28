@@ -26,7 +26,7 @@ class packet
 		
 		int assemble(char *format, int max_length, const char *data, ...);
 		int assemble(char *format, int max_length, const char *data, va_list array);
-		const unsigned char* disassemble(unsigned char *buf, const char *format, ...);
+		void disassemble(unsigned char *buf, const char *format, ...);
 		
 		void processPacket();	//process packet data and return the proper sub-class
 		
