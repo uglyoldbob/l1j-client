@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 #include "globals.h"
+#include "unsorted.h"
 
 void init_codepage(unsigned long arg)
 {
@@ -11,6 +12,11 @@ void init_codepage(unsigned long arg)
 //	{
 //		lower_table[i] = to_lower[i];
 //	}
+}
+
+void init_math_tables()
+{
+	printf("STUB InitMathTables\n");	
 }
 
 int getNumber(char **buf)
@@ -42,7 +48,7 @@ int getNumber(char **buf)
 	return ret_val;
 }
 
-void LoadDurationTable(char *file)
+void LoadDurationTable(const char *file)
 {
 	char *table;
 	int length;

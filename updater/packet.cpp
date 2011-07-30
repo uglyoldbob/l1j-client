@@ -172,14 +172,14 @@ void packet::getPacket(const char* args, ...)
 	unsigned short length = 0;
 	server->rcv_var(&length, 2);
 	length = reverse(length);
-	printf("Packet length %04x\n", length);
+//	printf("Packet length %04x\n", length);
 	if (length != 0)
 	{
 		if (packet_length == 0)
 		{
 			packet_length = length;
 			packet_data = new unsigned char[packet_length-2];
-			printf("Receiving data\n");
+//			printf("Receiving data\n");
 			server->rcv(packet_data, packet_length-2);
 			if (key_initialized == 1)
 			{
@@ -188,7 +188,7 @@ void packet::getPacket(const char* args, ...)
 			}
 			else
 			{
-				printf("Not decrypting this packet\n");
+//				printf("Not decrypting this packet\n");
 			}
 			//determine if it should be decrypted
 			//process the packet
@@ -288,14 +288,13 @@ packet::packet(connection *serve)
 	packet_data = (unsigned char*)0;
 	if (key_initialized == 0)
 	{
-		printf("Retrieving encryption key from server\n");
+//		printf("Retrieving encryption key from server\n");
 		getPacket("asdf", 1);
 		if (packet_data[0] == 0x41)
 		{
 			processPacket();
 			getPacket("asdf", 1);
 			processPacket();
-			
 		}
 		else
 		{
@@ -388,7 +387,7 @@ void packet::serverVersionPacket()
 	disassemble(&packet_data[25], "c", &countryCode);
 	
 	unsigned short serverId = (countryCode<<8) + serverCode;
-	printf("Server id: %04x\n", serverId);
+//	printf("Server id: %04x\n", serverId);
 	if (serverId == 0x012c)
 	{
 		LoadDurationTable("spelldur300.tbl");
