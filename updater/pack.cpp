@@ -1,7 +1,9 @@
-#include "pack.h"
-
+#include <ctype.h>
 #include <stdio.h>
 #include <string.h>
+
+#include "lindes.h"
+#include "pack.h"
 
 //in encrypt.cpp
 void decrypt(unsigned char* buffer, unsigned char *buf2, unsigned int length);
@@ -27,7 +29,7 @@ int pack::load_index()
 		return 1;
 	}
 	num_files = size1;
-	printf("Loading list of %d files\n", num_files);
+//	printf("Loading list of %d files\n", num_files);
 	files = new file_entry[num_files];
 
 	//read the files all at once
@@ -35,38 +37,48 @@ int pack::load_index()
 
 	if (encrypted == 1)
 	{
-		printf("Attempting to decrypt\n");
-		decrypt((unsigned char*)files, (unsigned char*)files, num_files * sizeof(file_entry));
+//		printf("Attempting to decrypt\n");
+		DesReadBlock((char*)files, num_files*sizeof(file_entry));
+//		decrypt((unsigned char*)files, (unsigned char*)files, num_files * sizeof(file_entry));
 //		crypt.decrypt_block((unsigned char*)files, num_files * sizeof(file_entry));
 	}
-	if (files[0].offset != 0)
-	{	//fix the first offset
-		printf("Fixing offset of the first file %02lx%02lx%02lx%02lx\n", 
-			(files[0].offset>>16)&0xFF,
-			files[0].offset>>24, 
-			(files[0].offset>>8)&0xFF,
-			files[0].offset&0xFF);
-		files[0].offset = 0;
+	
+	for (int i = 0; i < num_files; i++)
+	{
+		for (int j = 0; j < 20; j++)
+		{
+			files[i].name[j] = tolower(files[i].name[j]);
+		}
 	}
 	
-	for (int i = 0; i < 20; i++)
-	{
-		if (files[i].name[19] != 0)
-		{
-			for (int j = 0; j < 20; j++)
-			{
-				printf("%02x:", files[i].name[j] & 0xFF);
-			}
-			printf("\n\t");
-			printf(" length %08x @ %08lx\n", 
-				files[i].size, files[i].offset);
-		}
-		else
-		{
-			printf("%s length %08x @ %08lx\n", 
-				files[i].name, files[i].size, files[i].offset);
-		}
-	}
+//	if (files[0].offset != 0)
+//	{	//fix the first offset
+//		printf("\tFixing offset of the first file %02lx%02lx%02lx%02lx\n", 
+//			(files[0].offset>>16)&0xFF,
+//			files[0].offset>>24, 
+//			(files[0].offset>>8)&0xFF,
+//			files[0].offset&0xFF);
+//		files[0].offset = 0;
+//	}
+	
+//	for (int i = 0; i < 20; i++)
+//	{
+//		if (files[i].name[19] != 0)
+//		{
+//			for (int j = 0; j < 20; j++)
+//			{
+//				printf("%02x:", files[i].name[j] & 0xFF);
+//			}
+//			printf("\n\t");
+//			printf(" length %08x @ %08lx\n", 
+//				files[i].size, files[i].offset);
+//		}
+//		else
+//		{
+//			printf("%s length %08x @ %08lx\n", 
+//				files[i].name, files[i].size, files[i].offset);
+//		}
+//	}
 
 	open_data();	//open the data file it is not already
 	int num_invalid = 0;
@@ -87,14 +99,15 @@ int pack::load_index()
 		//check offset is valid
 		//size+offset not too large
 	}
-	printf("There were %d invalid file entries detected\n", num_invalid);
+	if (num_invalid > 0)
+		printf("\tThere were %d invalid file entries detected\n", num_invalid);
 
 	return 0;
 }
 
 int pack::detect_dupes()	//detects duplicate files
 {
-	printf("Checking for duplicate files\n");
+//	printf("Checking for duplicate files\n");
 	int dupes = 0;
 	for (int i = 0; (i+1) < num_files; i++)
 	{
@@ -130,10 +143,8 @@ int pack::detect_dupes()	//detects duplicate files
 			}
 		}
 	}
-	if (dupes >= 0)
-	{
+	if (dupes > 0)
 		printf("\tThere were %d duplicate files detected\n", dupes);
-	}
 	return dupes;
 }
 
@@ -205,7 +216,7 @@ pack::pack(const char *name, int encrypt)
 	load_data();
 }
 
-char *pack::load_file(char *name, int *size, int decrypting)
+char *pack::load_file(const char *name, int *size, int decrypting)
 {
 	char *ret_buf = (char*)0;
 	int i;
@@ -218,7 +229,7 @@ char *pack::load_file(char *name, int *size, int decrypting)
 	}
 	if (i < num_files)
 	{
-		printf("Loading %s from %s\n", files[i].name, data_file);
+//		printf("Loading %s from %s\n", files[i].name, data_file);
 		*size = files[i].size;
 		ret_buf = (char*)load_file(i, decrypting);
 	}
@@ -242,8 +253,17 @@ unsigned char* pack::load_file(int which, int decrypting)
 			fread(buf, 1, files[which].size, data_buf);
 			if (decrypting == 1)
 			{
-				decrypt(buf, buf, files[which].size);
+//				decrypt(buf, buf, files[which].size);
+				DesReadBlock((char*)buf, files[which].size);
 			}
+			buf[files[which].size] = 0;
+			buf[files[which].size + 1] = 0;
+			buf[files[which].size + 2] = 0;
+			buf[files[which].size + 3] = 0;
+			buf[files[which].size + 4] = 0;
+			buf[files[which].size + 5] = 0;
+			buf[files[which].size + 6] = 0;
+			buf[files[which].size + 7] = 0;
 		}
 		else
 		{

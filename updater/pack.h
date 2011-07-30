@@ -25,7 +25,7 @@ class pack
 		int sort();
 		int detect_dupes();	//detects duplicate files
 		unsigned char* load_file(int which, int decrypting);
-		char *load_file(char *name, int *size, int decrypting);
+		char *load_file(const char *name, int *size, int decrypting);
 		~pack();
 	private:
 		char* data_file;
