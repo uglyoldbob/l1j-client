@@ -3,17 +3,94 @@
 #include "config.h"
 #include "connection.h"
 #include "globals.h"
+#include "lindes.h"
 #include "music.h"
 #include "pack.h"
 #include "packet.h"
+#include "table.h"
+#include "unsorted.h"
 
 #define TRANSFER_AMOUNT 0x400
 
 unsigned long checksum = 0xdeadbeef;
 pack *textpack;
+pack *tilepack;
+pack **spritepack;
+const int num_sprite_pack = 17;
+table bad_words;
+table strings;
+table teleport;
+table un_transaction;
+table important_items;
+table pet;
+table solvent;
+table todays_tip;
 
 int pack_resources()
 {
+	return 0;
+}
+
+int init_packs()
+{
+	textpack = new pack("Text", 1);
+	return 0;
+	tilepack = new pack("Tile", 0);
+	spritepack = new pack*[num_sprite_pack];
+	spritepack[0] = new pack("Sprite", 0);
+	for (int i = 0; i < (num_sprite_pack-1); i++)
+	{
+		char name[10];
+		sprintf(name, "Sprite%02d", i);
+		spritepack[i+1] = new pack(name, 0);
+	}
+	return 0;
+}
+
+int init_strings()
+{
+	int acp = -1;
+	if (acp == -1)
+	{
+		printf("STUB GetACP()\n");
+		//acp = GetACP();
+	}
+	
+	//list of filtered chat words
+	bad_words.load_local("obscene");
+	bad_words.sort();
+	
+	//list of tips for new players?
+	todays_tip.load_local("todaystip");
+	printf("STUB Load MercenaryIconData\n");
+	printf("STUB Load MagicDollData\n");
+	
+	//list of items
+	solvent.load_local("solvent");
+	
+	//list of pet types
+	pet.load_local("ntexpet");
+	
+	//no important items?
+	important_items.load("itemimportant.tbl");
+	
+	printf("STUB Load BaseStatus\n");
+	
+	//unknown
+	teleport.load("telbook.tbl");
+	
+	//unknown
+	un_transaction.load("untransaction.tbl");
+	
+//	if (battleServer != 0)
+//	{
+//		table notices;
+//		notices.load("notice_bs.tbl");
+//		notices.print();
+//	}
+
+	strings.load_local("string");
+	
 	return 0;
 }
 
@@ -23,6 +100,7 @@ int get_updates(connection* server)
 	long sign_temp;
 	int status;	//> 0 means update occurred
 	status = 0;
+	printf("STUB Get update magic number\n");
 	try
 	{
 		if (server->connection_ok() == 1)
@@ -47,7 +125,6 @@ int get_updates(connection* server)
 				for (int i = 0; i < num_files; i++)
 				{
 					server->rcv(&name_length, 1);
-					printf(" Length of filename %d, ", name_length);
 					filename = new char[name_length];
 					server->rcv(filename, name_length);
 					filename[name_length] = 0;
@@ -76,7 +153,7 @@ int get_updates(connection* server)
 					}
 //					fclose(filedump);
 					printf(" done\n");
-					//todo: do something with this number (the new checksum)
+					printf("STUB Update magic number\n");
 					server->rcv_var(&sign_temp, 4);
 					delete [] dump_name;
 					delete [] filename;
@@ -86,15 +163,9 @@ int get_updates(connection* server)
 			long num_servers;
 			unsigned short* num_users;
 			server->rcv_var(&num_servers, 4);
-			printf("There are %ld servers: ", num_servers);
 			num_users = new unsigned short[num_servers];
 			for (int j = 0; j < num_servers; j++)
 				server->rcv_var(&num_users[j], 2);
-			for (int i = 0; i < num_servers; i++)
-			{
-				printf("%d, ", num_users[i]);
-			}
-			printf("\n");
 		}
 	}
 	catch(int e)
@@ -128,7 +199,7 @@ int main (int argc, char **argv)
 	}
 	else
 	{
-		printf("Configuration loaded successfully.\n");
+//		printf("Configuration loaded successfully.\n");
 	}
 
 #if 0
@@ -144,19 +215,20 @@ int main (int argc, char **argv)
 	WSACleanup();
 	return 0;
 #endif
+	DesKeyInit("~!@#%^$<");
+	init_packs();
 
-	textpack = new pack("Text", 1);
-	
 	server = new connection(main_config);
 	if (get_updates(server) > 0)
 	{
-		printf("Packing resources\n");
+		printf("STUB Packing resources\n");
 	}
 	
 	//begin game portion of client
 	if (server->change() == 1)
 	{
-		printf("Connected to game server\n");
+//		printf("Connected to game server\n");
+		packet bob(server);
 	}
 	else
 	{
@@ -169,8 +241,16 @@ int main (int argc, char **argv)
 		//music failed
 		printf("STUB InitSound()\n");
 	}
-	packet bob(server);
+	
+	init_codepage(0);
+	init_math_tables();
+	printf("STUB Load player config\n");
+	printf("STUB Initialize screenshots\n");
+	printf("STUB Initialize emblem cache\n");
+	printf("STUB Initialize GUI\n");
 
+	init_strings();
+	
 	printf("Exiting client now\n");
 	delete server;	
 	delete main_config;
