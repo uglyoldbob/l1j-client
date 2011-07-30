@@ -94,7 +94,6 @@ void table::load(const char *real_name)
 		}
 	}
 		
-	delete [] real_name;
 	delete [] buffer;
 }
 
@@ -104,6 +103,7 @@ void table::load_local(const char *name)
 	real_name = new char[strlen(name) + 7];
 	sprintf(real_name, "%s-%c.tbl", name, get_lang_char());
 	load(real_name);
+	delete [] real_name;
 }
 
 char table::get_lang_char()
