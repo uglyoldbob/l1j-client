@@ -60,13 +60,13 @@ void table::print()
 	printf("\n");
 }
 
-void table::load(const char *real_name)
+void table::load(const char *real_name, pack *from)
 {
 	char *buffer;
 	table_name = new char[strlen(real_name) + 1];
 	strcpy(table_name, real_name);
 	int size;
-	buffer = textpack->load_file(real_name, &size, 1);
+	buffer = from->load_file(real_name, &size, 1);
 
 	int i = 0;
 	char* temp_entry;
@@ -97,12 +97,12 @@ void table::load(const char *real_name)
 	delete [] buffer;
 }
 
-void table::load_local(const char *name)
+void table::load_local(const char *name, pack* from)
 {
 	char *real_name;
 	real_name = new char[strlen(name) + 7];
 	sprintf(real_name, "%s-%c.tbl", name, get_lang_char());
-	load(real_name);
+	load(real_name, from);
 	delete [] real_name;
 }
 
