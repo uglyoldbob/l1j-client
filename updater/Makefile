@@ -1,6 +1,5 @@
-LIN_OBJS = config.o connection.o encrypt.o lindes.o \
-			main.o music.o pack.o packet.o unsorted.o \
-			table.o
+LIN_OBJS = client.o config.o connection.o lindes.o main.o \
+			music.o pack.o packet.o unsorted.o table.o
 CC=g++
 DEBUG=-g
 CFLAGS=-c -Wall $(DEBUG)
@@ -18,16 +17,16 @@ clean:
 
 Lineage: $(LIN_OBJS)
 	$(CC) $(LFLAGS) $(LIN_OBJS) $(LDADD) -o Lineage
-	
+
+client.o: client.cpp client.h
+	$(CC) $(CFLAGS) client.cpp unsorted.cpp	
+
 config.o: config.cpp config.h
 	$(CC) $(CFLAGS) config.cpp
 
 connection.o: connection.cpp connection.h
 	$(CC) $(CFLAGS) connection.cpp
 
-encrypt.o: encrypt.cpp
-	$(CC) $(CFLAGS) encrypt.cpp
-	
 lindes.o: lindes.cpp lindes.h
 	$(CC) $(CFLAGS) lindes.cpp
 
