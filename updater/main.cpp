@@ -1,20 +1,12 @@
 #include <stdio.h>
 
-#include "client.h"
+#include "sdl_master.h"
 
-int main (int argc, char **argv)
+int main(int argc, char* argv[])
 {
-	client *game;
-	game = new client();
-	try
-	{
-		game->init();
-	}
-	catch (const char *error)
-	{
-		printf("%s", error);
-	}
+	sdl_master graphics;
+	graphics.create_client();
+	graphics.process_events();
 	
-	delete game;
 	return 0;
 }

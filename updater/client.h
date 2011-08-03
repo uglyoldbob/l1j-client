@@ -1,6 +1,7 @@
 #ifndef _CLIENT_H_
 #define _CLIENT_H_
 
+#include "sdl_user.h"
 #include "config.h"
 #include "connection.h"
 #include "table.h"
@@ -8,10 +9,12 @@
 
 #define TRANSFER_AMOUNT 0x400
 
+int run_client(void *moron);
+
 class client
 {
 	public:
-		client();
+		client(sdl_user *stuff);
 		~client();
 		void init();
 		
@@ -20,6 +23,7 @@ class client
 		void init_codepage(unsigned long arg);
 		
 	private:
+		sdl_user *graphics;
 		config *main_config;
 		connection *server;
 		unsigned long checksum;
@@ -35,6 +39,11 @@ class client
 		table pet;
 		table solvent;
 		table todays_tip;
+		
+		int acp[2];	//-1, 0xec8a0 (a function pointer to badwords compare?)
+		unsigned long serverId;	//0
+		unsigned char countryCode;
+		
 
 		int get_updates(connection* server);
 		int pack_resources();
@@ -44,7 +53,6 @@ class client
 		//unsorted functions
 		void init_math_tables();
 		int getNumber(char **buf);
-		
 };
 
 #endif

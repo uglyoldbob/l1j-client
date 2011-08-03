@@ -1,3 +1,4 @@
+#include "sdl_user.h"
 #include "client.h"
 #include "config.h"
 #include "connection.h"
@@ -6,6 +7,7 @@
 #include "music.h"
 #include "pack.h"
 #include "packet.h"
+#include "partial_table.h"
 #include "table.h"
 #include "unsorted.h"
 
@@ -17,7 +19,6 @@ int client::pack_resources()
 int client::init_packs()
 {
 	textpack = new pack("Text", 1);
-	return 0;
 	tilepack = new pack("Tile", 0);
 	spritepack = new pack*[num_sprite_pack];
 	spritepack[0] = new pack("Sprite", 0);
@@ -26,7 +27,12 @@ int client::init_packs()
 		char name[10];
 		sprintf(name, "Sprite%02d", i);
 		spritepack[i+1] = new pack(name, 0);
+		//new_surf_pack and spritepack are the same thing
+		//new_icon_pack and spritepack are the same thing
+		//spriteFile is simply the first element of spritepack
 	}
+	//TODO: verify all packs were loaded successfully
+	
 	return 0;
 }
 
@@ -38,6 +44,9 @@ int client::init_strings()
 		printf("STUB GetACP()\n");
 		//acp = GetACP();
 	}
+	
+	partial_table test;
+	test.load_local("itemdesc", textpack);
 	
 	//list of filtered chat words
 	bad_words.load_local("obscene", textpack);
@@ -108,11 +117,11 @@ int client::get_updates(connection* server)
 				for (int i = 0; i < num_files; i++)
 				{
 					server->rcv(&name_length, 1);
-					filename = new char[name_length];
+					filename = new char[name_length+1];
 					server->rcv(filename, name_length);
 					filename[name_length] = 0;
 					server->rcv_var(&file_length, 4);
-					file_buffer = new unsigned char[file_length];
+					file_buffer = new unsigned char[file_length+1];
 					printf("Downloading %s, %ld bytes ...", filename, file_length);
 					//do stuff so the file can be saved
 					char *dump_name;
@@ -160,9 +169,10 @@ int client::get_updates(connection* server)
 }
 
 
-client::client()
+client::client(sdl_user *stuff)
 {
 	main_config = 0;
+	graphics = stuff;
 	server = 0;
 	checksum = 0xdeadbeef;
 	num_sprite_pack = 17;
@@ -181,6 +191,12 @@ void client::init()
 	DesKeyInit("~!@#%^$<");
 	init_packs();
 	
+	graphics_data *temp = new graphics_data;
+	temp->tilepack = tilepack;
+	temp->spritepack = spritepack;
+	temp->num_sprite_pack = num_sprite_pack;
+	graphics->give_data(temp);	//pack files will not be created or delete during updates
+
 	server = new connection(main_config);
 	if (get_updates(server) > 0)
 	{
@@ -208,8 +224,9 @@ void client::init()
 	printf("STUB Initialize screenshots\n");
 	printf("STUB Initialize emblem cache\n");
 	printf("STUB Initialize GUI\n");
-
 	init_strings();
+	graphics->load_done();
+	for (;;);
 }
 
 client::~client()
@@ -219,4 +236,18 @@ client::~client()
 		delete server;
 	if (main_config != 0)
 		delete main_config;
+}
+
+int run_client(void *moron)
+{	//the main thread for each client
+	client game((sdl_user*)moron);
+	try
+	{
+		game.init();
+	}
+	catch (const char *error)
+	{
+		printf("%s", error);
+	}
+	return 0;
 }

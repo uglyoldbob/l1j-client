@@ -43,19 +43,14 @@ void table::print()
 	printf("There are %d entries to print in %s\n", num_entries, table_name);
 	for (int i = 0; i < num_entries; i++)
 	{
-		printf("Entry %d:\n\t", i+1);
 		if (entries[i] != 0)
 		{
-			printf("%s \n", entries[i]);
+			printf("Entry %d:\n\t%s \n", i, entries[i]);
+			char moron;
+			scanf("%c", &moron);
+			if (moron == 'q')
+				break;
 		}
-		else
-		{
-			printf("(null)\n");
-		}
-		char moron;
-		scanf("%c", &moron);
-		if (moron == 'q')
-			break;
 	}
 	printf("\n");
 }
@@ -68,12 +63,18 @@ void table::load(const char *real_name, pack *from)
 	int size;
 	buffer = from->load_file(real_name, &size, 1);
 
-	int i = 0;
 	char* temp_entry;
 	char delimiters[] = {0x0d, 0x0a, 0};
 	temp_entry = strtok(buffer, delimiters);
 	num_entries = atoi(temp_entry);
 	entries = new char*[num_entries];
+	
+	for (int i = 0; i < num_entries; i++)
+	{
+		entries[i] = (char*)0;
+	}
+	int i = 0;
+	
 	temp_entry = strtok(NULL, delimiters);
 	while (temp_entry != NULL)
 	{
@@ -93,7 +94,7 @@ void table::load(const char *real_name, pack *from)
 			entries[i++] = (char*)0;
 		}
 	}
-		
+
 	delete [] buffer;
 }
 
