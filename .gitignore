@@ -1,4 +1,7 @@
 client/documents/*
 updater/documents/*
+updater/zlib/*
+updater/libpng-1.5.4/*
+updater/deploy/*
 *.o
 *.exe

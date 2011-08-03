@@ -11,11 +11,11 @@ class table
 		const char *operator[](int);
 						
 		void load_local(const char *name, pack* from);
-		void load(const char *real_name, pack* from);
+		virtual void load(const char *real_name, pack* from);
 		void sort();
 		static int compare(const void *a, const void *b);
 		void print();
-	private:
+	protected:
 		int num_entries;
 		char **entries;
 		char *table_name;

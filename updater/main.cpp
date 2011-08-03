@@ -2,7 +2,7 @@
 
 #include "client.h"
 
-int main (int argc, char **argv)
+int main(int argc, char* argv[])
 {
 	WSADATA wsaData;
 	if (WSAStartup(MAKEWORD(2,2), &wsaData) != 0)
@@ -12,18 +12,16 @@ int main (int argc, char **argv)
 		return 1;
 	}
 	
-	client *game;
-	game = new client();
+	client game;
 	try
 	{
-		game->init();
+		game.init();
 	}
 	catch (const char *error)
 	{
 		printf("%s", error);
 	}
 	
-	delete game;
 	WSACleanup();
 	return 0;
 }

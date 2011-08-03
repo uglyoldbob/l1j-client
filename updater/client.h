@@ -1,6 +1,7 @@
 #ifndef _CLIENT_H_
 #define _CLIENT_H_
 
+#include "class_sdl.h"
 #include "config.h"
 #include "connection.h"
 #include "table.h"
@@ -20,6 +21,7 @@ class client
 		void init_codepage(unsigned long arg);
 		
 	private:
+		class_sdl graphics;
 		config *main_config;
 		connection *server;
 		unsigned long checksum;
@@ -35,6 +37,11 @@ class client
 		table pet;
 		table solvent;
 		table todays_tip;
+		
+		int acp[2];	//-1, 0xec8a0 (a function pointer to badwords compare?)
+		unsigned long serverId;	//0
+		unsigned char countryCode;
+		
 
 		int get_updates(connection* server);
 		int pack_resources();

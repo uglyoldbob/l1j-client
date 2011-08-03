@@ -1,3 +1,4 @@
+#include "class_sdl.h"
 #include "client.h"
 #include "config.h"
 #include "connection.h"
@@ -6,6 +7,7 @@
 #include "music.h"
 #include "pack.h"
 #include "packet.h"
+#include "partial_table.h"
 #include "table.h"
 #include "unsorted.h"
 
@@ -17,7 +19,6 @@ int client::pack_resources()
 int client::init_packs()
 {
 	textpack = new pack("Text", 1);
-	return 0;
 	tilepack = new pack("Tile", 0);
 	spritepack = new pack*[num_sprite_pack];
 	spritepack[0] = new pack("Sprite", 0);
@@ -26,7 +27,12 @@ int client::init_packs()
 		char name[10];
 		sprintf(name, "Sprite%02d", i);
 		spritepack[i+1] = new pack(name, 0);
+		//new_surf_pack and spritepack are the same thing
+		//new_icon_pack and spritepack are the same thing
+		//spriteFile is simply the first element of spritepack
 	}
+	//TODO: verify all packs were loaded successfully
+	
 	return 0;
 }
 
@@ -38,6 +44,9 @@ int client::init_strings()
 		printf("STUB GetACP()\n");
 		//acp = GetACP();
 	}
+	
+	partial_table test;
+	test.load_local("itemdesc", textpack);
 	
 	//list of filtered chat words
 	bad_words.load_local("obscene", textpack);
@@ -181,11 +190,25 @@ void client::init()
 	DesKeyInit("~!@#%^$<");
 	init_packs();
 	
+	graphics_data *temp = new graphics_data;
+	temp->tilepack = tilepack;
+	temp->spritepack = spritepack;
+	temp->num_sprite_pack = num_sprite_pack;
+	graphics.give_data(temp);
+	graphics.draw_load1();
+
 	server = new connection(main_config);
 	if (get_updates(server) > 0)
 	{
 		printf("STUB Packing resources\n");
 	}
+
+	temp = new graphics_data;
+	temp->tilepack = tilepack;
+	temp->spritepack = spritepack;
+	temp->num_sprite_pack = num_sprite_pack;
+	graphics.give_data(temp);
+	
 	
 	//begin game portion of client
 	if (server->change() != 1)
@@ -208,8 +231,8 @@ void client::init()
 	printf("STUB Initialize screenshots\n");
 	printf("STUB Initialize emblem cache\n");
 	printf("STUB Initialize GUI\n");
-
 	init_strings();
+	graphics.do_stuff();
 }
 
 client::~client()
