@@ -231,20 +231,27 @@ pack::pack(const char *name, int encrypt)
 unsigned char* pack::load_png(const char *name, int *size, int decrypting)
 {	//because the file might need to be transformed before it can be used
 	char *buffer = load_file(name, size, decrypting);
-	if (buffer[3] == 0x58)
-	{	//c963c
-		printf("Normalizing mangled PNG file\n");
-		buffer[3] = 0x47;
-		if (*size > 5)
-		{	//c9654
-			for (int i = 1; i <= (*size-5); i++)
-			{	//c9660, i = ctr
-				buffer[*size-i] ^= buffer[*size-i-1];
-				buffer[*size-i] ^= 0x52;
+	if (buffer != 0)
+	{
+		if (buffer[3] == 0x58)
+		{	//c963c
+			printf("Normalizing mangled PNG file\n");
+			buffer[3] = 0x47;
+			if (*size > 5)
+			{	//c9654
+				for (int i = 1; i <= (*size-5); i++)
+				{	//c9660, i = ctr
+					buffer[*size-i] ^= buffer[*size-i-1];
+					buffer[*size-i] ^= 0x52;
+				}
 			}
 		}
+		printf("Finished loading %s\n", name);
 	}
-	printf("Finished loading %s\n", name);
+	else
+	{
+		printf("Failed to load %s\n", name);
+	}
 	return (unsigned char*)buffer;
 }
 
@@ -268,6 +275,7 @@ char *pack::load_file(const char *name, int *size, int decrypting)
 	else
 	{
 		printf("File %s not found\n", name);
+		ret_buf = (char*)0;
 	}
 	return ret_buf;
 }

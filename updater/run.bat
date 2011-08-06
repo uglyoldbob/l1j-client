@@ -1,2 +1,2 @@
-call Lineage.exe
+call gdb Lineage.exe
 pause

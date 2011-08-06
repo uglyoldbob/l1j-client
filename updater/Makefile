@@ -1,5 +1,6 @@
-LIN_OBJS = class_sdl.o client.o config.o connection.o lindes.o main.o music.o \
-	pack.o packet.o partial_table.o unsorted.o table.o
+LIN_OBJS = client.o config.o connection.o lindes.o main.o music.o pack.o \
+	packet.o partial_table.o prepared_graphics.o sdl_master.o sdl_user.o \
+	sdl_widget.o unsorted.o table.o
 CC=g++
 TEST=-g
 RELEASE=-s -O3
@@ -9,7 +10,7 @@ LDADD=ws2_32.dll mswsock.dll SDL.dll SDL_image.dll
 
 .PHONY : debug release
 
-all: Lineage debug release install
+all: debug_check release_check Lineage install
 
 install:
 	cp -f ./Lineage.exe "C:\Program Files\NCsoft\Lineage"
@@ -37,22 +38,38 @@ clean:
 		echo "Making DEBUG version";\
 		rm -f release;\
 	fi
-
+	
 release:
+	@if [ -e debug ]; then\
+		echo "make clean";\
+		make clean;\
+	fi
+	rm -f debug
+	touch release
+	make Lineage
+	
+debug:
+	@if [ -e release ]; then\
+		echo "make clean";\
+		make clean;\
+	fi
+	rm -f release
+	touch debug
+	make Lineage
+
+release_check:
 	@if [ -e release ] && [ ! -e Lineage_rls ]; then\
 		echo "Making RELEASE version";\
 		rm -f debug;\
 		make clean;\
-		make Lineage;\
 	fi
 	
-debug:
+debug_check:
 	@if [ -e debug ] && [ ! -e Lineage_dbg ]; then\
 		echo "Making DEBUG version";\
 		rm -f release;\
 		make clean;\
-		make Lineage;\
-	fi	
+	fi
 
 Lineage: $(LIN_OBJS)
 	@if [ -e debug_made ] && [ -e release_made ]; then\

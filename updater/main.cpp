@@ -1,6 +1,8 @@
 #include <stdio.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
 
-#include "client.h"
+#include "sdl_master.h"
 
 int main(int argc, char* argv[])
 {
@@ -12,15 +14,9 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 	
-	client game;
-	try
-	{
-		game.init();
-	}
-	catch (const char *error)
-	{
-		printf("%s", error);
-	}
+	sdl_master graphics;
+	graphics.create_client();
+	graphics.process_events();
 	
 	WSACleanup();
 	return 0;

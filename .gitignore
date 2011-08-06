@@ -2,6 +2,7 @@ client/documents/*
 updater/documents/*
 updater/zlib/*
 updater/libpng-1.5.4/*
+updater/SDL_image-1.2.10/*
 updater/deploy/*
 *.o
 *.exe

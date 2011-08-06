@@ -1,4 +1,4 @@
-#include "class_sdl.h"
+#include "sdl_user.h"
 #include "client.h"
 #include "config.h"
 #include "connection.h"
@@ -117,11 +117,11 @@ int client::get_updates(connection* server)
 				for (int i = 0; i < num_files; i++)
 				{
 					server->rcv(&name_length, 1);
-					filename = new char[name_length];
+					filename = new char[name_length+1];
 					server->rcv(filename, name_length);
 					filename[name_length] = 0;
 					server->rcv_var(&file_length, 4);
-					file_buffer = new unsigned char[file_length];
+					file_buffer = new unsigned char[file_length+1];
 					printf("Downloading %s, %ld bytes ...", filename, file_length);
 					//do stuff so the file can be saved
 					char *dump_name;
@@ -169,9 +169,10 @@ int client::get_updates(connection* server)
 }
 
 
-client::client()
+client::client(sdl_user *stuff)
 {
 	main_config = 0;
+	graphics = stuff;
 	server = 0;
 	checksum = 0xdeadbeef;
 	num_sprite_pack = 17;
@@ -194,21 +195,13 @@ void client::init()
 	temp->tilepack = tilepack;
 	temp->spritepack = spritepack;
 	temp->num_sprite_pack = num_sprite_pack;
-	graphics.give_data(temp);
-	graphics.draw_load1();
+	graphics->give_data(temp);	//pack files will not be created or delete during updates
 
 	server = new connection(main_config);
 	if (get_updates(server) > 0)
 	{
 		printf("STUB Packing resources\n");
 	}
-
-	temp = new graphics_data;
-	temp->tilepack = tilepack;
-	temp->spritepack = spritepack;
-	temp->num_sprite_pack = num_sprite_pack;
-	graphics.give_data(temp);
-	
 	
 	//begin game portion of client
 	if (server->change() != 1)
@@ -232,7 +225,8 @@ void client::init()
 	printf("STUB Initialize emblem cache\n");
 	printf("STUB Initialize GUI\n");
 	init_strings();
-	graphics.do_stuff();
+	graphics->load_done();
+	for (;;);
 }
 
 client::~client()
@@ -242,4 +236,18 @@ client::~client()
 		delete server;
 	if (main_config != 0)
 		delete main_config;
+}
+
+int run_client(void *moron)
+{	//the main thread for each client
+	client game((sdl_user*)moron);
+	try
+	{
+		game.init();
+	}
+	catch (const char *error)
+	{
+		printf("%s", error);
+	}
+	return 0;
 }
