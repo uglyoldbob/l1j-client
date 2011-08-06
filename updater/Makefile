@@ -1,50 +1,94 @@
-LIN_OBJS = config.o connection.o encrypt.o lindes.o \
-			main.o music.o pack.o packet.o unsorted.o \
-			table.o
+LIN_OBJS = client.o config.o connection.o lindes.o main.o music.o pack.o \
+	packet.o partial_table.o prepared_graphics.o sdl_master.o sdl_user.o \
+	sdl_widget.o unsorted.o table.o
 CC=g++
-DEBUG=-g
-CFLAGS=-c -Wall $(DEBUG)
-LFLAGS=$(DEBUG)
+
+TEST=-g
+RELEASE=-s -O3
+CFLAGS=-c -Wall
+LFLAGS=
 LDADD=
 
-all: Lineage install
+.PHONY : debug release
+
+all: debug_check release_check Lineage install
 
 install:
 	cp -f ./Lineage ~/Lineage
 	cp -f ./Lineage.ini ~/Lineage
 	
+	echo "Release archive creation not enabled"
+#	@if [ -e release_made ]; then\
+#		if [ ! -d deploy ]; then\
+#			echo mkdir deploy;\
+#			mkdir deploy;\
+#		fi;\
+#		echo "Copying files to deploy folder";\
+#		cp -f "deploy_files" ./deploy/;\
+#		echo tar -zcvf release.tar.gz deploy;\
+#		tar -zcvf release.tar.gz deploy;\
+#	fi
+	
 clean:
-	rm -f *.o Lineage
+	rm -f *.o Lineage* debug_made release_made
+	@if [ -e debug ] && [ -e release ]; then\
+		echo "Making DEBUG version";\
+		rm -f release;\
+	fi
+	
+release:
+	@if [ -e debug ]; then\
+		echo "make clean";\
+		make clean;\
+	fi
+	rm -f debug
+	touch release
+	make Lineage
+	
+debug:
+	@if [ -e release ]; then\
+		echo "make clean";\
+		make clean;\
+	fi
+	rm -f release
+	touch debug
+	make Lineage
+
+release_check:
+	@if [ -e release ] && [ ! -e Lineage_rls ]; then\
+		echo "Making RELEASE version";\
+		rm -f debug;\
+		make clean;\
+	fi
+	
+debug_check:
+	@if [ -e debug ] && [ ! -e Lineage_dbg ]; then\
+		echo "Making DEBUG version";\
+		rm -f release;\
+		make clean;\
+	fi
 
 Lineage: $(LIN_OBJS)
-	$(CC) $(LFLAGS) $(LIN_OBJS) $(LDADD) -o Lineage
-	
-config.o: config.cpp config.h
-	$(CC) $(CFLAGS) config.cpp
+	@if [ -e debug_made ] && [ -e release_made ]; then\
+		echo Make clean because of mixed debug and release objects;\
+		make clean;\
+	fi
+	@if [ -e debug_made ]; then\
+		echo $(CC) $(TEST) $(LFLAGS) $(LIN_OBJS) $(LDADD) -o Lineage_dbg;\
+		$(CC) $(TEST) $(LFLAGS) $(LIN_OBJS) $(LDADD) -o Lineage_dbg;\
+		cp -f Lineage_dbg Lineage;\
+	fi
+	@if [ -e release_made ]; then\
+		echo $(CC) $(RELEASE) $(LFLAGS) $(LIN_OBJS) $(LDADD) -o Lineage_rls;\
+		$(CC) $(RELEASE) $(LFLAGS) $(LIN_OBJS) $(LDADD) -o Lineage_rls;\
+		cp -f Lineage_rls Lineage;\
+	fi
 
-connection.o: connection.cpp connection.h
-	$(CC) $(CFLAGS) connection.cpp
-
-encrypt.o: encrypt.cpp
-	$(CC) $(CFLAGS) encrypt.cpp
-	
-lindes.o: lindes.cpp lindes.h
-	$(CC) $(CFLAGS) lindes.cpp
-
-main.o: main.cpp
-	$(CC) $(CFLAGS) main.cpp
-	
-music.o: music.cpp music.h
-	$(CC) $(CFLAGS) music.cpp
-
-pack.o: pack.cpp pack.h
-	$(CC) $(CFLAGS) pack.cpp
-
-packet.o: packet.cpp packet.h
-	$(CC) $(CFLAGS) packet.cpp
-	
-table.o: table.cpp table.h
-	$(CC) $(CFLAGS) table.cpp
-	
-unsorted.o: unsorted.cpp unsorted.h
-	$(CC) $(CFLAGS) unsorted.cpp
+.cpp.o:
+	@if [ -e release ]; then\
+		echo $(CC) $(RELEASE) $(CFLAGS) $<;\
+		$(CC) $(RELEASE) $(CFLAGS) $< && touch release_made;\
+	else\
+		echo $(CC) $(TEST) $(CFLAGS) $<;\
+		$(CC) $(TEST) $(CFLAGS) $< && touch debug_made;\
+	fi
