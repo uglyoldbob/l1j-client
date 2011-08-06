@@ -1,12 +1,12 @@
 LIN_OBJS = client.o config.o connection.o lindes.o main.o music.o pack.o \
 	packet.o partial_table.o prepared_graphics.o sdl_master.o sdl_user.o \
-	sdl_widget.o unsorted.o table.o
+	sdl_widget.o unsorted.o table.o SDLMain.o
 CC=g++
 
 TEST=-g
 RELEASE=-s -O3
-CFLAGS=-c -Wall
-LFLAGS=
+CFLAGS=-c -Wall -I/Library/Frameworks/SDL.framework/Headers
+LFLAGS=-framework SDL -framework SDL_image -framework Cocoa
 LDADD=
 
 .PHONY : debug release
@@ -74,14 +74,23 @@ Lineage: $(LIN_OBJS)
 		make clean;\
 	fi
 	@if [ -e debug_made ]; then\
-		echo $(CC) $(TEST) $(LFLAGS) $(LIN_OBJS) $(LDADD) -o Lineage_dbg;\
-		$(CC) $(TEST) $(LFLAGS) $(LIN_OBJS) $(LDADD) -o Lineage_dbg;\
+		echo $(CC) $(TEST) $(LIN_OBJS) $(LDADD) -o Lineage_dbg $(LFLAGS);\
+		$(CC) $(TEST) $(LIN_OBJS) $(LDADD) -o Lineage_dbg $(LFLAGS) ;\
 		cp -f Lineage_dbg Lineage;\
 	fi
 	@if [ -e release_made ]; then\
-		echo $(CC) $(RELEASE) $(LFLAGS) $(LIN_OBJS) $(LDADD) -o Lineage_rls;\
-		$(CC) $(RELEASE) $(LFLAGS) $(LIN_OBJS) $(LDADD) -o Lineage_rls;\
+		echo $(CC) $(RELEASE) $(LIN_OBJS) $(LDADD) -o Lineage_rls $(LFLAGS);\
+		$(CC) $(RELEASE) $(LIN_OBJS) $(LDADD) -o Lineage_rls $(LFLAGS);\
 		cp -f Lineage_rls Lineage;\
+	fi
+
+SDLMain.o: SDLMain.m
+	@if [ -e release ]; then\
+		echo $(CC) $(RELEASE) $(CFLAGS) SDLMain.m;\
+		$(CC) $(RELEASE) $(CFLAGS) SDLMain.m && touch release_made;\
+	else\
+		echo $(CC) $(TEST) $(CFLAGS) SDLMain.m;\
+		$(CC) $(TEST) $(CFLAGS) SDLMain.m && touch debug_made;\
 	fi
 
 .cpp.o:
