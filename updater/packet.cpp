@@ -2,6 +2,8 @@
 #include <string.h>
 #include <wchar.h>
 
+#include "client.h"
+#include "globals.h"
 #include "packet.h"
 #include "unsorted.h"
 
@@ -280,9 +282,10 @@ void packet::decrypt()
 	}
 }
 
-packet::packet(connection *serve)
+packet::packet(client *clnt, connection *serve)
 {
 	//merely copy the existing connection so we can use it
+	game = clnt;
 	server = serve;
 	packet_length = 0;
 	packet_data = (unsigned char*)0;
@@ -390,35 +393,35 @@ void packet::serverVersionPacket()
 //	printf("Server id: %04x\n", serverId);
 	if (serverId == 0x012c)
 	{
-		LoadDurationTable("spelldur300.tbl");
+		game->LoadDurationTable("spelldur300.tbl");
 	}
 	else
 	{
-		LoadDurationTable("spelldur.tbl");
+		game->LoadDurationTable("spelldur.tbl");
 	}
 	if (countryCode == 3)
 	{
-		init_codepage(0x3b6);	//memset(lead_table, 0, 0x100); memset(lower_table, 0, 0x100); 
+		game->init_codepage(0x3b6);	//memset(lead_table, 0, 0x100); memset(lower_table, 0, 0x100); 
 //		serverCP = 0x3b6;
 	}
 	else if (countryCode == 4)
 	{
-		init_codepage(0x3a4);
+		game->init_codepage(0x3a4);
 //		serverCP = 0x3a4;
 	}
 	else if (countryCode == 0)
 	{
-		init_codepage(0x3b5);
+		game->init_codepage(0x3b5);
 //		serverCP = 0;
 	}
 	else if (countryCode == 5)
 	{
-		init_codepage(0x3a8);
+		game->init_codepage(0x3a8);
 //		serverCP = 0x3a8;
 	}
 	else
 	{
-		init_codepage(0x4e4);
+		game->init_codepage(0x4e4);
 //		serverCP = 0;
 	}
 	printf("STUB AdjustExp()\n");

@@ -6,10 +6,12 @@
 
 #include "connection.h"
 
+class client;
+
 class packet
 {
 	public:
-		packet(connection *serve);
+		packet(client *clnt, connection *serve);
 		~packet();
 		
 	private:
@@ -18,6 +20,7 @@ class packet
 		static int mode;	//what mode is packet decoding in?
 		static int key_initialized;
 		connection *server;
+		client *game;
 		unsigned char *packet_data;
 		int packet_length;
 		

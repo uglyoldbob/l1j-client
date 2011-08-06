@@ -43,37 +43,38 @@ void table::print()
 	printf("There are %d entries to print in %s\n", num_entries, table_name);
 	for (int i = 0; i < num_entries; i++)
 	{
-		printf("Entry %d:\n\t", i+1);
 		if (entries[i] != 0)
 		{
-			printf("%s \n", entries[i]);
+			printf("Entry %d:\n\t%s \n", i, entries[i]);
+			char moron;
+			scanf("%c", &moron);
+			if (moron == 'q')
+				break;
 		}
-		else
-		{
-			printf("(null)\n");
-		}
-		char moron;
-		scanf("%c", &moron);
-		if (moron == 'q')
-			break;
 	}
 	printf("\n");
 }
 
-void table::load(const char *real_name)
+void table::load(const char *real_name, pack *from)
 {
 	char *buffer;
 	table_name = new char[strlen(real_name) + 1];
 	strcpy(table_name, real_name);
 	int size;
-	buffer = textpack->load_file(real_name, &size, 1);
+	buffer = from->load_file(real_name, &size, 1);
 
-	int i = 0;
 	char* temp_entry;
 	char delimiters[] = {0x0d, 0x0a, 0};
 	temp_entry = strtok(buffer, delimiters);
 	num_entries = atoi(temp_entry);
 	entries = new char*[num_entries];
+	
+	for (int i = 0; i < num_entries; i++)
+	{
+		entries[i] = (char*)0;
+	}
+	int i = 0;
+	
 	temp_entry = strtok(NULL, delimiters);
 	while (temp_entry != NULL)
 	{
@@ -93,17 +94,17 @@ void table::load(const char *real_name)
 			entries[i++] = (char*)0;
 		}
 	}
-		
-	delete [] real_name;
+
 	delete [] buffer;
 }
 
-void table::load_local(const char *name)
+void table::load_local(const char *name, pack* from)
 {
 	char *real_name;
 	real_name = new char[strlen(name) + 7];
 	sprintf(real_name, "%s-%c.tbl", name, get_lang_char());
-	load(real_name);
+	load(real_name, from);
+	delete [] real_name;
 }
 
 char table::get_lang_char()

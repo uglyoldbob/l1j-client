@@ -1,10 +1,10 @@
 #include <ctype.h>
 #include <stdio.h>
 
+#include "client.h"
 #include "globals.h"
-#include "unsorted.h"
 
-void init_codepage(unsigned long arg)
+void client::init_codepage(unsigned long arg)
 {
 	printf("STUB init_codepage\n");
 //	memset(lead_table, 0, 0x100);
@@ -14,12 +14,12 @@ void init_codepage(unsigned long arg)
 //	}
 }
 
-void init_math_tables()
+void client::init_math_tables()
 {
 	printf("STUB InitMathTables\n");	
 }
 
-int getNumber(char **buf)
+int client::getNumber(char **buf)
 {
 	int is_neg = 0;
 	while ((*buf[0] != 0) && (isdigit(*buf[0]) == 0))
@@ -48,7 +48,7 @@ int getNumber(char **buf)
 	return ret_val;
 }
 
-void LoadDurationTable(const char *file)
+void client::LoadDurationTable(const char *file)
 {
 	char *table;
 	int length;
