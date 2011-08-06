@@ -2,6 +2,7 @@ LIN_OBJS = client.o config.o connection.o lindes.o main.o music.o pack.o \
 	packet.o partial_table.o prepared_graphics.o sdl_master.o sdl_user.o \
 	sdl_widget.o unsorted.o table.o
 CC=g++
+
 TEST=-g
 RELEASE=-s -O3
 CFLAGS=-c -Wall
@@ -30,7 +31,6 @@ install:
 		echo tar -zcvf release.tar.gz deploy;\
 		tar -zcvf release.tar.gz deploy;\
 	fi
-
 	
 clean:
 	rm -f *.o Lineage* debug_made release_made
