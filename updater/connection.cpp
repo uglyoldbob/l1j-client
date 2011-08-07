@@ -4,6 +4,7 @@
 #include <unistd.h>
 
 #include "connection.h"
+#include "globals.h"
 
 int connection::connection_ok()
 {
@@ -72,12 +73,12 @@ int connection::snd_var(const void* msg, int len)
 	if (len == 4)
 	{
 		unsigned long *temp = (unsigned long *)msg;
-		*temp = htonl(*temp);
+		*temp = SWAP32(*temp);
 	}
 	else if (len == 2)
 	{
 		unsigned short *temp = (unsigned short *)msg;
-		*temp = htons(*temp);
+		*temp = SWAP16(*temp);
 	}
 	char *buf;
 	int sent = 0;
@@ -120,12 +121,12 @@ int connection::rcv_var(void *buf, int len)
 	if (len == 4)
 	{
 		unsigned long *temp = (unsigned long *)buf;
-		*temp = ntohl(*temp);
+		*temp = SWAP32(*temp);
 	}
 	else if (len == 2)
 	{
 		unsigned short *temp = (unsigned short *)buf;
-		*temp = ntohs(*temp);
+		*temp = SWAP16(*temp);
 	}
 
 	return len;

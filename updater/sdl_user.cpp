@@ -1,6 +1,7 @@
 #include <SDL.h>
 #include "SDL_image.h"
 
+#include "globals.h"
 #include "sdl_user.h"
 #include "sdl_widget.h"
 
@@ -178,12 +179,20 @@ SDL_Surface *sdl_user::get_img(const char *name, pack **source)
 		SDL_RWread(sdl_buf, &height, 2, 1);
 		SDL_RWread(sdl_buf, &moron, 2, 1);
 		SDL_RWread(sdl_buf, &moron2, 2, 1);
+		width = SWAP16(width);
+		height = SWAP16(height);
+		moron = SWAP16(moron);
+		moron2 = SWAP16(moron2);
 		printf("Unknown data in %s: %02x %02x\n", name, moron & 0xFF, 
 			moron2 & 0xFF);
 		printf("\tImage size %d %d %04x %04x %04x\n", size, index, width, height, 
 			(size/2) - (width*height));
 		data = new unsigned short[width * height];
 		SDL_RWread(sdl_buf, data, 2, width * height);
+		for (int i = 0; i < width * height; i++)
+		{
+			data[i] = SWAP16(data[i]);
+		}
 //		SDL_RWclose(sdl_buf);
 
 		image = SDL_CreateRGBSurfaceFrom(data, width, height, 16, width*2, 
