@@ -1,34 +1,25 @@
-#ifndef __SDL_WIDGET_H_
-#define __SDL_WIDGET_H_
+#ifndef __SDL_BUTTON_H_
+#define __SDL_BUTTON_H_
 
 #include <SDL.h>
 
 #include "globals.h"
+#include "sdl_widget.h"
 
 sdl_graphic *make_sdl_graphic(int num, int x, int y, graphics_data *packs);
 SDL_Rect *make_sdl_rect(int x, int y, int w, int h);
 
 #include <SDL.h>
 
-class sdl_widget
+class sdl_button : public sdl_widget
 {
 	public:
-		sdl_widget(int num, int x, int y, graphics_data *packs);
-		~sdl_widget();
+		sdl_button(int num, int x, int y, graphics_data *packs);
+		~sdl_button();
 		virtual void draw(SDL_Surface *display);
 		
-		//for tracking what the mouse is over
-		void mouseOn();
-		void mouseOff();
-
-		friend class sdl_user;
-	protected:
-		int visible;	//determines if the widget should be drawn
-		sdl_graphic *one;
-		
-		bool have_mouse;
-		
-		bool contains(int x, int y);	//does this widget contain the given point?
+	private:
+		sdl_graphic *two;
 		
 		void mouse_to(SDL_MouseMotionEvent *to);
 		void mouse_from(SDL_MouseMotionEvent *from);

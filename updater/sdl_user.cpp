@@ -1,7 +1,9 @@
 #include <SDL.h>
 #include "SDL_image.h"
 
+#include "globals.h"
 #include "sdl_user.h"
+#include "sdl_button.h"
 #include "sdl_widget.h"
 
 sdl_user::sdl_user(Uint32 flags)
@@ -22,6 +24,70 @@ sdl_user::sdl_user(Uint32 flags)
 sdl_user::~sdl_user()
 {
 	SDL_FreeSurface(display);
+}
+
+int sdl_user::get_widget(int x, int y)
+{
+	//priority among who gets mouse when there is overlap? 
+		//implement a tracking variable and update it using rules
+	for (int i = 0; i < num_widgets; i++)
+	{
+		if (widgets[i]->contains(x,y))
+		{
+			return i;
+		}
+	}
+	return -1;	//no widget contains that
+}
+
+void sdl_user::mouse_to(SDL_MouseMotionEvent *to)
+{
+	int which = get_widget(to->x, to->y);
+	if (which >= 0)
+	{
+		widgets[which]->mouse_to(to);
+	}
+}
+
+void sdl_user::mouse_from(SDL_MouseMotionEvent *from)
+{
+	int which = get_widget(from->x, from->y);
+	if (which >= 0)
+	{
+		widgets[which]->mouse_from(from);
+	}
+}
+
+void sdl_user::mouse_move(SDL_MouseMotionEvent *from, SDL_MouseMotionEvent *to)
+{	//TODO: handle click and drag movable widgets
+	int from_w = get_widget(from->x, from->y);
+	int to_w = get_widget(to->x, to->y);
+	printf("%d, %d\n", from_w, to_w);
+	if ((from_w != -1) && (to_w != -1))
+	{
+		if (from_w != to_w)
+		{	//only send events if the widgets are different
+			mouse_from(from);
+			mouse_to(to);
+		}
+	}
+	if ((from_w == -1) && (to_w != -1))
+	{
+		mouse_to(to);
+	}
+	if ((from_w != -1) && (to_w == -1))
+	{
+		mouse_from(from);
+	}
+}
+
+void sdl_user::mouse_click(SDL_MouseButtonEvent *here)
+{
+}
+
+bool sdl_user::mouse_leave()
+{
+	return false;
 }
 
 void sdl_user::give_data(graphics_data *abc)
@@ -52,7 +118,7 @@ void sdl_user::prepare_load1()
 	pg->pg[0].position = NULL;
 	pg->pg[0].cleanup = false;
 	
-	pg->pg[1].surf = get_img("330.img", graphx->spritepack);
+	pg->pg[1].surf = get_img(330, graphx->spritepack);
 	rect = new SDL_Rect;
   	rect->x = 0xf1;
   	rect->y = 0x181;
@@ -109,93 +175,6 @@ void sdl_user::set_load_amount(int size)
 	}
 }
 
-
-SDL_Surface *sdl_user::get_image(const char *name, pack *source)
-{
-	char *buffer;
-	SDL_RWops *sdl_buf;
-	int size;
-	buffer = (char*)source->load_file(name, &size, 0);
-	sdl_buf = SDL_RWFromConstMem(buffer, size);
-	return get_image(sdl_buf);
-}
-
-SDL_Surface *sdl_user::get_png_image(const char *name, pack *source)
-{
-	char *buffer;
-	SDL_Surface *ret;
-	SDL_RWops *sdl_buf;
-	int size;
-	if (source != 0)
-	{
-		buffer = (char*)source->load_png(name, &size, 0);
-		sdl_buf = SDL_RWFromConstMem(buffer, size);
-		ret = get_image(sdl_buf);
-		delete [] buffer;
-	}
-	else
-	{
-		ret = (SDL_Surface*) 0;
-	}
-	return ret;
-}
-
-SDL_Surface *sdl_user::get_image(SDL_RWops *buf)
-{
-	printf("Check returns %d\n", IMG_isPNG(buf));
-	if (IMG_isPNG(buf) == 1)
-	{
-		printf("Converting png to surface\n");
-		return IMG_LoadPNG_RW(buf);
-	}
-	return (SDL_Surface *)0;
-}
-
-SDL_Surface *sdl_user::get_img(const char *name, pack **source)
-{
-	SDL_Surface *image;
-	
-	char *buffer;
-	SDL_RWops *sdl_buf;
-	int size;
-	int index = getHashIndex(name) + 1;
-	if (source != 0)
-	{
-		printf("Loading %s\n", name);
-		buffer = (char*)source[index]->load_file(name, &size, 0);
-		printf("Buffer = %08x\n", (int)buffer);
-		if (buffer == 0)
-		{
-			printf("Attempting to load %s again\n", name);
-			buffer = (char*)source[0]->load_file(name, &size, 0);
-		}
-		sdl_buf = SDL_RWFromConstMem(buffer, size);
-		
-		unsigned short width, height;
-		unsigned short moron, moron2;
-		unsigned short *data;
-		SDL_RWread(sdl_buf, &width, 2, 1);
-		SDL_RWread(sdl_buf, &height, 2, 1);
-		SDL_RWread(sdl_buf, &moron, 2, 1);
-		SDL_RWread(sdl_buf, &moron2, 2, 1);
-		printf("Unknown data in %s: %02x %02x\n", name, moron & 0xFF, 
-			moron2 & 0xFF);
-		printf("\tImage size %d %d %04x %04x %04x\n", size, index, width, height, 
-			(size/2) - (width*height));
-		data = new unsigned short[width * height];
-		SDL_RWread(sdl_buf, data, 2, width * height);
-//		SDL_RWclose(sdl_buf);
-
-		image = SDL_CreateRGBSurfaceFrom(data, width, height, 16, width*2, 
-			0x7C00, 0x03E0, 0x001F, 0);
-	}
-	else
-	{
-		image = (SDL_Surface *)0;
-	}
-	return image;
-}
-
 void sdl_user::draw()
 {
 	if (ready)
@@ -234,67 +213,14 @@ void sdl_user::prepare_login()
 	pg->pg[0].cleanup = false;
 	pg->ready = true;
 	
-	SDL_Rect *pos;
-	SDL_Rect *mask;
-	SDL_Surface *surf;
-	
 	num_widgets = 5;
 	widgets = new sdl_widget*[num_widgets];
 	
-	pos = new SDL_Rect;
-	pos->x = 0x1a9;
-	pos->y = 0x138;
-	surf = get_img("59.img", graphx->spritepack);
-	mask = new SDL_Rect;
-	mask->x = 0;
-	mask->y = 0;
-	mask->w = surf->w;
-	mask->h = surf->h;
-	widgets[0] = new sdl_widget(pos, mask, surf);
-	
-	pos = new SDL_Rect;
-	pos->x = 0x213;
-	pos->y = 0x183;
-	surf = get_img("53.img", graphx->spritepack);
-	mask = new SDL_Rect;
-	mask->x = 0;
-	mask->y = 0;
-	mask->w = surf->w;
-	mask->h = surf->h;
-	widgets[1] = new sdl_widget(pos, mask, surf);
-	
-	pos = new SDL_Rect;
-	pos->x = 0x213;
-	pos->y = 0x195;
-	surf = get_img("65.img", graphx->spritepack);
-	mask = new SDL_Rect;
-	mask->x = 0;
-	mask->y = 0;
-	mask->w = surf->w;
-	mask->h = surf->h;
-	widgets[2] = new sdl_widget(pos, mask, surf);
-	
-	pos = new SDL_Rect;
-	pos->x = 0x213;
-	pos->y = 0x1a8;
-	surf = get_img("55.img", graphx->spritepack);
-	mask = new SDL_Rect;
-	mask->x = 0;
-	mask->y = 0;
-	mask->w = surf->w;
-	mask->h = surf->h;
-	widgets[3] = new sdl_widget(pos, mask, surf);
-	
-	pos = new SDL_Rect;
-	pos->x = 0x213;
-	pos->y = 0x1c2;
-	surf = get_img("57.img", graphx->spritepack);
-	mask = new SDL_Rect;
-	mask->x = 0;
-	mask->y = 0;
-	mask->w = surf->w;
-	mask->h = surf->h;
-	widgets[4] = new sdl_widget(pos, mask, surf);
+	widgets[0] = new sdl_widget(59, 0x1a9, 0x138, graphx);
+	widgets[1] = new sdl_button(53, 0x213, 0x183, graphx);
+	widgets[2] = new sdl_button(65, 0x213, 0x195, graphx);
+	widgets[3] = new sdl_button(55, 0x213, 0x1a8, graphx);
+	widgets[4] = new sdl_button(57, 0x213, 0x1c2, graphx);
 	
 	ready = true;
 }

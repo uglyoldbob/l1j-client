@@ -71,16 +71,3 @@ void client::LoadDurationTable(const char *file)
 		delete [] table;
 	}
 }
-
-unsigned short reverse(unsigned short me)
-{
-	return (me>>8 | me<<8);
-}
-
-unsigned long reverse(unsigned long me)
-{
-	return  ((me<<24) |
-			((me<<8) & 0xFF0000) |
-			((me>>8) & 0xFF00) |
-			(me>>24));
-}

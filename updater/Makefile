@@ -1,6 +1,6 @@
-LIN_OBJS = client.o config.o connection.o lindes.o main.o music.o pack.o \
-	packet.o partial_table.o prepared_graphics.o sdl_master.o sdl_user.o \
-	sdl_widget.o unsorted.o table.o
+LIN_OBJS = client.o config.o connection.o global.o lindes.o main.o music.o \
+	pack.o packet.o partial_table.o prepared_graphics.o sdl_button.o \
+	sdl_master.o sdl_user.o sdl_widget.o unsorted.o table.o
 CC=g++
 
 TEST=-g
@@ -30,6 +30,7 @@ install:
 		filedate=`date '+%m%d%y'`;\
 		echo tar -zcvf release.tar.gz deploy;\
 		tar -zcvf release.tar.gz deploy;\
+		echo "release.tar.gz created";\
 	fi
 	
 clean:
