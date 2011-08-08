@@ -46,6 +46,12 @@ void sdl_master::create_client()
 void sdl_master::process_events()
 {
 	bool done = false;
+	
+	SDL_MouseMotionEvent mouse_position;
+	mouse_position.state = 0;
+	mouse_position.x = 0;
+	mouse_position.y = 0;
+	
 	SDL_Event event;
 	while(!done)
 	{ //While program isn't done
@@ -54,6 +60,14 @@ void sdl_master::process_events()
 		{ //Poll events
 			switch(event.type)
 			{ //Check event type
+				case SDL_MOUSEMOTION:
+					mouse_move(&mouse_position, &event.motion);
+					mouse_position = event.motion;
+					break;
+				case SDL_MOUSEBUTTONDOWN:
+				case SDL_MOUSEBUTTONUP:
+					mouse_click(&event.button);
+					break;
 				case SDL_QUIT: //User hit the X (or equivelent)
 					done = true; //Make the loop end
 					break; //We handled the event
@@ -83,6 +97,41 @@ void sdl_master::draw()
 		SDL_Flip(display);
 	}
 	
+}
+
+void sdl_master::mouse_move(SDL_MouseMotionEvent *old, SDL_MouseMotionEvent *fresh)
+{
+	int old_num = get_client(old->x, old->y);
+	if (old_num != get_client(fresh->x, fresh->y))
+	{	//pointer tried to move from one client to another
+		if (clients[old_num]->mouse_leave())
+		{
+			printf("Prevent client %d from losing the mouse\n", old_num);
+			*fresh = *old;
+		}
+	}
+	int new_num = get_client(fresh->x, fresh->y);
+	//don't do an else here, the fresh mouse position may have changed
+	if (old_num == get_client(fresh->x, fresh->y))
+	{	//mouse moved within a single client
+		clients[old_num]->mouse_move(old, fresh);
+	}
+	else
+	{	//mouse was allowed to leave the old client
+		clients[old_num]->mouse_from(old);
+		clients[new_num]->mouse_to(fresh);
+	}
+}
+
+void sdl_master::mouse_click(SDL_MouseButtonEvent *here)
+{
+	int num = get_client(here->x, here->y);
+	clients[num]->mouse_click(here);
+}
+
+int sdl_master::get_client(int x, int y)
+{	//determine which client owns the x/y coordinate specified
+	return 0;
 }
 
 sdl_master::~sdl_master()
