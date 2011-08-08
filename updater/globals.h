@@ -15,6 +15,7 @@
 #else
 #define SWAP16(X)    SDL_Swap16(X)
 #define SWAP32(X)    SDL_Swap32(X)
+#endif
 
 struct sdl_graphic
 {
