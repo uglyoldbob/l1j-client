@@ -22,6 +22,7 @@ class sdl_user
 	public:
 		sdl_user(Uint32 flags = SDL_SWSURFACE);
 		~sdl_user();
+		void quit_client();
 		
 		void init_client(client *clnt);
 		
@@ -30,6 +31,7 @@ class sdl_user
 		void set_load_amount(int size);
 		void add_loaded(int size);
 		void load_done();
+		volatile bool done;	//used to terminate the client
 		
 		friend class sdl_master;
 	private:

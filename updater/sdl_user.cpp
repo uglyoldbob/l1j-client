@@ -1,6 +1,7 @@
 #include <SDL.h>
 #include "SDL_image.h"
 
+#include "client.h"
 #include "globals.h"
 #include "sdl_button.h"
 #include "sdl_input_box.h"
@@ -13,6 +14,17 @@ void test_func(void * arg)
 	printf("Clicked login\n");
 }
 
+void quit_the_client(void *arg)
+{
+	sdl_user *bob = (sdl_user*)arg;
+	bob->quit_client();
+}
+
+void sdl_user::quit_client()
+{
+	done = true;
+}
+
 sdl_user::sdl_user(Uint32 flags)
 {
 	load_progress = 0;
@@ -20,6 +32,7 @@ sdl_user::sdl_user(Uint32 flags)
 	graphx = 0;
 	pg = 0;
 	num_widgets = 0;
+	done = false;
 	
 	draw_mtx = SDL_CreateMutex();
 	widgets = (sdl_widget**)0;
@@ -37,6 +50,7 @@ void sdl_user::init_client(client *clnt)
 
 sdl_user::~sdl_user()
 {
+	delete game;
 	SDL_FreeSurface(display);
 }
 
@@ -268,7 +282,7 @@ void sdl_user::prepare_login()
 		//type 2, normalMenu(4), nSub=9, subMi=0x19f1ac, px=0x26
 	widgets[5] = new sdl_button(55, 0x213, 0x1a8, graphx, 0, 0);
 		//type 2, newAccountMenu(5), nSub=24, subMi=0x19f630, px = 0x26
-	widgets[6] = new sdl_button(57, 0x213, 0x1c2, graphx, 0, 0);
+	widgets[6] = new sdl_button(57, 0x213, 0x1c2, graphx, &quit_the_client, this);
 		//type 2, normalMenu(6), nSub=38, 
 	widgets[7] = new sdl_widget(814, 0x1a, 0x3b, graphx);
 		//type 1, null("intro"), px=0xcf, py=0x11a
