@@ -46,7 +46,7 @@ void packet::disassemble(unsigned char *buf, const char *format, ...)
 				unsigned long *from = (unsigned long*)(&buf[buf_offset]);
 				buf_offset += 4;
 				unsigned long *store = va_arg(args, unsigned long *);
-				*store = reverse(ntohl(*from));
+				*store = SWAP32(*from);
 				break;
 			}
 			default:
@@ -173,7 +173,6 @@ void packet::getPacket(const char* args, ...)
 {
 	unsigned short length = 0;
 	server->rcv_var(&length, 2);
-	length = reverse(length);
 //	printf("Packet length %04x\n", length);
 	if (length != 0)
 	{
@@ -192,7 +191,6 @@ void packet::getPacket(const char* args, ...)
 			{
 //				printf("Not decrypting this packet\n");
 			}
-			//determine if it should be decrypted
 			//process the packet
 		}
 		else

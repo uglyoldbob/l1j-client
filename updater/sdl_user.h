@@ -3,6 +3,8 @@
 
 #include <SDL.h>
 
+class client;
+#include "globals.h"
 #include "pack.h"
 #include "prepared_graphics.h"
 #include "sdl_widget.h"
@@ -13,18 +15,15 @@
 //#define false 0
 #define COLORKEY 255, 0, 255 //Your Transparent colour
 
-struct graphics_data
-{
-	pack *tilepack;
-	pack **spritepack;
-	int num_sprite_pack;
-};
+void test_func(void * arg);
 
 class sdl_user
 {
 	public:
 		sdl_user(Uint32 flags = SDL_SWSURFACE);
 		~sdl_user();
+		
+		void init_client(client *clnt);
 		
 		void give_data(graphics_data *abc);
 		
@@ -38,17 +37,15 @@ class sdl_user
 		int draw_mode;
 		int load_progress;
 		int load_amount;
+		
+		client *game;
 		graphics_data *graphx;
 		SDL_Surface *display;
 		
+		SDL_mutex *draw_mtx;
 		prepared_graphics *pg;
 		sdl_widget **widgets;
 		int num_widgets;
-		
-		SDL_Surface *get_image(const char *name, pack *source);
-		SDL_Surface *get_png_image(const char *name, pack *source);
-		SDL_Surface *get_img(const char *name, pack **source);	//loads raw image data
-		SDL_Surface *get_image(SDL_RWops *buf);
 		
 		void draw();
 		void prepare_load1();
@@ -57,6 +54,16 @@ class sdl_user
 		void draw_login();
 		
 		void update_load();
+
+		int get_widget(int x, int y);	//returns the index of the widget for this point (-1 for none)
+				
+		//for tracking mouse movements 
+		void mouse_to(SDL_MouseMotionEvent *to);
+		void mouse_from(SDL_MouseMotionEvent *from);
+		void mouse_move(SDL_MouseMotionEvent *from, SDL_MouseMotionEvent *to);
+		bool mouse_leave();	//is it ok for the mouse to leave?
+		
+		void mouse_click(SDL_MouseButtonEvent *here);
 };
 
 #endif

@@ -19,7 +19,7 @@ void partial_table::load(const char *real_name, pack *from)
 	char delimiters2[] = {0x0d, 0x0a, ' ', 0};
 	temp_entry = strtok(buffer, delimiters);
 	num_entries = atoi(temp_entry);
-	printf("There are %d possible entries in %s\n", num_entries, real_name);
+//	printf("There are %d possible entries in %s\n", num_entries, real_name);
 	entries = new char*[num_entries];
 	temp_entry = strtok(NULL, delimiters2);
 	

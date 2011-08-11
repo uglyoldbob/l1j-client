@@ -5,7 +5,6 @@
 
 //#include "des.h"
 
-#define FOLDER_PREFIX "../Resources/"
 #define DATA_EXT ".pak"
 #define INDEX_EXT ".idx"
 #define TEMP_EXT ".$$$"
