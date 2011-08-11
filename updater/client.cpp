@@ -223,10 +223,8 @@ void client::init()
 	printf("STUB Load player config\n");
 	printf("STUB Initialize screenshots\n");
 	printf("STUB Initialize emblem cache\n");
-	printf("STUB Initialize GUI\n");
 	init_strings();
 	graphics->load_done();
-	for (;;);
 }
 
 client::~client()
@@ -236,18 +234,34 @@ client::~client()
 		delete server;
 	if (main_config != 0)
 		delete main_config;
+		
+	delete textpack;
+	delete tilepack;
+	for (int i = 0; i < num_sprite_pack; i++)
+	{
+		delete spritepack[i];
+	}
+	delete [] spritepack;
 }
 
 int run_client(void *moron)
 {	//the main thread for each client
 	client game((sdl_user*)moron);
+	sdl_user *temp;
+	temp = (sdl_user*)moron;
+	temp->init_client(&game);
 	try
 	{
 		game.init();
 	}
 	catch (const char *error)
 	{
-		printf("%s", error);
+		printf("FATAL ERROR: %s", error);
+	}
+	
+	while (1)
+	{
+		SDL_Delay(1000);
 	}
 	return 0;
 }

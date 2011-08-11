@@ -6,7 +6,11 @@
 #include "SDL_image.h"
 
 #include "pack.h"
+#include "sdl_font.h"
 #include "table.h"
+
+extern char *lineage_dir;	//string to hold the absolute path to the lineage directory
+extern sdl_font lineage_font;
 
 //these are used so that the correct byte order is used
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN

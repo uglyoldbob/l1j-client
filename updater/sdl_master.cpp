@@ -54,7 +54,7 @@ void sdl_master::process_events()
 	
 	SDL_Event event;
 	while(!done)
-	{ //While program isn't done
+	{
 		draw();
 		while(SDL_PollEvent(&event))
 		{ //Poll events
@@ -68,16 +68,20 @@ void sdl_master::process_events()
 				case SDL_MOUSEBUTTONUP:
 					mouse_click(&event.button);
 					break;
-				case SDL_QUIT: //User hit the X (or equivelent)
-					done = true; //Make the loop end
-					break; //We handled the event
+				case SDL_KEYDOWN:
+				case SDL_KEYUP:
+					key_press(&event.key);
+					break;
+				case SDL_QUIT:
+					done = true;
+					break;
 				case SDL_VIDEORESIZE: //User resized window
-					display = SDL_SetVideoMode(event.resize.w, event.resize.h, 32,
-					SDL_HWSURFACE | SDL_RESIZABLE); // Create new window
-					break; //Event handled, fetch next :)
-			} //Finished with current event
-		} //Done with all events for now
-	} //Program done, exited
+					display = SDL_SetVideoMode(event.resize.w, event.resize.h, 16,
+						SDL_HWSURFACE | SDL_DOUBLEBUF); // Create new window
+					break;
+			}
+		}
+	}
 //	int status;
 //	if (game_client[0] != 0)
 //		SDL_WaitThread(game_client[0], &status);
@@ -127,6 +131,10 @@ void sdl_master::mouse_click(SDL_MouseButtonEvent *here)
 {
 	int num = get_client(here->x, here->y);
 	clients[num]->mouse_click(here);
+}
+
+void sdl_master::key_press(SDL_KeyboardEvent *button)
+{
 }
 
 int sdl_master::get_client(int x, int y)

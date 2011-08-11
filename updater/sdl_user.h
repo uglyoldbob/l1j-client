@@ -3,6 +3,7 @@
 
 #include <SDL.h>
 
+class client;
 #include "globals.h"
 #include "pack.h"
 #include "prepared_graphics.h"
@@ -14,11 +15,15 @@
 //#define false 0
 #define COLORKEY 255, 0, 255 //Your Transparent colour
 
+void test_func(void * arg);
+
 class sdl_user
 {
 	public:
 		sdl_user(Uint32 flags = SDL_SWSURFACE);
 		~sdl_user();
+		
+		void init_client(client *clnt);
 		
 		void give_data(graphics_data *abc);
 		
@@ -32,9 +37,12 @@ class sdl_user
 		int draw_mode;
 		int load_progress;
 		int load_amount;
+		
+		client *game;
 		graphics_data *graphx;
 		SDL_Surface *display;
 		
+		SDL_mutex *draw_mtx;
 		prepared_graphics *pg;
 		sdl_widget **widgets;
 		int num_widgets;

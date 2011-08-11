@@ -27,9 +27,15 @@ SDL_Rect *make_sdl_rect(int x, int y, int w, int h)
 
 sdl_widget::sdl_widget(int num, int x, int y, graphics_data *packs)
 {
-	one = make_sdl_graphic(num, x, y, packs);
+	visible = false;
+	key_focus = false;
+	allow_key_focus = false;
 	
-	visible = 1;
+	one = make_sdl_graphic(num, x, y, packs);
+	if (one != 0)
+	{
+		visible = true;
+	}
 	have_mouse = false;
 }
 
@@ -79,9 +85,12 @@ sdl_widget::~sdl_widget()
 
 void sdl_widget::draw(SDL_Surface *display)
 {
-	if (one->img != 0)
+	if (visible)
 	{
-		SDL_BlitSurface(one->img, one->mask, display, one->pos);
+		if (one->img != 0)
+		{
+			SDL_BlitSurface(one->img, one->mask, display, one->pos);
+		}
 	}
 }
 
