@@ -14,7 +14,7 @@ class sdl_widget
 {
 	public:
 		sdl_widget(int num, int x, int y, graphics_data *packs);
-		~sdl_widget();
+		virtual ~sdl_widget();
 		virtual void draw(SDL_Surface *display);
 		
 		//for tracking what the mouse is over
@@ -23,7 +23,9 @@ class sdl_widget
 
 		friend class sdl_user;
 	protected:
-		int visible;	//determines if the widget should be drawn
+		bool visible;	//determines if the widget should be drawn
+		bool key_focus;	//does the widget have keyboard focus?
+		bool allow_key_focus;	//am i allowed to have key focus?
 		sdl_graphic *one;
 		
 		bool have_mouse;
@@ -33,7 +35,7 @@ class sdl_widget
 		void mouse_to(SDL_MouseMotionEvent *to);
 		void mouse_from(SDL_MouseMotionEvent *from);
 		void mouse_move(SDL_MouseMotionEvent *from, SDL_MouseMotionEvent *to);
-		void mouse_click(SDL_MouseButtonEvent *here);
+		virtual void mouse_click(SDL_MouseButtonEvent *here);
 };
 
 #endif

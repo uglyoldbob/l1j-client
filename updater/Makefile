@@ -1,6 +1,9 @@
 LIN_OBJS = client.o config.o connection.o global.o lindes.o main.o music.o \
-	pack.o packet.o partial_table.o prepared_graphics.o sdl_button.o \
-	sdl_master.o sdl_user.o sdl_widget.o unsorted.o table.o
+	pack.o packet.o partial_table.o prepared_graphics.o sdl_button.o sdl_font.o \
+	sdl_input_box.o sdl_master.o sdl_user.o sdl_widget.o unsorted.o table.o
+
+DIST_FILES = Lineage.exe Lineage.ini README.txt README-SDL.txt README-SDL-image.txt \
+	SDL.dll SDL_image.dll zlib1.dll libpng12-0.dll
 CC=g++
 
 TEST=-g
@@ -9,32 +12,32 @@ CFLAGS=-c -Wall
 LFLAGS=-lmswsock -lws2_32 --enable-stdcall-fixup -Wl,-subsystem,windows -lmingw32 -lSDLmain
 LDADD=ws2_32.dll mswsock.dll SDL.dll SDL_image.dll
 
-.PHONY : debug release
+.PHONY : debug release dist
 
-all: debug_check release_check Lineage install
+all: debug_check release_check Lineage dist
 
-install:
-	cp -f ./Lineage.exe "C:\Program Files\NCsoft\Lineage"
-	cp -f ./run.bat "C:\Program Files\NCsoft\Lineage"
-	@if [ -e release_made ]; then\
-		if [ ! -d deploy ]; then\
-			echo mkdir deploy;\
-			mkdir deploy;\
-		fi;\
-		echo "Copying files to deploy folder";\
-		cp -f Lineage.exe ./deploy/;\
-		cp -f SDL.dll ./deploy/;\
-		cp -f SDL_image.dll ./deploy/;\
-		cp -f zlib1.dll ./deploy/;\
-		cp -f libpng12-0.dll ./deploy/;\
-		filedate=`date '+%m%d%y'`;\
-		echo tar -zcvf release.tar.gz deploy;\
-		tar -zcvf release.tar.gz deploy;\
-		echo "release.tar.gz created";\
+dist:
+	@if [ ! -d client ]; then\
+		echo mkdir client;\
+		mkdir client;\
 	fi
+	@echo "Copying files to dist folder"
+	@rm -f ./client/*
+	cp -f $(DIST_FILES) ./client/
+	@if [ -e debug_made ]; then\
+		echo touch ./client/DEBUG_DO_NOT_RELEASE.txt;\
+		touch ./client/DEBUG_DO_NOT_RELEASE.txt;\
+		cp run.bat ./client/;\
+		rm -f release.tar.gz;\
+	fi
+	@if [ -e release_made ]; then\
+		echo tar -zcvf release.tar.gz client;\
+		tar -zcvf release.tar.gz client;\
+	fi
+
 	
 clean:
-	rm -f *.o Lineage* debug_made release_made
+	rm -f *.o Lineage.exe Lineage_dbg.exe Lineage_rls.exe Lineage debug_made release_made
 	@if [ -e debug ] && [ -e release ]; then\
 		echo "Making DEBUG version";\
 		rm -f release;\
