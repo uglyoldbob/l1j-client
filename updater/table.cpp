@@ -12,6 +12,10 @@ table::table()
 	entries = 0;
 }
 
+table::~table()
+{
+}
+
 //constant because tables will not be modified by the [] operator
 const char *table::operator[](int i)
 {

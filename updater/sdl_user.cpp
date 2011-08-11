@@ -180,11 +180,10 @@ void sdl_user::load_done()
 {
 	if (draw_mode == 0)
 	{
-		while (SDL_mutexP(draw_mtx) == -1) {};
-	
 		load_progress = load_amount;
 		update_load();
 		SDL_Delay(250);
+		while (SDL_mutexP(draw_mtx) == -1) {};
 		ready = false;
 		delete pg;
 		pg = 0;
@@ -237,6 +236,7 @@ void sdl_user::draw()
 		}
 	}
 	SDL_mutexV(draw_mtx);
+	SDL_Delay(10);
 }
 
 void sdl_user::prepare_login()
