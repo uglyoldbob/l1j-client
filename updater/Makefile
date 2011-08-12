@@ -4,6 +4,7 @@ LIN_OBJS = client.o config.o connection.o global.o lindes.o main.o music.o \
 
 DIST_FILES = Lineage.exe Lineage.ini README.txt README-SDL.txt README-SDL-image.txt \
 	SDL.dll SDL_image.dll zlib1.dll libpng12-0.dll
+
 CC=g++
 
 TEST=-g
@@ -27,7 +28,6 @@ dist:
 	@if [ -e debug_made ]; then\
 		echo touch ./client/DEBUG_DO_NOT_RELEASE.txt;\
 		touch ./client/DEBUG_DO_NOT_RELEASE.txt;\
-		cp run.bat ./client/;\
 		rm -f release.tar.gz;\
 	fi
 	@if [ -e release_made ]; then\

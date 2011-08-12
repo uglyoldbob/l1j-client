@@ -56,29 +56,38 @@ void sdl_master::process_events()
 	while(!done)
 	{
 		draw();
-		while(SDL_PollEvent(&event))
-		{ //Poll events
-			switch(event.type)
-			{ //Check event type
-				case SDL_MOUSEMOTION:
-					mouse_move(&mouse_position, &event.motion);
-					mouse_position = event.motion;
-					break;
-				case SDL_MOUSEBUTTONDOWN:
-				case SDL_MOUSEBUTTONUP:
-					mouse_click(&event.button);
-					break;
-				case SDL_KEYDOWN:
-				case SDL_KEYUP:
-					key_press(&event.key);
-					break;
-				case SDL_QUIT:
-					done = true;
-					break;
-				case SDL_VIDEORESIZE: //User resized window
-					display = SDL_SetVideoMode(event.resize.w, event.resize.h, 16,
-						SDL_HWSURFACE | SDL_DOUBLEBUF); // Create new window
-					break;
+		if (clients[0]->done)
+		{
+			printf("Quitting the client by master\n");
+			delete clients[0];
+			done = true;
+		}
+		else
+		{
+			while(SDL_PollEvent(&event))
+			{ //Poll events
+				switch(event.type)
+				{ //Check event type
+					case SDL_MOUSEMOTION:
+						mouse_move(&mouse_position, &event.motion);
+						mouse_position = event.motion;
+						break;
+					case SDL_MOUSEBUTTONDOWN:
+					case SDL_MOUSEBUTTONUP:
+						mouse_click(&event.button);
+						break;
+					case SDL_KEYDOWN:
+					case SDL_KEYUP:
+						key_press(&event.key);
+						break;
+					case SDL_QUIT:
+						done = true;
+						break;
+					case SDL_VIDEORESIZE: //User resized window
+						display = SDL_SetVideoMode(event.resize.w, event.resize.h, 16,
+							SDL_HWSURFACE | SDL_DOUBLEBUF); // Create new window
+						break;
+				}
 			}
 		}
 	}

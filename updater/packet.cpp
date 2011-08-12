@@ -148,23 +148,26 @@ int packet::assemble(char *send, int max_length, const char *format, va_list arr
 
 void packet::sendPacket(const char* args, ...)
 {
-	char sendbuf[MAX_LENGTH];
-	va_list temp_args;
-	va_start(temp_args, args);
-	int length;
-	
-	length = assemble(&sendbuf[2], MAX_LENGTH, args, temp_args);
-	va_end(temp_args);
-	if (length != 0)
+	if (packet_data == 0)
 	{
-		sendbuf[0] = length & 0xff;
-		sendbuf[1] = (length>>8) & 0xff;
-		packet_length = length;
-		packet_data = new unsigned char[packet_length];
-		memcpy(packet_data, sendbuf, packet_length);
-		this->encrypt();
-		this->change_key(encryptionKey, &sendbuf[2]);
-		server->snd(packet_data, length+2);
+		char sendbuf[MAX_LENGTH];
+		va_list temp_args;
+		va_start(temp_args, args);
+		int length;
+		
+		length = assemble(&sendbuf[2], MAX_LENGTH, args, temp_args);
+		va_end(temp_args);
+		if (length != 0)
+		{
+			sendbuf[0] = length & 0xff;
+			sendbuf[1] = (length>>8) & 0xff;
+			packet_length = length;
+			packet_data = new unsigned char[packet_length];
+			memcpy(packet_data, sendbuf, packet_length);
+			this->encrypt();
+			this->change_key(encryptionKey, &sendbuf[2]);
+			server->snd(packet_data, length+2);
+		}
 	}
 }
 
@@ -177,10 +180,10 @@ void packet::getPacket(const char* args, ...)
 	{
 		if (packet_length == 0)
 		{
-			packet_length = length;
-			packet_data = new unsigned char[packet_length-2];
+			packet_length = length - 2;
+			packet_data = new unsigned char[packet_length];
 //			printf("Receiving data\n");
-			server->rcv(packet_data, packet_length-2);
+			server->rcv(packet_data, packet_length);
 			if (key_initialized == 1)
 			{
 				this->decrypt();
@@ -305,9 +308,10 @@ packet::packet(client *clnt, connection *serve)
 
 void packet::reset()
 {
-	if (packet_length != 0)
+	if (packet_data != 0)
 	{
 		delete [] packet_data;
+		packet_data = 0;
 		packet_length = 0;
 	}
 }
