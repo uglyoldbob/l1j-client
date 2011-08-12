@@ -273,6 +273,7 @@ void sdl_user::prepare_login()
 	widgets[0] = new sdl_widget(59, 0x1a9, 0x138, graphx);
 		//type 0
 	widgets[1] = new sdl_input_box(12, 0x1fb, 0x14a, graphx);
+	widgets[1]->cursor_on();
 		//type 7, arg 2, nSub=17
 	widgets[2] = new sdl_input_box(13, 0x1fb, 0x160, graphx);
 		//type 7, arg 4, nSub=17

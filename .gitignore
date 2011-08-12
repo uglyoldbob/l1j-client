@@ -1,4 +1,5 @@
 client/documents/*
+updater/client/*
 updater/documents/*
 updater/zlib/*
 updater/libpng-1.5.4/*

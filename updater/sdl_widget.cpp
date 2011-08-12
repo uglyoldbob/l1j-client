@@ -83,6 +83,14 @@ sdl_widget::~sdl_widget()
 	SDL_FreeSurface(one->img);
 }
 
+void sdl_widget::cursor_on()
+{
+}
+
+void sdl_widget::cursor_off()
+{
+}
+
 void sdl_widget::draw(SDL_Surface *display)
 {
 	if (visible)

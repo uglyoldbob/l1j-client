@@ -20,6 +20,9 @@ class sdl_widget
 		//for tracking what the mouse is over
 		void mouseOn();
 		void mouseOff();
+		
+		virtual void cursor_on();
+		virtual void cursor_off();
 
 		friend class sdl_user;
 	protected:
