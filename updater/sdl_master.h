@@ -16,7 +16,7 @@
 class sdl_master
 {
 	public:
-		sdl_master(Uint32 flags = SDL_DOUBLEBUF | SDL_HWSURFACE);
+		sdl_master(Uint32 flags = SDL_DOUBLEBUF | SDL_HWSURFACE | SDL_FULLSCREEN);
 		~sdl_master();
 				
 		void create_client();

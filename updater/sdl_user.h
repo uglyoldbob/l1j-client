@@ -23,6 +23,7 @@ class sdl_user
 		sdl_user(Uint32 flags = SDL_SWSURFACE);
 		~sdl_user();
 		void quit_client();
+		void login();
 		
 		void init_client(client *clnt);
 		
@@ -48,6 +49,7 @@ class sdl_user
 		prepared_graphics *pg;
 		sdl_widget **widgets;
 		int num_widgets;
+		int widget_key_focus;
 		
 		void draw();
 		void prepare_load1();
@@ -64,8 +66,9 @@ class sdl_user
 		void mouse_from(SDL_MouseMotionEvent *from);
 		void mouse_move(SDL_MouseMotionEvent *from, SDL_MouseMotionEvent *to);
 		bool mouse_leave();	//is it ok for the mouse to leave?
-		
+				
 		void mouse_click(SDL_MouseButtonEvent *here);
+		void key_press(SDL_KeyboardEvent *button);
 };
 
 #endif

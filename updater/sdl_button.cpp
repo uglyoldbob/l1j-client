@@ -16,7 +16,7 @@ void sdl_button::draw(SDL_Surface *display)
 {
 	if (visible == 1)
 	{
-		if (have_mouse)
+		if (have_mouse || key_focus)
 		{
 			if (two->img != 0)
 			{
@@ -33,18 +33,33 @@ void sdl_button::draw(SDL_Surface *display)
 	}
 }
 
+void sdl_button::cursor_on()
+{
+	key_focus = true;
+}
+
+void sdl_button::cursor_off()
+{
+	key_focus = false;
+}
+
+
 void sdl_button::mouse_click(SDL_MouseButtonEvent *here)
 {
 	static bool pressed = false;
-	if ((pressed) && (here->type == SDL_MOUSEBUTTONUP))
+	
+	if (here->button == 1)
 	{
-		if (click_ptr != 0)
+		if (here->type == SDL_MOUSEBUTTONDOWN)
 		{
-			(*click_ptr)(arg);
+			pressed = true;
 		}
-	}
-	else if (here->type == SDL_MOUSEBUTTONDOWN)
-	{
-		pressed = true;
+		if ((pressed) && (here->type == SDL_MOUSEBUTTONUP))
+		{
+			if (click_ptr != 0)
+			{
+				(*click_ptr)(arg);
+			}
+		}
 	}
 }
