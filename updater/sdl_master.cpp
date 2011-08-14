@@ -138,12 +138,15 @@ void sdl_master::mouse_move(SDL_MouseMotionEvent *old, SDL_MouseMotionEvent *fre
 
 void sdl_master::mouse_click(SDL_MouseButtonEvent *here)
 {
+	//TODO: check for double-click by measuring the time since the last click
 	int num = get_client(here->x, here->y);
 	clients[num]->mouse_click(here);
 }
 
 void sdl_master::key_press(SDL_KeyboardEvent *button)
 {
+	//TODO: determine which client gets keyboard input
+	clients[0]->key_press(button);
 }
 
 int sdl_master::get_client(int x, int y)

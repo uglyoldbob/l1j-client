@@ -9,9 +9,10 @@
 #include "sdl_user.h"
 #include "sdl_widget.h"
 
-void test_func(void * arg)
+void login_function(void *arg)
 {
-	printf("Clicked login\n");
+	sdl_user *bob = (sdl_user*)arg;
+	bob->login();
 }
 
 void quit_the_client(void *arg)
@@ -23,6 +24,11 @@ void quit_the_client(void *arg)
 void sdl_user::quit_client()
 {
 	done = true;
+}
+
+void sdl_user::login()
+{
+	//TODO : make this function do something
 }
 
 sdl_user::sdl_user(Uint32 flags)
@@ -134,6 +140,38 @@ void sdl_user::mouse_click(SDL_MouseButtonEvent *here)
 bool sdl_user::mouse_leave()
 {
 	return false;
+}
+
+void sdl_user::key_press(SDL_KeyboardEvent *button)
+{
+	while (SDL_mutexP(draw_mtx) == -1) {};
+	if (num_widgets > 0)
+	{
+		if (button->type == SDL_KEYUP)
+		{
+			switch(button->keysym.sym)
+			{
+				case SDLK_TAB:
+					//TODO: possibly change focus to a different widget
+					widgets[widget_key_focus]->cursor_off();
+					if (++widget_key_focus == num_widgets)
+					{
+						widget_key_focus = 0;
+					}
+					widgets[widget_key_focus]->cursor_on();
+					break;
+				case SDLK_F1: case SDLK_F2: case SDLK_F3: case SDLK_F4:
+				case SDLK_F5: case SDLK_F6: case SDLK_F7: case SDLK_F8:
+				case SDLK_F9: case SDLK_F10: case SDLK_F11: case SDLK_F12:
+				case SDLK_F13: case SDLK_F14: case SDLK_F15:
+					break;
+				default:
+					widgets[widget_key_focus]->key_press(button);
+					break;
+			}
+		}
+	}
+	SDL_mutexV(draw_mtx);
 }
 
 void sdl_user::give_data(graphics_data *abc)
@@ -274,10 +312,11 @@ void sdl_user::prepare_login()
 		//type 0
 	widgets[1] = new sdl_input_box(12, 0x1fb, 0x14a, graphx);
 	widgets[1]->cursor_on();
+	widget_key_focus = 1;
 		//type 7, arg 2, nSub=17
 	widgets[2] = new sdl_input_box(13, 0x1fb, 0x160, graphx);
 		//type 7, arg 4, nSub=17
-	widgets[3] = new sdl_button(53, 0x213, 0x183, graphx, &test_func, 0);
+	widgets[3] = new sdl_button(53, 0x213, 0x183, graphx, &login_function, this);
 		//type 2, login(), nSub=11, subMi=0x19ef70, px=0x25
 	widgets[4] = new sdl_button(65, 0x213, 0x195, graphx, 0, 0);
 		//type 2, normalMenu(4), nSub=9, subMi=0x19f1ac, px=0x26

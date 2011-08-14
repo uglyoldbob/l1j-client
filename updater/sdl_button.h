@@ -18,6 +18,8 @@ class sdl_button : public sdl_widget
 		virtual ~sdl_button();
 		virtual void draw(SDL_Surface *display);
 		
+		virtual void cursor_on();
+		virtual void cursor_off();		
 	private:
 		sdl_graphic *two;
 		

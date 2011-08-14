@@ -57,6 +57,10 @@ void sdl_widget::mouse_click(SDL_MouseButtonEvent *here)
 {
 }
 
+void sdl_widget::key_press(SDL_KeyboardEvent *button)
+{
+}
+
 bool sdl_widget::contains(int x, int y)
 {
 	int x_check1 = one->pos->x;

@@ -18,9 +18,12 @@ class sdl_input_box : public sdl_widget
 		bool draw_cursor;
 		int cursor_pos;	//pixel offset
 		int cursor_idx;	//character number offset
-		char field[MAX_LENGTH];
+		char *field;
+		int field_length;
+		void add_char(char dat);
 		
 		void cursor_toggle();
+		virtual void key_press(SDL_KeyboardEvent *button);
 };
 
 #endif
