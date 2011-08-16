@@ -1,6 +1,7 @@
 LIN_OBJS = client.o config.o connection.o global.o lindes.o main.o music.o \
-	pack.o packet.o partial_table.o prepared_graphics.o sdl_button.o sdl_font.o \
-	sdl_input_box.o sdl_master.o sdl_user.o sdl_widget.o unsorted.o table.o
+	pack.o packet.o partial_table.o prepared_graphics.o sdl_animate_button.o \
+	sdl_button.o sdl_font.o sdl_input_box.o sdl_master.o sdl_plain_button.o \
+	sdl_user.o sdl_widget.o unsorted.o table.o
 
 DIST_FILES = Lineage.exe Lineage.ini README.txt README-SDL.txt README-SDL-image.txt \
 	SDL.dll SDL_image.dll zlib1.dll libpng12-0.dll

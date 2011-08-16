@@ -14,18 +14,34 @@ SDL_Surface *get_image(const char *name, pack *source)
 	return get_image(sdl_buf);
 }
 
-SDL_Surface *get_png_image(const char *name, pack *source)
+SDL_Surface *get_png_image(int num, pack **source)
 {
+	char name[256];
+	sprintf(name, "%d.png", num);
+	int index = getHashIndex(name) + 1;
+	
 	char *buffer;
 	SDL_Surface *ret;
 	SDL_RWops *sdl_buf;
 	int size;
 	if (source != 0)
 	{
-		buffer = (char*)source->load_png(name, &size, 0);
-		sdl_buf = SDL_RWFromConstMem(buffer, size);
-		ret = get_image(sdl_buf);
-		delete [] buffer;
+		buffer = (char*)source[index]->load_png(name, &size, 0);
+		if (buffer == 0)
+		{
+			buffer = (char*)source[0]->load_png(name, &size, 0);
+		}
+		if (buffer != 0)
+		{
+			sdl_buf = SDL_RWFromConstMem(buffer, size);
+			ret = get_image(sdl_buf);
+			delete [] buffer;
+		}
+		else
+		{
+			printf("Could not load %s\n", name);
+			ret = (SDL_Surface*) 0;
+		}
 	}
 	else
 	{

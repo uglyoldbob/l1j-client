@@ -14,24 +14,24 @@ class packet
 		packet(client *clnt, connection *serve);
 		~packet();
 		
-	private:
-		static char decryptionKey[8];
-		static char encryptionKey[8];
-		static int mode;	//what mode is packet decoding in?
-		static int key_initialized;
-		connection *server;
-		client *game;
-		unsigned char *packet_data;
-		int packet_length;
-		
-		void sendPacket(const char* args, ...);
-		void getPacket(const char* args, ...);
+		void send_packet(const char* args, ...);
+		void send_packet(const char* args, va_list array);
+		void get_packet();
 		
 		int assemble(char *format, int max_length, const char *data, ...);
 		int assemble(char *format, int max_length, const char *data, va_list array);
 		void disassemble(unsigned char *buf, const char *format, ...);
 		
-		void processPacket();	//process packet data and return the proper sub-class
+		int process_packet();
+	private:
+		static char decryptionKey[8];
+		static char encryptionKey[8];
+		static int mode;	//what mode is packet decoding in?
+		static volatile int key_initialized;
+		connection *server;
+		client *game;
+		unsigned char *packet_data;
+		int packet_length;
 		
 		void encrypt();
 		void decrypt();
@@ -39,9 +39,15 @@ class packet
 		void create_key(const unsigned long seed);
 		void reset();
 		
+		void print_packet();
+		
 		//packet handlers
-		void keyPacket();
-		void serverVersionPacket();
+		void key_packet();
+		void server_version_packet();
+		void news_packet();
+		void num_char_packet();
+		void login_char_packet();
+		void login_check();
 };
 
 #endif

@@ -17,6 +17,8 @@ class client
 		client(sdl_user *stuff);
 		~client();
 		void init();
+		int process_packet();
+		void send_packet(const char *format, ...);
 		
 		//unsorted public functions
 		void LoadDurationTable(const char *file);

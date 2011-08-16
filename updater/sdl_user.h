@@ -52,6 +52,7 @@ class sdl_user
 		int widget_key_focus;
 		
 		void draw();
+		void prepare_char_sel();
 		void prepare_load1();
 		void draw_load1();
 		void prepare_login();

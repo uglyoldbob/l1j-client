@@ -39,6 +39,7 @@ int connection::snd(const void* msg, int len)
 	char *buf;
 	int sent = 0;
 	int trans;
+
 	while (sent < len)
 	{
 		buf = (char*)msg;
