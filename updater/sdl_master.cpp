@@ -21,6 +21,7 @@ sdl_master::sdl_master(Uint32 flags)
 	else
 	{
 		display = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 16, flags);
+		SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 		if (display == NULL) 
 		{
 			fprintf(stderr, "Unable to set video mode: %s\n", SDL_GetError());

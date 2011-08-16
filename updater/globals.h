@@ -36,7 +36,7 @@ struct graphics_data
 };
 
 SDL_Surface *get_image(const char *name, pack *source);
-SDL_Surface *get_png_image(const char *name, pack *source);
+SDL_Surface *get_png_image(int num, pack **source);
 SDL_Surface *get_img(int num, pack **source);	//loads raw image data
 SDL_Surface *get_image(SDL_RWops *buf);
 

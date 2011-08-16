@@ -3,9 +3,11 @@
 
 #include "client.h"
 #include "globals.h"
+#include "sdl_animate_button.h"
 #include "sdl_button.h"
 #include "sdl_input_box.h"
 #include "sdl_font.h"
+#include "sdl_plain_button.h"
 #include "sdl_user.h"
 #include "sdl_widget.h"
 
@@ -13,6 +15,8 @@ void login_function(void *arg)
 {
 	sdl_user *bob = (sdl_user*)arg;
 	bob->login();
+	//send login packet with username and password
+	//clear username and password information
 }
 
 void quit_the_client(void *arg)
@@ -28,7 +32,9 @@ void sdl_user::quit_client()
 
 void sdl_user::login()
 {
-	//TODO : make this function do something
+	//TODO : use the entered usernames and passwords
+	game->send_packet("css", 12, "moron", "moron");
+	prepare_char_sel();
 }
 
 sdl_user::sdl_user(Uint32 flags)
@@ -56,7 +62,7 @@ void sdl_user::init_client(client *clnt)
 
 sdl_user::~sdl_user()
 {
-	delete game;
+//	delete game;
 	SDL_FreeSurface(display);
 }
 
@@ -147,7 +153,7 @@ void sdl_user::key_press(SDL_KeyboardEvent *button)
 	while (SDL_mutexP(draw_mtx) == -1) {};
 	if (num_widgets > 0)
 	{
-		if (button->type == SDL_KEYUP)
+		if (button->type == SDL_KEYDOWN)
 		{
 			switch(button->keysym.sym)
 			{
@@ -184,11 +190,59 @@ void sdl_user::give_data(graphics_data *abc)
 	}
 }
 
-void sdl_user::prepare_load1()
+void sdl_user::prepare_char_sel()
 {
 	while (SDL_mutexP(draw_mtx) == -1) {};
 	if (pg != 0)
 		delete pg;
+	
+	pg = new prepared_graphics;
+	pg->num_pg = 1;
+	pg->pg = new prepared_graphic[1];
+	
+	//1c1
+	//0
+	
+	pg->pg[0].surf = get_png_image(815, graphx->spritepack);
+	pg->pg[0].mask = NULL;
+	pg->pg[0].position = NULL;
+	pg->pg[0].cleanup = false;
+	pg->ready = true;
+	
+	num_widgets = 11;
+	if (widgets != 0)
+	{
+		delete [] widgets;
+		widgets = 0;
+	}
+	widgets = new sdl_widget*[num_widgets];
+	
+	//character select animating buttons
+	widgets[0] = new sdl_animate_button(0xf4, 0x013, 0, graphx, 0, 0);
+	widgets[1] = new sdl_animate_button(0xf4, 0x0b0, 0, graphx, 0, 0);
+	widgets[2] = new sdl_animate_button(0xf4, 0x14d, 0, graphx, 0, 0);
+	widgets[3] = new sdl_animate_button(0xf4, 0x1ea, 0, graphx, 0, 0);
+	widgets[3]->cursor_on();
+	
+	widgets[4] = new sdl_plain_button(0x6e5, 0x0f7, 0x10b, graphx, 0, 0);	//left arrow
+	widgets[5] = new sdl_plain_button(0x6e7, 0x16c, 0x10b, graphx, 0, 0);	//right arrow
+	widgets[6] = new sdl_plain_button(0x134, 0x20d, 0x1b5, graphx, 0, 0);	//delete
+	widgets[7] = new sdl_plain_button(0x336, 0x20d, 0x19a, graphx, 0, 0);	//cancel
+	widgets[8] = new sdl_plain_button(0x334, 0x20d, 0x185, graphx, 0, 0);	//login
+	
+	widgets[9] = new sdl_widget(0x6e9, 0x127, 0x10f, graphx);
+	widgets[10] = new sdl_widget(0x6eb, 0x146, 0x10f, graphx);
+	
+	SDL_mutexV(draw_mtx);
+}
+
+void sdl_user::prepare_load1()
+{
+	while (SDL_mutexP(draw_mtx) == -1) {};
+	if (pg != 0)
+	{
+		delete pg;
+	}
 	pg = new prepared_graphics;
 	pg->num_pg = 2;
 	
@@ -197,8 +251,7 @@ void sdl_user::prepare_load1()
 
 	pg->pg = new prepared_graphic[2];
 	
-	index = getHashIndex("811.png") + 1;
-	pg->pg[0].surf = get_png_image("811.png", graphx->spritepack[index]);
+	pg->pg[0].surf = get_png_image(811, graphx->spritepack);
 	pg->pg[0].mask = NULL;
 	pg->pg[0].position = NULL;
 	pg->pg[0].cleanup = false;
@@ -235,15 +288,7 @@ void sdl_user::load_done()
 		load_progress = load_amount;
 		update_load();
 		SDL_Delay(250);
-		while (SDL_mutexP(draw_mtx) == -1) {};
-		ready = false;
-		delete pg;
-		pg = 0;
 		prepare_login();
-		ready = true;
-		draw_mode = 1;
-
-		SDL_mutexV(draw_mtx);
 	}
 }
 
@@ -294,18 +339,19 @@ void sdl_user::draw()
 void sdl_user::prepare_login()
 {
 	while (SDL_mutexP(draw_mtx) == -1) {};
+	ready = false;
+	delete pg;
 	pg = new prepared_graphics;
 	pg->num_pg = 1;
 	pg->pg = new prepared_graphic[1];
 	
-	int index = getHashIndex("814.png") + 1;
-	pg->pg[0].surf = get_png_image("814.png", graphx->spritepack[index]);
+	pg->pg[0].surf = get_png_image(814, graphx->spritepack);
 	pg->pg[0].mask = NULL;
 	pg->pg[0].position = NULL;
 	pg->pg[0].cleanup = false;
 	pg->ready = true;
 	
-	num_widgets = 8;
+	num_widgets = 7;
 	widgets = new sdl_widget*[num_widgets];
 	
 	widgets[0] = new sdl_widget(59, 0x1a9, 0x138, graphx);
@@ -316,19 +362,21 @@ void sdl_user::prepare_login()
 		//type 7, arg 2, nSub=17
 	widgets[2] = new sdl_input_box(13, 0x1fb, 0x160, graphx);
 		//type 7, arg 4, nSub=17
-	widgets[3] = new sdl_button(53, 0x213, 0x183, graphx, &login_function, this);
+	widgets[3] = new sdl_plain_button(53, 0x213, 0x183, graphx, &login_function, this);
 		//type 2, login(), nSub=11, subMi=0x19ef70, px=0x25
-	widgets[4] = new sdl_button(65, 0x213, 0x195, graphx, 0, 0);
+	widgets[4] = new sdl_plain_button(65, 0x213, 0x195, graphx, 0, 0);
 		//type 2, normalMenu(4), nSub=9, subMi=0x19f1ac, px=0x26
-	widgets[5] = new sdl_button(55, 0x213, 0x1a8, graphx, 0, 0);
+	widgets[5] = new sdl_plain_button(55, 0x213, 0x1a8, graphx, 0, 0);
 		//type 2, newAccountMenu(5), nSub=24, subMi=0x19f630, px = 0x26
-	widgets[6] = new sdl_button(57, 0x213, 0x1c2, graphx, &quit_the_client, this);
+	widgets[6] = new sdl_plain_button(57, 0x213, 0x1c2, graphx, &quit_the_client, this);
 		//type 2, normalMenu(6), nSub=38, 
-	widgets[7] = new sdl_widget(814, 0x1a, 0x3b, graphx);
+//	widgets[7] = new sdl_widget(814, 0x1a, 0x3b, graphx);
 		//type 1, null("intro"), px=0xcf, py=0x11a
 //	widgets[8] = new sdl_widget(787, 0x244, 0x14, graphx);
 //		//type = 10
 
+	ready = true;
+	draw_mode = 1;
 	SDL_mutexV(draw_mtx);
 }
 
