@@ -29,6 +29,8 @@ class sdl_user
 		
 		void give_data(graphics_data *abc);
 		
+		void set_login_char(int num, int type);
+		void wait_for_char_select();
 		void set_load_amount(int size);
 		void add_loaded(int size);
 		void load_done();
@@ -37,7 +39,7 @@ class sdl_user
 		friend class sdl_master;
 	private:
 		bool ready;
-		int draw_mode;
+		volatile int draw_mode;
 		int load_progress;
 		int load_amount;
 		

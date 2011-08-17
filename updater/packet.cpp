@@ -421,6 +421,7 @@ void packet::login_char_packet()
 	printf("\n\tLevel: %d", level);
 	printf("\n\tSTR:%3d\tDEX:%3d\tCON:%3d\n\tWIS:%3d\tCHA:%3d\tINT:%3d", str, dex, con, wis, cha, intl);
 	printf("\n");
+	game->register_char(type*2 + gender);
 }
 
 void packet::login_check()
