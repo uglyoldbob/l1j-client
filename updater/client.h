@@ -24,6 +24,8 @@ class client
 		void LoadDurationTable(const char *file);
 		void init_codepage(unsigned long arg);
 		
+		void register_char(int type);
+		
 	private:
 		sdl_user *graphics;
 		config *main_config;
@@ -46,6 +48,7 @@ class client
 		unsigned long serverId;	//0
 		unsigned char countryCode;
 		
+		int num_char_packs;
 
 		int get_updates(connection* server);
 		int pack_resources();

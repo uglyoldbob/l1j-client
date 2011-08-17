@@ -176,6 +176,7 @@ client::client(sdl_user *stuff)
 	server = 0;
 	checksum = 0xdeadbeef;
 	num_sprite_pack = 17;
+	num_char_packs = 0;
 }
 
 void client::init()
@@ -241,6 +242,13 @@ void client::send_packet(const char *format, ...)
 	packet bob(this, server);
 	bob.send_packet(format, temp_args);			
 	va_end(temp_args);
+}
+
+void client::register_char(int type)
+{
+	graphics->wait_for_char_select();
+	printf("Registering character %d to %d\n", num_char_packs, type);
+	graphics->set_login_char(num_char_packs++, type);
 }
 
 client::~client()

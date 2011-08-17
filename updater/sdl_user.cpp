@@ -129,12 +129,75 @@ void sdl_user::mouse_move(SDL_MouseMotionEvent *from, SDL_MouseMotionEvent *to)
 	SDL_mutexV(draw_mtx);
 }
 
+void sdl_user::wait_for_char_select()
+{
+	while (draw_mode != 2)
+	{
+		SDL_Delay(100);
+	};
+}
+
+void sdl_user::set_login_char(int num, int type)
+{
+	while (SDL_mutexP(draw_mtx) == -1) {};
+	printf("Num: %d, type: %d, draw_mode: %d\n", num, type, draw_mode);
+	if ((num < 4) && (draw_mode == 2))
+	{
+		sdl_animate_button *chars[4];
+		printf("Set char %d to %d\n", num, type);
+		chars[0] = (sdl_animate_button*)widgets[0];
+		chars[1] = (sdl_animate_button*)widgets[1];
+		chars[2] = (sdl_animate_button*)widgets[2];
+		chars[3] = (sdl_animate_button*)widgets[3];
+		
+		chars[num]->set_type(type);
+	}
+	SDL_mutexV(draw_mtx);
+}
+
 void sdl_user::mouse_click(SDL_MouseButtonEvent *here)
 {
 	while (SDL_mutexP(draw_mtx) == -1) {};
 	if (num_widgets > 0)
 	{
 		int index = get_widget(here->x, here->y);
+		if (draw_mode == 2)
+		{
+			sdl_animate_button *chars[4];
+			chars[0] = (sdl_animate_button*)widgets[0];
+			chars[1] = (sdl_animate_button*)widgets[1];
+			chars[2] = (sdl_animate_button*)widgets[2];
+			chars[3] = (sdl_animate_button*)widgets[3];
+			switch (index)
+			{
+				case 0:
+					chars[0]->animate(true);
+					chars[1]->animate(false);
+					chars[2]->animate(false);
+					chars[3]->animate(false);
+					break;
+				case 1:
+					chars[0]->animate(false);
+					chars[1]->animate(true);
+					chars[2]->animate(false);
+					chars[3]->animate(false);
+					break;
+				case 2:
+					chars[0]->animate(false);
+					chars[1]->animate(false);
+					chars[2]->animate(true);
+					chars[3]->animate(false);
+					break;
+				case 3:
+					chars[0]->animate(false);
+					chars[1]->animate(false);
+					chars[2]->animate(false);
+					chars[3]->animate(true);
+					break;
+				default:
+					break;
+			}
+		}
 		if (index != -1)
 		{
 			widgets[index]->mouse_click(here);
@@ -223,6 +286,7 @@ void sdl_user::prepare_char_sel()
 	widgets[2] = new sdl_animate_button(0xf4, 0x14d, 0, graphx, 0, 0);
 	widgets[3] = new sdl_animate_button(0xf4, 0x1ea, 0, graphx, 0, 0);
 	widgets[3]->cursor_on();
+	widget_key_focus = 3;
 	
 	widgets[4] = new sdl_plain_button(0x6e5, 0x0f7, 0x10b, graphx, 0, 0);	//left arrow
 	widgets[5] = new sdl_plain_button(0x6e7, 0x16c, 0x10b, graphx, 0, 0);	//right arrow
@@ -232,6 +296,8 @@ void sdl_user::prepare_char_sel()
 	
 	widgets[9] = new sdl_widget(0x6e9, 0x127, 0x10f, graphx);
 	widgets[10] = new sdl_widget(0x6eb, 0x146, 0x10f, graphx);
+	
+	draw_mode = 2;
 	
 	SDL_mutexV(draw_mtx);
 }
@@ -327,6 +393,9 @@ void sdl_user::draw()
 				break;
 			case 1:
 				draw_login();
+				break;
+			case 2:
+				//character select screen
 				break;
 			default:
 				break;
