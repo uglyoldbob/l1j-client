@@ -266,7 +266,9 @@ void packet::change_key(char *key, const char* data)
 	key[3] ^= data[3];
 	
 	unsigned long *temp = (unsigned long*)(&key[4]);
+	*temp = SWAP32(*temp);
 	*temp += 0x287EFFC3;
+	*temp = SWAP32(*temp);
 }
 
 void packet::encrypt()
