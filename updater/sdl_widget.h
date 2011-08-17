@@ -20,7 +20,10 @@ class sdl_widget
 		//for tracking what the mouse is over
 		void mouseOn();
 		void mouseOff();
-
+		
+		virtual void cursor_on();
+		virtual void cursor_off();
+		
 		friend class sdl_user;
 	protected:
 		bool visible;	//determines if the widget should be drawn
@@ -36,6 +39,7 @@ class sdl_widget
 		void mouse_from(SDL_MouseMotionEvent *from);
 		void mouse_move(SDL_MouseMotionEvent *from, SDL_MouseMotionEvent *to);
 		virtual void mouse_click(SDL_MouseButtonEvent *here);
+		virtual void key_press(SDL_KeyboardEvent *button);
 };
 
 #endif

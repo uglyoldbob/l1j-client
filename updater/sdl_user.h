@@ -22,19 +22,24 @@ class sdl_user
 	public:
 		sdl_user(Uint32 flags = SDL_SWSURFACE);
 		~sdl_user();
+		void quit_client();
+		void login();
 		
 		void init_client(client *clnt);
 		
 		void give_data(graphics_data *abc);
 		
+		void set_login_char(int num, int type);
+		void wait_for_char_select();
 		void set_load_amount(int size);
 		void add_loaded(int size);
 		void load_done();
+		volatile bool done;	//used to terminate the client
 		
 		friend class sdl_master;
 	private:
 		bool ready;
-		int draw_mode;
+		volatile int draw_mode;
 		int load_progress;
 		int load_amount;
 		
@@ -46,8 +51,10 @@ class sdl_user
 		prepared_graphics *pg;
 		sdl_widget **widgets;
 		int num_widgets;
+		int widget_key_focus;
 		
 		void draw();
+		void prepare_char_sel();
 		void prepare_load1();
 		void draw_load1();
 		void prepare_login();
@@ -62,8 +69,9 @@ class sdl_user
 		void mouse_from(SDL_MouseMotionEvent *from);
 		void mouse_move(SDL_MouseMotionEvent *from, SDL_MouseMotionEvent *to);
 		bool mouse_leave();	//is it ok for the mouse to leave?
-		
+				
 		void mouse_click(SDL_MouseButtonEvent *here);
+		void key_press(SDL_KeyboardEvent *button);
 };
 
 #endif

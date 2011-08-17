@@ -61,9 +61,10 @@ bool sdl_font::init(const char *name)
 	delete [] new_buf;
 	delete [] buffer;
 	SDL_FreeSurface(loser);
+	return true;
 }
 
-int sdl_font::draw(SDL_Surface *surf, int x, int y, char *str, Uint32 color)
+int sdl_font::draw(SDL_Surface *surf, int x, int y, const char *str, Uint32 color)
 {
 	int total = 0;
 	for ( int i = 0; i < strlen(str); i++)

@@ -16,11 +16,10 @@ class sdl_button : public sdl_widget
 	public:
 		sdl_button(int num, int x, int y, graphics_data *packs, void (*fnctn)(void*), void* ag);
 		virtual ~sdl_button();
-		virtual void draw(SDL_Surface *display);
 		
-	private:
-		sdl_graphic *two;
-		
+		virtual void cursor_on();
+		virtual void cursor_off();		
+	protected:
 		void (*click_ptr)(void*);
 		void *arg;
 		

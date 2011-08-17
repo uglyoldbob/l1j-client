@@ -176,6 +176,7 @@ client::client(sdl_user *stuff)
 	server = 0;
 	checksum = 0xdeadbeef;
 	num_sprite_pack = 17;
+	num_char_packs = 0;
 }
 
 void client::init()
@@ -188,7 +189,7 @@ void client::init()
 		throw "ERROR Loading configuration file.\n";
 	}
 
-	DesKeyInit("~!@#%^$<");
+	DesKeyInit("~!@#%^$<");	//TODO : move this code to a class and use an object
 	init_packs();
 	
 	graphics_data *temp = new graphics_data;
@@ -209,8 +210,6 @@ void client::init()
 		throw "Failed to connect to game server\n";
 	}
 	
-	packet bob(this, server);
-	
 	music game_music;
 	if (game_music.init() != 0)
 	{
@@ -225,6 +224,31 @@ void client::init()
 	printf("STUB Initialize emblem cache\n");
 	init_strings();
 	graphics->load_done();
+}
+
+int client::process_packet()
+{
+	packet bob(this, server);
+	
+	bob.get_packet();
+	return bob.process_packet();
+}
+
+void client::send_packet(const char *format, ...)
+{
+	va_list temp_args;
+	va_start(temp_args, format);
+	
+	packet bob(this, server);
+	bob.send_packet(format, temp_args);			
+	va_end(temp_args);
+}
+
+void client::register_char(int type)
+{
+	graphics->wait_for_char_select();
+	printf("Registering character %d to %d\n", num_char_packs, type);
+	graphics->set_login_char(num_char_packs++, type);
 }
 
 client::~client()
@@ -259,9 +283,8 @@ int run_client(void *moron)
 		printf("FATAL ERROR: %s", error);
 	}
 	
-	while (1)
+	while (game.process_packet() == 0)
 	{
-		SDL_Delay(1000);
 	}
 	return 0;
 }

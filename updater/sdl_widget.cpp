@@ -6,11 +6,17 @@
 sdl_graphic *make_sdl_graphic(int num, int x, int y, graphics_data *packs)
 {
 	sdl_graphic *ret;
-	ret = new sdl_graphic;
-	ret->img = get_img(num, packs->spritepack);
-	ret->pos = make_sdl_rect(x, y, ret->img->w, ret->img->h);
-	ret->mask = make_sdl_rect(0, 0, ret->img->w, ret->img->h);
-	
+	if (num != -1)
+	{
+		ret = new sdl_graphic;
+		ret->img = get_img(num, packs->spritepack);
+		ret->pos = make_sdl_rect(x, y, ret->img->w, ret->img->h);
+		ret->mask = make_sdl_rect(0, 0, ret->img->w, ret->img->h);
+	}
+	else
+	{
+		ret = 0;
+	}
 	return ret;
 }
 
@@ -57,19 +63,26 @@ void sdl_widget::mouse_click(SDL_MouseButtonEvent *here)
 {
 }
 
+void sdl_widget::key_press(SDL_KeyboardEvent *button)
+{
+}
+
 bool sdl_widget::contains(int x, int y)
 {
-	int x_check1 = one->pos->x;
-	int y_check1 = one->pos->y;
-	
-	int x_check2 = one->pos->x + one->pos->w;
-	int y_check2 = one->pos->y + one->pos->h;
-
-	if ((x_check1 <= x) && (x <= x_check2))
+	if ((one != 0) && (one->pos != 0))
 	{
-		if ((y_check1 <= y) && (y <= y_check2))
+		int x_check1 = one->pos->x;
+		int y_check1 = one->pos->y;
+	
+		int x_check2 = one->pos->x + one->pos->w;
+		int y_check2 = one->pos->y + one->pos->h;
+
+		if ((x_check1 <= x) && (x <= x_check2))
 		{
-			return true;
+			if ((y_check1 <= y) && (y <= y_check2))
+			{
+				return true;
+			}
 		}
 	}
 	return false;
@@ -77,10 +90,21 @@ bool sdl_widget::contains(int x, int y)
 
 sdl_widget::~sdl_widget()
 {
-	delete [] (short*)one->img->pixels;
-	delete one->pos;
-	delete one->mask;
-	SDL_FreeSurface(one->img);
+	if (one != 0)
+	{
+		delete [] (short*)one->img->pixels;
+		delete one->pos;
+		delete one->mask;
+		SDL_FreeSurface(one->img);
+	}
+}
+
+void sdl_widget::cursor_on()
+{
+}
+
+void sdl_widget::cursor_off()
+{
 }
 
 void sdl_widget::draw(SDL_Surface *display)

@@ -1,16 +1,40 @@
 #include <SDL.h>
 #include "SDL_image.h"
 
+#include "client.h"
 #include "globals.h"
+#include "sdl_animate_button.h"
 #include "sdl_button.h"
 #include "sdl_input_box.h"
 #include "sdl_font.h"
+#include "sdl_plain_button.h"
 #include "sdl_user.h"
 #include "sdl_widget.h"
 
-void test_func(void * arg)
+void login_function(void *arg)
 {
-	printf("Clicked login\n");
+	sdl_user *bob = (sdl_user*)arg;
+	bob->login();
+	//send login packet with username and password
+	//clear username and password information
+}
+
+void quit_the_client(void *arg)
+{
+	sdl_user *bob = (sdl_user*)arg;
+	bob->quit_client();
+}
+
+void sdl_user::quit_client()
+{
+	done = true;
+}
+
+void sdl_user::login()
+{
+	//TODO : use the entered usernames and passwords
+	game->send_packet("css", 12, "moron", "moron");
+	prepare_char_sel();
 }
 
 sdl_user::sdl_user(Uint32 flags)
@@ -20,6 +44,7 @@ sdl_user::sdl_user(Uint32 flags)
 	graphx = 0;
 	pg = 0;
 	num_widgets = 0;
+	done = false;
 	
 	draw_mtx = SDL_CreateMutex();
 	widgets = (sdl_widget**)0;
@@ -37,6 +62,7 @@ void sdl_user::init_client(client *clnt)
 
 sdl_user::~sdl_user()
 {
+//	delete game;
 	SDL_FreeSurface(display);
 }
 
@@ -103,12 +129,75 @@ void sdl_user::mouse_move(SDL_MouseMotionEvent *from, SDL_MouseMotionEvent *to)
 	SDL_mutexV(draw_mtx);
 }
 
+void sdl_user::wait_for_char_select()
+{
+	while (draw_mode != 2)
+	{
+		SDL_Delay(100);
+	};
+}
+
+void sdl_user::set_login_char(int num, int type)
+{
+	while (SDL_mutexP(draw_mtx) == -1) {};
+	printf("Num: %d, type: %d, draw_mode: %d\n", num, type, draw_mode);
+	if ((num < 4) && (draw_mode == 2))
+	{
+		sdl_animate_button *chars[4];
+		printf("Set char %d to %d\n", num, type);
+		chars[0] = (sdl_animate_button*)widgets[0];
+		chars[1] = (sdl_animate_button*)widgets[1];
+		chars[2] = (sdl_animate_button*)widgets[2];
+		chars[3] = (sdl_animate_button*)widgets[3];
+		
+		chars[num]->set_type(type);
+	}
+	SDL_mutexV(draw_mtx);
+}
+
 void sdl_user::mouse_click(SDL_MouseButtonEvent *here)
 {
 	while (SDL_mutexP(draw_mtx) == -1) {};
 	if (num_widgets > 0)
 	{
 		int index = get_widget(here->x, here->y);
+		if (draw_mode == 2)
+		{
+			sdl_animate_button *chars[4];
+			chars[0] = (sdl_animate_button*)widgets[0];
+			chars[1] = (sdl_animate_button*)widgets[1];
+			chars[2] = (sdl_animate_button*)widgets[2];
+			chars[3] = (sdl_animate_button*)widgets[3];
+			switch (index)
+			{
+				case 0:
+					chars[0]->animate(true);
+					chars[1]->animate(false);
+					chars[2]->animate(false);
+					chars[3]->animate(false);
+					break;
+				case 1:
+					chars[0]->animate(false);
+					chars[1]->animate(true);
+					chars[2]->animate(false);
+					chars[3]->animate(false);
+					break;
+				case 2:
+					chars[0]->animate(false);
+					chars[1]->animate(false);
+					chars[2]->animate(true);
+					chars[3]->animate(false);
+					break;
+				case 3:
+					chars[0]->animate(false);
+					chars[1]->animate(false);
+					chars[2]->animate(false);
+					chars[3]->animate(true);
+					break;
+				default:
+					break;
+			}
+		}
 		if (index != -1)
 		{
 			widgets[index]->mouse_click(here);
@@ -122,6 +211,38 @@ bool sdl_user::mouse_leave()
 	return false;
 }
 
+void sdl_user::key_press(SDL_KeyboardEvent *button)
+{
+	while (SDL_mutexP(draw_mtx) == -1) {};
+	if (num_widgets > 0)
+	{
+		if (button->type == SDL_KEYDOWN)
+		{
+			switch(button->keysym.sym)
+			{
+				case SDLK_TAB:
+					//TODO: possibly change focus to a different widget
+					widgets[widget_key_focus]->cursor_off();
+					if (++widget_key_focus == num_widgets)
+					{
+						widget_key_focus = 0;
+					}
+					widgets[widget_key_focus]->cursor_on();
+					break;
+				case SDLK_F1: case SDLK_F2: case SDLK_F3: case SDLK_F4:
+				case SDLK_F5: case SDLK_F6: case SDLK_F7: case SDLK_F8:
+				case SDLK_F9: case SDLK_F10: case SDLK_F11: case SDLK_F12:
+				case SDLK_F13: case SDLK_F14: case SDLK_F15:
+					break;
+				default:
+					widgets[widget_key_focus]->key_press(button);
+					break;
+			}
+		}
+	}
+	SDL_mutexV(draw_mtx);
+}
+
 void sdl_user::give_data(graphics_data *abc)
 {
 	if (graphx == 0)
@@ -132,11 +253,62 @@ void sdl_user::give_data(graphics_data *abc)
 	}
 }
 
-void sdl_user::prepare_load1()
+void sdl_user::prepare_char_sel()
 {
 	while (SDL_mutexP(draw_mtx) == -1) {};
 	if (pg != 0)
 		delete pg;
+	
+	pg = new prepared_graphics;
+	pg->num_pg = 1;
+	pg->pg = new prepared_graphic[1];
+	
+	//1c1
+	//0
+	
+	pg->pg[0].surf = get_png_image(815, graphx->spritepack);
+	pg->pg[0].mask = NULL;
+	pg->pg[0].position = NULL;
+	pg->pg[0].cleanup = false;
+	pg->ready = true;
+	
+	num_widgets = 11;
+	if (widgets != 0)
+	{
+		delete [] widgets;
+		widgets = 0;
+	}
+	widgets = new sdl_widget*[num_widgets];
+	
+	//character select animating buttons
+	widgets[0] = new sdl_animate_button(0xf4, 0x013, 0, graphx, 0, 0);
+	widgets[1] = new sdl_animate_button(0xf4, 0x0b0, 0, graphx, 0, 0);
+	widgets[2] = new sdl_animate_button(0xf4, 0x14d, 0, graphx, 0, 0);
+	widgets[3] = new sdl_animate_button(0xf4, 0x1ea, 0, graphx, 0, 0);
+	widgets[3]->cursor_on();
+	widget_key_focus = 3;
+	
+	widgets[4] = new sdl_plain_button(0x6e5, 0x0f7, 0x10b, graphx, 0, 0);	//left arrow
+	widgets[5] = new sdl_plain_button(0x6e7, 0x16c, 0x10b, graphx, 0, 0);	//right arrow
+	widgets[6] = new sdl_plain_button(0x134, 0x20d, 0x1b5, graphx, 0, 0);	//delete
+	widgets[7] = new sdl_plain_button(0x336, 0x20d, 0x19a, graphx, 0, 0);	//cancel
+	widgets[8] = new sdl_plain_button(0x334, 0x20d, 0x185, graphx, 0, 0);	//login
+	
+	widgets[9] = new sdl_widget(0x6e9, 0x127, 0x10f, graphx);
+	widgets[10] = new sdl_widget(0x6eb, 0x146, 0x10f, graphx);
+	
+	draw_mode = 2;
+	
+	SDL_mutexV(draw_mtx);
+}
+
+void sdl_user::prepare_load1()
+{
+	while (SDL_mutexP(draw_mtx) == -1) {};
+	if (pg != 0)
+	{
+		delete pg;
+	}
 	pg = new prepared_graphics;
 	pg->num_pg = 2;
 	
@@ -145,8 +317,7 @@ void sdl_user::prepare_load1()
 
 	pg->pg = new prepared_graphic[2];
 	
-	index = getHashIndex("811.png") + 1;
-	pg->pg[0].surf = get_png_image("811.png", graphx->spritepack[index]);
+	pg->pg[0].surf = get_png_image(811, graphx->spritepack);
 	pg->pg[0].mask = NULL;
 	pg->pg[0].position = NULL;
 	pg->pg[0].cleanup = false;
@@ -180,19 +351,10 @@ void sdl_user::load_done()
 {
 	if (draw_mode == 0)
 	{
-		while (SDL_mutexP(draw_mtx) == -1) {};
-	
 		load_progress = load_amount;
 		update_load();
 		SDL_Delay(250);
-		ready = false;
-		delete pg;
-		pg = 0;
 		prepare_login();
-		ready = true;
-		draw_mode = 1;
-
-		SDL_mutexV(draw_mtx);
 	}
 }
 
@@ -232,49 +394,58 @@ void sdl_user::draw()
 			case 1:
 				draw_login();
 				break;
+			case 2:
+				//character select screen
+				break;
 			default:
 				break;
 		}
 	}
 	SDL_mutexV(draw_mtx);
+	SDL_Delay(10);
 }
 
 void sdl_user::prepare_login()
 {
 	while (SDL_mutexP(draw_mtx) == -1) {};
+	ready = false;
+	delete pg;
 	pg = new prepared_graphics;
 	pg->num_pg = 1;
 	pg->pg = new prepared_graphic[1];
 	
-	int index = getHashIndex("814.png") + 1;
-	pg->pg[0].surf = get_png_image("814.png", graphx->spritepack[index]);
+	pg->pg[0].surf = get_png_image(814, graphx->spritepack);
 	pg->pg[0].mask = NULL;
 	pg->pg[0].position = NULL;
 	pg->pg[0].cleanup = false;
 	pg->ready = true;
 	
-	num_widgets = 8;
+	num_widgets = 7;
 	widgets = new sdl_widget*[num_widgets];
 	
 	widgets[0] = new sdl_widget(59, 0x1a9, 0x138, graphx);
 		//type 0
 	widgets[1] = new sdl_input_box(12, 0x1fb, 0x14a, graphx);
+	widgets[1]->cursor_on();
+	widget_key_focus = 1;
 		//type 7, arg 2, nSub=17
 	widgets[2] = new sdl_input_box(13, 0x1fb, 0x160, graphx);
 		//type 7, arg 4, nSub=17
-	widgets[3] = new sdl_button(53, 0x213, 0x183, graphx, &test_func, 0);
+	widgets[3] = new sdl_plain_button(53, 0x213, 0x183, graphx, &login_function, this);
 		//type 2, login(), nSub=11, subMi=0x19ef70, px=0x25
-	widgets[4] = new sdl_button(65, 0x213, 0x195, graphx, 0, 0);
+	widgets[4] = new sdl_plain_button(65, 0x213, 0x195, graphx, 0, 0);
 		//type 2, normalMenu(4), nSub=9, subMi=0x19f1ac, px=0x26
-	widgets[5] = new sdl_button(55, 0x213, 0x1a8, graphx, 0, 0);
+	widgets[5] = new sdl_plain_button(55, 0x213, 0x1a8, graphx, 0, 0);
 		//type 2, newAccountMenu(5), nSub=24, subMi=0x19f630, px = 0x26
-	widgets[6] = new sdl_button(57, 0x213, 0x1c2, graphx, 0, 0);
+	widgets[6] = new sdl_plain_button(57, 0x213, 0x1c2, graphx, &quit_the_client, this);
 		//type 2, normalMenu(6), nSub=38, 
-	widgets[7] = new sdl_widget(814, 0x1a, 0x3b, graphx);
+//	widgets[7] = new sdl_widget(814, 0x1a, 0x3b, graphx);
 		//type 1, null("intro"), px=0xcf, py=0x11a
 //	widgets[8] = new sdl_widget(787, 0x244, 0x14, graphx);
 //		//type = 10
 
+	ready = true;
+	draw_mode = 1;
 	SDL_mutexV(draw_mtx);
 }
 

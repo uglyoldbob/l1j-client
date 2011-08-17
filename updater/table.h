@@ -7,6 +7,7 @@ class table
 {
 	public:
 		table();
+		virtual ~table();
 		
 		const char *operator[](int);
 						

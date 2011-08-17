@@ -9,10 +9,10 @@
 
 static const int MAX_LENGTH = 0x13fe;
 
-char packet::decryptionKey[8];
-char packet::encryptionKey[8];
+char packet::decryptionKey[8];		//TODO : move this variable to the connection class
+char packet::encryptionKey[8];		//TODO : move this variable to the connection class
 int packet::mode = 0;
-int packet::key_initialized = 0;
+volatile int packet::key_initialized = 0;	//TODO : move this variable to the connection class
 
 int packet::assemble(char *buf, int max_length, const char *format, ...)
 {
@@ -34,6 +34,29 @@ void packet::disassemble(unsigned char *buf, const char *format, ...)
 	{
 		switch(format[i])
 		{
+			case 's':
+			{
+				unsigned char length = 0;
+				while (buf[buf_offset+length] != 0)
+				{
+					length++;
+				}
+				length++;
+				char **temp = va_arg(args, char **);
+				*temp = new char[length];
+				strcpy(*temp, (char*)&buf[buf_offset]);
+				buf_offset += length;
+				break;
+			}
+			case 'h':
+			{
+				unsigned short *temp = (unsigned short*)&buf[buf_offset];
+				unsigned short *store = va_arg(args, unsigned short *);
+				*store = *temp;
+				*store = SWAP16(*store);
+				buf_offset += 2;
+				break;
+			}
 			case 'c':
 			{
 				unsigned char temp = buf[buf_offset++];
@@ -129,11 +152,11 @@ int packet::assemble(char *send, int max_length, const char *format, va_list arr
 			{
 				int src_len;
 				char *temp = va_arg(array, char *);
-				src_len = strlen(temp);
+				src_len = strlen(temp) + 1;
 				if ((send_offset + src_len) <= max_length)
 				{
 					strcpy(&send[send_offset], temp);
-					send_offset += (src_len + 1);
+					send_offset += src_len;
 				}
 				break;
 			}
@@ -147,51 +170,62 @@ int packet::assemble(char *send, int max_length, const char *format, va_list arr
 	return send_offset;
 }
 
-void packet::sendPacket(const char* args, ...)
+void packet::send_packet(const char* args, va_list array)
 {
-	char sendbuf[MAX_LENGTH];
-	va_list temp_args;
-	va_start(temp_args, args);
-	int length;
-	
-	length = assemble(&sendbuf[2], MAX_LENGTH, args, temp_args);
-	va_end(temp_args);
-	if (length != 0)
+	while (key_initialized == 0)
 	{
-		sendbuf[0] = length & 0xff;
-		sendbuf[1] = (length>>8) & 0xff;
-		packet_length = length;
-		packet_data = new unsigned char[packet_length];
-		memcpy(packet_data, sendbuf, packet_length);
-		this->encrypt();
-		this->change_key(encryptionKey, &sendbuf[2]);
-		server->snd(packet_data, length+2);
+		SDL_Delay(100);
+	}
+	if (packet_data == 0)
+	{
+		char sendbuf[MAX_LENGTH];
+		int length;
+		
+		length = assemble(&sendbuf[2], MAX_LENGTH, args, array);
+		if (length != 0)
+		{
+			char key_change[4];
+			length += 2;
+			sendbuf[0] = length & 0xff;
+			sendbuf[1] = (length>>8) & 0xff;
+			packet_length = length;
+			packet_data = new unsigned char[packet_length];
+			memcpy(packet_data, sendbuf, packet_length);
+			memcpy(key_change, &sendbuf[2], 4);
+			
+			this->encrypt();
+
+			this->change_key(encryptionKey, key_change);
+			server->snd(packet_data, packet_length);
+		}
+		reset();
 	}
 }
 
-void packet::getPacket(const char* args, ...)
+void packet::send_packet(const char* args, ...)
+{
+	va_list temp_args;
+	va_start(temp_args, args);
+	send_packet(args, temp_args);
+	va_end(temp_args);
+}
+
+void packet::get_packet()
 {
 	unsigned short length = 0;
 	server->rcv_var(&length, 2);
-//	printf("Packet length %04x\n", length);
 	if (length != 0)
 	{
 		if (packet_length == 0)
 		{
-			packet_length = length;
-			packet_data = new unsigned char[packet_length-2];
-//			printf("Receiving data\n");
-			server->rcv(packet_data, packet_length-2);
+			packet_length = length - 2;
+			packet_data = new unsigned char[packet_length];
+			server->rcv(packet_data, packet_length);
 			if (key_initialized == 1)
 			{
 				this->decrypt();
 				this->change_key(decryptionKey, (char*)(packet_data));
 			}
-			else
-			{
-//				printf("Not decrypting this packet\n");
-			}
-			//process the packet
 		}
 		else
 		{
@@ -244,14 +278,13 @@ void packet::encrypt()
 		
 		for (int i = 3; i < packet_length; i++)
 		{
-			packet_data[i] ^= encryptionKey[i & 7] ^ packet_data[i-1];
+			packet_data[i] ^= encryptionKey[(i-2) & 7] ^ packet_data[i-1];
 		}
 
 		packet_data[5] ^= encryptionKey[2];
 		packet_data[4] ^= encryptionKey[3] ^ packet_data[5];
 		packet_data[3] ^= encryptionKey[4] ^ packet_data[4];
 		packet_data[2] ^= encryptionKey[5] ^ packet_data[3];
-
 	}
 }
 
@@ -287,51 +320,40 @@ packet::packet(client *clnt, connection *serve)
 	server = serve;
 	packet_length = 0;
 	packet_data = (unsigned char*)0;
-	if (key_initialized == 0)
-	{
-//		printf("Retrieving encryption key from server\n");
-		getPacket("asdf", 1);
-		if (packet_data[0] == 0x41)
-		{
-			processPacket();
-			getPacket("asdf", 1);
-			processPacket();
-		}
-		else
-		{
-			printf("This server is not compatible with this client\n");
-		}
-	}
 }
 
 void packet::reset()
 {
-	if (packet_length != 0)
+	if (packet_data != 0)
 	{
 		delete [] packet_data;
+		packet_data = 0;
 		packet_length = 0;
 	}
 }
 
-void packet::processPacket()
+int packet::process_packet()
 {
+	if (key_initialized == 0)
+	{
+		if (packet_data[0] != 0x41)
+		{
+			printf("This server is not compatible with this client\n");
+			return -1;
+		}
+	}
+
 	if (mode == 0)
 	{
 		switch(packet_data[0])
 		{	//the second list
-			case 0x0a:
-			{
-				serverVersionPacket();
-				break;
-			}
-			case 0x41:
-			{	//receive encryption key data
-				keyPacket();
-				break;
-			}
-			default:
-				//b0648
-				break;
+			case 10: server_version_packet(); break;
+			case 21: login_check(); break;
+			case 65: key_packet(); break;
+			case 90: news_packet(); break;
+			case 99: login_char_packet(); break;
+			case 113: num_char_packet(); break;
+			default: print_packet(); break;
 		}
 	}
 	else
@@ -342,6 +364,8 @@ void packet::processPacket()
 				break;
 		}
 	}
+	reset();
+	return 0;
 }
 
 packet::~packet()
@@ -349,20 +373,87 @@ packet::~packet()
 	reset();
 }
 
-void packet::keyPacket()
+void packet::print_packet()
+{
+	printf("Packet data\n\t");
+	for (int i = 0; i < packet_length; i++)
+	{
+		printf("%02x ", packet_data[i]);
+		if ((i % 8) == 7)
+		{
+			printf("\n\t");
+		}
+	}
+	printf("\n");
+}
+
+void packet::num_char_packet()
+{
+	unsigned char num_characters;
+	unsigned char max_characters;
+	disassemble(&packet_data[1], "cc", &num_characters, &max_characters);
+	
+	printf("You have %d of %d characters\n", num_characters, max_characters);
+}
+
+void packet::login_char_packet()
+{
+	char *name;
+	char *pledge;
+	unsigned char type;
+	unsigned char gender;
+	short alignment;
+	short hp;
+	short mp;
+	char ac;
+	char level;
+	char str, wis, cha, con, dex, intl;
+	disassemble(&packet_data[1], "sscchhhcccccccc", 
+		&name, &pledge, 
+		&type, &gender,
+		&alignment,
+		&hp, &mp, &ac, &level,
+		&str, &dex, &con, &wis, &cha, &intl);
+	printf("Character data:\n\tName:%s of pledge %s", name, pledge);
+	printf("\n\tCharacter type:%d", type);
+	printf("\n\tGender: %d", gender);
+	printf("\n\tAlignment: %d", alignment);
+	printf("\n\tHP: %d MP: %d AC: %d", hp, mp, ac);
+	printf("\n\tLevel: %d", level);
+	printf("\n\tSTR:%3d\tDEX:%3d\tCON:%3d\n\tWIS:%3d\tCHA:%3d\tINT:%3d", str, dex, con, wis, cha, intl);
+	printf("\n");
+	game->register_char(type*2 + gender);
+}
+
+void packet::login_check()
+{
+	print_packet();
+}
+
+void packet::news_packet()
+{
+	char *news;
+	disassemble(&packet_data[1], "s", &news);
+	//TODO Create class for displaying messages
+	printf("The news is %s\n", news);
+	reset();
+	send_packet("cdd", 43, 0, 0);	//TODO: there is a minimum packet length
+}
+
+void packet::key_packet()
 {
 	unsigned long seed;
 	disassemble(&packet_data[1], "d", &seed);
 	create_key(seed);
 	reset();
 	//loadFile("VersionInfo", &r1_40);
-	sendPacket("chdcd", 0x47, 0x33, -1, 32, 101101);
+	send_packet("chdcd", 0x47, 0x33, -1, 32, 101101);
+	//TODO : put actual defined values here
 		//acp, VersionInfo, buildNumber
 		//-1, 32, 101101
-	reset();
 }
 
-void packet::serverVersionPacket()
+void packet::server_version_packet()
 {
 	char version_check;
 	unsigned long serverVersion;
@@ -388,6 +479,7 @@ void packet::serverVersionPacket()
 	disassemble(&packet_data[25], "c", &countryCode);
 	
 	unsigned short serverId = (countryCode<<8) + serverCode;
+	//TODO : move these to an actual loading function
 //	printf("Server id: %04x\n", serverId);
 	if (serverId == 0x012c)
 	{

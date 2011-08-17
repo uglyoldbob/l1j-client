@@ -21,6 +21,7 @@ sdl_master::sdl_master(Uint32 flags)
 	else
 	{
 		display = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 16, flags);
+		SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 		if (display == NULL) 
 		{
 			fprintf(stderr, "Unable to set video mode: %s\n", SDL_GetError());
@@ -56,29 +57,38 @@ void sdl_master::process_events()
 	while(!done)
 	{
 		draw();
-		while(SDL_PollEvent(&event))
-		{ //Poll events
-			switch(event.type)
-			{ //Check event type
-				case SDL_MOUSEMOTION:
-					mouse_move(&mouse_position, &event.motion);
-					mouse_position = event.motion;
-					break;
-				case SDL_MOUSEBUTTONDOWN:
-				case SDL_MOUSEBUTTONUP:
-					mouse_click(&event.button);
-					break;
-				case SDL_KEYDOWN:
-				case SDL_KEYUP:
-					key_press(&event.key);
-					break;
-				case SDL_QUIT:
-					done = true;
-					break;
-				case SDL_VIDEORESIZE: //User resized window
-					display = SDL_SetVideoMode(event.resize.w, event.resize.h, 16,
-						SDL_HWSURFACE | SDL_DOUBLEBUF); // Create new window
-					break;
+		if (clients[0]->done)
+		{
+			printf("Quitting the client by master\n");
+			delete clients[0];
+			done = true;
+		}
+		else
+		{
+			while(SDL_PollEvent(&event))
+			{ //Poll events
+				switch(event.type)
+				{ //Check event type
+					case SDL_MOUSEMOTION:
+						mouse_move(&mouse_position, &event.motion);
+						mouse_position = event.motion;
+						break;
+					case SDL_MOUSEBUTTONDOWN:
+					case SDL_MOUSEBUTTONUP:
+						mouse_click(&event.button);
+						break;
+					case SDL_KEYDOWN:
+					case SDL_KEYUP:
+						key_press(&event.key);
+						break;
+					case SDL_QUIT:
+						done = true;
+						break;
+					case SDL_VIDEORESIZE: //User resized window
+						display = SDL_SetVideoMode(event.resize.w, event.resize.h, 16,
+							SDL_HWSURFACE | SDL_DOUBLEBUF); // Create new window
+						break;
+				}
 			}
 		}
 	}
@@ -129,12 +139,15 @@ void sdl_master::mouse_move(SDL_MouseMotionEvent *old, SDL_MouseMotionEvent *fre
 
 void sdl_master::mouse_click(SDL_MouseButtonEvent *here)
 {
+	//TODO: check for double-click by measuring the time since the last click
 	int num = get_client(here->x, here->y);
 	clients[num]->mouse_click(here);
 }
 
 void sdl_master::key_press(SDL_KeyboardEvent *button)
 {
+	//TODO: determine which client gets keyboard input
+	clients[0]->key_press(button);
 }
 
 int sdl_master::get_client(int x, int y)

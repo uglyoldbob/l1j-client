@@ -17,10 +17,14 @@ class client
 		client(sdl_user *stuff);
 		~client();
 		void init();
+		int process_packet();
+		void send_packet(const char *format, ...);
 		
 		//unsorted public functions
 		void LoadDurationTable(const char *file);
 		void init_codepage(unsigned long arg);
+		
+		void register_char(int type);
 		
 	private:
 		sdl_user *graphics;
@@ -44,6 +48,7 @@ class client
 		unsigned long serverId;	//0
 		unsigned char countryCode;
 		
+		int num_char_packs;
 
 		int get_updates(connection* server);
 		int pack_resources();
