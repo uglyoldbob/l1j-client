@@ -25,7 +25,7 @@ int getHashIndex(const char *name)
 
 int pack::load_index()
 {
-	bool reverse_file = false;
+	bool reverse_file = false;	//flag to determine if the file contents are backwards
 	index_buf = fopen(index_file, "rb");
 	if (index_buf == 0)
 	{
