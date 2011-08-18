@@ -36,7 +36,7 @@ class packet
 		void encrypt();
 		void decrypt();
 		void change_key(char *key, const char *data);	//changes the encryption key
-		void create_key(const unsigned long seed);
+		void create_key(const unsigned int seed);
 		void reset();
 		
 		void print_packet();
