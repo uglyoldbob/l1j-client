@@ -68,11 +68,11 @@ int pack::load_index()
 		for (int j = 0; j < 20; j++)
 		{
 			files[i].name[j] = tolower(files[i].name[j]);
-			if (reverse_file)
-			{
-				files[i].offset = ntohl(files[i].offset);
-				files[i].size = ntohl(files[i].size);
-			}
+		}
+		if (reverse_file)
+		{
+			files[i].offset = ntohl(files[i].offset);
+			files[i].size = ntohl(files[i].size);
 		}
 	}
 	
