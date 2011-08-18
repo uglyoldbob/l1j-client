@@ -9,8 +9,8 @@ CC=g++
 
 TEST=-g
 RELEASE=-s -O3
-CFLAGS=-c -Wall -I/Library/Frameworks/SDL.framework/Headers
-LFLAGS=-framework SDL -framework SDL_image -framework Cocoa
+CFLAGS=-c -Wall -I/Library/Frameworks/SDL.framework/Headers -I/Library/Frameworks/SDL_mixer.framework/Headers
+LFLAGS=-framework SDL -framework SDL_image -framework SDL_mixer -framework Cocoa -dylib_file @loader_path/Frameworks/mikmod.framework/Versions/A/mikmod:/Library/Frameworks/SDL_mixer.framework/Versions/A/Frameworks/mikmod.framework/Versions/A/mikmod -dylib_file @loader_path/Frameworks/smpeg.framework/Versions/A/smpeg:/Library/Frameworks/SDL_mixer.framework/Versions/A/Frameworks/smpeg.framework/Versions/A/smpeg
 LDADD=
 
 .PHONY : debug release dist
