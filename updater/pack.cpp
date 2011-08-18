@@ -42,8 +42,11 @@ int pack::load_index()
 	{
 		reverse_file = false;
 		size1 = ntohl(size1);
-		printf("Size mismatch (%d) (%d)\n", size1, size2);
-		return 1;
+		if (size1 != size2)
+		{
+			printf("Size mismatch (%d) (%d)\n", size1, size2);
+			return 1;
+		}
 	}
 	num_files = size1;
 //	printf("Loading list of %d files\n", num_files);
