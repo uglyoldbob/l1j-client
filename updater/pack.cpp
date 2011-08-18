@@ -25,6 +25,7 @@ int getHashIndex(const char *name)
 
 int pack::load_index()
 {
+	bool reverse_file = false;
 	index_buf = fopen(index_file, "rb");
 	if (index_buf == 0)
 	{
@@ -39,6 +40,8 @@ int pack::load_index()
 	fread(&size1, 4, 1, index_buf);
 	if (size1 != size2)
 	{
+		reverse_file = false;
+		size1 = ntohl(size1);
 		printf("Size mismatch (%d) (%d)\n", size1, size2);
 		return 1;
 	}
@@ -62,6 +65,11 @@ int pack::load_index()
 		for (int j = 0; j < 20; j++)
 		{
 			files[i].name[j] = tolower(files[i].name[j]);
+			if (reverse_file)
+			{
+				files[i].offset = ntohl(files[i].offset);
+				files[i].size = ntohl(files[i].offset);
+			}
 		}
 	}
 	
