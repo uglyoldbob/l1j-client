@@ -4,7 +4,7 @@
 #include "client.h"
 #include "globals.h"
 
-void client::init_codepage(unsigned long arg)
+void client::init_codepage(unsigned int arg)
 {
 	printf("STUB init_codepage\n");
 //	memset(lead_table, 0, 0x100);
