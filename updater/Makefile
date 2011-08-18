@@ -4,7 +4,7 @@ LIN_OBJS = client.o config.o connection.o global.o lindes.o main.o music.o \
 	sdl_user.o sdl_widget.o unsorted.o table.o
 
 DIST_FILES = Lineage.exe Lineage.ini README.txt README-SDL.txt README-SDL-image.txt \
-	SDL.dll SDL_image.dll zlib1.dll libpng12-0.dll
+	SDL.dll SDL_image.dll SDL_mixer.dll smpeg.dll zlib1.dll libpng12-0.dll
 
 CC=g++
 
@@ -12,7 +12,7 @@ TEST=-g
 RELEASE=-s -O3
 CFLAGS=-c -Wall
 LFLAGS=-lmswsock -lws2_32 --enable-stdcall-fixup -Wl,-subsystem,windows -lmingw32 -lSDLmain
-LDADD=ws2_32.dll mswsock.dll SDL.dll SDL_image.dll
+LDADD=ws2_32.dll mswsock.dll SDL.dll SDL_image.dll SDL_mixer.dll smpeg.dll
 
 .PHONY : debug release dist
 
