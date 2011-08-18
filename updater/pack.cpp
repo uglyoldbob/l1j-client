@@ -25,6 +25,7 @@ int getHashIndex(const char *name)
 
 int pack::load_index()
 {
+	bool reverse_file = false;	//flag to determine if the file contents are backwards
 	index_buf = fopen(index_file, "rb");
 	if (index_buf == 0)
 	{
@@ -39,8 +40,13 @@ int pack::load_index()
 	fread(&size1, 4, 1, index_buf);
 	if (size1 != size2)
 	{
-		printf("Size mismatch (%d) (%d)\n", size1, size2);
-		return 1;
+		size1 = SWAP32(size1);
+		reverse_file = true;
+		if (size1 != size2)
+		{
+			printf("Size mismatch (%d) (%d)\n", size1, size2);
+			return 1;
+		}
 	}
 	num_files = size1;
 //	printf("Loading list of %d files\n", num_files);
@@ -62,6 +68,11 @@ int pack::load_index()
 		for (int j = 0; j < 20; j++)
 		{
 			files[i].name[j] = tolower(files[i].name[j]);
+		}
+		if (reverse_file)
+		{
+			files[i].offset = SWAP32(files[i].offset);
+			files[i].size = SWAP32(files[i].size);
 		}
 	}
 	
