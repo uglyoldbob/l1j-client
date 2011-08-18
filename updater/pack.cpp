@@ -71,7 +71,7 @@ int pack::load_index()
 			if (reverse_file)
 			{
 				files[i].offset = ntohl(files[i].offset);
-				files[i].size = ntohl(files[i].offset);
+				files[i].size = ntohl(files[i].size);
 			}
 		}
 	}
