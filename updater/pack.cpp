@@ -40,7 +40,7 @@ int pack::load_index()
 	fread(&size1, 4, 1, index_buf);
 	if (size1 != size2)
 	{
-		reverse_file = false;
+		reverse_file = true;
 		size1 = ntohl(size1);
 		if (size1 != size2)
 		{
