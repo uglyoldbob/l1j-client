@@ -88,8 +88,8 @@ int client::init_strings()
 
 int client::get_updates(connection* server)
 {
-	unsigned long temp;
-	long sign_temp;
+	unsigned int temp;
+	int sign_temp;
 	int status;	//> 0 means update occurred
 	status = 0;
 	printf("STUB Get update magic number\n");
@@ -111,7 +111,7 @@ int client::get_updates(connection* server)
 				printf("Receiving %d files\n", num_files);
 				status = num_files;
 				unsigned char name_length;
-				unsigned long file_length;
+				unsigned int file_length;
 				unsigned char* file_buffer;
 				char *filename;
 				for (int i = 0; i < num_files; i++)
@@ -152,7 +152,7 @@ int client::get_updates(connection* server)
 					delete [] file_buffer;
 				}
 			}
-			long num_servers;
+			int num_servers;
 			unsigned short* num_users;
 			server->rcv_var(&num_servers, 4);
 			num_users = new unsigned short[num_servers];

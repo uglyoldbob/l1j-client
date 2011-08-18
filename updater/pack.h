@@ -11,7 +11,7 @@
 
 struct file_entry
 {
-	long offset;
+	int offset;
 	char name[20];
 	int size;
 };
