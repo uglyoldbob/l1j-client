@@ -65,9 +65,9 @@ void packet::disassemble(unsigned char *buf, const char *format, ...)
 			}
 			case 'd':
 			{
-				unsigned long *from = (unsigned long*)(&buf[buf_offset]);
+				unsigned int *from = (unsigned int*)(&buf[buf_offset]);
 				buf_offset += 4;
-				unsigned long *store = va_arg(args, unsigned long *);
+				unsigned int *store = va_arg(args, unsigned int *);
 				*store = SWAP32(*from);
 				break;
 			}
@@ -125,7 +125,7 @@ int packet::assemble(char *send, int max_length, const char *format, va_list arr
 			}
 			case 'd':	//a single 4-byte variable
 			{
-				long temp = va_arg(array, long);
+				int temp = va_arg(array, int);
 				if ((send_offset + 4) <= max_length)
 				{
 					send[send_offset+3] = temp>>24 & 0xFF;
@@ -212,7 +212,7 @@ void packet::send_packet(const char* args, ...)
 void packet::get_packet()
 {
 	unsigned short length = 0;
-	server->rcv_var(&length, 2);
+	server->rcv_varg(&length, 2);
 	if (length != 0)
 	{
 		if (packet_length == 0)
@@ -233,14 +233,14 @@ void packet::get_packet()
 	}
 }
 
-void packet::create_key(const unsigned long seed)
+void packet::create_key(const unsigned int seed)
 {
-	unsigned long key = 0x930FD7E2;
-	unsigned long big_key[2];
+	unsigned int key = 0x930FD7E2;
+	unsigned int big_key[2];
 	big_key[0] = seed;
 	big_key[1] = key;
 	
-	unsigned long rotrParam = big_key[0] ^ 0x9C30D539;
+	unsigned int rotrParam = big_key[0] ^ 0x9C30D539;
 	big_key[0] = (rotrParam>>13) | (rotrParam<<19);	//rotate right by 13 bits
 	big_key[1] = big_key[0] ^ big_key[1] ^ 0x7C72E993;
 	
@@ -265,7 +265,7 @@ void packet::change_key(char *key, const char* data)
 	key[2] ^= data[2];
 	key[3] ^= data[3];
 	
-	unsigned long *temp = (unsigned long*)(&key[4]);
+	unsigned int *temp = (unsigned int*)(&key[4]);
 	*temp = SWAP32(*temp);
 	*temp += 0x287EFFC3;
 	*temp = SWAP32(*temp);
@@ -443,7 +443,7 @@ void packet::news_packet()
 
 void packet::key_packet()
 {
-	unsigned long seed;
+	unsigned int seed;
 	disassemble(&packet_data[1], "d", &seed);
 	create_key(seed);
 	reset();
@@ -457,11 +457,11 @@ void packet::key_packet()
 void packet::server_version_packet()
 {
 	char version_check;
-	unsigned long serverVersion;
-	unsigned long cacheVersion;
-	unsigned long authVersion;
-	unsigned long npcVersion;
-	unsigned long serverStartTime;
+	unsigned int serverVersion;
+	unsigned int cacheVersion;
+	unsigned int authVersion;
+	unsigned int npcVersion;
+	unsigned int serverStartTime;
 	char canMakeNewAccount;
 	char englishOnly;
 	char countryCode;

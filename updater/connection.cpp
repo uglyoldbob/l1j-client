@@ -48,6 +48,69 @@ int connection::snd(const void* msg, int len)
 	return len;
 }
 
+int connection::snd_var(const void* msg, int len)
+{
+	if (len == 4)
+	{
+		unsigned int *temp = (unsigned int *)msg;
+		*temp = htonl(*temp);
+	}
+	else if (len == 2)
+	{
+		unsigned short *temp = (unsigned short *)msg;
+		*temp = htons(*temp);
+	}
+	char *buf;
+	int sent = 0;
+	int trans;
+	while (sent < len)
+	{
+		buf = (char*)msg;
+		buf = &buf[sent];
+		trans = send(sock, buf, len-sent, 0);
+		if (trans < 0)
+		{
+			printf("Error sending %d \n", errno);
+			throw 2;
+			return trans;
+		}
+		sent += trans;
+	}
+	return len;
+}
+
+int connection::snd_varg(const void* msg, int len)
+{
+	if (len == 4)
+	{
+		unsigned int *temp = (unsigned int *)msg;
+		*temp = SWAP32(*temp);
+	}
+	else if (len == 2)
+	{
+		unsigned short *temp = (unsigned short *)msg;
+		*temp = SWAP16(*temp);
+	}
+	char *buf;
+	int sent = 0;
+	int trans;
+
+	while (sent < len)
+	{
+		buf = (char*)msg;
+		buf = &buf[sent];
+		trans = send(sock, buf, len-sent, 0);
+		if (trans < 0)
+		{
+			printf("Error sending %d \n", errno);
+			throw 2;
+			return trans;
+		}
+		sent += trans;
+	}
+	return len;
+}
+
 int connection::rcv(void *buf, int len)
 {
 	int recvd = 0;
@@ -66,37 +129,7 @@ int connection::rcv(void *buf, int len)
 		}
 		recvd += trans;
 	}
-	return len;
-}
 
-int connection::snd_var(const void* msg, int len)
-{
-	if (len == 4)
-	{
-		unsigned long *temp = (unsigned long *)msg;
-		*temp = SWAP32(*temp);
-	}
-	else if (len == 2)
-	{
-		unsigned short *temp = (unsigned short *)msg;
-		*temp = SWAP16(*temp);
-	}
-	char *buf;
-	int sent = 0;
-	int trans;
-	while (sent < len)
-	{
-		buf = (char*)msg;
-		buf = &buf[sent];
-		trans = send(sock, buf, len-sent, 0);
-		if (trans < 0)
-		{
-			printf("Error sending %d \n", errno);
-			throw 2;
-			return trans;
-		}
-		sent += trans;
-	}
 	return len;
 }
 
@@ -121,7 +154,40 @@ int connection::rcv_var(void *buf, int len)
 	
 	if (len == 4)
 	{
-		unsigned long *temp = (unsigned long *)buf;
+		unsigned int *temp = (unsigned int *)buf;
+		*temp = ntohl(*temp);
+	}
+	else if (len == 2)
+	{
+		unsigned short *temp = (unsigned short *)buf;
+		*temp = ntohs(*temp);
+	}
+
+	return len;
+}
+
+int connection::rcv_varg(void *buf, int len)
+{
+	int recvd = 0;
+	int trans;
+	char *temp;
+	while (recvd < len)
+	{
+		temp = (char*)buf;
+		temp = &temp[recvd];
+		trans = recv(sock, temp, len-recvd, 0);
+		if (trans < 0)
+		{
+			printf("Error receiving %d\n", errno);
+			throw 1;
+			return recvd;
+		}
+		recvd += trans;
+	}
+	
+	if (len == 4)
+	{
+		unsigned int *temp = (unsigned int *)buf;
 		*temp = SWAP32(*temp);
 	}
 	else if (len == 2)
@@ -132,7 +198,6 @@ int connection::rcv_var(void *buf, int len)
 
 	return len;
 }
-
 
 int connection::make_connection()
 {
