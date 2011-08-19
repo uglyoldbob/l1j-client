@@ -9,8 +9,8 @@ CC=g++
 
 TEST=-g
 RELEASE=-s -O3
-CFLAGS=-c -Wall
-LFLAGS=
+CFLAGS=-c -Wall -I/usr/include/SDL
+LFLAGS=-lSDL -lSDL_mixer -lSDL_image
 LDADD=
 
 .PHONY : debug release dist
