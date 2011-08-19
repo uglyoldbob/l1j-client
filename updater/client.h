@@ -24,7 +24,7 @@ class client
 		void LoadDurationTable(const char *file);
 		void init_codepage(unsigned int arg);
 		
-		void register_char(int type);
+		void register_char(lin_char_info *data);
 		
 	private:
 		sdl_user *graphics;

@@ -1,7 +1,8 @@
 LIN_OBJS = client.o config.o connection.o global.o lindes.o main.o music.o \
-	pack.o packet.o partial_table.o prepared_graphics.o sdl_animate_button.o \
-	sdl_button.o sdl_font.o sdl_input_box.o sdl_master.o sdl_plain_button.o \
-	sdl_user.o sdl_widget.o unsorted.o table.o
+	pack.o packet.o partial_table.o prepared_graphics.o unsorted.o table.o
+
+LIN_SDL_OBJS = sdl_animate_button.o sdl_button.o sdl_char_info.o sdl_font.o \
+	sdl_input_box.o sdl_master.o sdl_plain_button.o sdl_user.o sdl_widget.o
 
 DIST_FILES = Lineage.exe Lineage.ini README.txt README-SDL.txt README-SDL-image.txt \
 	SDL.dll SDL_image.dll SDL_mixer.dll smpeg.dll zlib1.dll libpng12-0.dll
@@ -12,7 +13,7 @@ TEST=-g
 RELEASE=-s -O3
 CFLAGS=-c -Wall
 LFLAGS=-lmswsock -lws2_32 --enable-stdcall-fixup -Wl,-subsystem,windows -lmingw32 -lSDLmain
-LDADD=ws2_32.dll mswsock.dll SDL.dll SDL_image.dll SDL_mixer.dll smpeg.dll
+LDADD=lin_sdl.a ws2_32.dll mswsock.dll SDL.dll SDL_image.dll SDL_mixer.dll smpeg.dll
 
 .PHONY : debug release dist
 
@@ -24,7 +25,6 @@ dist:
 		mkdir client;\
 	fi
 	@echo "Copying files to dist folder"
-	@rm -f ./client/*
 	cp -f $(DIST_FILES) ./client/
 	@if [ -e debug_made ]; then\
 		echo touch ./client/DEBUG_DO_NOT_RELEASE.txt;\
@@ -38,7 +38,7 @@ dist:
 
 	
 clean:
-	rm -f *.o Lineage.exe Lineage_dbg.exe Lineage_rls.exe Lineage debug_made release_made
+	rm -f *.o *.a Lineage.exe Lineage_dbg.exe Lineage_rls.exe Lineage debug_made release_made ./client/*
 	@if [ -e debug ] && [ -e release ]; then\
 		echo "Making DEBUG version";\
 		rm -f release;\
@@ -76,7 +76,7 @@ debug_check:
 		make clean;\
 	fi
 
-Lineage: $(LIN_OBJS)
+Lineage: $(LIN_OBJS) lin_sdl.a
 	@if [ -e debug_made ] && [ -e release_made ]; then\
 		echo Make clean because of mixed debug and release objects;\
 		make clean;\
@@ -91,6 +91,9 @@ Lineage: $(LIN_OBJS)
 		$(CC) $(RELEASE) $(LFLAGS) $(LIN_OBJS) $(LDADD) -o Lineage_rls;\
 		cp -f Lineage_rls.exe Lineage.exe;\
 	fi
+	
+lin_sdl.a: $(LIN_SDL_OBJS)
+	ar rvs lin_sdl.a $(LIN_SDL_OBJS)
 
 .cpp.o:
 	@if [ -e release ]; then\

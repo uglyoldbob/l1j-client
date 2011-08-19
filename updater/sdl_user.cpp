@@ -1,10 +1,12 @@
 #include <SDL.h>
 #include "SDL_image.h"
+#include <time.h>
 
 #include "client.h"
 #include "globals.h"
 #include "sdl_animate_button.h"
 #include "sdl_button.h"
+#include "sdl_char_info.h"
 #include "sdl_input_box.h"
 #include "sdl_font.h"
 #include "sdl_plain_button.h"
@@ -137,8 +139,9 @@ void sdl_user::wait_for_char_select()
 	};
 }
 
-void sdl_user::set_login_char(int num, int type)
+void sdl_user::set_login_char(int num, lin_char_info *data)
 {
+	int type = (data->char_type * 2) + data->gender;
 	while (SDL_mutexP(draw_mtx) == -1) {};
 	printf("Num: %d, type: %d, draw_mode: %d\n", num, type, draw_mode);
 	if ((num < 4) && (draw_mode == 2))
@@ -150,7 +153,7 @@ void sdl_user::set_login_char(int num, int type)
 		chars[2] = (sdl_animate_button*)widgets[2];
 		chars[3] = (sdl_animate_button*)widgets[3];
 		
-		chars[num]->set_type(type);
+		chars[num]->set_info(data);
 	}
 	SDL_mutexV(draw_mtx);
 }
@@ -164,6 +167,8 @@ void sdl_user::mouse_click(SDL_MouseButtonEvent *here)
 		if (draw_mode == 2)
 		{
 			sdl_animate_button *chars[4];
+			sdl_char_info *stuff;
+			stuff = (sdl_char_info*)widgets[11];
 			chars[0] = (sdl_animate_button*)widgets[0];
 			chars[1] = (sdl_animate_button*)widgets[1];
 			chars[2] = (sdl_animate_button*)widgets[2];
@@ -171,24 +176,28 @@ void sdl_user::mouse_click(SDL_MouseButtonEvent *here)
 			switch (index)
 			{
 				case 0:
+					stuff->hand_info(chars[0]->get_info());
 					chars[0]->animate(true);
 					chars[1]->animate(false);
 					chars[2]->animate(false);
 					chars[3]->animate(false);
 					break;
 				case 1:
+					stuff->hand_info(chars[1]->get_info());
 					chars[0]->animate(false);
 					chars[1]->animate(true);
 					chars[2]->animate(false);
 					chars[3]->animate(false);
 					break;
 				case 2:
+					stuff->hand_info(chars[2]->get_info());
 					chars[0]->animate(false);
 					chars[1]->animate(false);
 					chars[2]->animate(true);
 					chars[3]->animate(false);
 					break;
 				case 3:
+					stuff->hand_info(chars[3]->get_info());
 					chars[0]->animate(false);
 					chars[1]->animate(false);
 					chars[2]->animate(false);
@@ -234,6 +243,23 @@ void sdl_user::key_press(SDL_KeyboardEvent *button)
 				case SDLK_F9: case SDLK_F10: case SDLK_F11: case SDLK_F12:
 				case SDLK_F13: case SDLK_F14: case SDLK_F15:
 					break;
+				case SDLK_PRINT:
+					char filename[256];
+					time_t rawtime;
+					struct tm * timeinfo;
+					time ( &rawtime );
+					timeinfo = localtime ( &rawtime );
+					sprintf(filename, "%s", asctime(timeinfo));
+					filename[strlen(filename)-1] = 0;
+					strcat(filename, ".bmp");
+					for (int i = 0; i < strlen(filename); i++)
+					{
+						if ((filename[i] == ' ') || (filename[i] == ':'))
+							filename[i] = '_';
+					}
+					printf("Screenshot to %s\n", filename);
+					SDL_SaveBMP(display, filename);
+					break;
 				default:
 					widgets[widget_key_focus]->key_press(button);
 					break;
@@ -272,7 +298,7 @@ void sdl_user::prepare_char_sel()
 	pg->pg[0].cleanup = false;
 	pg->ready = true;
 	
-	num_widgets = 11;
+	num_widgets = 12;
 	if (widgets != 0)
 	{
 		delete [] widgets;
@@ -296,6 +322,7 @@ void sdl_user::prepare_char_sel()
 	
 	widgets[9] = new sdl_widget(0x6e9, 0x127, 0x10f, graphx);
 	widgets[10] = new sdl_widget(0x6eb, 0x146, 0x10f, graphx);
+	widgets[11] = new sdl_char_info(graphx);
 	
 	draw_mode = 2;
 	

@@ -21,12 +21,14 @@ class sdl_animate_button : public sdl_plain_button
 		
 		void animate(bool animate);
 		
-		void set_type(int type);
+		void set_info(lin_char_info *data);
+		lin_char_info *get_info();
 		
 	protected:
 		int x;
 		int y;
 		bool animating;
+		lin_char_info *char_info;
 		sdl_graphic **animates;
 		int num_anim;
 		int first_anim;

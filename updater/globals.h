@@ -21,6 +21,25 @@ extern sdl_font lineage_font;
 #define SWAP32(X)    SDL_Swap32(X)
 #endif
 
+struct lin_char_info
+{
+	char *name;
+	char *pledge;
+	char char_type;
+	char gender;
+	short alignment;
+	short hp;
+	short mp;
+	char ac;
+	char level;
+	char str;
+	char dex;
+	char con;
+	char wis;
+	char cha;
+	char intl;
+};
+
 struct sdl_graphic
 {
 	SDL_Surface *img;

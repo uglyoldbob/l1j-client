@@ -1,6 +1,6 @@
 #include "sdl_animate_button.h"
 
-int sdl_animate_button::frame_time = 100;
+int sdl_animate_button::frame_time = 67;
 
 sdl_graphic *make_sdl_graphic_png(int num, int x, int y, graphics_data *packs)
 {
@@ -49,15 +49,22 @@ sdl_animate_button::sdl_animate_button(int num, int x, int y, graphics_data *pac
 	animating = false;	
 	this->x = x;
 	this->y = y;
+	char_info = 0;
 	
 	num_anim = 0;
 		
-	set_type(-1);
+	set_info(0);
 }
 
-void sdl_animate_button::set_type(int type)
+lin_char_info *sdl_animate_button::get_info()
+{
+	return char_info;
+}
+
+void sdl_animate_button::set_info(lin_char_info *data)
 {	//females get the odd numbers, type is multiplied by 2 and gender is added
-	
+	char_info = data;	
+
 	delete_sdl_graphic_png(one);
 	delete_sdl_graphic_png(two);
 	if (num_anim > 0)
@@ -68,8 +75,18 @@ void sdl_animate_button::set_type(int type)
 		}
 		delete animates;
 	}
+	
+	int temp;
+	if (data != 0)
+	{
+		temp = (data->char_type * 2) + data->gender;
+	}
+	else
+	{
+		temp = -1;
+	}
 
-	switch(type)
+	switch(temp)
 	{
 		case 0:	//male royal
 			num_anim = 86;
@@ -258,4 +275,10 @@ void sdl_animate_button::key_press(SDL_KeyboardEvent *button)
 
 sdl_animate_button::~sdl_animate_button()
 {
+	if (char_info != 0)
+	{
+		delete [] char_info->name;
+		delete [] char_info->pledge;
+		delete char_info;
+	}
 }
