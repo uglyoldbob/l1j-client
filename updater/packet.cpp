@@ -423,7 +423,25 @@ void packet::login_char_packet()
 	printf("\n\tLevel: %d", level);
 	printf("\n\tSTR:%3d\tDEX:%3d\tCON:%3d\n\tWIS:%3d\tCHA:%3d\tINT:%3d", str, dex, con, wis, cha, intl);
 	printf("\n");
-	game->register_char(type*2 + gender);
+	
+	lin_char_info *temp;
+	temp = new lin_char_info;
+	temp->name = name;
+	temp->pledge = pledge;
+	temp->char_type = type;
+	temp->gender = gender;
+	temp->alignment = alignment;
+	temp->hp = hp;
+	temp->mp = mp;
+	temp->ac = ac;
+	temp->level = level;
+	temp->str = str;
+	temp->dex = dex;
+	temp->con = con;
+	temp->wis = wis;
+	temp->cha = cha;
+	temp->intl = intl;
+	game->register_char(temp);
 }
 
 void packet::login_check()

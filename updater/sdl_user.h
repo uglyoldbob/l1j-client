@@ -29,7 +29,7 @@ class sdl_user
 		
 		void give_data(graphics_data *abc);
 		
-		void set_login_char(int num, int type);
+		void set_login_char(int num, lin_char_info *data);
 		void wait_for_char_select();
 		void set_load_amount(int size);
 		void add_loaded(int size);
