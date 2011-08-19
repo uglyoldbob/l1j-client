@@ -17,16 +17,20 @@ class client
 		client(sdl_user *stuff);
 		~client();
 		void init();
+		int process_packet();
+		void send_packet(const char *format, ...);
 		
 		//unsorted public functions
 		void LoadDurationTable(const char *file);
-		void init_codepage(unsigned long arg);
+		void init_codepage(unsigned int arg);
+		
+		void register_char(int type);
 		
 	private:
 		sdl_user *graphics;
 		config *main_config;
 		connection *server;
-		unsigned long checksum;
+		unsigned int checksum;
 		pack *textpack;
 		pack *tilepack;
 		pack **spritepack;
@@ -41,9 +45,10 @@ class client
 		table todays_tip;
 		
 		int acp[2];	//-1, 0xec8a0 (a function pointer to badwords compare?)
-		unsigned long serverId;	//0
+		unsigned int serverId;	//0
 		unsigned char countryCode;
 		
+		int num_char_packs;
 
 		int get_updates(connection* server);
 		int pack_resources();

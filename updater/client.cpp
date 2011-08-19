@@ -88,8 +88,8 @@ int client::init_strings()
 
 int client::get_updates(connection* server)
 {
-	unsigned long temp;
-	long sign_temp;
+	unsigned int temp;
+	int sign_temp;
 	int status;	//> 0 means update occurred
 	status = 0;
 	printf("STUB Get update magic number\n");
@@ -111,7 +111,7 @@ int client::get_updates(connection* server)
 				printf("Receiving %d files\n", num_files);
 				status = num_files;
 				unsigned char name_length;
-				unsigned long file_length;
+				unsigned int file_length;
 				unsigned char* file_buffer;
 				char *filename;
 				for (int i = 0; i < num_files; i++)
@@ -152,7 +152,7 @@ int client::get_updates(connection* server)
 					delete [] file_buffer;
 				}
 			}
-			long num_servers;
+			int num_servers;
 			unsigned short* num_users;
 			server->rcv_var(&num_servers, 4);
 			num_users = new unsigned short[num_servers];
@@ -176,6 +176,7 @@ client::client(sdl_user *stuff)
 	server = 0;
 	checksum = 0xdeadbeef;
 	num_sprite_pack = 17;
+	num_char_packs = 0;
 }
 
 void client::init()
@@ -188,7 +189,7 @@ void client::init()
 		throw "ERROR Loading configuration file.\n";
 	}
 
-	DesKeyInit("~!@#%^$<");
+	DesKeyInit("~!@#%^$<");	//TODO : move this code to a class and use an object
 	init_packs();
 	
 	graphics_data *temp = new graphics_data;
@@ -209,8 +210,6 @@ void client::init()
 		throw "Failed to connect to game server\n";
 	}
 	
-	packet bob(this, server);
-	
 	music game_music;
 	if (game_music.init() != 0)
 	{
@@ -223,10 +222,33 @@ void client::init()
 	printf("STUB Load player config\n");
 	printf("STUB Initialize screenshots\n");
 	printf("STUB Initialize emblem cache\n");
-	printf("STUB Initialize GUI\n");
 	init_strings();
 	graphics->load_done();
-	for (;;);
+}
+
+int client::process_packet()
+{
+	packet bob(this, server);
+	
+	bob.get_packet();
+	return bob.process_packet();
+}
+
+void client::send_packet(const char *format, ...)
+{
+	va_list temp_args;
+	va_start(temp_args, format);
+	
+	packet bob(this, server);
+	bob.send_packet(format, temp_args);			
+	va_end(temp_args);
+}
+
+void client::register_char(int type)
+{
+	graphics->wait_for_char_select();
+	printf("Registering character %d to %d\n", num_char_packs, type);
+	graphics->set_login_char(num_char_packs++, type);
 }
 
 client::~client()
@@ -236,18 +258,33 @@ client::~client()
 		delete server;
 	if (main_config != 0)
 		delete main_config;
+		
+	delete textpack;
+	delete tilepack;
+	for (int i = 0; i < num_sprite_pack; i++)
+	{
+		delete spritepack[i];
+	}
+	delete [] spritepack;
 }
 
 int run_client(void *moron)
 {	//the main thread for each client
 	client game((sdl_user*)moron);
+	sdl_user *temp;
+	temp = (sdl_user*)moron;
+	temp->init_client(&game);
 	try
 	{
 		game.init();
 	}
 	catch (const char *error)
 	{
-		printf("%s", error);
+		printf("FATAL ERROR: %s", error);
+	}
+	
+	while (game.process_packet() == 0)
+	{
 	}
 	return 0;
 }

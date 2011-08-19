@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "globals.h"
 #include "lindes.h"
 #include "pack.h"
 
@@ -24,6 +25,7 @@ int getHashIndex(const char *name)
 
 int pack::load_index()
 {
+	bool reverse_file = false;	//flag to determine if the file contents are backwards
 	index_buf = fopen(index_file, "rb");
 	if (index_buf == 0)
 	{
@@ -38,8 +40,13 @@ int pack::load_index()
 	fread(&size1, 4, 1, index_buf);
 	if (size1 != size2)
 	{
-		printf("Size mismatch (%d) (%d)\n", size1, size2);
-		return 1;
+		size1 = SWAP32(size1);
+		reverse_file = true;
+		if (size1 != size2)
+		{
+			printf("Size mismatch (%d) (%d)\n", size1, size2);
+			return 1;
+		}
 	}
 	num_files = size1;
 //	printf("Loading list of %d files\n", num_files);
@@ -61,6 +68,11 @@ int pack::load_index()
 		for (int j = 0; j < 20; j++)
 		{
 			files[i].name[j] = tolower(files[i].name[j]);
+		}
+		if (reverse_file)
+		{
+			files[i].offset = SWAP32(files[i].offset);
+			files[i].size = SWAP32(files[i].size);
 		}
 	}
 	
@@ -201,21 +213,21 @@ pack::pack(const char *name, int encrypt)
 {
 	int size;
 	encrypted = encrypt;
-	size = strlen(FOLDER_PREFIX) + strlen(name) + strlen(DATA_EXT) + 1;
+	size = strlen(lineage_dir) + strlen(name) + strlen(DATA_EXT) + 1;
 	data_file = new char[size];
-	sprintf(data_file, "%s%s%s", FOLDER_PREFIX, name, DATA_EXT);
+	sprintf(data_file, "%s%s%s", lineage_dir, name, DATA_EXT);
 	
-	size = strlen(FOLDER_PREFIX) + strlen(name) + strlen(TEMP_EXT) + 1;
+	size = strlen(lineage_dir) + strlen(name) + strlen(TEMP_EXT) + 1;
 	temp_file = new char[size];
-	sprintf(temp_file, "%s%s%s", FOLDER_PREFIX, name, TEMP_EXT);
+	sprintf(temp_file, "%s%s%s", lineage_dir, name, TEMP_EXT);
 	
-	size = strlen(FOLDER_PREFIX) + strlen(name) + strlen(INDEX_EXT) + 1;
+	size = strlen(lineage_dir) + strlen(name) + strlen(INDEX_EXT) + 1;
 	index_file = new char[size];
-	sprintf(index_file, "%s%s%s", FOLDER_PREFIX, name, INDEX_EXT);
+	sprintf(index_file, "%s%s%s", lineage_dir, name, INDEX_EXT);
 	
 	num_files = 0;
 	
-	printf("Loading %s%s\n", FOLDER_PREFIX, name);
+	printf("Loading %s%s\n", lineage_dir, name);
 	
 	data_buf = 0;
 	index_buf = 0;
@@ -235,7 +247,7 @@ unsigned char* pack::load_png(const char *name, int *size, int decrypting)
 	{
 		if (buffer[3] == 0x58)
 		{	//c963c
-			printf("Normalizing mangled PNG file\n");
+//			printf("Normalizing mangled PNG file\n");
 			buffer[3] = 0x47;
 			if (*size > 5)
 			{	//c9654
@@ -246,11 +258,11 @@ unsigned char* pack::load_png(const char *name, int *size, int decrypting)
 				}
 			}
 		}
-		printf("Finished loading %s\n", name);
+//		printf("Finished loading %s\n", name);
 	}
 	else
 	{
-		printf("Failed to load %s\n", name);
+//		printf("Failed to load %s\n", name);
 	}
 	return (unsigned char*)buffer;
 }
@@ -274,7 +286,7 @@ char *pack::load_file(const char *name, int *size, int decrypting)
 	}
 	else
 	{
-		printf("File %s not found\n", name);
+//		printf("File %s not found in %s\n", name, index_file);
 		ret_buf = (char*)0;
 	}
 	return ret_buf;

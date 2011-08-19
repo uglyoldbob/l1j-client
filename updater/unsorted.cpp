@@ -4,7 +4,7 @@
 #include "client.h"
 #include "globals.h"
 
-void client::init_codepage(unsigned long arg)
+void client::init_codepage(unsigned int arg)
 {
 	printf("STUB init_codepage\n");
 //	memset(lead_table, 0, 0x100);
@@ -70,17 +70,4 @@ void client::LoadDurationTable(const char *file)
 		}
 		delete [] table;
 	}
-}
-
-unsigned short reverse(unsigned short me)
-{
-	return (me>>8 | me<<8);
-}
-
-unsigned long reverse(unsigned long me)
-{
-	return  ((me<<24) |
-			((me<<8) & 0xFF0000) |
-			((me>>8) & 0xFF00) |
-			(me>>24));
 }

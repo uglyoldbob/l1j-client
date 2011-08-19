@@ -2,6 +2,7 @@
 #include <string.h>
 
 #include "config.h"
+#include "globals.h"
 
 const char* config::get_port()
 {
@@ -55,6 +56,7 @@ config::config(const char *cfile)
 	all_names = new char[MAX_LINE_LENGTH];
 
 	num_errors = 0;
+	lineage_dir = (char*)0;	
 	
 	//retrieve configuration settings
 	char *line_read = new char[MAX_LINE_LENGTH];
@@ -80,6 +82,12 @@ config::config(const char *cfile)
 				else if (sscanf(line_read, "GamePort = %[^\t\n\r]", game_port) == 1)
 				{
 					printf("Connect using game port number %s\n", game_port);
+				}
+				else if (sscanf(line_read, "Path = %[^\t\n\r]", all_names) == 1)
+				{
+					lineage_dir = new char[strlen(line_read)];
+					strcpy(lineage_dir, all_names);
+					printf("Lineage is located at: %s\n", lineage_dir);
 				}
 				else if (sscanf(line_read, "Names = %[^\t\n\r]", all_names) == 1)
 				{
@@ -125,6 +133,11 @@ config::config(const char *cfile)
 	}
 	else if ((num_errors == MAGIC_ERROR_NUMBER) || (num_errors == 0))
 	{	//apply defaults if necessary
+		if (lineage_dir == 0)
+		{
+			printf("ERROR: Lineage path is missing\n");
+			num_errors++;
+		}
 		if (num_errors == MAGIC_ERROR_NUMBER)
 		{
 			printf("ERROR: %s is missing\n", cfile);
@@ -150,6 +163,7 @@ config::config(const char *cfile)
 		printf("ERROR: %i errors were found in your config file. Fix them and restart!\n", num_errors);
 	}
 
+	lineage_font.init("Font/eng.fnt");
 }
 
 config::~config()

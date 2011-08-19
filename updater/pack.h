@@ -5,14 +5,13 @@
 
 //#include "des.h"
 
-#define FOLDER_PREFIX "./"
 #define DATA_EXT ".pak"
 #define INDEX_EXT ".idx"
 #define TEMP_EXT ".$$$"
 
 struct file_entry
 {
-	long offset;
+	int offset;
 	char name[20];
 	int size;
 };

@@ -12,6 +12,10 @@ table::table()
 	entries = 0;
 }
 
+table::~table()
+{
+}
+
 //constant because tables will not be modified by the [] operator
 const char *table::operator[](int i)
 {
@@ -88,7 +92,7 @@ void table::load(const char *real_name, pack *from)
 	}
 	if (i < num_entries)
 	{
-		printf("WARNING: %s only had (%d of %d) entries\n", real_name, i-1, num_entries);
+//		printf("WARNING: %s only had (%d of %d) entries\n", real_name, i-1, num_entries);
 		while (i < num_entries)
 		{
 			entries[i++] = (char*)0;

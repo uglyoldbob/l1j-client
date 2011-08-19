@@ -1,6 +1,10 @@
-LIN_OBJS = client.o config.o connection.o lindes.o main.o music.o pack.o \
-	packet.o partial_table.o prepared_graphics.o sdl_master.o sdl_user.o \
-	sdl_widget.o unsorted.o table.o
+LIN_OBJS = client.o config.o connection.o global.o lindes.o main.o music.o \
+	pack.o packet.o partial_table.o prepared_graphics.o sdl_animate_button.o \
+	sdl_button.o sdl_font.o sdl_input_box.o sdl_master.o sdl_plain_button.o \
+	sdl_user.o sdl_widget.o unsorted.o table.o
+
+DIST_FILES = Lineage Lineage.ini README.txt 
+
 CC=g++
 
 TEST=-g
@@ -9,28 +13,30 @@ CFLAGS=-c -Wall
 LFLAGS=
 LDADD=
 
-.PHONY : debug release
+.PHONY : debug release dist
 
-all: debug_check release_check Lineage install
+all: debug_check release_check Lineage dist
 
-install:
-	cp -f ./Lineage ~/Lineage
-	cp -f ./Lineage.ini ~/Lineage
-	
-	echo "Release archive creation not enabled"
-#	@if [ -e release_made ]; then\
-#		if [ ! -d deploy ]; then\
-#			echo mkdir deploy;\
-#			mkdir deploy;\
-#		fi;\
-#		echo "Copying files to deploy folder";\
-#		cp -f "deploy_files" ./deploy/;\
-#		echo tar -zcvf release.tar.gz deploy;\
-#		tar -zcvf release.tar.gz deploy;\
-#	fi
+dist:
+	@if [ ! -d client ]; then\
+		echo mkdir client;\
+		mkdir client;\
+	fi
+	@echo "Copying files to dist folder"
+	@rm -f ./client/*
+	cp -f $(DIST_FILES) ./client/
+	@if [ -e debug_made ]; then\
+		echo touch ./client/DEBUG_DO_NOT_RELEASE.txt;\
+		touch ./client/DEBUG_DO_NOT_RELEASE.txt;\
+		rm -f release.tar.gz;\
+	fi
+	@if [ -e release_made ]; then\
+		echo tar -zcvf release.tar.gz client;\
+		tar -zcvf release.tar.gz client;\
+	fi
 	
 clean:
-	rm -f *.o Lineage* debug_made release_made
+	rm -f *.o Lineage.exe Lineage_dbg.exe Lineage_rls.exe Lineage debug_made release_made
 	@if [ -e debug ] && [ -e release ]; then\
 		echo "Making DEBUG version";\
 		rm -f release;\
