@@ -4,14 +4,14 @@
 
 #include "client.h"
 #include "globals.h"
-#include "sdl_animate_button.h"
-#include "sdl_button.h"
-#include "sdl_char_info.h"
-#include "sdl_input_box.h"
-#include "sdl_font.h"
-#include "sdl_plain_button.h"
+#include "resources/sdl_font.h"
 #include "sdl_user.h"
-#include "sdl_widget.h"
+#include "widgets/sdl_animate_button.h"
+#include "widgets/sdl_button.h"
+#include "widgets/sdl_char_info.h"
+#include "widgets/sdl_input_box.h"
+#include "widgets/sdl_plain_button.h"
+#include "widgets/sdl_widget.h"
 
 void login_function(void *arg)
 {

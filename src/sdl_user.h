@@ -5,9 +5,9 @@
 
 class client;
 #include "globals.h"
-#include "pack.h"
-#include "prepared_graphics.h"
-#include "sdl_widget.h"
+#include "resources/pack.h"
+#include "resources/prepared_graphics.h"
+#include "widgets/sdl_widget.h"
 
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480

@@ -1,9 +1,10 @@
 client/documents/*
-updater/client/*
-updater/documents/*
-updater/zlib/*
-updater/libpng-1.5.4/*
-updater/SDL_image-1.2.10/*
-updater/deploy/*
+release/*.o
+release/*.a
+debug/*.o
+debug/*.a
+src/documents/*
+libs/*
 *.o
 *.exe
+*.a

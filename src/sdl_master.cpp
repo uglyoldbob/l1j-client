@@ -3,7 +3,7 @@
 
 #include "sdl_master.h"
 #include "client.h"
-#include "pack.h"
+#include "resources/pack.h"
 
 sdl_master::sdl_master(Uint32 flags)
 {

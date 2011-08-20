@@ -2,7 +2,7 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 
-#include "music.h"
+#include "resources/music.h"
 #include "sdl_master.h"
 #include "SDL_mixer.h"
 
