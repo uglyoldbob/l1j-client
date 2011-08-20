@@ -1,5 +1,5 @@
 #include "globals.h"
-#include "sdl_font.h"
+#include "resources/sdl_font.h"
 
 sdl_font lineage_font;//("Font/eng.fnt");
 char *lineage_dir;	//TODO : add a variable into the config file to initialize this

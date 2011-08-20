@@ -4,8 +4,8 @@
 #include "sdl_user.h"
 #include "config.h"
 #include "connection.h"
-#include "table.h"
-#include "pack.h"
+#include "resources/table.h"
+#include "resources/pack.h"
 
 #define TRANSFER_AMOUNT 0x400
 

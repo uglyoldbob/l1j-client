@@ -5,9 +5,9 @@
 #include "SDL_endian.h"
 #include "SDL_image.h"
 
-#include "pack.h"
-#include "sdl_font.h"
-#include "table.h"
+#include "resources/pack.h"
+#include "resources/sdl_font.h"
+#include "resources/table.h"
 
 extern char *lineage_dir;	//string to hold the absolute path to the lineage directory
 extern sdl_font lineage_font;

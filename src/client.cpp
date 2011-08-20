@@ -4,11 +4,11 @@
 #include "connection.h"
 #include "globals.h"
 #include "lindes.h"
-#include "music.h"
-#include "pack.h"
+#include "resources/music.h"
+#include "resources/pack.h"
 #include "packet.h"
-#include "partial_table.h"
-#include "table.h"
+#include "resources/partial_table.h"
+#include "resources/table.h"
 #include "unsorted.h"
 
 int client::pack_resources()
