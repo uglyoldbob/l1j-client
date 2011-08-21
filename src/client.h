@@ -4,8 +4,8 @@
 #include "sdl_user.h"
 #include "config.h"
 #include "connection.h"
-#include "table.h"
-#include "pack.h"
+#include "resources/table.h"
+#include "resources/pack.h"
 
 #define TRANSFER_AMOUNT 0x400
 
@@ -24,7 +24,7 @@ class client
 		void LoadDurationTable(const char *file);
 		void init_codepage(unsigned int arg);
 		
-		void register_char(int type);
+		void register_char(lin_char_info *data);
 		
 	private:
 		sdl_user *graphics;

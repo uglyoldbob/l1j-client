@@ -5,9 +5,9 @@
 #include "SDL_endian.h"
 #include "SDL_image.h"
 
-#include "pack.h"
-#include "sdl_font.h"
-#include "table.h"
+#include "resources/pack.h"
+#include "resources/sdl_font.h"
+#include "resources/table.h"
 
 extern char *lineage_dir;	//string to hold the absolute path to the lineage directory
 extern sdl_font lineage_font;
@@ -20,6 +20,25 @@ extern sdl_font lineage_font;
 #define SWAP16(X)    SDL_Swap16(X)
 #define SWAP32(X)    SDL_Swap32(X)
 #endif
+
+struct lin_char_info
+{
+	char *name;
+	char *pledge;
+	char char_type;
+	char gender;
+	short alignment;
+	short hp;
+	short mp;
+	char ac;
+	char level;
+	char str;
+	char dex;
+	char con;
+	char wis;
+	char cha;
+	char intl;
+};
 
 struct sdl_graphic
 {

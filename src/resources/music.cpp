@@ -24,8 +24,7 @@ int music::init()
 	//Mix_QuerySpec(&audio_rate, &audio_format, &audio_channels);
 	start_music("sound/music0.mp3");
 
-	printf("STUB Initialize music\n");
-	return 1;
+	return 0;
 }
 
 void music::start_music(const char *name)

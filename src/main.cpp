@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "music.h"
+#include "resources/music.h"
 #include "sdl_master.h"
 #include "SDL_mixer.h"
 
@@ -16,5 +16,6 @@ int main(int argc, char* argv[])
 	graphics.create_client();
 	graphics.process_events();
 	
+	SDL_Quit();
 	return 0;
 }

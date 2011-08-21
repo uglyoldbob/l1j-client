@@ -4,11 +4,11 @@
 #include "connection.h"
 #include "globals.h"
 #include "lindes.h"
-#include "music.h"
-#include "pack.h"
+#include "resources/music.h"
+#include "resources/pack.h"
 #include "packet.h"
-#include "partial_table.h"
-#include "table.h"
+#include "resources/partial_table.h"
+#include "resources/table.h"
 #include "unsorted.h"
 
 int client::pack_resources()
@@ -168,7 +168,6 @@ int client::get_updates(connection* server)
 	return status;
 }
 
-
 client::client(sdl_user *stuff)
 {
 	main_config = 0;
@@ -244,11 +243,12 @@ void client::send_packet(const char *format, ...)
 	va_end(temp_args);
 }
 
-void client::register_char(int type)
+void client::register_char(lin_char_info *data)
 {
 	graphics->wait_for_char_select();
+	int type = (data->char_type * 2) + data->gender;
 	printf("Registering character %d to %d\n", num_char_packs, type);
-	graphics->set_login_char(num_char_packs++, type);
+	graphics->set_login_char(num_char_packs++, data);
 }
 
 client::~client()

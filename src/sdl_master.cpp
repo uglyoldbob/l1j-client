@@ -3,7 +3,7 @@
 
 #include "sdl_master.h"
 #include "client.h"
-#include "pack.h"
+#include "resources/pack.h"
 
 sdl_master::sdl_master(Uint32 flags)
 {
@@ -60,6 +60,7 @@ void sdl_master::process_events()
 		if (clients[0]->done)
 		{
 			printf("Quitting the client by master\n");
+//			SDL_KillThread(game_client[0]);
 			delete clients[0];
 			done = true;
 		}
@@ -83,6 +84,7 @@ void sdl_master::process_events()
 						break;
 					case SDL_QUIT:
 						done = true;
+//						SDL_KillThread(game_client[0]);
 						break;
 					case SDL_VIDEORESIZE: //User resized window
 						display = SDL_SetVideoMode(event.resize.w, event.resize.h, 16,
