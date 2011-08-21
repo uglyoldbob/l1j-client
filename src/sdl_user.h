@@ -5,9 +5,9 @@
 
 class client;
 #include "globals.h"
-#include "pack.h"
-#include "prepared_graphics.h"
-#include "sdl_widget.h"
+#include "resources/pack.h"
+#include "resources/prepared_graphics.h"
+#include "widgets/sdl_widget.h"
 
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
@@ -29,7 +29,7 @@ class sdl_user
 		
 		void give_data(graphics_data *abc);
 		
-		void set_login_char(int num, int type);
+		void set_login_char(int num, lin_char_info *data);
 		void wait_for_char_select();
 		void set_load_amount(int size);
 		void add_loaded(int size);

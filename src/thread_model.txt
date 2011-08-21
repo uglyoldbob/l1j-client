@@ -1,0 +1,2 @@
+The initial thread will handle all the SDL stuff. This is because of a limitation of SDL on windows.
+class_sdl will be called from multiple threads, so it needs to use the SDL mutexes

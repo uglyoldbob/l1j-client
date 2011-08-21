@@ -33,7 +33,7 @@ class sdl_widget
 		
 		bool have_mouse;
 		
-		bool contains(int x, int y);	//does this widget contain the given point?
+		virtual bool contains(int x, int y);	//does this widget contain the given point?
 		
 		void mouse_to(SDL_MouseMotionEvent *to);
 		void mouse_from(SDL_MouseMotionEvent *from);
