@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <wordexp.h>
 
 #include "config.h"
 #include "globals.h"
@@ -87,6 +88,12 @@ config::config(const char *cfile)
 				{
 					lineage_dir = new char[strlen(line_read)];
 					strcpy(lineage_dir, all_names);
+		
+					wordexp_t exp_result;
+					wordexp(lineage_dir, &exp_result, 0);
+					strcpy(lineage_dir, exp_result.we_wordv[0]);
+					wordfree(&exp_result);
+
 					printf("Lineage is located at: %s\n", lineage_dir);
 				}
 				else if (sscanf(line_read, "Names = %[^\t\n\r]", all_names) == 1)
