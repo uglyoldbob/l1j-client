@@ -1,10 +1,13 @@
 client/documents/*
 release/*.o
 release/*.a
+release/client/*
 debug/*.o
 debug/*.a
+debug/client/*
 src/documents/*
 libs/*
 *.o
 *.exe
 *.a
+*.d

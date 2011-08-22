@@ -349,6 +349,7 @@ int packet::process_packet()
 		switch(packet_data[0])
 		{	//the second list
 			case 10: server_version_packet(); break;
+			case 18: return -1; break;
 			case 21: login_check(); break;
 			case 65: key_packet(); break;
 			case 90: news_packet(); break;
@@ -376,7 +377,7 @@ packet::~packet()
 
 void packet::print_packet()
 {
-	printf("Packet data\n\t");
+	printf("Packet data of unknown packet\n\t");
 	for (int i = 0; i < packet_length; i++)
 	{
 		printf("%02x ", packet_data[i]);
@@ -457,6 +458,7 @@ void packet::news_packet()
 	printf("The news is %s\n", news);
 	reset();
 	send_packet("cdd", 43, 0, 0);	//TODO: there is a minimum packet length
+	game->graphics->change_drawmode(DRAWMODE_CHARSEL);
 }
 
 void packet::key_packet()
