@@ -25,9 +25,9 @@ class client
 		void init_codepage(unsigned int arg);
 		
 		void register_char(lin_char_info *data);
+		sdl_user *graphics;
 		
 	private:
-		sdl_user *graphics;
 		config *main_config;
 		connection *server;
 		unsigned int checksum;

@@ -2,11 +2,14 @@
 #include "client.h"
 #include "config.h"
 #include "connection.h"
+#include "drawmode/draw_char_sel.h"
+#include "drawmode/draw_loading.h"
+#include "drawmode/sdl_drawmode.h"
 #include "globals.h"
 #include "lindes.h"
+#include "packet.h"
 #include "resources/music.h"
 #include "resources/pack.h"
-#include "packet.h"
 #include "resources/partial_table.h"
 #include "resources/table.h"
 #include "unsorted.h"
@@ -197,6 +200,11 @@ void client::init()
 	temp->num_sprite_pack = num_sprite_pack;
 	graphics->give_data(temp);	//pack files will not be created or delete during updates
 
+	draw_loading *load;
+	graphics->wait_ready();
+	load = (draw_loading*)graphics->get_drawmode();
+	
+	
 	server = new connection(main_config);
 	if (get_updates(server) > 0)
 	{
@@ -209,20 +217,13 @@ void client::init()
 		throw "Failed to connect to game server\n";
 	}
 	
-	music game_music;
-	if (game_music.init() != 0)
-	{
-		//music failed
-		printf("STUB InitSound()\n");
-	}
-
 	init_codepage(0);
 	init_math_tables();
 	printf("STUB Load player config\n");
 	printf("STUB Initialize screenshots\n");
 	printf("STUB Initialize emblem cache\n");
 	init_strings();
-	graphics->load_done();
+	load->load_done();
 }
 
 int client::process_packet()
@@ -245,10 +246,12 @@ void client::send_packet(const char *format, ...)
 
 void client::register_char(lin_char_info *data)
 {
-	graphics->wait_for_char_select();
+	graphics->wait_for_mode(DRAWMODE_CHARSEL);
 	int type = (data->char_type * 2) + data->gender;
 	printf("Registering character %d to %d\n", num_char_packs, type);
-	graphics->set_login_char(num_char_packs++, data);
+	draw_char_sel* temp;
+	temp = (draw_char_sel*)graphics->get_drawmode();
+	temp->set_login_char(num_char_packs++, data);
 }
 
 client::~client()
