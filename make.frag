@@ -2,14 +2,15 @@ LIN_OBJS = client.o config.o connection.o global.o lindes.o main.o packet.o \
 	sdl_master.o sdl_user.o unsorted.o
 
 SDL_WIDGET_OBJS = widgets/sdl_animate_button.o widgets/sdl_button.o \
-	widgets/sdl_char_info.o widgets/sdl_input_box.o \
-	widgets/sdl_plain_button.o widgets/sdl_widget.o
+	widgets/sdl_char_info.o widgets/sdl_check_button.o widgets/sdl_radio_button.o \
+	widgets/sdl_input_box.o widgets/sdl_plain_button.o widgets/sdl_widget.o
 
 RESOURCE_OBJS = resources/music.o resources/pack.o resources/partial_table.o \
 	resources/prepared_graphics.o resources/sdl_font.o resources/table.o
 
-DRAWMODE_OBJS = drawmode/sdl_drawmode.o drawmode/draw_login.o \
-	drawmode/draw_loading.o drawmode/draw_char_sel.o
+DRAWMODE_OBJS = drawmode/sdl_drawmode.o drawmode/draw_game.o \
+	drawmode/draw_login.o drawmode/draw_loading.o drawmode/draw_char_sel.o \
+	drawmode/draw_new_char.o
 
 ARCH_ADD=$(SDL_WIDGET_OBJS) $(RESOURCE_OBJS) $(DRAWMODE_OBJS)
 

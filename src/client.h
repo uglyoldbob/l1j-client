@@ -24,7 +24,10 @@ class client
 		void LoadDurationTable(const char *file);
 		void init_codepage(unsigned int arg);
 		
+		void create_chars(int used, int usable, int slots);
 		void register_char(lin_char_info *data);
+		int check_login_chars();
+		lin_char_info** get_login_chars();
 		sdl_user *graphics;
 		
 	private:
@@ -44,11 +47,14 @@ class client
 		table solvent;
 		table todays_tip;
 		
+		lin_char_info **login_opts;
+		int num_login_opts;	//number of elements present
+		int login_opts_stored;
+		volatile int login_opts_used;
+		
 		int acp[2];	//-1, 0xec8a0 (a function pointer to badwords compare?)
 		unsigned int serverId;	//0
 		unsigned char countryCode;
-		
-		int num_char_packs;
 
 		int get_updates(connection* server);
 		int pack_resources();

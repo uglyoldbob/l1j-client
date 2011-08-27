@@ -10,8 +10,18 @@ sdl_graphic *make_sdl_graphic(int num, int x, int y, graphics_data *packs)
 	{
 		ret = new sdl_graphic;
 		ret->img = get_img(num, packs->spritepack);
-		ret->pos = make_sdl_rect(x, y, ret->img->w, ret->img->h);
-		ret->mask = make_sdl_rect(0, 0, ret->img->w, ret->img->h);
+		if (ret->img != 0)
+		{
+			ret->pos = make_sdl_rect(x, y, ret->img->w, ret->img->h);
+			ret->mask = make_sdl_rect(0, 0, ret->img->w, ret->img->h);
+			ret->cleanup = true;
+		}
+		else
+		{
+			ret->pos = 0;
+			ret->mask = 0;
+			ret->cleanup = false;
+		}
 	}
 	else
 	{
@@ -43,6 +53,16 @@ sdl_widget::sdl_widget(int num, int x, int y, graphics_data *packs)
 		visible = true;
 	}
 	have_mouse = false;
+}
+
+void sdl_widget::set_key_focus(bool arg)
+{
+	allow_key_focus = arg;
+}
+
+bool sdl_widget::check_key_focus()
+{
+	return allow_key_focus;
 }
 
 void sdl_widget::mouse_to(SDL_MouseMotionEvent *to)
@@ -92,7 +112,8 @@ sdl_widget::~sdl_widget()
 {
 	if (one != 0)
 	{
-		delete [] (short*)one->img->pixels;
+		if (one->cleanup)
+			delete [] (short*)one->img->pixels;
 		delete one->pos;
 		delete one->mask;
 		SDL_FreeSurface(one->img);
@@ -111,9 +132,12 @@ void sdl_widget::draw(SDL_Surface *display)
 {
 	if (visible)
 	{
-		if (one->img != 0)
+		if (one != 0)
 		{
-			SDL_BlitSurface(one->img, one->mask, display, one->pos);
+			if (one->img != 0)
+			{
+				SDL_BlitSurface(one->img, one->mask, display, one->pos);
+			}
 		}
 	}
 }

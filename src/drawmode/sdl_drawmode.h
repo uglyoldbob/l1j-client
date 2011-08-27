@@ -14,7 +14,8 @@ enum drawmode
 	DRAWMODE_LOADING,
 	DRAWMODE_LOGIN,
 	DRAWMODE_CHARSEL,
-	DRAWMODE_NEWCHAR
+	DRAWMODE_NEWCHAR,
+	DRAWMODE_GAME
 };
 
 //this is a pure virtual (or abstract) class
