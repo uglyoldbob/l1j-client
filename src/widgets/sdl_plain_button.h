@@ -14,7 +14,8 @@ SDL_Rect *make_sdl_rect(int x, int y, int w, int h);
 class sdl_plain_button : public sdl_button
 {
 	public:
-		sdl_plain_button(int num, int x, int y, graphics_data *packs, void (*fnctn)(void*), void* ag);
+		sdl_plain_button(int num, int x, int y, graphics_data *packs, 
+			void (*fnctn)(void*, void*), void* ag, void* ag2);
 		virtual ~sdl_plain_button();
 		virtual void draw(SDL_Surface *display);
 				

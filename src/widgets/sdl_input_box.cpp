@@ -14,6 +14,16 @@ sdl_input_box::sdl_input_box(int num, int x, int y, graphics_data *packs)
 	field[field_length - 1] = 0;
 }
 
+sdl_input_box::~sdl_input_box()
+{
+	delete [] field;
+}
+
+const char *sdl_input_box::get_str()
+{
+	return field;
+}
+
 void sdl_input_box::draw(SDL_Surface *display)
 {	//TODO : implement password field masking (print '****' instead of 'asdf')
 	lineage_font.draw(display, one->pos->x, one->pos->y, field, 0xFFFE);

@@ -6,10 +6,25 @@ sdl_drawmode::sdl_drawmode(graphics_data *stuff, sdl_user *self)
 {
 	graphx = stuff;
 	owner = self;
+	widget_key_focus = 0;
+	pg = 0;
+	num_widgets = 0;
+	widgets = 0;
 }
 
 sdl_drawmode::~sdl_drawmode()
 {
+	if (pg != 0)
+		delete pg;
+	if (widgets != 0)
+	{
+		for (int i = 0; i < num_widgets; i++)
+		{
+			delete widgets[i];
+		}
+		delete [] widgets;
+	}
+
 }
 
 int sdl_drawmode::get_widget(int x, int y)
@@ -29,7 +44,9 @@ int sdl_drawmode::get_widget(int x, int y)
 void sdl_drawmode::draw(SDL_Surface *display)
 {
 	if (pg != 0)
+	{
 		pg->draw(display);
+	}
 	for (int i = 0; i < num_widgets; i++)
 	{
 		if (widgets[i] != 0)
@@ -46,14 +63,21 @@ void sdl_drawmode::key_press(SDL_KeyboardEvent *button)
 			switch(button->keysym.sym)
 			{
 				case SDLK_TAB:
+				{
 					//TODO: possibly change focus to a different widget
 					widgets[widget_key_focus]->cursor_off();
-					if (++widget_key_focus == num_widgets)
+					bool cont = true;
+					while (cont)
 					{
-						widget_key_focus = 0;
+						if (++widget_key_focus == num_widgets)
+						{
+							widget_key_focus = 0;
+						}
+						widgets[widget_key_focus]->cursor_on();
+						cont = !(widgets[widget_key_focus]->check_key_focus());
 					}
-					widgets[widget_key_focus]->cursor_on();
 					break;
+				}
 				case SDLK_F1: case SDLK_F2: case SDLK_F3: case SDLK_F4:
 				case SDLK_F5: case SDLK_F6: case SDLK_F7: case SDLK_F8:
 				case SDLK_F9: case SDLK_F10: case SDLK_F11: case SDLK_F12:

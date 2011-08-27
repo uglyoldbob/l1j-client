@@ -4,17 +4,13 @@
 
 #include "client.h"
 #include "drawmode/draw_char_sel.h"
+#include "drawmode/draw_game.h"
+#include "drawmode/draw_new_char.h"
 #include "drawmode/draw_loading.h"
 #include "drawmode/draw_login.h"
 #include "globals.h"
 #include "resources/sdl_font.h"
 #include "sdl_user.h"
-#include "widgets/sdl_animate_button.h"
-#include "widgets/sdl_button.h"
-#include "widgets/sdl_char_info.h"
-#include "widgets/sdl_input_box.h"
-#include "widgets/sdl_plain_button.h"
-#include "widgets/sdl_widget.h"
 
 void sdl_user::quit_client()
 {
@@ -24,7 +20,7 @@ void sdl_user::quit_client()
 void sdl_user::login()
 {
 	//TODO : use the entered usernames and passwords
-	game->send_packet("css", 12, "moron", "moron");
+	game->send_packet("css", CLIENT_LOGIN, "moron", "moron");
 }
 
 sdl_user::sdl_user(Uint32 flags)
@@ -77,11 +73,18 @@ void sdl_user::mouse_from(SDL_MouseMotionEvent *from)
 
 bool sdl_user::mouse_leave()
 {
+	bool ret_val;
+	while (SDL_mutexP(draw_mtx) == -1) {};
 	if (drawmode != 0)
 	{
-		return drawmode->mouse_leave();
+		ret_val = drawmode->mouse_leave();
 	}
-	return false;
+	else
+	{
+		ret_val = false;
+	}
+	SDL_mutexV(draw_mtx);
+	return ret_val;
 }
 
 void sdl_user::mouse_move(SDL_MouseMotionEvent *from, SDL_MouseMotionEvent *to)
@@ -172,7 +175,10 @@ void sdl_user::change_drawmode(enum drawmode chg)
 	while (SDL_mutexP(draw_mtx) == -1) {};
 	ready = false;
 	if (drawmode != 0)
+	{
 		delete drawmode;
+		drawmode = 0;
+	}
 	switch(chg)
 	{
 		case DRAWMODE_LOADING:
@@ -187,6 +193,16 @@ void sdl_user::change_drawmode(enum drawmode chg)
 			break;
 		case DRAWMODE_CHARSEL:
 			drawmode = new draw_char_sel(graphx, this);
+			draw_mode = chg;
+			ready = true;
+			break;
+		case DRAWMODE_NEWCHAR:
+			drawmode = new draw_new_char(graphx, this);
+			draw_mode = chg;
+			ready = true;
+			break;
+		case DRAWMODE_GAME:
+			drawmode = new draw_game(graphx, this);
 			draw_mode = chg;
 			ready = true;
 			break;

@@ -173,12 +173,15 @@ int client::get_updates(connection* server)
 
 client::client(sdl_user *stuff)
 {
+	login_opts = 0;
+	num_login_opts = 0;
+	login_opts_used = 0;
+	login_opts_stored = 0;
 	main_config = 0;
 	graphics = stuff;
 	server = 0;
 	checksum = 0xdeadbeef;
 	num_sprite_pack = 17;
-	num_char_packs = 0;
 }
 
 void client::init()
@@ -220,7 +223,6 @@ void client::init()
 	init_codepage(0);
 	init_math_tables();
 	printf("STUB Load player config\n");
-	printf("STUB Initialize screenshots\n");
 	printf("STUB Initialize emblem cache\n");
 	init_strings();
 	load->load_done();
@@ -244,14 +246,59 @@ void client::send_packet(const char *format, ...)
 	va_end(temp_args);
 }
 
-void client::register_char(lin_char_info *data)
+int client::check_login_chars()
 {
-	graphics->wait_for_mode(DRAWMODE_CHARSEL);
-	int type = (data->char_type * 2) + data->gender;
-	printf("Registering character %d to %d\n", num_char_packs, type);
-	draw_char_sel* temp;
-	temp = (draw_char_sel*)graphics->get_drawmode();
-	temp->set_login_char(num_char_packs++, data);
+	return login_opts_stored;
+}
+
+void client::create_chars(int used, int usable, int slots)
+{	//creates the array and makes them all blank
+	if (num_login_opts == 0)
+	{
+		num_login_opts = usable;	//the unusable slots will not be modified
+		login_opts_used = used;
+		login_opts = new lin_char_info*[slots];
+		for (int i = 0; i < slots; i++)
+		{
+			login_opts[i] = 0;
+		}
+		for (int i = num_login_opts; i < slots; i++)
+		{	
+			//possibly initialize them so they will display as not usable
+			printf("STUB: Slot %d is not usable\n", i+1);
+		}
+	}
+}
+
+lin_char_info** client::get_login_chars()
+{	//retrieves the entire array
+	return login_opts;
+}
+
+void client::register_char(lin_char_info *data)
+{	//puts character data into the array
+	if (num_login_opts > 0)
+	{
+		int i;
+		for (i = 0; i <= num_login_opts; i++)
+		{
+			if (login_opts[i] == 0)
+				break;
+		}
+		if (i < num_login_opts)
+		{
+			printf("Storing character data at %d %d\n", i, login_opts_stored+1);
+			login_opts[i] = data;
+			login_opts_stored++;
+		}
+	}
+	if (login_opts_stored == login_opts_used)
+	{
+		draw_char_sel *bob;
+		bob = (draw_char_sel *)graphics->get_drawmode();
+		graphics->wait_for_mode(DRAWMODE_CHARSEL);
+		bob->get_login_chars();
+	}
 }
 
 client::~client()
@@ -269,6 +316,15 @@ client::~client()
 		delete spritepack[i];
 	}
 	delete [] spritepack;
+	
+	if (num_login_opts > 0)
+	{
+		for (int i = 0; i < num_login_opts; i++)
+		{
+			delete login_opts[i];
+		}
+		delete [] login_opts;
+	}
 }
 
 int run_client(void *moron)
@@ -280,14 +336,14 @@ int run_client(void *moron)
 	try
 	{
 		game.init();
+		while (game.process_packet() == 0)
+		{
+		}
 	}
 	catch (const char *error)
 	{
 		printf("FATAL ERROR: %s", error);
 	}
 	
-	while (game.process_packet() == 0)
-	{
-	}
 	return 0;
 }

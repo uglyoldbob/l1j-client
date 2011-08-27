@@ -40,11 +40,11 @@ class sdl_user
 		music game_music;
 		
 		friend class sdl_master;
+		client *game;
 	private:
 		bool ready;
 		volatile enum drawmode draw_mode;
-				
-		client *game;
+
 		graphics_data *graphx;
 		SDL_Surface *display;
 		

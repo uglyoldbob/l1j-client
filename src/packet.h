@@ -43,11 +43,13 @@ class packet
 		
 		//packet handlers
 		void key_packet();
+		void delete_char_packet();
 		void server_version_packet();
 		void news_packet();
 		void num_char_packet();
 		void login_char_packet();
 		void login_check();
+		void char_create_result();
 };
 
 #endif

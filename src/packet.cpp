@@ -2,6 +2,8 @@
 #include <string.h>
 
 #include "client.h"
+#include "drawmode/draw_char_sel.h"
+#include "drawmode/draw_new_char.h"
 #include "globals.h"
 #include "packet.h"
 #include "unsorted.h"
@@ -337,7 +339,7 @@ int packet::process_packet()
 {
 	if (key_initialized == 0)
 	{
-		if (packet_data[0] != 0x41)
+		if (packet_data[0] != SERVER_KEY)
 		{
 			printf("This server is not compatible with this client\n");
 			return -1;
@@ -348,13 +350,15 @@ int packet::process_packet()
 	{
 		switch(packet_data[0])
 		{	//the second list
-			case 10: server_version_packet(); break;
-			case 18: return -1; break;
-			case 21: login_check(); break;
-			case 65: key_packet(); break;
-			case 90: news_packet(); break;
-			case 99: login_char_packet(); break;
-			case 113: num_char_packet(); break;
+			case SERVER_VERSIONS: server_version_packet(); break;
+			case SERVER_CHAR_DELETE: delete_char_packet(); break;
+			case SERVER_DISCONNECT: return -1; break;
+			case SERVER_LOGIN: login_check(); break;
+			case SERVER_KEY: key_packet(); break;
+			case SERVER_NEWS: news_packet(); break;
+			case SERVER_LOGIN_CHAR: login_char_packet(); break;
+			case SERVER_CREATE_STAT: char_create_result();	break;
+			case SERVER_NUM_CHARS: num_char_packet(); break;
 			default: print_packet(); break;
 		}
 	}
@@ -389,12 +393,43 @@ void packet::print_packet()
 	printf("\n");
 }
 
+void packet::delete_char_packet()
+{
+	char result;
+	disassemble(&packet_data[1], "c", &result);
+	
+	draw_char_sel* bob;
+	bob = (draw_char_sel*)game->graphics->get_drawmode();
+	if (result == 5)
+	{	//delete right now
+		bob->do_delete();
+	}
+	else if (result == 0x51)
+	{	//char is to be deleted in the future
+	}
+	
+}
+
+void packet::char_create_result()
+{
+	char result;
+	disassemble(&packet_data[1], "c", &result);
+	printf("The result from character creation is %d\n", result);
+	lin_char_info *temp;
+	draw_new_char* bob;
+	bob = (draw_new_char*)game->graphics->get_drawmode();
+	temp = bob->get_char();
+	game->register_char(temp);
+	game->graphics->change_drawmode(DRAWMODE_CHARSEL);
+}
+
 void packet::num_char_packet()
 {
 	unsigned char num_characters;
 	unsigned char max_characters;
 	disassemble(&packet_data[1], "cc", &num_characters, &max_characters);
 	
+	game->create_chars(num_characters, max_characters, 8);
 	printf("You have %d of %d characters\n", num_characters, max_characters);
 }
 
@@ -457,7 +492,7 @@ void packet::news_packet()
 	//TODO Create class for displaying messages
 	printf("The news is %s\n", news);
 	reset();
-	send_packet("cdd", 43, 0, 0);	//TODO: there is a minimum packet length
+	send_packet("cdd", CLIENT_CLICK, 0, 0);	//TODO: there is a minimum packet length
 	game->graphics->change_drawmode(DRAWMODE_CHARSEL);
 }
 
@@ -468,7 +503,7 @@ void packet::key_packet()
 	create_key(seed);
 	reset();
 	//loadFile("VersionInfo", &r1_40);
-	send_packet("chdcd", 0x47, 0x33, -1, 32, 101101);
+	send_packet("chdcd", CLIENT_VERSION, 0x33, -1, 32, 101101);
 	//TODO : put actual defined values here
 		//acp, VersionInfo, buildNumber
 		//-1, 32, 101101

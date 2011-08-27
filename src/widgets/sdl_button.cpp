@@ -1,10 +1,12 @@
 #include "sdl_button.h"
 
-sdl_button::sdl_button(int num, int x, int y, graphics_data *packs, void (*fnctn)(void*), void *ag)
+sdl_button::sdl_button(int num, int x, int y, graphics_data *packs, 
+	void (*fnctn)(void*, void*), void *ag, void*ag2)
 	: sdl_widget(num, x, y, packs)
 {
 	click_ptr = fnctn;
-	arg = ag;
+	arg1 = ag;
+	arg2 = ag2;
 }
 
 sdl_button::~sdl_button()
@@ -13,7 +15,8 @@ sdl_button::~sdl_button()
 
 void sdl_button::cursor_on()
 {
-	key_focus = true;
+	if (allow_key_focus)
+		key_focus = true;
 }
 
 void sdl_button::cursor_off()
@@ -36,8 +39,9 @@ void sdl_button::mouse_click(SDL_MouseButtonEvent *here)
 		{
 			if (click_ptr != 0)
 			{
-				(*click_ptr)(arg);
+				(*click_ptr)(arg1, arg2);
 			}
+			pressed = false;
 		}
 	}
 }

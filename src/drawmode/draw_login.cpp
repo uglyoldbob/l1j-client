@@ -6,7 +6,7 @@
 #include "widgets/sdl_animate_button.h"
 #include "widgets/sdl_input_box.h"
 
-void login_function(void *arg)
+void login_function(void *arg, void*arg2)
 {
 	draw_login *bob = (draw_login*)arg;
 	bob->owner->login();
@@ -14,7 +14,7 @@ void login_function(void *arg)
 	//clear username and password information
 }
 
-void quit_the_client(void *arg)
+void quit_the_client(void *arg, void* arg2)
 {
 	draw_login *bob = (draw_login*)arg;
 	bob->owner->quit_client();
@@ -24,6 +24,7 @@ void quit_the_client(void *arg)
 draw_login::draw_login(graphics_data *stuff, sdl_user *self)
 	: sdl_drawmode(stuff, self)
 {	
+	//273 - 300 is the lantern animation (img)
 	owner->game_music.change_music("sound/music0.mp3");
 	pg = new prepared_graphics;
 	pg->num_pg = 1;
@@ -40,23 +41,25 @@ draw_login::draw_login(graphics_data *stuff, sdl_user *self)
 	
 	widgets[0] = new sdl_widget(59, 0x1a9, 0x138, graphx);
 	widgets[1] = new sdl_input_box(12, 0x1fb, 0x14a, graphx);
+	widgets[1]->set_key_focus(true);
 	widgets[1]->cursor_on();
 	widget_key_focus = 1;
 	widgets[2] = new sdl_input_box(13, 0x1fb, 0x160, graphx);
-	widgets[3] = new sdl_plain_button(53, 0x213, 0x183, graphx, &login_function, this);
-	widgets[4] = new sdl_plain_button(65, 0x213, 0x195, graphx, 0, 0);
-	widgets[5] = new sdl_plain_button(55, 0x213, 0x1a8, graphx, 0, 0);
-	widgets[6] = new sdl_plain_button(57, 0x213, 0x1c2, graphx, &quit_the_client, this);
+	widgets[2]->set_key_focus(true);
+	widgets[3] = new sdl_plain_button(53, 0x213, 0x183, graphx, &login_function, this, 0);
+	widgets[3]->set_key_focus(true);
+	widgets[4] = new sdl_plain_button(65, 0x213, 0x195, graphx, 0, 0, 0);
+	widgets[4]->set_key_focus(true);
+	widgets[5] = new sdl_plain_button(55, 0x213, 0x1a8, graphx, 0, 0, 0);
+	widgets[5]->set_key_focus(true);
+	widgets[6] = new sdl_plain_button(57, 0x213, 0x1c2, graphx, &quit_the_client, this, 0);
+	widgets[6]->set_key_focus(true);
 //	widgets[7] = new sdl_widget(814, 0x1a, 0x3b, graphx);
 		//type 1, null("intro"), px=0xcf, py=0x11a
 }
 
 draw_login::~draw_login()
 {
-	if (pg != 0)
-		delete pg;
-	if (widgets != 0)
-		delete [] widgets;
 }
 
 bool draw_login::mouse_leave()

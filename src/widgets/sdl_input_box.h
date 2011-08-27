@@ -9,10 +9,13 @@ class sdl_input_box : public sdl_widget
 {
 	public:
 		sdl_input_box(int num, int x, int y, graphics_data *packs);
+		virtual ~sdl_input_box();
 		virtual void draw(SDL_Surface *display);
 		
 		virtual void cursor_on();
 		virtual void cursor_off();
+		
+		const char *get_str();
 	protected:
 		bool have_cursor;
 		bool draw_cursor;

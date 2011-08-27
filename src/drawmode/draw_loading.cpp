@@ -70,10 +70,6 @@ void draw_loading::load_done()
 
 draw_loading::~draw_loading()
 {
-	if (pg != 0)
-		delete pg;
-	if (widgets != 0)
-		delete [] widgets;
 }
 
 bool draw_loading::mouse_leave()
