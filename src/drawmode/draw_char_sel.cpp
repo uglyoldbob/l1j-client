@@ -165,14 +165,15 @@ void draw_char_sel::select_char()
 	{
 		sdl_animate_button **chars;
 		chars = (sdl_animate_button**)&widgets[0];
+		lin_char_info *bob;
 		if (chars[cur_char_slot]->char_info == 0)
 		{
 			owner->change_drawmode(DRAWMODE_NEWCHAR);
 		}
 		else
 		{
-			printf("STUB Log in with %s\n", chars[cur_char_slot]->char_info->name);
-			owner->change_drawmode(DRAWMODE_GAME);
+			bob = chars[cur_char_slot]->get_info();			
+			owner->game->send_packet("csdd", CLIENT_USE_CHAR, bob->name, 0, 0);
 		}
 	}
 }
@@ -181,15 +182,10 @@ void draw_char_sel::get_login_chars()
 {
 	while (SDL_mutexP(draw_mtx) == -1) {};
 	lin_char_info **data = owner->game->get_login_chars();
-	printf("Grabbed character data %d\n", (int)data);
 	sdl_animate_button **chars;
 	chars = (sdl_animate_button**)&widgets[0];
 	for (int i = 0; i < 4; i++)
 	{
-		if (data[i + (page_num*4)] != 0)
-		{
-			printf("Registering character %s\n", data[i + (page_num*4)]->name);
-		}
 		chars[i]->set_info(data[i + (page_num*4)]);
 	}
 	ready = true;

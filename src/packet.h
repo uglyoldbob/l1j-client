@@ -43,6 +43,9 @@ class packet
 		
 		//packet handlers
 		void key_packet();
+		void char_status();
+		void set_map();
+		void enter_game();
 		void delete_char_packet();
 		void server_version_packet();
 		void news_packet();

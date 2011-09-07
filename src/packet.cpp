@@ -346,29 +346,21 @@ int packet::process_packet()
 		}
 	}
 
-	if (mode == 0)
-	{
-		switch(packet_data[0])
-		{	//the second list
-			case SERVER_VERSIONS: server_version_packet(); break;
-			case SERVER_CHAR_DELETE: delete_char_packet(); break;
-			case SERVER_DISCONNECT: return -1; break;
-			case SERVER_LOGIN: login_check(); break;
-			case SERVER_KEY: key_packet(); break;
-			case SERVER_NEWS: news_packet(); break;
-			case SERVER_LOGIN_CHAR: login_char_packet(); break;
-			case SERVER_CREATE_STAT: char_create_result();	break;
-			case SERVER_NUM_CHARS: num_char_packet(); break;
-			default: print_packet(); break;
-		}
-	}
-	else
-	{
-		switch(packet_data[0])
-		{
-			default:
-				break;
-		}
+	switch(packet_data[0])
+	{	//the second list
+		case SERVER_VERSIONS: server_version_packet(); break;
+		case SERVER_CHAR_DELETE: delete_char_packet(); break;
+		case SERVER_DISCONNECT: return -1; break;
+		case SERVER_CHAR_STAT: char_status(); break;
+		case SERVER_ENTERGAME: enter_game(); break;
+		case SERVER_LOGIN: login_check(); break;
+		case SERVER_KEY: key_packet(); break;
+		case SERVER_MAP: set_map(); break;
+		case SERVER_NEWS: news_packet(); break;
+		case SERVER_LOGIN_CHAR: login_char_packet(); break;
+		case SERVER_CREATE_STAT: char_create_result();	break;
+		case SERVER_NUM_CHARS: num_char_packet(); break;
+		default: print_packet(); break;
 	}
 	reset();
 	return 0;
@@ -384,13 +376,52 @@ void packet::print_packet()
 	printf("Packet data of unknown packet\n\t");
 	for (int i = 0; i < packet_length; i++)
 	{
-		printf("%02x ", packet_data[i]);
+		printf("%02x ", packet_data[i] & 0xff);
 		if ((i % 8) == 7)
 		{
 			printf("\n\t");
 		}
 	}
 	printf("\n");
+}
+
+void packet::set_map()
+{
+	short mapid;
+	char underwater;
+	disassemble(&packet_data[1], "hc", &mapid, &underwater);
+	printf("The map is %d and underwater:%d\n", mapid, underwater);
+}
+
+void packet::char_status()
+{
+	int id;
+	char level;
+	unsigned int exp;
+	char str, intl, wis, dex, con, cha;
+	short cur_hp, max_hp, cur_mp, max_mp;
+	char ac;
+	int time;
+	char food, weight, alignment, fire_res, water_res, wind_res, earth_res;
+	disassemble(&packet_data[1], "dcdcccccchhhhcdcchcccc", &id, &level, &exp, 
+		&str, &intl, &wis, &dex, &con, &cha, &cur_hp, &max_hp, &cur_mp, &max_mp,
+		&ac, &time, &food, &weight, &alignment, &fire_res, &water_res, &wind_res,
+		&earth_res);
+	printf("Character data: ID %d\n", id);
+	printf("\tLevel : %d\tExp %d\n", level, exp);
+	printf("\tSTR %2d CON %2d DEX %2d WIS %2d INT %2d CHA %2d\n", str, con, dex,
+		wis, intl, cha);
+	printf("\tHP %d/%d\tMP %d/%d\n", cur_hp, max_hp, cur_mp, max_mp);
+	printf("\tAC %d\tTIME %d\tFood %d\tWeight %d\tAlignment %d\n", ac, time, 
+		food, weight, alignment);
+}
+
+void packet::enter_game()
+{
+	//send 9?
+	send_packet("cdd", CLIENT_ALIVE, 0, 0);
+	send_packet("ccdd", CLIENT_INITGAME, 0, 0, 0);
+	game->graphics->change_drawmode(DRAWMODE_GAME);
 }
 
 void packet::delete_char_packet()
@@ -430,7 +461,6 @@ void packet::num_char_packet()
 	disassemble(&packet_data[1], "cc", &num_characters, &max_characters);
 	
 	game->create_chars(num_characters, max_characters, 8);
-	printf("You have %d of %d characters\n", num_characters, max_characters);
 }
 
 void packet::login_char_packet()
@@ -451,14 +481,6 @@ void packet::login_char_packet()
 		&alignment,
 		&hp, &mp, &ac, &level,
 		&str, &dex, &con, &wis, &cha, &intl);
-	printf("Character data:\n\tName:%s of pledge %s", name, pledge);
-	printf("\n\tCharacter type:%d", type);
-	printf("\n\tGender: %d", gender);
-	printf("\n\tAlignment: %d", alignment);
-	printf("\n\tHP: %d MP: %d AC: %d", hp, mp, ac);
-	printf("\n\tLevel: %d", level);
-	printf("\n\tSTR:%3d\tDEX:%3d\tCON:%3d\n\tWIS:%3d\tCHA:%3d\tINT:%3d", str, dex, con, wis, cha, intl);
-	printf("\n");
 	
 	lin_char_info *temp;
 	temp = new lin_char_info;
@@ -490,7 +512,7 @@ void packet::news_packet()
 	char *news;
 	disassemble(&packet_data[1], "s", &news);
 	//TODO Create class for displaying messages
-	printf("The news is %s\n", news);
+	printf("STUB The news is %s\n", news);
 	reset();
 	send_packet("cdd", CLIENT_CLICK, 0, 0);	//TODO: there is a minimum packet length
 	game->graphics->change_drawmode(DRAWMODE_CHARSEL);

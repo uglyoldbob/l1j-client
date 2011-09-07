@@ -15,8 +15,15 @@ enum drawmode
 	DRAWMODE_LOGIN,
 	DRAWMODE_CHARSEL,
 	DRAWMODE_NEWCHAR,
-	DRAWMODE_GAME
+	DRAWMODE_GAME,
+	DRAWMODE_ADMIN_MAIN,
+	DRAWMODE_MAINT_IMG,
+	DRAWMODE_MAINT_PNG,
+	DRAWMODE_MAINT_TIL,
+	DRAWMODE_MAINT_MAP
 };
+
+void change_mode(void *a, void* b);
 
 //this is a pure virtual (or abstract) class
 class sdl_drawmode

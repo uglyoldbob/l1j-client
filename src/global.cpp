@@ -194,6 +194,8 @@ SDL_Surface *get_img(int num, pack **source)
 	
 			image = SDL_CreateRGBSurfaceFrom(data, width, height, 16, width*2, 
 				0x7C00, 0x03E0, 0x001F, 0);
+				
+			SDL_SetColorKey(image, SDL_SRCCOLORKEY, moron2);
 		}
 	}
 	return image;

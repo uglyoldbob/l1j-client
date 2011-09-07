@@ -1,6 +1,6 @@
 EXTRA_FLAGS=-s -O3
 
-all: Lineage package
+all: Lineage package Admin
 
 -include ../make.frag
 	
@@ -12,6 +12,7 @@ release.tar.gz: $(PACKAGE_FILES)
 		mkdir client;\
 	fi
 	@echo "Copying files to package folder"
+	rm -f ./client/std* ./client/*.exe
 	cp -f $(PACKAGE_FILES) ./client/
 	rm -f ./client/std*
 	tar -zcvf release.tar.gz client
