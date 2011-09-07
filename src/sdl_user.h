@@ -5,9 +5,11 @@
 
 class client;
 #include "globals.h"
-#include "resources/pack.h"
-#include "resources/prepared_graphics.h"
-#include "widgets/sdl_widget.h"
+#include "drawmode/sdl_drawmode.h"
+#include "resources/music.h"
+class pack;
+class prepared_graphics;
+class sdl_widget;
 
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
@@ -30,40 +32,29 @@ class sdl_user
 		void give_data(graphics_data *abc);
 		
 		void set_login_char(int num, lin_char_info *data);
-		void wait_for_char_select();
-		void set_load_amount(int size);
-		void add_loaded(int size);
-		void load_done();
+		void wait_for_mode(enum drawmode wait);
+		sdl_drawmode *get_drawmode();
+		void wait_ready();
+		void change_drawmode(enum drawmode chg);
 		volatile bool done;	//used to terminate the client
+		music game_music;
 		
 		friend class sdl_master;
+		client *game;
 	private:
 		bool ready;
-		volatile int draw_mode;
-		int load_progress;
-		int load_amount;
-		
-		client *game;
+		volatile enum drawmode draw_mode;
+
 		graphics_data *graphx;
 		SDL_Surface *display;
 		
+		sdl_drawmode *drawmode;
+		
 		SDL_mutex *draw_mtx;
-		prepared_graphics *pg;
-		sdl_widget **widgets;
-		int num_widgets;
-		int widget_key_focus;
 		
 		void draw();
 		void prepare_char_sel();
-		void prepare_load1();
-		void draw_load1();
-		void prepare_login();
-		void draw_login();
 		
-		void update_load();
-
-		int get_widget(int x, int y);	//returns the index of the widget for this point (-1 for none)
-				
 		//for tracking mouse movements 
 		void mouse_to(SDL_MouseMotionEvent *to);
 		void mouse_from(SDL_MouseMotionEvent *from);

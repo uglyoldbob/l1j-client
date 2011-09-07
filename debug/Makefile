@@ -1,30 +1,10 @@
-LIN_OBJS = client.o config.o connection.o global.o lindes.o main.o packet.o \
-	sdl_master.o sdl_user.o unsorted.o
-
-SDL_WIDGET_OBJS = widgets/sdl_animate_button.o widgets/sdl_button.o \
-	widgets/sdl_char_info.o widgets/sdl_input_box.o \
-	widgets/sdl_plain_button.o widgets/sdl_widget.o
-
-RESOURCE_OBJS = resources/music.o resources/pack.o resources/partial_table.o \
-	resources/prepared_graphics.o resources/sdl_font.o resources/table.o
-
-CC=g++
-
-VPATH = ../src
-
-TEST=-g
-CFLAGS =-c -Wall -I../src -I/usr/include/SDL
-INCLUDE = -I../src/
-OUTPUT = ../src/
-LIB_LOC = ../libs/
-LFLAGS=-lSDL -lSDL_mixer -lSDL_image
-LDADD=sdl_widgets.a lin_res.a
+EXTRA_FLAGS=-g
 	
-PACKAGE_FILES = Lineage $(OUTPUT)run.bat $(OUTPUT)Lineage.ini $(OUTPUT)README.txt
+PACKAGE_FILES += $(OUTPUT)run.bat
 
-.PHONY : all clean
+all: Lineage package Admin
 
-all: Lineage package
+-include ../make.frag
 
 package: $(PACKAGE_FILES)
 	@if [ ! -d client ]; then\
@@ -34,28 +14,3 @@ package: $(PACKAGE_FILES)
 	@echo "Copying files to package folder"
 	cp -f $(PACKAGE_FILES) ./client/
 	touch ./client/DEBUG_DO_NOT_RELEASE.txt
-	
-clean:
-	rm -rf *.o *.a *.exe
-	
-Lineage: $(LIN_OBJS) sdl_widgets.a lin_res.a
-	$(CC) $(TEST) $(LFLAGS) $(LIN_OBJS) $(LDADD) -o Lineage
-	
-sdl_widgets.a: widgets/sdl_widgets.a
-	cp -f widgets/sdl_widgets.a sdl_widgets.a
-
-widgets/sdl_widgets.a: $(SDL_WIDGET_OBJS)
-	ar rvs widgets/sdl_widgets.a $(SDL_WIDGET_OBJS)
-	
-lin_res.a: resources/lin_res.a
-	cp -f resources/lin_res.a lin_res.a
-
-resources/lin_res.a: $(RESOURCE_OBJS)
-	ar rvs resources/lin_res.a $(RESOURCE_OBJS)
-
-.cpp.o:
-	@if [ ! -d $(@D) ]; then\
-		echo mkdir $(@D);\
-		mkdir $(@D);\
-	fi
-	$(CC) $(TEST) $(CFLAGS) $(INCLUDE)$(@D) $< -o $@

@@ -15,7 +15,8 @@ void delete_sdl_graphic_png(sdl_graphic *stuff);
 class sdl_animate_button : public sdl_plain_button
 {
 	public:
-		sdl_animate_button(int num, int x, int y, graphics_data *packs, void (*fnctn)(void*), void* ag);
+		sdl_animate_button(int num, int x, int y, graphics_data *packs, 
+			void (*fnctn)(void*, void*), void* ag, void* ag2);
 		virtual ~sdl_animate_button();
 		virtual void draw(SDL_Surface *display);
 		
@@ -24,11 +25,12 @@ class sdl_animate_button : public sdl_plain_button
 		void set_info(lin_char_info *data);
 		lin_char_info *get_info();
 		
+		lin_char_info *char_info;
+		
 	protected:
 		int x;
 		int y;
 		bool animating;
-		lin_char_info *char_info;
 		sdl_graphic **animates;
 		int num_anim;
 		int first_anim;
@@ -38,6 +40,7 @@ class sdl_animate_button : public sdl_plain_button
 		int cur_frame;
 		Uint32 change_time;
 		virtual void key_press(SDL_KeyboardEvent *button);
+		void delete_animation();
 };
 
 #endif

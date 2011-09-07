@@ -16,5 +16,7 @@ int main(int argc, char* argv[])
 	graphics.create_client();
 	graphics.process_events();
 	
+	printf("Exiting now\n");
+
 	return 0;
 }
