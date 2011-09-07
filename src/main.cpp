@@ -17,5 +17,6 @@ int main(int argc, char* argv[])
 	graphics.process_events();
 	
 	SDL_Quit();
+	printf("Exiting now\n");
 	return 0;
 }

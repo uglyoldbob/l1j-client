@@ -8,11 +8,14 @@ class music
 {
 	public:
 		music();
-		int init();
+		~music();
+		bool init();
 		
-		void start_music(const char *name);
+		void change_music(const char *name);
 	private:
 		Mix_Music *cur_music;
+		char *cur_music_name;
+		static bool initialized;
 };
 
 #endif

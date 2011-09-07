@@ -14,12 +14,75 @@ extern sdl_font lineage_font;
 
 //these are used so that the correct byte order is used
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN
+#undef DO_SWAP
 #define SWAP16(X)    (X)
 #define SWAP32(X)    (X)
 #else
+#define DO_SWAP
 #define SWAP16(X)    SDL_Swap16(X)
 #define SWAP32(X)    SDL_Swap32(X)
 #endif
+
+enum server_packet_types
+{	//the numbers will eventually be deleted
+	SERVER_VERSIONS = 10,
+	SERVER_DISCONNECT = 18,
+	SERVER_LOGIN = 21,
+	SERVER_CHAR_DELETE = 33,
+	SERVER_ENTERGAME = 63,
+	SERVER_KEY = 65,
+	SERVER_MAP = 76,
+	SERVER_CHAR_STAT = 69,
+	SERVER_NEWS = 90,
+	SERVER_LOGIN_CHAR = 99,
+	SERVER_CREATE_STAT = 106,
+	SERVER_NUM_CHARS = 113,
+	SERVER_LAST
+};
+
+#if SERVER_LAST > 256
+#error "Too many server packet types"
+#endif
+
+enum client_packet_types
+{	//the numbers will eventually be deleted
+	CLIENT_LOGIN = 12,
+	CLIENT_DELETE_CHAR = 34,
+	CLIENT_CLICK = 43,
+	CLIENT_ALIVE = 57,
+	CLIENT_VERSION = 71,
+	CLIENT_CREATE_CHAR,
+	CLIENT_USE_CHAR = 83,
+	CLIENT_INITGAME = 92,
+	CLIENT_MYSTERY = 96,	//todo	reply to 109 "c" (bad)
+	CLIENT_STATUS_REPLY,	//todo reply to status packet "ccc" (bad)
+	CLIENT_LAST
+};
+
+#if CLIENT_LAST > 256
+#error "Too many client packet types"
+#endif
+
+enum lin_char_type
+{
+	CLASS_ROYAL,
+	CLASS_KNIGHT,
+	CLASS_ELF,
+	CLASS_WIZARD,
+	CLASS_DARKELF,
+	CLASS_DRAGONKNIGHT,
+	CLASS_ILLUSIONIST
+};
+
+enum lin_stat_type
+{
+	STAT_STR,
+	STAT_CON,
+	STAT_DEX,
+	STAT_WIS,
+	STAT_CHA,
+	STAT_INT
+};
 
 struct lin_char_info
 {
@@ -38,13 +101,20 @@ struct lin_char_info
 	char wis;
 	char cha;
 	char intl;
+	char max_str;
+	char max_dex;
+	char max_con;
+	char max_wis;
+	char max_cha;
+	char max_int;
 };
 
 struct sdl_graphic
-{
+{	//TODO : convert this to a class, with other classes inheriting this
 	SDL_Surface *img;
 	SDL_Rect *pos;
 	SDL_Rect *mask;
+	bool cleanup;
 };
 
 struct graphics_data
@@ -54,6 +124,7 @@ struct graphics_data
 	int num_sprite_pack;
 };
 
+lin_char_info *make_lin_char_info(int char_type, int gender);
 SDL_Surface *get_image(const char *name, pack *source);
 SDL_Surface *get_png_image(int num, pack **source);
 SDL_Surface *get_img(int num, pack **source);	//loads raw image data

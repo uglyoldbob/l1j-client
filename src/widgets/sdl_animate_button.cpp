@@ -11,8 +11,10 @@ sdl_graphic *make_sdl_graphic_png(int num, int x, int y, graphics_data *packs)
 		ret->img = get_png_image(num, packs->spritepack);
 		if (ret->img != 0)
 		{
+			SDL_SetColorKey(ret->img, SDL_SRCCOLORKEY, SDL_MapRGB(ret->img->format, 0, 0, 0));
 			ret->pos = make_sdl_rect(x, y, ret->img->w, ret->img->h);
 			ret->mask = make_sdl_rect(0, 0, ret->img->w, ret->img->h);
+			ret->cleanup = false;
 		}
 		else
 		{
@@ -42,8 +44,9 @@ void delete_sdl_graphic_png(sdl_graphic *stuff)
 	}
 }
 
-sdl_animate_button::sdl_animate_button(int num, int x, int y, graphics_data *packs, void (*fnctn)(void*), void *ag)
-	: sdl_plain_button(num, x, y, packs, fnctn, ag)
+sdl_animate_button::sdl_animate_button(int num, int x, int y, graphics_data *packs, 
+	void (*fnctn)(void*, void*), void *ag, void* ag2)
+	: sdl_plain_button(-1, x, y, packs, fnctn, ag, ag2)
 {
 	blabla = packs;
 	animating = false;	
@@ -52,6 +55,7 @@ sdl_animate_button::sdl_animate_button(int num, int x, int y, graphics_data *pac
 	char_info = 0;
 	
 	num_anim = 0;
+	cur_frame = 0;
 		
 	set_info(0);
 }
@@ -63,18 +67,12 @@ lin_char_info *sdl_animate_button::get_info()
 
 void sdl_animate_button::set_info(lin_char_info *data)
 {	//females get the odd numbers, type is multiplied by 2 and gender is added
-	char_info = data;	
+	char_info = data;
 
 	delete_sdl_graphic_png(one);
 	delete_sdl_graphic_png(two);
-	if (num_anim > 0)
-	{
-		for (int i = 0; i < num_anim; i++)
-		{
-			delete_sdl_graphic_png(animates[i]);
-		}
-		delete animates;
-	}
+	delete_animation();
+	cur_frame = 0;
 	
 	int temp;
 	if (data != 0)
@@ -85,7 +83,7 @@ void sdl_animate_button::set_info(lin_char_info *data)
 	{
 		temp = -1;
 	}
-
+	visible = true;
 	switch(temp)
 	{
 		case 0:	//male royal
@@ -273,12 +271,22 @@ void sdl_animate_button::key_press(SDL_KeyboardEvent *button)
 {
 }
 
+void sdl_animate_button::delete_animation()
+{
+	if (num_anim > 0)
+	{
+		for (int i = 0; i < num_anim; i++)
+		{
+			if ((animates[i] != 0) && (animates[i] != (sdl_graphic*)-1))
+			{
+				delete_sdl_graphic_png(animates[i]);
+			}
+		}
+		delete animates;
+	}
+}
+
 sdl_animate_button::~sdl_animate_button()
 {
-	if (char_info != 0)
-	{
-		delete [] char_info->name;
-		delete [] char_info->pledge;
-		delete char_info;
-	}
+	delete_animation();
 }
