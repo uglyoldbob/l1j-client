@@ -21,7 +21,7 @@ struct unknown_struct
 struct unknown4_struct
 {
 	short num_bla1;
-	bla1 *unknown_struct;
+	unknown_struct *bla1;
 };
 
 struct lin_map_data

@@ -11,11 +11,7 @@ void change_mode(void *a, void* b)
 {
 	sdl_user *owner;
 	owner = (sdl_user*)a;
-	enum drawmode temp;
-	int temp2;
-	temp2 = reinterpret_cast<int>(b);
-	temp = (drawmode)temp2;
-	owner->change_drawmode(temp);
+	owner->change_drawmode(*(drawmode*)b);
 }
 
 draw_admin_main::draw_admin_main(graphics_data *stuff, sdl_user *self)

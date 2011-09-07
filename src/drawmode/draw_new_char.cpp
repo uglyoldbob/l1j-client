@@ -15,36 +15,28 @@ void dnc_init_new_char(void *arg, void*arg2)
 {
 	draw_new_char* bob;
 	bob = (draw_new_char*)arg;
-	int temp;
-	temp = int(arg2);
-	bob->init_new_char(temp);
+	bob->init_new_char(*(int*)arg2);
 }
 
 void dnc_set_gender(void *arg, void*arg2)
 {
 	draw_new_char* bob;
 	bob = (draw_new_char*)arg;
-	int temp;
-	temp = (int)arg2;
-	bob->set_gender(temp);
+	bob->set_gender(*(int*)arg2);
 }
 
 void dnc_stat_up(void* arg1, void* arg2)
 {
 	draw_new_char* bob;
 	bob = (draw_new_char*)arg1;
-	int temp;
-	temp = (int)arg2;
-	bob->stat_up(temp);
+	bob->stat_up(*(int*)arg2);
 }
 
 void dnc_stat_down(void* arg1, void* arg2)
 {
 	draw_new_char* bob;
 	bob = (draw_new_char*)arg1;
-	int temp;
-	temp = (int)arg2;
-	bob->stat_down(temp);
+	bob->stat_down(*(int*)arg2);
 }
 
 void dnc_cancel(void *arg, void *arg2)
