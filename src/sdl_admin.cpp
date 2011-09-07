@@ -3,11 +3,12 @@
 #include <time.h>
 
 #include "client.h"
-#include "drawmode/draw_char_sel.h"
-#include "drawmode/draw_game.h"
-#include "drawmode/draw_new_char.h"
+#include "drawmode/draw_admin_main.h"
 #include "drawmode/draw_loading.h"
 #include "drawmode/draw_login.h"
+#include "drawmode/draw_maint_img.h"
+#include "drawmode/draw_maint_map.h"
+#include "drawmode/draw_maint_til.h"
 #include "globals.h"
 #include "resources/sdl_font.h"
 #include "sdl_user.h"
@@ -19,8 +20,6 @@ void sdl_user::quit_client()
 
 void sdl_user::login()
 {
-	//TODO : use the entered usernames and passwords
-	game->send_packet("css", CLIENT_LOGIN, "moron", "moron");
 }
 
 sdl_user::sdl_user(Uint32 flags)
@@ -156,7 +155,7 @@ void sdl_user::give_data(graphics_data *abc)
 	if (graphx == 0)
 	{
 		graphx = abc;
-		change_drawmode(DRAWMODE_LOADING);
+		change_drawmode(DRAWMODE_ADMIN_MAIN);
 	}
 }
 
@@ -181,28 +180,23 @@ void sdl_user::change_drawmode(enum drawmode chg)
 	}
 	switch(chg)
 	{
-		case DRAWMODE_LOADING:
-			drawmode = new draw_loading(graphx, this);
+		case DRAWMODE_ADMIN_MAIN:
+			drawmode = new draw_admin_main(graphx, this);
 			draw_mode = chg;
 			ready = true;
 			break;
-		case DRAWMODE_LOGIN:
-			drawmode = new draw_login(graphx, this);
+		case DRAWMODE_MAINT_IMG:
+			drawmode = new draw_maint_img(graphx, this);
 			draw_mode = chg;
 			ready = true;
 			break;
-		case DRAWMODE_CHARSEL:
-			drawmode = new draw_char_sel(graphx, this);
+		case DRAWMODE_MAINT_TIL:
+			drawmode = new draw_maint_til(graphx, this);
 			draw_mode = chg;
 			ready = true;
 			break;
-		case DRAWMODE_NEWCHAR:
-			drawmode = new draw_new_char(graphx, this);
-			draw_mode = chg;
-			ready = true;
-			break;
-		case DRAWMODE_GAME:
-			drawmode = new draw_game(graphx, this);
+		case DRAWMODE_MAINT_MAP:
+			drawmode = new draw_maint_map(graphx, this);
 			draw_mode = chg;
 			ready = true;
 			break;

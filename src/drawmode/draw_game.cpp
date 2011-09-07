@@ -9,21 +9,15 @@ draw_game::draw_game(graphics_data *stuff, sdl_user *self)
 	background = 811;
 	draw_mtx = SDL_CreateMutex();
 	owner->game_music.change_music("sound/music0.mp3");
-	pg = new prepared_graphics;
-	pg->num_pg = 1;
-	pg->pg = new prepared_graphic[1];
+	pg = 0;
 	
-	pg->pg[0].surf = get_png_image(background, graphx->spritepack);
-	pg->pg[0].mask = NULL;
-	pg->pg[0].position = NULL;
-	pg->pg[0].cleanup = false;
-	
-	pg->ready = true;
-	
-	num_widgets = 1;
+	num_widgets = 4;
 	
 	widgets = new sdl_widget*[num_widgets];
 	widgets[0] = new sdl_widget(background, 0, 0, graphx);
+	widgets[1] = new sdl_widget(1019, 485, 366, graphx);
+	widgets[2] = new sdl_widget(1028, 0, 368, graphx);
+	widgets[3] = new sdl_widget(1042, 124, 363, graphx);
 }
 
 void draw_game::key_press(SDL_KeyboardEvent *button)
