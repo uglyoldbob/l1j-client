@@ -1,16 +1,14 @@
 #include "sdl_button.h"
 
-sdl_button::sdl_button(int num, int x, int y, graphics_data *packs, 
-	void (*fnctn)(void*, void*), void *ag, void*ag2)
+sdl_button::sdl_button(int num, int x, int y, graphics_data *packs, funcptr *stuff)
 	: sdl_widget(num, x, y, packs)
 {
-	click_ptr = fnctn;
-	arg1 = ag;
-	arg2 = ag2;
+	method = stuff;
 }
 
 sdl_button::~sdl_button()
 {
+	delete method;
 }
 
 void sdl_button::cursor_on()
@@ -37,9 +35,9 @@ void sdl_button::mouse_click(SDL_MouseButtonEvent *here)
 		}
 		if ((pressed) && (here->type == SDL_MOUSEBUTTONUP))
 		{
-			if (click_ptr != 0)
+			if (method != 0)
 			{
-				(*click_ptr)(arg1, arg2);
+				method->go();
 			}
 			pressed = false;
 		}

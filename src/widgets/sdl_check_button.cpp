@@ -1,8 +1,7 @@
 #include "sdl_check_button.h"
 
-sdl_check_button::sdl_check_button(int num, int x, int y, graphics_data *packs, 
-	void (*fnctn)(void*, void*), void *ag, void* ag2)
-	: sdl_plain_button(num, x, y, packs, fnctn, ag, ag2)
+sdl_check_button::sdl_check_button(int num, int x, int y, graphics_data *packs, funcptr *stuff)
+	: sdl_plain_button(num, x, y, packs, stuff)
 {
 	checked = 0;
 }
@@ -41,9 +40,9 @@ void sdl_check_button::mouse_click(SDL_MouseButtonEvent *here)
 		if ((pressed) && (here->type == SDL_MOUSEBUTTONUP))
 		{
 			checked = true;
-			if (click_ptr != 0)
+			if (method != 0)
 			{
-				(*click_ptr)(arg1, arg2);
+				method->go();
 			}
 			pressed = false;
 		}
