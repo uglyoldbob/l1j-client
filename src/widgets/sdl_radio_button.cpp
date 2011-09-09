@@ -1,8 +1,8 @@
 #include "sdl_radio_button.h"
 
-sdl_radio_button::sdl_radio_button(int num, int x, int y, graphics_data *packs, 
-	void (*fnctn)(void*, void*), void *ag, void *ag2, sdl_widget**bob, int amnt, int indx)
-	: sdl_check_button(num, x, y, packs, fnctn, ag, ag2)
+sdl_radio_button::sdl_radio_button(int num, int x, int y, graphics_data *packs, funcptr *stuff,
+	sdl_widget**bob, int amnt, int indx)
+	: sdl_check_button(num, x, y, packs, stuff)
 {
 	checked = 0; 
 	options = bob;

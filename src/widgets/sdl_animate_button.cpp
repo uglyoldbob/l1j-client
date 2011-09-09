@@ -44,9 +44,8 @@ void delete_sdl_graphic_png(sdl_graphic *stuff)
 	}
 }
 
-sdl_animate_button::sdl_animate_button(int num, int x, int y, graphics_data *packs, 
-	void (*fnctn)(void*, void*), void *ag, void* ag2)
-	: sdl_plain_button(-1, x, y, packs, fnctn, ag, ag2)
+sdl_animate_button::sdl_animate_button(int num, int x, int y, graphics_data *packs, funcptr *stuff)
+	: sdl_plain_button(-1, x, y, packs, stuff)
 {
 	blabla = packs;
 	animating = false;	

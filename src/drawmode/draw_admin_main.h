@@ -1,6 +1,7 @@
 #ifndef __DRAW_ADMIN_MAIN_H_
 #define __DRAW_ADMIN_MAIN_H_
 
+#include "funcptr.h"
 #include "sdl_drawmode.h"
 
 class draw_admin_main : public sdl_drawmode

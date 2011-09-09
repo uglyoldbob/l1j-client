@@ -11,8 +11,8 @@
 class sdl_radio_button : public sdl_check_button
 {
 	public:
-		sdl_radio_button(int num, int x, int y, graphics_data *packs, 
-			void (*fnctn)(void*, void*), void* ag, void* ag2, sdl_widget**, int amnt, int indx);
+		sdl_radio_button(int num, int x, int y, graphics_data *packs, funcptr *stuff,
+			sdl_widget**, int amnt, int indx);
 		virtual ~sdl_radio_button();
 		
 		virtual void mouse_click(SDL_MouseButtonEvent *here);
