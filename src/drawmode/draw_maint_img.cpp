@@ -16,7 +16,8 @@ draw_maint_img::draw_maint_img(graphics_data *stuff, sdl_user *self)
 	
 	widgets = new sdl_widget*[num_widgets];
 	widgets[0] = new sdl_widget(background, 0, 0, graphx);
-	widgets[1] = new sdl_text_button("Return", 320, 255, graphx, change_mode, owner, (void*)DRAWMODE_ADMIN_MAIN);
+	widgets[1] = new sdl_text_button("Return", 320, 255, graphx, 
+		(funcptr*)new dam_ptr(this, DRAWMODE_ADMIN_MAIN));
 	widgets[1]->set_key_focus(true);
 }
 

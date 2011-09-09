@@ -15,8 +15,7 @@ void delete_sdl_graphic_png(sdl_graphic *stuff);
 class sdl_animate_button : public sdl_plain_button
 {
 	public:
-		sdl_animate_button(int num, int x, int y, graphics_data *packs, 
-			void (*fnctn)(void*, void*), void* ag, void* ag2);
+		sdl_animate_button(int num, int x, int y, graphics_data *packs, funcptr *stuff);
 		virtual ~sdl_animate_button();
 		virtual void draw(SDL_Surface *display);
 		

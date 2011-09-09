@@ -1,13 +1,36 @@
 #ifndef __DRAW_LOGIN_H_
 #define __DRAW_LOGIN_H_
 
+#include "funcptr.h"
 #include "sdl_drawmode.h"
+
+class draw_login;
+
+class login_ptr : public funcptr
+{
+	public:
+		login_ptr(draw_login *bla);
+		virtual void go();
+	private:
+		draw_login *ref;
+};
+
+class quit_ptr : public funcptr
+{
+	public:
+		quit_ptr(draw_login *bla);
+		virtual void go();
+	private:
+		draw_login *ref;
+};
 
 class draw_login : public sdl_drawmode
 {
 	public:
 		draw_login(graphics_data *stuff, sdl_user *self);
 		~draw_login();
+		void login();
+		void quit();
 		
 		virtual void mouse_click(SDL_MouseButtonEvent *here);
 		virtual void mouse_to(SDL_MouseMotionEvent *to);

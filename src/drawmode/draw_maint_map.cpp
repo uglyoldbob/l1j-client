@@ -17,7 +17,8 @@ draw_maint_map::draw_maint_map(graphics_data *stuff, sdl_user *self)
 	num_widgets = 1;
 	
 	widgets = new sdl_widget*[num_widgets];
-	widgets[0] = new sdl_text_button("Return", 320, 255, graphx, change_mode, owner, (void*)DRAWMODE_ADMIN_MAIN);
+	widgets[0] = new sdl_text_button("Return", 320, 255, graphx, 
+		(funcptr*)new dam_ptr(this, DRAWMODE_ADMIN_MAIN));
 	widgets[0]->set_key_focus(true);
 	
 	themap = new lin_map;

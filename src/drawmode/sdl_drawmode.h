@@ -1,6 +1,7 @@
 #ifndef __SDL_DRAWMODE_H_
 #define __SDL_DRAWMODE_H_
 
+#include "funcptr.h"
 #include <SDL.h>
 
 class graphics_data;
@@ -21,6 +22,22 @@ enum drawmode
 	DRAWMODE_MAINT_PNG,
 	DRAWMODE_MAINT_TIL,
 	DRAWMODE_MAINT_MAP
+};
+
+enum dam_funcs
+{
+	DAM_FUNC_CHGMODE
+};
+
+class sdl_drawmode;
+class dam_ptr : public funcptr
+{
+	public:
+		dam_ptr(sdl_drawmode *bla, enum drawmode val);
+		virtual void go();
+	private:
+		enum drawmode which;
+		sdl_drawmode *ref;
 };
 
 void change_mode(void *a, void* b);

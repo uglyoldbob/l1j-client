@@ -11,46 +11,44 @@
 #include "widgets/sdl_input_box.h"
 #include "widgets/sdl_widget.h"
 
-void dnc_init_new_char(void *arg, void*arg2)
+dnc_ptr::dnc_ptr(draw_new_char *bla, enum dnc_funcs sel)
 {
-	draw_new_char* bob;
-	bob = (draw_new_char*)arg;
-	bob->init_new_char(*(int*)arg2);
+	ref = bla;
+	what = sel;
 }
 
-void dnc_set_gender(void *arg, void*arg2)
+dnc_ptr::dnc_ptr(draw_new_char *bla, enum dnc_funcs sel, int val)
 {
-	draw_new_char* bob;
-	bob = (draw_new_char*)arg;
-	bob->set_gender(*(int*)arg2);
+	ref = bla;
+	what = sel;
+	which = val;
 }
 
-void dnc_stat_up(void* arg1, void* arg2)
+void dnc_ptr::go()
 {
-	draw_new_char* bob;
-	bob = (draw_new_char*)arg1;
-	bob->stat_up(*(int*)arg2);
-}
-
-void dnc_stat_down(void* arg1, void* arg2)
-{
-	draw_new_char* bob;
-	bob = (draw_new_char*)arg1;
-	bob->stat_down(*(int*)arg2);
-}
-
-void dnc_cancel(void *arg, void *arg2)
-{
-	draw_new_char* bob;
-	bob = (draw_new_char*)arg;
-	bob->cancel(arg2);
-}
-
-void dnc_submit(void *arg, void* arg2)
-{
-	draw_new_char* bob;
-	bob = (draw_new_char*)arg;
-	bob->submit(arg2);
+	switch(what)
+	{
+		case DNC_FUNC_NEWCHAR:
+			ref->init_new_char(which);
+			break;
+		case DNC_FUNC_SETGENDER:
+			ref->set_gender(which);
+			break;
+		case DNC_FUNC_STATUP:
+			ref->stat_up(which);
+			break;
+		case DNC_FUNC_STATDOWN:
+			ref->stat_down(which);
+			break;
+		case DNC_FUNC_CANCEL:
+			ref->cancel();
+			break;
+		case DNC_FUNC_SUBMIT:
+			ref->submit();
+			break;
+		default:
+			break;
+	}
 }
 
 draw_new_char::draw_new_char(graphics_data *stuff, sdl_user *self)
@@ -70,58 +68,58 @@ draw_new_char::draw_new_char(graphics_data *stuff, sdl_user *self)
 	widgets = new sdl_widget*[num_widgets];
 	widget_key_focus = 14;
 	widgets[0] = new sdl_plain_button(825, 476, 403, graphx, 
-		dnc_submit, this, 0);	//ok
+		(funcptr*)new dnc_ptr(this, DNC_FUNC_SUBMIT));	//ok
 	widgets[1] = new sdl_plain_button(827, 476, 430, graphx, 
-		dnc_cancel, this, 0);	//cancel
+		(funcptr*)new dnc_ptr(this, DNC_FUNC_CANCEL));	//cancel
 	widgets[2] = new sdl_plain_button(556, 424, 317, graphx, 
-		dnc_stat_down, this, (void*)STAT_STR);	//str down
+		(funcptr*)new dnc_ptr(this, DNC_FUNC_STATDOWN, STAT_STR));	//str down
 	widgets[3] = new sdl_plain_button(554, 435, 317, graphx, 
-		dnc_stat_up, this, (void*)STAT_STR);	//str up
+		(funcptr*)new dnc_ptr(this, DNC_FUNC_STATUP, STAT_STR));	//str up
 	widgets[4] = new sdl_plain_button(556, 424, 332, graphx, 
-		dnc_stat_down, this, (void*)STAT_DEX);	//dex down
+		(funcptr*)new dnc_ptr(this, DNC_FUNC_STATDOWN, STAT_DEX));	//dex down
 	widgets[5] = new sdl_plain_button(554, 435, 332, graphx, 
-		dnc_stat_up, this, (void*)STAT_DEX);	//dex up
+		(funcptr*)new dnc_ptr(this, DNC_FUNC_STATUP, STAT_DEX));	//dex up
 	widgets[6] = new sdl_plain_button(556, 424, 347, graphx, 
-		dnc_stat_down, this, (void*)STAT_CON);	//con down
+		(funcptr*)new dnc_ptr(this, DNC_FUNC_STATDOWN, STAT_CON));	//con down
 	widgets[7] = new sdl_plain_button(554, 435, 347, graphx, 
-		dnc_stat_up, this, (void*)STAT_CON);	//con up
+		(funcptr*)new dnc_ptr(this, DNC_FUNC_STATUP, STAT_CON));	//con up
 	widgets[8] = new sdl_plain_button(556, 498, 317, graphx, 
-		dnc_stat_down, this, (void*)STAT_WIS);	//wis down
+		(funcptr*)new dnc_ptr(this, DNC_FUNC_STATDOWN, STAT_WIS));	//wis down
 	widgets[9] = new sdl_plain_button(554, 509, 317, graphx, 
-		dnc_stat_up, this, (void*)STAT_WIS);	//wis up
+		(funcptr*)new dnc_ptr(this, DNC_FUNC_STATUP, STAT_WIS));	//wis up
 	widgets[10] = new sdl_plain_button(556, 498, 332, graphx, 
-		dnc_stat_down, this, (void*)STAT_CHA);//cha down
+		(funcptr*)new dnc_ptr(this, DNC_FUNC_STATDOWN, STAT_CHA));//cha down
 	widgets[11] = new sdl_plain_button(554, 509, 332, graphx, 
-		dnc_stat_up, this, (void*)STAT_CHA);//cha up
+		(funcptr*)new dnc_ptr(this, DNC_FUNC_STATUP, STAT_CHA));//cha up
 	widgets[12] = new sdl_plain_button(556, 498, 347, graphx, 
-		dnc_stat_down, this, (void*)STAT_INT);//int down
+		(funcptr*)new dnc_ptr(this, DNC_FUNC_STATDOWN, STAT_INT));//int down
 	widgets[13] = new sdl_plain_button(554, 509, 347, graphx, 
-		dnc_stat_up, this, (void*)STAT_INT);//int up
+		(funcptr*)new dnc_ptr(this, DNC_FUNC_STATUP, STAT_INT));//int up
 	
 	widgets[14] = new sdl_input_box(13, 440, 381, graphx);
 	widgets[14]->cursor_on();
 	
 	widgets[15] = new sdl_radio_button(1753, 332, 11, graphx, 
-		dnc_init_new_char, this, (void*)0, &widgets[15], 7, 0);
+		(funcptr*)new dnc_ptr(this, DNC_FUNC_NEWCHAR, 0), &widgets[15], 7, 0);
 	widgets[16] = new sdl_radio_button(1755, 542, 11, graphx, 
-		dnc_init_new_char, this, (void*)1, &widgets[15], 7, 1);
+		(funcptr*)new dnc_ptr(this, DNC_FUNC_NEWCHAR, 1), &widgets[15], 7, 1);
 	widgets[17] = new sdl_radio_button(1757, 332, 67, graphx, 
-		dnc_init_new_char, this, (void*)2, &widgets[15], 7, 2);
+		(funcptr*)new dnc_ptr(this, DNC_FUNC_NEWCHAR, 2), &widgets[15], 7, 2);
 	widgets[18] = new sdl_radio_button(1759, 542, 67, graphx, 
-		dnc_init_new_char, this, (void*)3, &widgets[15], 7, 3);
+		(funcptr*)new dnc_ptr(this, DNC_FUNC_NEWCHAR, 3), &widgets[15], 7, 3);
 	widgets[19] = new sdl_radio_button(1761, 332, 118, graphx, 
-		dnc_init_new_char, this, (void*)4, &widgets[15], 7, 4);
+		(funcptr*)new dnc_ptr(this, DNC_FUNC_NEWCHAR, 4), &widgets[15], 7, 4);
 	widgets[20] = new sdl_radio_button(1749, 542, 118, graphx, 
-		dnc_init_new_char, this, (void*)5, &widgets[15], 7, 5);
+		(funcptr*)new dnc_ptr(this, DNC_FUNC_NEWCHAR, 5), &widgets[15], 7, 5);
 	widgets[21] = new sdl_radio_button(1751, 332, 166, graphx, 
-		dnc_init_new_char, this, (void*)6, &widgets[15], 7, 6);
+		(funcptr*)new dnc_ptr(this, DNC_FUNC_NEWCHAR, 6), &widgets[15], 7, 6);
 	
-	widgets[22] = new sdl_animate_button(0xf4, 410, 0, graphx, 0, 0, 0);
+	widgets[22] = new sdl_animate_button(0xf4, 410, 0, graphx, 0);
 	
 	widgets[23] = new sdl_radio_button(306, 348, 248, graphx, 
-		dnc_set_gender, this, (void*)0, &widgets[23], 2, 0);
+		(funcptr*)new dnc_ptr(this, DNC_FUNC_SETGENDER, 0), &widgets[23], 2, 0);
 	widgets[24] = new sdl_radio_button(304, 533, 248, graphx, 
-		dnc_set_gender, this, (void*)1, &widgets[23], 2, 1);
+		(funcptr*)new dnc_ptr(this, DNC_FUNC_SETGENDER, 1), &widgets[23], 2, 1);
 	
 	sdl_radio_button *bob;
 	gender = 0;
@@ -137,12 +135,12 @@ draw_new_char::~draw_new_char()
 {
 }
 
-void draw_new_char::cancel(void *arg)
+void draw_new_char::cancel()
 {
 	owner->change_drawmode(DRAWMODE_CHARSEL);
 }
 
-void draw_new_char::submit(void *arg)
+void draw_new_char::submit()
 {
 	sdl_animate_button *jim;
 	jim = (sdl_animate_button*)widgets[22];
@@ -366,7 +364,7 @@ void draw_new_char::update_char()
 	delete widgets[22];
 	lin_char_info *temp;
 	temp = make_lin_char_info(char_type, gender);
-	widgets[22] = new sdl_animate_button(0xf4, 410, 0, graphx, 0, 0, 0);
+	widgets[22] = new sdl_animate_button(0xf4, 410, 0, graphx, 0);
 	bob = (sdl_animate_button*)widgets[22];
 	bob->set_info(temp);
 	bob->animate(true);

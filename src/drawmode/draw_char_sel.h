@@ -2,7 +2,30 @@
 #define __DRAW_CHARSEL_H_
 
 class lin_char_info;
+#include "funcptr.h"
 #include "sdl_drawmode.h"
+
+class draw_char_sel;
+
+enum dcs_funcs
+{
+	DCS_FUNC_SELCHAR,
+	DCS_FUNC_PREVPAGE,
+	DCS_FUNC_NEXTPAGE,
+	DCS_FUNC_DELCHAR
+};
+
+class dcs_ptr : public funcptr
+{
+	public:
+		dcs_ptr(draw_char_sel *bla, enum dcs_funcs sel);
+		dcs_ptr(draw_char_sel *bla, enum dcs_funcs sel, int* val);
+		virtual void go();
+	private:
+		int *which;
+		enum dcs_funcs what;
+		draw_char_sel *ref;
+};
 
 class draw_char_sel : public sdl_drawmode
 {

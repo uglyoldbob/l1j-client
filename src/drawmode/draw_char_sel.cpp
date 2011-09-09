@@ -9,30 +9,38 @@
 #include "widgets/sdl_input_box.h"
 #include "widgets/sdl_widget.h"
 
-void selected_char(void *arg, void* arg2)
+dcs_ptr::dcs_ptr(draw_char_sel *bla, enum dcs_funcs sel)
 {
-	draw_char_sel *bob = (draw_char_sel*)arg;
-	bob->select_char();
+	ref = bla;
+	what = sel;
 }
 
-void dcs_delete(void *arg, void* arg2)
-{	
-	draw_char_sel *bob = (draw_char_sel*)arg;
-	int *temp;
-	temp = (int*)arg2;
-	bob->delete_char(*temp);
+dcs_ptr::dcs_ptr(draw_char_sel *bla, enum dcs_funcs sel, int* val)
+{
+	ref = bla;
+	what = sel;
+	which = val;
 }
 
-void dcs_nextpage(void *arg, void *arg2)
+void dcs_ptr::go()
 {
-	draw_char_sel *bob = (draw_char_sel*)arg;
-	bob->nextpage();
-}
-
-void dcs_prevpage(void *arg, void *arg2)
-{
-	draw_char_sel *bob = (draw_char_sel*)arg;
-	bob->prevpage();
+	switch(what)
+	{
+		case DCS_FUNC_SELCHAR:
+			ref->select_char();
+			break;
+		case DCS_FUNC_PREVPAGE:
+			ref->prevpage();
+			break;
+		case DCS_FUNC_NEXTPAGE:
+			ref->nextpage();
+			break;
+		case DCS_FUNC_DELCHAR:
+			ref->delete_char(*which);
+			break;
+		default:
+			break;
+	}
 }
 
 draw_char_sel::draw_char_sel(graphics_data *stuff, sdl_user *self)
@@ -63,10 +71,10 @@ draw_char_sel::draw_char_sel(graphics_data *stuff, sdl_user *self)
 	widgets = new sdl_widget*[num_widgets];
 	
 	//character select animating buttons
-	widgets[0] = new sdl_animate_button(0xf4, 0x013, 0, graphx, 0, 0, 0);
-	widgets[1] = new sdl_animate_button(0xf4, 0x0b0, 0, graphx, 0, 0, 0);
-	widgets[2] = new sdl_animate_button(0xf4, 0x14d, 0, graphx, 0, 0, 0);
-	widgets[3] = new sdl_animate_button(0xf4, 0x1ea, 0, graphx, 0, 0, 0);
+	widgets[0] = new sdl_animate_button(0xf4, 0x013, 0, graphx, 0);
+	widgets[1] = new sdl_animate_button(0xf4, 0x0b0, 0, graphx, 0);
+	widgets[2] = new sdl_animate_button(0xf4, 0x14d, 0, graphx, 0);
+	widgets[3] = new sdl_animate_button(0xf4, 0x1ea, 0, graphx, 0);
 	widgets[0]->set_key_focus(true);
 	widgets[1]->set_key_focus(true);
 	widgets[2]->set_key_focus(true);
@@ -75,15 +83,14 @@ draw_char_sel::draw_char_sel(graphics_data *stuff, sdl_user *self)
 	widget_key_focus = 0;
 	
 	widgets[4] = new sdl_plain_button(0x6e5, 0x0f7, 0x10b, graphx, 
-		dcs_prevpage, this, 0);	//left arrow
+		(funcptr*)new dcs_ptr(this, DCS_FUNC_PREVPAGE));	//left arrow
 	widgets[5] = new sdl_plain_button(0x6e7, 0x16c, 0x10b, graphx, 
-		dcs_nextpage, this, 0);	//right arrow
+		(funcptr*)new dcs_ptr(this, DCS_FUNC_NEXTPAGE));	//left arrow
 	widgets[6] = new sdl_plain_button(0x334, 0x20d, 0x185, graphx, 
-		selected_char, this, 0);	//login
-	widgets[7] = new sdl_plain_button(0x336, 0x20d, 0x19a, graphx, 
-		0, 0, 0);	//cancel
-	widgets[8] = new sdl_plain_button(0x134, 0x20d, 0x1b5, 
-		graphx, dcs_delete, this, &cur_char_slot);	//delete
+		(funcptr*)new dcs_ptr(this, DCS_FUNC_SELCHAR));	//login
+	widgets[7] = new sdl_plain_button(0x336, 0x20d, 0x19a, graphx, 0);	//cancel
+	widgets[8] = new sdl_plain_button(0x134, 0x20d, 0x1b5, graphx, 
+		(funcptr*)new dcs_ptr(this, DCS_FUNC_DELCHAR, &cur_char_slot));	//delete
 	widgets[4]->set_key_focus(true);
 	widgets[5]->set_key_focus(true);
 	widgets[6]->set_key_focus(true);

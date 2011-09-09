@@ -37,16 +37,20 @@ draw_admin_main::draw_admin_main(graphics_data *stuff, sdl_user *self)
 	
 	int x = 200;
 	int y = 200;
-	widgets[0] = new sdl_text_button("IMG Files", x, y, graphx, change_mode, owner, (void*)DRAWMODE_MAINT_IMG);
+	widgets[0] = new sdl_text_button("IMG Files", x, y, graphx, 
+		(funcptr*)new dam_ptr(this, DRAWMODE_MAINT_IMG));
 	widgets[0]->set_key_focus(true);
 	widgets[0]->cursor_on();
-	widgets[1] = new sdl_text_button("PNG Files", x, y+(15*1), graphx, change_mode, owner, (void*)DRAWMODE_MAINT_PNG);
+	widgets[1] = new sdl_text_button("PNG Files", x, y+(15*1), graphx, 
+		(funcptr*)new dam_ptr(this, DRAWMODE_MAINT_PNG));
 	widgets[1]->set_key_focus(true);
-	widgets[2] = new sdl_text_button("TIL Files", x, y+(15*2), graphx, change_mode, owner, (void*)DRAWMODE_MAINT_TIL);
+	widgets[2] = new sdl_text_button("TIL Files", x, y+(15*2), graphx, 
+		(funcptr*)new dam_ptr(this, DRAWMODE_MAINT_TIL));
 	widgets[2]->set_key_focus(true);
-	widgets[3] = new sdl_text_button("MAPS", x, y+(15*3), graphx, change_mode, owner, (void*)DRAWMODE_MAINT_MAP);
+	widgets[3] = new sdl_text_button("MAPS", x, y+(15*3), graphx, 
+		(funcptr*)new dam_ptr(this, DRAWMODE_MAINT_MAP));
 	widgets[3]->set_key_focus(true);
-	widgets[4] = new sdl_text_button("Exit", x, y+(15*4), graphx, 0, 0, 0);
+	widgets[4] = new sdl_text_button("Exit", x, y+(15*4), graphx, 0);
 	widgets[4]->set_key_focus(true);
 }
 

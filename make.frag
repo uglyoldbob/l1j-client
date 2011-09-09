@@ -1,11 +1,10 @@
 #main folder objects
-Lineage_OBJS = client.o config.o connection.o global.o lindes.o main.o packet.o \
-	sdl_master.o sdl_user.o unsorted.o 
+Lineage_OBJS = client.o config.o connection.o funcptr.o global.o lindes.o main.o \
+	packet.o sdl_master.o sdl_user.o unsorted.o
 Lineage_OBJS += SDLMain.o
-Admin_OBJS = client_admin.o config.o connection.o global.o lindes.o main.o \
-	sdl_master.o sdl_admin.o unsorted.o
+Admin_OBJS = client_admin.o config.o connection.o funcptr.o global.o lindes.o \
+	main.o sdl_master.o sdl_admin.o unsorted.o
 Admin_OBJS += SDLMain.o
-
 
 #widget objects
 Lineage_OBJS += widgets/sdl_animate_button.o widgets/sdl_button.o \

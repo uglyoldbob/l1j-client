@@ -3,6 +3,7 @@
 
 #include <SDL.h>
 
+#include "funcptr.h"
 #include "globals.h"
 #include "sdl_widget.h"
 
@@ -14,15 +15,13 @@ SDL_Rect *make_sdl_rect(int x, int y, int w, int h);
 class sdl_button : public sdl_widget
 {
 	public:
-		sdl_button(int num, int x, int y, graphics_data *packs, void (*fnctn)(void*, void*), void* ag, void* ag2);
+		sdl_button(int num, int x, int y, graphics_data *packs, funcptr *stuff);
 		virtual ~sdl_button();
 		
 		virtual void cursor_on();
 		virtual void cursor_off();		
 	protected:
-		void (*click_ptr)(void*, void*);
-		void *arg1;
-		void *arg2;
+		funcptr *method;
 		
 		void mouse_to(SDL_MouseMotionEvent *to);
 		void mouse_from(SDL_MouseMotionEvent *from);

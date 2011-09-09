@@ -1,8 +1,7 @@
 #include "sdl_text_button.h"
 
-sdl_text_button::sdl_text_button(const char *bla, int x, int y, graphics_data *packs, 
-	void (*fnctn)(void*, void*), void *ag, void* ag2)
-	: sdl_plain_button(-1, x, y, packs, fnctn, ag, ag2)
+sdl_text_button::sdl_text_button(const char *bla, int x, int y, graphics_data *packs, funcptr *stuff)
+	: sdl_plain_button(-1, x, y, packs, stuff)
 {
 	xpos = x;
 	ypos = y;
