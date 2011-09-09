@@ -1,8 +1,32 @@
 #ifndef __DRAW_NEWCHAR_H_
 #define __DRAW_NEWCHAR_H_
 
+#include "funcptr.h"
 #include "globals.h"
 #include "sdl_drawmode.h"
+
+enum dnc_funcs
+{
+	DNC_FUNC_NEWCHAR,
+	DNC_FUNC_SETGENDER,
+	DNC_FUNC_STATUP,
+	DNC_FUNC_STATDOWN,
+	DNC_FUNC_CANCEL,
+	DNC_FUNC_SUBMIT
+};
+
+class draw_new_char;
+class dnc_ptr : public funcptr
+{
+	public:
+		dnc_ptr(draw_new_char *bla, enum dnc_funcs sel);
+		dnc_ptr(draw_new_char *bla, enum dnc_funcs sel, int val);
+		virtual void go();
+	private:
+		int which;
+		enum dnc_funcs what;
+		draw_new_char *ref;
+};
 
 class draw_new_char : public sdl_drawmode
 {
@@ -23,8 +47,8 @@ class draw_new_char : public sdl_drawmode
 		void update_char();
 		void stat_up(int stat);
 		void stat_down(int stat);
-		void cancel(void *arg);
-		void submit(void *arg);
+		void cancel();
+		void submit();
 		lin_char_info* get_char();
 	private:
 		int graphic;

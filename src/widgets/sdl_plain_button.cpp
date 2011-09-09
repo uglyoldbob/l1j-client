@@ -1,8 +1,7 @@
 #include "sdl_plain_button.h"
 
-sdl_plain_button::sdl_plain_button(int num, int x, int y, graphics_data *packs, 
-	void (*fnctn)(void*, void*), void *ag, void* ag2)
-	: sdl_button(num, x, y, packs, fnctn, ag, ag2)
+sdl_plain_button::sdl_plain_button(int num, int x, int y, graphics_data *packs, funcptr *stuff)
+	: sdl_button(num, x, y, packs, stuff)
 {
 	if (num != -1)
 	{

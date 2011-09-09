@@ -1,6 +1,18 @@
 #include "resources/prepared_graphics.h"
 #include "sdl_drawmode.h"
+#include "sdl_user.h"
 #include "widgets/sdl_widget.h"
+
+dam_ptr::dam_ptr(sdl_drawmode *bla, enum drawmode val)
+{
+	ref = bla;
+	which = val;
+}
+
+void dam_ptr::go()
+{
+	ref->owner->change_drawmode(which);
+}
 
 sdl_drawmode::sdl_drawmode(graphics_data *stuff, sdl_user *self)
 {

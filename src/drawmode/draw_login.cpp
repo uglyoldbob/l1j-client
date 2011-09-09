@@ -6,20 +6,25 @@
 #include "widgets/sdl_animate_button.h"
 #include "widgets/sdl_input_box.h"
 
-void login_function(void *arg, void*arg2)
+login_ptr::login_ptr(draw_login *bla)
 {
-	draw_login *bob = (draw_login*)arg;
-	bob->owner->login();
-	//send login packet with username and password
-	//clear username and password information
+	ref = bla;
 }
 
-void quit_the_client(void *arg, void* arg2)
+void login_ptr::go()
 {
-	draw_login *bob = (draw_login*)arg;
-	bob->owner->quit_client();
+	ref->login();
 }
 
+quit_ptr::quit_ptr(draw_login *bla)
+{
+	ref = bla;
+}
+
+void quit_ptr::go()
+{
+	ref->quit();
+}
 
 draw_login::draw_login(graphics_data *stuff, sdl_user *self)
 	: sdl_drawmode(stuff, self)
@@ -46,13 +51,13 @@ draw_login::draw_login(graphics_data *stuff, sdl_user *self)
 	widget_key_focus = 1;
 	widgets[2] = new sdl_input_box(13, 0x1fb, 0x160, graphx);
 	widgets[2]->set_key_focus(true);
-	widgets[3] = new sdl_plain_button(53, 0x213, 0x183, graphx, &login_function, this, 0);
+	widgets[3] = new sdl_plain_button(53, 0x213, 0x183, graphx, (funcptr*)new login_ptr(this));
 	widgets[3]->set_key_focus(true);
-	widgets[4] = new sdl_plain_button(65, 0x213, 0x195, graphx, 0, 0, 0);
+	widgets[4] = new sdl_plain_button(65, 0x213, 0x195, graphx, 0);
 	widgets[4]->set_key_focus(true);
-	widgets[5] = new sdl_plain_button(55, 0x213, 0x1a8, graphx, 0, 0, 0);
+	widgets[5] = new sdl_plain_button(55, 0x213, 0x1a8, graphx, 0);
 	widgets[5]->set_key_focus(true);
-	widgets[6] = new sdl_plain_button(57, 0x213, 0x1c2, graphx, &quit_the_client, this, 0);
+	widgets[6] = new sdl_plain_button(57, 0x213, 0x1c2, graphx, (funcptr*)new quit_ptr(this));
 	widgets[6]->set_key_focus(true);
 //	widgets[7] = new sdl_widget(814, 0x1a, 0x3b, graphx);
 		//type 1, null("intro"), px=0xcf, py=0x11a
@@ -65,6 +70,18 @@ draw_login::~draw_login()
 bool draw_login::mouse_leave()
 {
 	return false;
+}
+
+void draw_login::login()
+{
+	owner->login();
+	//send login packet with username and password
+	//clear username and password information
+}
+
+void draw_login::quit()
+{
+	owner->quit_client();
 }
 
 void draw_login::mouse_click(SDL_MouseButtonEvent *here)
