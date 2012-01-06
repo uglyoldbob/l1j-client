@@ -7,9 +7,6 @@
 #include "sdl_plain_button.h"
 #include "sdl_widget.h"
 
-sdl_graphic *make_sdl_graphic_png(int num, int x, int y, graphics_data *packs);
-void delete_sdl_graphic_png(sdl_graphic *stuff);
-
 #include <SDL.h>
 
 class sdl_animate_button : public sdl_plain_button

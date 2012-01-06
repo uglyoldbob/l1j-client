@@ -2,48 +2,6 @@
 
 int sdl_animate_button::frame_time = 67;
 
-sdl_graphic *make_sdl_graphic_png(int num, int x, int y, graphics_data *packs)
-{
-	sdl_graphic *ret;
-	if (num != -1)
-	{
-		ret = new sdl_graphic;
-		ret->img = get_png_image(num, packs->spritepack);
-		if (ret->img != 0)
-		{
-			SDL_SetColorKey(ret->img, SDL_SRCCOLORKEY, SDL_MapRGB(ret->img->format, 0, 0, 0));
-			ret->pos = make_sdl_rect(x, y, ret->img->w, ret->img->h);
-			ret->mask = make_sdl_rect(0, 0, ret->img->w, ret->img->h);
-			ret->cleanup = false;
-		}
-		else
-		{
-			delete ret;
-			ret = 0;
-		}
-	}
-	else
-	{
-		ret = 0;
-	}
-	return ret;
-}
-
-void delete_sdl_graphic_png(sdl_graphic *stuff)
-{
-	if ((stuff != 0) && (stuff != (sdl_graphic*)-1))
-	{
-		delete stuff->pos;
-		delete stuff->mask;
-		if (stuff->img != 0)
-		{
-			SDL_FreeSurface(stuff->img);
-		}
-		delete stuff;
-		stuff = 0;
-	}
-}
-
 sdl_animate_button::sdl_animate_button(int num, int x, int y, graphics_data *packs, funcptr *stuff)
 	: sdl_plain_button(-1, x, y, packs, stuff)
 {
@@ -68,8 +26,8 @@ void sdl_animate_button::set_info(lin_char_info *data)
 {	//females get the odd numbers, type is multiplied by 2 and gender is added
 	char_info = data;
 
-	delete_sdl_graphic_png(one);
-	delete_sdl_graphic_png(two);
+	delete one;
+	delete two;
 	delete_animation();
 	cur_frame = 0;
 	
@@ -90,120 +48,120 @@ void sdl_animate_button::set_info(lin_char_info *data)
 			animates = new sdl_graphic*[num_anim];
 			first_anim = 714;
 			first_repeat = 0;
-			one = make_sdl_graphic_png(799, x, y, blabla);
-			two = make_sdl_graphic_png(801, x, y, blabla);
+			one = new sdl_graphic(799, x, y, blabla, GRAPH_PNG);
+			two = new sdl_graphic(801, x, y, blabla, GRAPH_PNG);
 			break;
 		case 1:	//female royal
 			num_anim = 82;
 			animates = new sdl_graphic*[num_anim];
 			first_anim = 629;
 			first_repeat = 0;
-			one = make_sdl_graphic_png(711, x, y, blabla);
-			two = make_sdl_graphic_png(713, x, y, blabla);
+			one = new sdl_graphic(711, x, y, blabla, GRAPH_PNG);
+			two = new sdl_graphic(713, x, y, blabla, GRAPH_PNG);
 			break;
 		case 2:	//male knight
 			num_anim = 71;
 			animates = new sdl_graphic*[num_anim];
 			first_anim = 378;
 			first_repeat = 0;
-			one = make_sdl_graphic_png(449, x, y, blabla);
-			two = make_sdl_graphic_png(451, x, y, blabla);
+			one = new sdl_graphic(449, x, y, blabla, GRAPH_PNG);
+			two = new sdl_graphic(451, x, y, blabla, GRAPH_PNG);
 			break;
 		case 3:	//female knight
 			num_anim = 60;
 			animates = new sdl_graphic*[num_anim];
 			first_anim = 315;
 			first_repeat = 0;
-			one = make_sdl_graphic_png(375, x, y, blabla);
-			two = make_sdl_graphic_png(377, x, y, blabla);
+			one = new sdl_graphic(375, x, y, blabla, GRAPH_PNG);
+			two = new sdl_graphic(377, x, y, blabla, GRAPH_PNG);
 			break;
 		case 4:	//male elf
 			num_anim = 67;
 			animates = new sdl_graphic*[num_anim];
 			first_anim = 245;
 			first_repeat = 0;
-			one = make_sdl_graphic_png(312, x, y, blabla);
-			two = make_sdl_graphic_png(314, x, y, blabla);
+			one = new sdl_graphic(312, x, y, blabla, GRAPH_PNG);
+			two = new sdl_graphic(314, x, y, blabla, GRAPH_PNG);
 			break;
 		case 5:	//female elf
 			num_anim = 76;
 			animates = new sdl_graphic*[num_anim];
 			first_anim = 166;
 			first_repeat = 0;
-			one = make_sdl_graphic_png(242, x, y, blabla);
-			two = make_sdl_graphic_png(244, x, y, blabla);
+			one = new sdl_graphic(242, x, y, blabla, GRAPH_PNG);
+			two = new sdl_graphic(244, x, y, blabla, GRAPH_PNG);
 			break;
 		case 6:	//male wizard
 			num_anim = 95;
 			animates = new sdl_graphic*[num_anim];
 			first_anim = 531;
 			first_repeat = 0;
-			one = make_sdl_graphic_png(626, x, y, blabla);
-			two = make_sdl_graphic_png(628, x, y, blabla);
+			one = new sdl_graphic(626, x, y, blabla, GRAPH_PNG);
+			two = new sdl_graphic(628, x, y, blabla, GRAPH_PNG);
 			break;
 		case 7:	//female wizard
 			num_anim = 76;
 			animates = new sdl_graphic*[num_anim];
 			first_anim = 452;
 			first_repeat = 0;
-			one = make_sdl_graphic_png(528, x, y, blabla);
-			two = make_sdl_graphic_png(530, x, y, blabla);
+			one = new sdl_graphic(528, x, y, blabla, GRAPH_PNG);
+			two = new sdl_graphic(530, x, y, blabla, GRAPH_PNG);
 			break;
 		case 8:	//male dark elf
 			num_anim = 73;
 			animates = new sdl_graphic*[num_anim];
 			first_anim = 90;
 			first_repeat = 0;
-			one = make_sdl_graphic_png(163, x, y, blabla);
-			two = make_sdl_graphic_png(165, x, y, blabla);
+			one = new sdl_graphic(163, x, y, blabla, GRAPH_PNG);
+			two = new sdl_graphic(165, x, y, blabla, GRAPH_PNG);
 			break;
 		case 9: //female dark elf
 			num_anim = 62;
 			animates = new sdl_graphic*[num_anim];
 			first_anim = 25;
 			first_repeat = 0;
-			one = make_sdl_graphic_png(87, x, y, blabla);
-			two = make_sdl_graphic_png(89, x, y, blabla);
+			one = new sdl_graphic(87, x, y, blabla, GRAPH_PNG);
+			two = new sdl_graphic(89, x, y, blabla, GRAPH_PNG);
 			break;
 		case 10:	//male dragon knight
 			num_anim = 65;
 			animates = new sdl_graphic*[num_anim];
 			first_anim = 841;
 			first_repeat = 0;
-			one = make_sdl_graphic_png(906, x, y, blabla);
-			two = make_sdl_graphic_png(907, x, y, blabla);
+			one = new sdl_graphic(906, x, y, blabla, GRAPH_PNG);
+			two = new sdl_graphic(907, x, y, blabla, GRAPH_PNG);
 			break;
 		case 11:	//female dragon knight
 			num_anim = 58;
 			animates = new sdl_graphic*[num_anim];
 			first_anim = 908;
 			first_repeat = 0;
-			one = make_sdl_graphic_png(966, x, y, blabla);
-			two = make_sdl_graphic_png(967, x, y, blabla);
+			one = new sdl_graphic(966, x, y, blabla, GRAPH_PNG);
+			two = new sdl_graphic(967, x, y, blabla, GRAPH_PNG);
 			break;
 		case 12:	//male illusionist
 			num_anim = 68;
 			animates = new sdl_graphic*[num_anim];
 			first_anim = 969;
 			first_repeat = 0;
-			one = make_sdl_graphic_png(1037, x, y, blabla);
-			two = make_sdl_graphic_png(1038, x, y, blabla);
+			one = new sdl_graphic(1037, x, y, blabla, GRAPH_PNG);
+			two = new sdl_graphic(1038, x, y, blabla, GRAPH_PNG);
 			break;
 		case 13:	//female illusionist
 			num_anim = 87;
 			animates = new sdl_graphic*[num_anim];
 			first_anim = 1039;
 			first_repeat = 0;
-			one = make_sdl_graphic_png(1126, x, y, blabla);
-			two = make_sdl_graphic_png(1127, x, y, blabla);
+			one = new sdl_graphic(1126, x, y, blabla, GRAPH_PNG);
+			two = new sdl_graphic(1127, x, y, blabla, GRAPH_PNG);
 			break;
 		default:	//new character
 			num_anim = 24;
 			animates = new sdl_graphic*[num_anim];
 			first_anim = 1;
 			first_repeat = 0;
-			one = make_sdl_graphic_png(0, x, y, blabla);
-			two = make_sdl_graphic_png(0, x, y, blabla);
+			one = new sdl_graphic(0, x, y, blabla, GRAPH_PNG);
+			two = new sdl_graphic(0, x, y, blabla, GRAPH_PNG);
 			break;
 	}
 	for (int i = 0; i < num_anim; i++)
@@ -256,9 +214,9 @@ void sdl_animate_button::draw(SDL_Surface *display)
 		//TODO : account for missing images on male illusionist
 		//TODO : delay image loading time to when image is first displayed
 		if (animates[cur_frame] == (sdl_graphic*)-1)
-			animates[cur_frame] = make_sdl_graphic_png(first_anim+cur_frame, x, y, blabla);
+			animates[cur_frame] = new sdl_graphic(first_anim+cur_frame, x, y, blabla, GRAPH_PNG);
 		if (animates[cur_frame] != 0)
-			SDL_BlitSurface(animates[cur_frame]->img, animates[cur_frame]->mask, display, animates[cur_frame]->pos);
+			animates[cur_frame]->draw(display);
 	}
 	else
 	{
@@ -278,7 +236,7 @@ void sdl_animate_button::delete_animation()
 		{
 			if ((animates[i] != 0) && (animates[i] != (sdl_graphic*)-1))
 			{
-				delete_sdl_graphic_png(animates[i]);
+				delete animates[i];
 			}
 		}
 		delete animates;

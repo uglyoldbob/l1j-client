@@ -23,6 +23,7 @@ class draw_maint_map : public sdl_drawmode
 		SDL_mutex *draw_mtx;
 		
 		lin_map *themap;
+		sdl_graphic *map_vis;
 };
 
 #endif

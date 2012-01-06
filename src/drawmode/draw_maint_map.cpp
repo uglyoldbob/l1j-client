@@ -22,6 +22,7 @@ draw_maint_map::draw_maint_map(graphics_data *stuff, sdl_user *self)
 	widgets[0]->set_key_focus(true);
 	
 	themap = new lin_map;
+	map_vis = 0;
 	themap->load(3);
 }
 
@@ -115,16 +116,16 @@ void draw_maint_map::draw(SDL_Surface *display)
 	while (SDL_mutexP(draw_mtx) == -1) {};
 	SDL_FillRect(display, NULL, 0);
 	sdl_drawmode::draw(display);
-	lineage_font.draw(display, 320, 240, "Loading map 3", 0xFFFE);
-	if (0)//if (themap != 0)
+	lineage_font.draw(display, 320, 240, "Loading map 3, 32700, 32800", 0xFFFE);
+	if (themap != 0)
 	{
-		sdl_graphic *temp = themap->get_map();
-		if (temp != 0)
+		if (map_vis == 0)
 		{
-			if (temp->img != 0)
-			{
-				SDL_BlitSurface(temp->img, NULL, display, NULL);
-			}
+			map_vis = themap->get_map(32700, 32800);
+		}
+		if (map_vis != 0)
+		{
+			map_vis->draw(display);
 		}
 	}
 	SDL_mutexV(draw_mtx);

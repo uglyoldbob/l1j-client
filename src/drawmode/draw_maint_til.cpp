@@ -141,42 +141,12 @@ void draw_maint_til::mouse_move(SDL_MouseMotionEvent *from, SDL_MouseMotionEvent
 draw_maint_til::~draw_maint_til()
 {
 	delete tileset;
-	if (cur_tile != 0)
-	{
-		delete cur_tile->pos;
-		delete cur_tile->mask;
-		if (cur_tile->img != 0)
-		{
-			if (cur_tile->cleanup)
-			{
-				delete [] (short*)cur_tile->img->pixels;
-			}
-			SDL_FreeSurface(cur_tile->img);
-		}
-		delete cur_tile;
-		cur_tile = 0;
-	}
 }
 
 //updates the graphic to reflect the current tile
 void draw_maint_til::update_tile()
 {
-	if (cur_tile != 0)
-	{
-		delete cur_tile->pos;
-		delete cur_tile->mask;
-		if (cur_tile->img != 0)
-		{
-			if (cur_tile->cleanup)
-			{
-				delete [] (short*)cur_tile->img->pixels;
-			}
-			SDL_FreeSurface(cur_tile->img);
-		}
-		delete cur_tile;
-		cur_tile = 0;
-	}
-	cur_tile = tileset->get_tile(tile_num);
+	cur_tile = tileset->get_tile_left(tile_num);
 }
 
 void draw_maint_til::draw(SDL_Surface *display)
@@ -186,7 +156,7 @@ void draw_maint_til::draw(SDL_Surface *display)
 	sdl_drawmode::draw(display);
 	if (cur_tile != 0)
 	{
-		SDL_BlitSurface(cur_tile->img, cur_tile->mask, display, cur_tile->pos);
+		cur_tile->draw(display);
 	}
 	char temp[27];
 	if (tileset != 0)

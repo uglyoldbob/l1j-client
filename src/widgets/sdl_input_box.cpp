@@ -26,10 +26,10 @@ const char *sdl_input_box::get_str()
 
 void sdl_input_box::draw(SDL_Surface *display)
 {	//TODO : implement password field masking (print '****' instead of 'asdf')
-	lineage_font.draw(display, one->pos->x, one->pos->y, field, 0xFFFE);
+	lineage_font.draw(display, one->getx(), one->gety(), field, 0xFFFE);
 	if (draw_cursor)
 	{
-		lineage_font.draw_cursor(display, one->pos->x + cursor_pos, one->pos->y, 0xFFFE);
+		lineage_font.draw_cursor(display, one->getx() + cursor_pos, one->gety(), 0xFFFE);
 	}
 	cursor_toggle();
 }

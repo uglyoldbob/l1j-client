@@ -12,16 +12,16 @@ void sdl_check_button::draw(SDL_Surface *display)
 	{
 		if (have_mouse || key_focus || checked)
 		{
-			if (two->img != 0)
+			if (two != 0)
 			{
-				SDL_BlitSurface(two->img, two->mask, display, two->pos);
+				two->draw(display);
 			}
 		}
 		else
 		{
-			if (one->img != 0)
+			if (one != 0)
 			{
-				SDL_BlitSurface(one->img, one->mask, display, one->pos);
+				one->draw(display);
 			}
 		}
 	}

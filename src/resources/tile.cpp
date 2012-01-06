@@ -19,6 +19,21 @@ tile::~tile()
 		delete [] filebuf;
 	if (tdata != 0)
 	{
+		for (int i = 0; i < tdata->num_tiles; i++)
+		{
+			if (tdata->ltile[i] != 0)
+				delete tdata->ltile[i];
+			if (tdata->rtile[i] != 0)
+				delete tdata->rtile[i];
+			if (tdata->stile[i] != 0)
+				delete tdata->stile[i];
+		}
+		if (tdata->num_tiles > 0)
+		{
+			delete [] tdata->ltile;
+			delete [] tdata->rtile;
+			delete [] tdata->stile;
+		}
 		delete [] tdata->offset;
 		delete tdata;
 	}
@@ -36,77 +51,64 @@ int tile::get_amnt()
 	}
 }
 
-sdl_graphic *tile::get_tile(int which)
+sdl_graphic *tile::get_tile_right(int which)
 {
 	sdl_graphic *ret;
-	ret = 0;
-	if ((tdata->data[tdata->offset[which]] & 2) != 0)
+	if (tdata->rtile[which] == 0)
 	{
-//		printf("TranspTile %d\n", which);
-		ret = new sdl_graphic;
-		unsigned char *data = (unsigned char*)&tdata->data[tdata->offset[which]+1];
-		int data_offset = 0;
-		int x, y;
-		int width, height;
-		x = data[data_offset++];
-		y = data[data_offset++];
-		width = data[data_offset++];
-		height = data[data_offset++];
-//		printf("\tx: %d y:%d w:%d h:%d\n", x, y, width, height);
-		ret->img = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 16,
-			0x7C00, 0x03E0, 0x001F, 0);
-		ret->cleanup = false;
-		ret->pos = make_sdl_rect(x, y, width, height);
-		ret->mask = make_sdl_rect(0, 0, width, height);
-		SDL_SetColorKey(ret->img, SDL_SRCCOLORKEY, SDL_MapRGB(ret->img->format, 255,255,255) );
-		SDL_FillRect(ret->img, NULL, SDL_MapRGB(ret->img->format, 255,255,255));
-		short *temp = (short*)ret->img->pixels;	//destination pointer
-		int source_off = 0;
-//		printf("There are %d rows\n", height);
-		for (int i = 0; i < height; i++)
+		if ((tdata->data[tdata->offset[which]] & 2) != 0)
 		{
-			int row_segs = data[data_offset++];
-			short *row_temp = temp;
-//			printf("\tThere are %d segments in this row\n", row_segs);
-			for (int j = 0; j < row_segs; j++)
-			{
-				int skip = data[data_offset++] / 2;
-				int seg_width = data[data_offset++];
-				row_temp = &row_temp[skip];
-//				printf("\t\tSkip %d, print %d\n", skip, seg_width);
-				memcpy(row_temp, &data[data_offset], seg_width * 2);
-				data_offset += (seg_width * 2);
-				row_temp = &row_temp[seg_width];
-			}
-			temp = &temp[width];
+			ret = get_special(which);
+		}
+		else
+		{
+			short *source = (short*)&tdata->data[tdata->offset[which]+1];
+			tdata->rtile[which] = new sdl_graphic(1, 2, source, GRAPH_RTIL);
+			ret = tdata->rtile[which];
 		}
 	}
 	else
 	{
-//		printf("\tNormal Tile %d\n", which);
-		ret = new sdl_graphic;
-		ret->img = SDL_CreateRGBSurface(SDL_SWSURFACE, 24, 24, 16,
-			0x7C00, 0x03E0, 0x001F, 0);
-		ret->cleanup = false;
-		ret->pos = make_sdl_rect(10, 10, 24, 24);
-		ret->mask = make_sdl_rect(0, 0, 24, 24);
-		SDL_SetColorKey(ret->img, SDL_SRCCOLORKEY, SDL_MapRGB(ret->img->format, 1,1,1) );
-		SDL_FillRect(ret->img, NULL, SDL_MapRGB(ret->img->format, 1,1,1));
-		short *temp = (short*)ret->img->pixels;	//destination pointer
-		short *source = (short*)&tdata->data[tdata->offset[which]+1];
-		int source_off = 0;
-		for (int i = 0; i < 24; i++)
+		ret = tdata->rtile[which];
+	}
+	return ret;
+}
+
+sdl_graphic *tile::get_tile_left(int which)
+{
+	sdl_graphic *ret;
+	if (tdata->ltile[which] == 0)
+	{
+		if ((tdata->data[tdata->offset[which]] & 2) != 0)
 		{
-			int row_width;
-			row_width = 2 * (i+1);
-			if (i > 11)
-			{
-				row_width -= (4 * (i - 11));
-			}
-			memcpy(temp, source, row_width * 2);
-			source = &source[24];
-			temp = &temp[24];
+			ret = get_special(which);
 		}
+		else
+		{
+			short *source = (short*)&tdata->data[tdata->offset[which]+1];
+			tdata->ltile[which] = new sdl_graphic(1, 2, source, GRAPH_LTIL);
+			ret = tdata->ltile[which];
+		}
+	}
+	else
+	{
+		ret = tdata->ltile[which];
+	}
+	return ret;
+}
+
+sdl_graphic *tile::get_special(int which)
+{
+	sdl_graphic *ret;
+	if (tdata->stile[which] == 0)
+	{
+		short *source = (short*)&tdata->data[tdata->offset[which]+1];
+		tdata->stile[which] = new sdl_graphic(1, 2, source, GRAPH_STIL);
+		ret = tdata->stile[which];
+	}
+	else
+	{
+		ret = tdata->stile[which];
 	}
 	return ret;
 }
@@ -133,6 +135,10 @@ void tile::load(int which, pack *source)
 //		printf("\tThere are %d tiles\n", tdata->num_tiles);
 		tdata->offset = new int[tdata->num_tiles + 1];
 		
+		tdata->ltile = new sdl_graphic*[tdata->num_tiles];
+		tdata->rtile = new sdl_graphic*[tdata->num_tiles];
+		tdata->stile = new sdl_graphic*[tdata->num_tiles];
+		
 		//load the offsets for the tiles
 		for (int i = 0; i <= tdata->num_tiles; i++)
 		{
@@ -144,6 +150,9 @@ void tile::load(int which, pack *source)
 		tdata->data = &data[4 * (2 + tdata->num_tiles)];
 		for (int i = 0; i < tdata->num_tiles; i++)
 		{
+			tdata->ltile[i] = 0;
+			tdata->rtile[i] = 0;
+			tdata->stile[i] = 0;
 			if (tdata->offset[i] != tdata->offset[i+1])
 			{
 				if ((tdata->data[tdata->offset[i]] & 2) != 0)
