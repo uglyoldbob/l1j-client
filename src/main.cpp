@@ -6,6 +6,8 @@
 #include "sdl_master.h"
 #include "SDL_mixer.h"
 
+int sha256_hash(char *filename);
+
 int main(int argc, char* argv[])
 {
 	WSADATA wsaData;
@@ -15,6 +17,9 @@ int main(int argc, char* argv[])
 //		perror("WSAStartup failed!\n");
 	}
 
+	sha256_hash("lineage.exe");
+	sha256_hash("admin.exe");
+	
 	if (SDL_Init(SDL_INIT_EVERYTHING) == -1)
 	{
 		printf("Failed to start SDL\n");

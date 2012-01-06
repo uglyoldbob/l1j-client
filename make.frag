@@ -30,6 +30,11 @@ Lineage_OBJS += drawmode/sdl_drawmode.o drawmode/draw_game.o \
 	drawmode/draw_new_char.o
 Admin_OBJS += drawmode/sdl_drawmode.o drawmode/draw_admin_main.o \
 	drawmode/draw_maint_img.o drawmode/draw_maint_map.o drawmode/draw_maint_til.o
+#encryption objects
+Lineage_OBJS += encryption/main.o encryption/sha256deep.o \
+	encryption/hash.o encryption/helpers.o encryption/sha256.o
+Admin_OBJS += encryption/main.o encryption/sha256deep.o \
+	encryption/hash.o encryption/helpers.o encryption/sha256.o
 
 
 Lineage_DEPS := $(Lineage_OBJS:.o=.d)
