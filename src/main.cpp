@@ -6,7 +6,7 @@
 #include "sdl_master.h"
 #include "SDL_mixer.h"
 
-int sha256_hash(char *filename);
+int sha256_hash(char *filename, char *dest);
 
 int main(int argc, char* argv[])
 {
@@ -17,8 +17,13 @@ int main(int argc, char* argv[])
 //		perror("WSAStartup failed!\n");
 	}
 
-	sha256_hash("lineage.exe");
-	sha256_hash("admin.exe");
+	char hash1[65], hash2[65];
+	
+	sha256_hash("lineage.exe", hash1);
+	sha256_hash("admin.exe", hash2);
+	
+	printf("Received hashes\nlineage.exe: %s\nadmin.exe: %s\n",
+		hash1, hash2);
 	
 	if (SDL_Init(SDL_INIT_EVERYTHING) == -1)
 	{

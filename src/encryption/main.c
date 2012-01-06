@@ -41,7 +41,7 @@ static int initialize_state(state *s)
   return FALSE;
 }
 
-int sha256_hash(char *filename) 
+int sha256_hash(char *filename, char *dest) 
 {
   state *s;
 
@@ -65,8 +65,9 @@ int sha256_hash(char *filename)
   // has specified a list of input files
   
   {
-    printf("%s: ", filename);
-    s->return_value = hash_file(s,filename);//process_win32(s,fn);
+	if (dest == 0)
+    	printf("%s: ", filename);
+    s->return_value = hash_file(s, filename, dest);//process_win32(s,fn);
   }
 
   return s->return_value;

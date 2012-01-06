@@ -34,63 +34,6 @@
 
 #endif // ifdef __MD5DEEP_H 
 		    
-
-int display_hash(state *s)
-{
-  if (NULL == s)
-    return TRUE;
-  
-  if (s->mode & mode_triage)
-  {
-    printf ("\t%s\t", s->hash_result);
-//    display_filename(stdout,s->full_name);
-    //make_newline(s);
-    return FALSE;
-  }    
-
-
-//  display_size(s);
-
-  printf ("%s", s->hash_result);
-
-  if (s->mode & mode_quiet)
-    printf ("  ");
-  else
-  {
-    if ((s->mode & mode_piecewise) ||
-	!(s->is_stdin))
-    {
-      if (s->mode & mode_timestamp)
-      {
-	struct tm * my_time = _gmtime64(&(s->timestamp));
-
-	// The format is four digit year, two digit month, 
-	// two digit hour, two digit minute, two digit second
-	strftime(s->time_str, 
-		 MAX_TIME_STRING_LENGTH, 
-		 "%Y:%m:%d:%H:%M:%S", 
-		 my_time);
-
-	printf ("%c%s", (s->mode & mode_csv?',':' '), s->time_str);
-      }
-
-      
-      if (s->mode & mode_csv)
-	printf(",");
-      else
-	printf("\n");      
-
- //     display_filename(stdout,s->full_name);
-    }
-  }
-
-  //make_newline(s);
-  return FALSE;
-}
-
-
-
-
 static void shorten_filename(char *dest, char *src)
 {
   char *basen;
@@ -261,41 +204,10 @@ static char hex[] = "0123456789abcdef";
       DEST[2 * __i + 1] = hex[ SRC[__i]       & 0xf];		\
     }
 
-static int hash_triage(state *s)
-{
-  if (NULL == s)
-    return TRUE;
-
-  memset(s->hash_result,0,(2 * s->hash_length) + 1);
-
-  // We use the piecewise mode to get a partial hash of the first 
-  // 512 bytes of the file. But we'll have to remove piecewise mode
-  // before returning to the main hashing code
-  s->block_size = 512;
-  s->mode |= mode_piecewise;
-
-  HASH_INITIALIZE();
-    
-  if (!compute_hash(s))
-  {
-    if (s->mode & mode_piecewise)
-      free(s->full_name);
-    return TRUE;
-  }
-
-  s->mode -= mode_piecewise;
-  
-  HASH_FINALIZE();
-  HASH_TO_STR(s->hash_sum, s->hash_result, s->hash_length);
-
-  printf ("%"PRIu64"\t%s", s->stat_bytes, s->hash_result);
-  
-  return FALSE;
-}
 #endif
 
 
-static int hash(state *s)
+static int hash(state *s, char *dest)
 {
   int done = FALSE, status = FALSE;
   char *tmp_name = NULL;
@@ -312,46 +224,17 @@ static int hash(state *s)
     s->last_time = s->start_time;
   }
 
-#ifdef __MD5DEEP_H
-  if (s->mode & mode_triage)
-  {
-    // Hash and display the first 512 bytes of this file
-    hash_triage(s);
-
-    // Rather than muck about with updating the state of the input
-    // file, just reset everything and process it normally.
-    s->actual_bytes = 0;
-    fseeko(s->handle, 0, SEEK_SET);
-  }
-#endif
-  
-  if ( s->mode & mode_piecewise )
-  {
-    s->block_size = s->piecewise_size;
-    
-    // We copy out the original file name and saved it in tmp_name
-    tmp_name = s->full_name;
-    s->full_name = (char *)malloc(sizeof(char) * PATH_MAX);
-    if (NULL == s->full_name)
-    {
-      return TRUE;
-    }
-  }
-  
   while (!done)
   {
-#ifdef __MD5DEEP_H
     memset(s->hash_result,0,(2 * s->hash_length) + 1);
-#endif
+
     HASH_INITIALIZE();
     
     s->read_start = s->actual_bytes;
 
     if (!compute_hash(s))
     {
-      if (s->mode & mode_piecewise)
-	free(s->full_name);
-      return TRUE;
+		return TRUE;
     }
 
     // We should only display a hash if we've processed some
@@ -371,33 +254,22 @@ static int hash(state *s)
       
       HASH_FINALIZE();
 
-#ifdef __MD5DEEP_H
       HASH_TO_STR(s->hash_sum, s->hash_result, s->hash_length);
       
-      // Under not matched mode, we only display those known hashes that
-      // didn't match any input files. Thus, we don't display anything now.
-      // The lookup is to mark those known hashes that we do encounter
-      if (s->mode & mode_not_matched)
-		status = 1;//is_known_hash(s->hash_result,NULL);
+      if (dest != 0)
+      {
+	      sprintf (dest, "%s", s->hash_result);
+      }
       else
-		display_hash(s);
-#else
-      display_hash(s);
-#endif    
+      {
+	      printf ("%s\n", s->hash_result);
+      }
     }
 
     if (s->mode & mode_piecewise)
       done = feof(s->handle);
     else
       done = TRUE;
-  }
-
-
-  
-  if (s->mode & mode_piecewise)
-  {
-    free(s->full_name);
-    s->full_name = tmp_name;
   }
   
   return status;
@@ -428,7 +300,7 @@ static int setup_barename(state *s, char *fn)
 }
 
 
-int hash_file(state *s, char *fn)
+int hash_file(state *s, char *fn, char *dest)
 {
   int status = STATUS_OK;
 
@@ -453,38 +325,13 @@ int hash_file(state *s, char *fn)
     if (UNKNOWN_FILE_SIZE == s->stat_bytes)
       s->stat_bytes = find_file_size(s->handle);
 
-    // If this file is above the size threshold set by the user, skip it
-    if ((s->mode & mode_size) && (s->stat_bytes > s->size_threshold))
-    {
-      if (s->mode & mode_size_all)
-      {
-	// Whereas md5deep has only one hash to wipe, hashdeep has several
-#ifdef __MD5DEEP_H
-	memset(s->hash_result, '*', HASH_STRING_LENGTH);
-#else
-	int i;
-	for (i = 0 ; i < NUM_ALGORITHMS ; ++i)
-	{
-	  if (s->hashes[i]->inuse)
-	    memset(s->current_file->hash[i], '*', s->hashes[i]->byte_length);
-	}
-#endif
-
-	display_hash(s);
-      }
-
-      fclose(s->handle);
-      return STATUS_OK;
-    }
-
-
     if (s->mode & mode_estimate)
     {
       s->stat_megs = s->stat_bytes / ONE_MEGABYTE;
       shorten_filename(s->short_name,s->full_name);    
     }    
 
-    status = hash(s);
+    status = hash(s, dest);
 
     fclose(s->handle);
   }
@@ -495,23 +342,4 @@ int hash_file(state *s, char *fn)
 
   
   return status;
-}
-
-
-int hash_stdin(state *s)
-{
-  if (NULL == s)
-    return TRUE;
-
-  strncpy(s->full_name,"stdin",PATH_MAX);
-  s->is_stdin  = TRUE;
-  s->handle    = stdin;
-
-  if (s->mode & mode_estimate)
-  {
-    s->short_name = s->full_name;
-    s->stat_megs = 0LL;
-  }
-
-  return (hash(s));
 }

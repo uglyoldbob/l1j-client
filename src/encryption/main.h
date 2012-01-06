@@ -126,7 +126,7 @@ typedef struct _state {
 // ---------------------------------------------------------------- 
 
 // Hashing functions 
-int hash_file(state *s, char *file_name);
+int hash_file(state *s, char *file_name, char *dest);
 
 // Sets up hashing algorithm and allocates memory 
 int setup_hashing_algorithm(state *s);
