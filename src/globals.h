@@ -109,14 +109,6 @@ struct lin_char_info
 	char max_int;
 };
 
-struct sdl_graphic
-{	//TODO : convert this to a class, with other classes inheriting this
-	SDL_Surface *img;
-	SDL_Rect *pos;
-	SDL_Rect *mask;
-	bool cleanup;
-};
-
 struct graphics_data
 {
 	pack *tilepack;
@@ -129,5 +121,6 @@ SDL_Surface *get_image(const char *name, pack *source);
 SDL_Surface *get_png_image(int num, pack **source);
 SDL_Surface *get_img(int num, pack **source);	//loads raw image data
 SDL_Surface *get_image(SDL_RWops *buf);
+SDL_Rect *make_sdl_rect(int x, int y, int w, int h);
 
 #endif

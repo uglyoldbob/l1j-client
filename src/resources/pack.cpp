@@ -267,9 +267,9 @@ unsigned char* pack::load_png(const char *name, int *size, int decrypting)
 	return (unsigned char*)buffer;
 }
 
-char *pack::load_file(const char *name, int *size, int decrypting)
-{
-	char *ret_buf = (char*)0;
+int pack::check_file(const char *name)
+{	//TODO change to a binary search
+	//because the list of files is sorted alphabetically
 	int i;
 	for (i = 0; i < num_files; i++)
 	{
@@ -279,6 +279,20 @@ char *pack::load_file(const char *name, int *size, int decrypting)
 		}
 	}
 	if (i < num_files)
+	{
+		return i;
+	}
+	else
+	{
+		return -1;
+	}
+}
+
+char *pack::load_file(const char *name, int *size, int decrypting)
+{
+	char *ret_buf = (char*)0;
+	int i = check_file(name);
+	if (i >= 0)
 	{
 //		printf("Loading %s from %s\n", files[i].name, data_file);
 		*size = files[i].size;

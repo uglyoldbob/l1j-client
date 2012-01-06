@@ -84,6 +84,17 @@ lin_char_info *make_lin_char_info(int char_type, int gender)
 	return ret;
 }
 
+SDL_Rect *make_sdl_rect(int x, int y, int w, int h)
+{
+	SDL_Rect *ret;
+	ret = new SDL_Rect;
+	ret->x = x;
+	ret->y = y;
+	ret->w = w;
+	ret->h = h;
+	return ret;
+}
+
 SDL_Surface *get_image(const char *name, pack *source)
 {
 	char *buffer;

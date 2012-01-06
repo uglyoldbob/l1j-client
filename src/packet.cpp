@@ -25,12 +25,26 @@ int packet::assemble(char *buf, int max_length, const char *format, ...)
 	return length;
 }
 
+void packet::disassemble(const char *format, ...)
+{
+	va_list temp_args;
+	va_start(temp_args, format);
+	disassemble(packet_data, format, temp_args);
+	va_end(temp_args);
+}
+
 void packet::disassemble(unsigned char *buf, const char *format, ...)
+{
+	va_list temp_args;
+	va_start(temp_args, format);
+	disassemble(buf, format, temp_args);
+	va_end(temp_args);
+}
+
+void packet::disassemble(unsigned char *buf, const char *format, va_list args)
 {
 	int i = 0;
 	int buf_offset = 0;
-	va_list args;
-	va_start(args, format);
 	while (format[i] != 0)
 	{
 		switch(format[i])
@@ -78,7 +92,6 @@ void packet::disassemble(unsigned char *buf, const char *format, ...)
 		}
 		i++;
 	}
-	va_end(args);
 }
 
 int packet::assemble(char *send, int max_length, const char *format, va_list array)

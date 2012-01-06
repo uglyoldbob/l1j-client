@@ -4,7 +4,9 @@
 #include "sdl_user.h"
 #include "config.h"
 #include "connection.h"
+#include "resources/briefcase.h"
 #include "resources/table.h"
+#include "resources/tile.h"
 #include "resources/pack.h"
 
 #define TRANSFER_AMOUNT 0x400
@@ -33,7 +35,7 @@ class client
 	private:
 		config *main_config;
 		connection *server;
-		unsigned int checksum;
+		briefcase *server_data;	//used to hold all server specific data
 		pack *textpack;
 		pack *tilepack;
 		pack **spritepack;
@@ -46,6 +48,10 @@ class client
 		table pet;
 		table solvent;
 		table todays_tip;
+		tile *map_tiles;
+		int number_map_tiles;
+		
+		char *server_name;
 		
 		lin_char_info **login_opts;
 		int num_login_opts;	//number of elements present
@@ -57,9 +63,11 @@ class client
 		unsigned char countryCode;
 
 		int get_updates(connection* server);
+		int old_get_updates(connection* server);
 		int pack_resources();
 		int init_packs();
 		int init_strings();
+		int init_tiles();
 		
 		//unsorted functions
 		void init_math_tables();

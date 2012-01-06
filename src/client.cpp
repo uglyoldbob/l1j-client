@@ -8,6 +8,7 @@
 #include "globals.h"
 #include "lindes.h"
 #include "packet.h"
+#include "resources/briefcase.h"
 #include "resources/music.h"
 #include "resources/pack.h"
 #include "resources/partial_table.h"
@@ -16,6 +17,25 @@
 
 int client::pack_resources()
 {
+	return 0;
+}
+
+int client::init_tiles()
+{
+	int last_good = 100;
+	for (int i = 0; i < (last_good * 2); i++)
+	{
+		char fname[100];
+		sprintf(fname, "%d.til", i);
+		if (tilepack->check_file(fname) != -1)
+		{	//the tileset is good
+			if (i > last_good)
+				last_good = i;
+		}
+	}
+	number_map_tiles = last_good;
+	map_tiles = new tile[number_map_tiles];
+	
 	return 0;
 }
 
@@ -91,7 +111,78 @@ int client::init_strings()
 
 int client::get_updates(connection* server)
 {
+	packet *proc;
+	unsigned char temp;
+	unsigned short temp2;
+	unsigned int num_files;
+	int status;	//> 0 means update occurred
+	unsigned int magic_number = 0;
+	status = 0;
+	try
+	{
+		if (server->connection_ok() == 1)
+		{
+			proc = new packet(this, server);	//init the packet class instance
+			proc->get_packet();	//read packet of server name
+			proc->disassemble("cs", &temp, &server_name);
+			printf("STUB Get checksum for server %s\n", server_name);
+			server_data = new briefcase(server_name);
+			temp2 = 0x0700;
+			server->snd_var(&temp2, 2);
+			temp = 1;
+			server->snd_var(&temp, 1);
+			server->snd_var(&magic_number, 4);
+			proc->reset();
+			proc->get_packet();
+			proc->disassemble("cd", &temp, &num_files);
+			printf("Receiving %d files from %d\n", num_files, temp);
+			for (int i = 0; i < num_files; i++)
+			{
+				unsigned char file_buffer[TRANSFER_AMOUNT];	//buffer space
+				unsigned int filesize;
+				char *filename;
+				proc->reset();
+				proc->get_packet();
+				proc->disassemble("csd", &temp, &filename, &filesize);
+				printf("Receiving file %s of length %d ...", filename, filesize);
+//				FILE *filedump = fopen(dump_name, "wb");
+				while (filesize > 0)
+				{
+					if (filesize > TRANSFER_AMOUNT)
+					{
+						server->rcv(file_buffer, TRANSFER_AMOUNT);
+//						fwrite(file_buffer, 1, TRANSFER_AMOUNT, filedump);
+						filesize -= TRANSFER_AMOUNT;
+					}
+					else
+					{
+						server->rcv(file_buffer, filesize);
+//						fwrite(file_buffer, 1, file_length, filedump);
+						filesize = 0;
+					}
+				}
+//				fclose(filedump);
+				printf(" done!\n");
+			}
+			for(;;)
+			{
+				SDL_Delay(100);
+			}
+		}			
+	}
+	catch(int e)
+	{
+		printf("An error occurred %d\n", e);
+		status = -1;
+	}
+	return status;
+}
+
+int client::old_get_updates(connection* server)
+{	//the classic way of getting updates
+	//very limited
 	unsigned int temp;
+	unsigned int checksum = 0xdeadbeef;
 	int sign_temp;
 	int status;	//> 0 means update occurred
 	status = 0;
@@ -180,7 +271,7 @@ client::client(sdl_user *stuff)
 	main_config = 0;
 	graphics = stuff;
 	server = 0;
-	checksum = 0xdeadbeef;
+	server_data = 0;
 	num_sprite_pack = 17;
 }
 
@@ -196,6 +287,7 @@ void client::init()
 
 	DesKeyInit("~!@#%^$<");	//TODO : move this code to a class and use an object
 	init_packs();
+	init_tiles();
 	
 	graphics_data *temp = new graphics_data;
 	temp->tilepack = tilepack;

@@ -19,6 +19,7 @@ class connection
 		//sends and receives network order information
 		int snd_var(const void* msg, int len);
 		int rcv_var(void *buf, int len);
+		
 		//sends and receives backwards network order information (for the game server)
 		int snd_varg(const void* msg, int len);
 		int rcv_varg(void *buf, int len);

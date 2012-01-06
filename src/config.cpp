@@ -7,17 +7,17 @@
 const char* config::get_port()
 {
 	if (port[0] == 0)
-		return 0;
-	else
 		return DEFAULT_PORT;
+	else
+		return port;
 }
 
 const char* config::get_game_port()
 {
 	if (game_port[0] == 0)
-		return 0;
-	else
 		return DEFAULT_GAME_PORT;
+	else
+		return game_port;
 }
 
 

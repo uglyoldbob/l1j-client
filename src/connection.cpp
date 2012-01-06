@@ -272,7 +272,7 @@ void connection::try_names(const char *port)
 {
 	for (int i = 0; i < the_config->get_num_names(); i++)
 	{
-		printf("\tAttempting %s [%d of %d]...", the_config->get_addr(i), i+1, the_config->get_num_names());
+		printf("\tAttempting %s [%d of %d] port %s...", the_config->get_addr(i), i+1, the_config->get_num_names(), port);
 		get_addr(port, the_config->get_addr(i));
 		make_connection();
 		if (connection_ok() == 1)

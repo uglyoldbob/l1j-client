@@ -92,6 +92,7 @@ int client::init_strings()
 int client::get_updates(connection* server)
 {
 	unsigned int temp;
+	unsigned int checksum = 0xdeadbeef;
 	int sign_temp;
 	int status;	//> 0 means update occurred
 	status = 0;
@@ -180,7 +181,6 @@ client::client(sdl_user *stuff)
 	main_config = 0;
 	graphics = stuff;
 	server = 0;
-	checksum = 0xdeadbeef;
 	num_sprite_pack = 17;
 }
 

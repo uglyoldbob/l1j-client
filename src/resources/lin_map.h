@@ -35,13 +35,25 @@ struct lin_map_data
 	//7cc8c for loading of unknown4 (contains three more elements than num_unknown4?)
 };
 
+//TODO find highest number of existing tile data ?
+//TODO place to store all the tile data (array)
+	//load / (unload) tile sections as necessary
+	
+//TODO method for getting tile data for a map coordinate
+	//loading a map section if necessary
+
+struct lin_map_segment
+{	//not in file order
+	int tile_data[64][128];
+};
+
 class lin_map
 {
 	public:
 		lin_map();
 		~lin_map();
 		void load(int which);
-		sdl_graphic *get_map();	//returns an image of the entire map
+		sdl_graphic *get_map(int x, int y);	//returns an image of a portion of the map
 		int get_amnt();
 	private:
 		lin_map_data *mapdata;	//all the necessary map data

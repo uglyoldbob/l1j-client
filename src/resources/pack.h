@@ -28,6 +28,7 @@ class pack
 		unsigned char* load_file(int which, int decrypting);
 		unsigned char* load_png(const char *name, int *size, int decrypting);
 		char *load_file(const char *name, int *size, int decrypting);
+		int check_file(const char *name);
 		~pack();
 	private:
 		char* data_file;
