@@ -26,8 +26,8 @@ void quit_ptr::go()
 	ref->quit();
 }
 
-draw_login::draw_login(graphics_data *stuff, sdl_user *self)
-	: sdl_drawmode(stuff, self)
+draw_login::draw_login(sdl_user *self)
+	: sdl_drawmode(self)
 {	
 	//273 - 300 is the lantern animation (img)
 	owner->game_music.change_music("sound/music0.mp3");
@@ -35,7 +35,7 @@ draw_login::draw_login(graphics_data *stuff, sdl_user *self)
 	pg->num_pg = 1;
 	pg->pg = new prepared_graphic[1];
 	
-	pg->pg[0].surf = get_png_image(814, graphx->spritepack);
+	pg->pg[0].surf = get_png_image(814, owner->game);
 	pg->pg[0].mask = NULL;
 	pg->pg[0].position = NULL;
 	pg->pg[0].cleanup = false;
@@ -44,20 +44,20 @@ draw_login::draw_login(graphics_data *stuff, sdl_user *self)
 	num_widgets = 7;
 	widgets = new sdl_widget*[num_widgets];
 	
-	widgets[0] = new sdl_widget(59, 0x1a9, 0x138, graphx);
-	widgets[1] = new sdl_input_box(12, 0x1fb, 0x14a, graphx);
+	widgets[0] = new sdl_widget(59, 0x1a9, 0x138, owner->game);
+	widgets[1] = new sdl_input_box(12, 0x1fb, 0x14a, owner->game);
 	widgets[1]->set_key_focus(true);
 	widgets[1]->cursor_on();
 	widget_key_focus = 1;
-	widgets[2] = new sdl_input_box(13, 0x1fb, 0x160, graphx);
+	widgets[2] = new sdl_input_box(13, 0x1fb, 0x160, owner->game);
 	widgets[2]->set_key_focus(true);
-	widgets[3] = new sdl_plain_button(53, 0x213, 0x183, graphx, (funcptr*)new login_ptr(this));
+	widgets[3] = new sdl_plain_button(53, 0x213, 0x183, owner->game, (funcptr*)new login_ptr(this));
 	widgets[3]->set_key_focus(true);
-	widgets[4] = new sdl_plain_button(65, 0x213, 0x195, graphx, 0);
+	widgets[4] = new sdl_plain_button(65, 0x213, 0x195, owner->game, 0);
 	widgets[4]->set_key_focus(true);
-	widgets[5] = new sdl_plain_button(55, 0x213, 0x1a8, graphx, 0);
+	widgets[5] = new sdl_plain_button(55, 0x213, 0x1a8, owner->game, 0);
 	widgets[5]->set_key_focus(true);
-	widgets[6] = new sdl_plain_button(57, 0x213, 0x1c2, graphx, (funcptr*)new quit_ptr(this));
+	widgets[6] = new sdl_plain_button(57, 0x213, 0x1c2, owner->game, (funcptr*)new quit_ptr(this));
 	widgets[6]->set_key_focus(true);
 //	widgets[7] = new sdl_widget(814, 0x1a, 0x3b, graphx);
 		//type 1, null("intro"), px=0xcf, py=0x11a

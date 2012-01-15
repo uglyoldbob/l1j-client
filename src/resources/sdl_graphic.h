@@ -3,6 +3,8 @@
 
 #include <SDL.h>
 
+class client;
+
 enum SDL_GRAPH_TYPES
 {
 	GRAPH_IMG,
@@ -17,11 +19,12 @@ class graphics_data;
 class sdl_graphic
 {
 	public:
-		sdl_graphic(int num, int x, int y, graphics_data *packs, int type);
+		sdl_graphic(int num, int x, int y, client *packs, int type);
 		sdl_graphic(int x, int y, short *source, int type);
 		sdl_graphic(int x, int y, int w, int h);
 		Uint32 color(Uint8 r, Uint8 g, Uint8 b);
-		void draw(SDL_Surface *display);
+		void drawat(int x, int y, SDL_Surface *display);
+		void draw(SDL_Surface *display);	//draws this tile onto display
 		void mod_with(SDL_Surface *display);
 		SDL_Surface *get_surf();
 		~sdl_graphic();

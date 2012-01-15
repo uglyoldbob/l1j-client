@@ -27,7 +27,7 @@ class quit_ptr : public funcptr
 class draw_login : public sdl_drawmode
 {
 	public:
-		draw_login(graphics_data *stuff, sdl_user *self);
+		draw_login(sdl_user *self);
 		~draw_login();
 		void login();
 		void quit();

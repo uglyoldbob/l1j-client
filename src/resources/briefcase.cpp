@@ -5,6 +5,37 @@
 #include "globals.h"
 #include "briefcase.h"
 
+const char * briefcase::get_hash()
+{
+	open_data();
+	if (data_buf == 0)
+	{	//the file does not exist yet
+		data_buf = fopen(data_file, "wb");
+	}
+	fclose(data_buf);
+//	sort_file();	//make sure the briefcase is sorted before hashing
+	data_buf = 0;
+	
+	sha256_hash(data_file, hash);
+	return hash;
+}
+
+void briefcase::sort()
+{
+	if (sorted == 0)
+	{
+		qsort(files, num_files, sizeof(struct briefcase_entry), briefcase::compare);
+		sorted = 1;
+	}
+}
+
+int briefcase::compare(const void *a, const void *b)
+{
+	const briefcase_entry *aa = (const briefcase_entry*)a;
+	const briefcase_entry *ba = (const briefcase_entry*)b;
+	return strcmp(aa->name, ba->name);
+}
+
 int briefcase::detect_dupes()	//detects duplicate files
 {
 //	printf("Checking for duplicate files\n");
@@ -81,7 +112,7 @@ briefcase::briefcase(const char *name)
 	int size;
 	size = strlen(name) + strlen(BCE_EXT) + 1;
 	data_file = new char[size];
-	sprintf(data_file, "%s%s", name, DATA_EXT);
+	sprintf(data_file, "%s%s", name, BCE_EXT);
 	
 	num_files = 0;
 	
@@ -111,6 +142,19 @@ int briefcase::check_file(const char *name)
 	{
 		return -1;
 	}
+}
+
+void briefcase::write_file(char *name, char *data, int size)
+{
+	int len = strlen(name);
+	if (data_buf == 0)
+		return;
+	fwrite(&len, sizeof(int), 1, data_buf);
+	fwrite(name, sizeof(char), len+1, data_buf);
+	fwrite(&size, sizeof(int), 1, data_buf);
+	long offset = ftell(data_buf) + sizeof(long);
+	fwrite(&offset, sizeof(long), 1, data_buf);
+	fwrite(data, sizeof(char), size, data_buf);
 }
 
 char* briefcase::load_file(const char *name, int *size)
@@ -164,14 +208,31 @@ unsigned char* briefcase::load_file(int which)
 	return buf;
 }
 
+void briefcase::finish_briefcase()
+{
+	if (data_buf == 0)
+	{
+		fclose(data_buf);
+		data_buf = 0;
+	}
+}
+
+void briefcase::new_data()
+{
+	if (data_buf == 0)
+		data_buf = fopen(data_file, "wb");
+}
+
+void briefcase::add_data()
+{
+	if (data_buf == 0)
+		data_buf = fopen(data_file, "ab");
+}
+
 void briefcase::open_data()
 {
 	if (data_buf == 0)
 		data_buf = fopen(data_file, "rb");
-	if (data_buf == 0)
-	{
-		printf("There is no custom data for this server yet.");
-	}
 }
 
 briefcase::~briefcase()

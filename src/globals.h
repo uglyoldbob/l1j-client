@@ -12,6 +12,13 @@
 extern char *lineage_dir;	//string to hold the absolute path to the lineage directory
 extern sdl_font lineage_font;
 
+//pack data is the same for all clients thanks to the briefcase object
+extern pack *textpack;
+extern pack *tilepack;
+extern pack **spritepack;
+extern int num_sprite_pack;
+
+
 //these are used so that the correct byte order is used
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN
 #undef DO_SWAP
@@ -117,10 +124,14 @@ struct graphics_data
 };
 
 lin_char_info *make_lin_char_info(int char_type, int gender);
-SDL_Surface *get_image(const char *name, pack *source);
-SDL_Surface *get_png_image(int num, pack **source);
-SDL_Surface *get_img(int num, pack **source);	//loads raw image data
+
+SDL_Surface *get_png_image(int num, client *who);
+void check_fix_png(char *buffer, int *size);
+SDL_Surface *get_img(int num, client *who);	//loads raw image data
 SDL_Surface *get_image(SDL_RWops *buf);
+
 SDL_Rect *make_sdl_rect(int x, int y, int w, int h);
+
+int sha256_hash(char *filename, char *dest);
 
 #endif

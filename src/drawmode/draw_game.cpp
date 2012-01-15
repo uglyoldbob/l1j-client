@@ -3,8 +3,8 @@
 #include "sdl_user.h"
 #include "widgets/sdl_widget.h"
 
-draw_game::draw_game(graphics_data *stuff, sdl_user *self)
-	: sdl_drawmode(stuff, self)
+draw_game::draw_game(sdl_user *self)
+	: sdl_drawmode(self)
 {
 	background = 811;
 	draw_mtx = SDL_CreateMutex();
@@ -14,10 +14,10 @@ draw_game::draw_game(graphics_data *stuff, sdl_user *self)
 	num_widgets = 4;
 	
 	widgets = new sdl_widget*[num_widgets];
-	widgets[0] = new sdl_widget(background, 0, 0, graphx);
-	widgets[1] = new sdl_widget(1019, 485, 366, graphx);
-	widgets[2] = new sdl_widget(1028, 0, 368, graphx);
-	widgets[3] = new sdl_widget(1042, 124, 363, graphx);
+	widgets[0] = new sdl_widget(background, 0, 0, self->game);
+	widgets[1] = new sdl_widget(1019, 485, 366, self->game);
+	widgets[2] = new sdl_widget(1028, 0, 368, self->game);
+	widgets[3] = new sdl_widget(1042, 124, 363, self->game);
 }
 
 void draw_game::key_press(SDL_KeyboardEvent *button)
@@ -35,7 +35,7 @@ void draw_game::key_press(SDL_KeyboardEvent *button)
 					{
 						delete widgets[0];
 					}
-					widgets[0] = new sdl_widget(background, 0, 0, graphx);
+					widgets[0] = new sdl_widget(background, 0, 0, owner->game);
 					//SDL_FreeSurface(pg->pg[0].surf);
 					//pg->pg[0].surf = get_png_image(background, graphx->spritepack);
 				}
@@ -46,7 +46,7 @@ void draw_game::key_press(SDL_KeyboardEvent *button)
 				{
 					delete widgets[0];
 				}
-				widgets[0] = new sdl_widget(background, 0, 0, graphx);
+				widgets[0] = new sdl_widget(background, 0, 0, owner->game);
 				//SDL_FreeSurface(pg->pg[0].surf);
 				//pg->pg[0].surf = get_png_image(background, graphx->spritepack);
 				break;

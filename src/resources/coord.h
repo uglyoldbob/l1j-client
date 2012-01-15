@@ -15,9 +15,33 @@ class coord
 		virtual pixel_coord get_pixel() = 0;
 		virtual map_coord get_map() = 0;
 		virtual screen_coord get_screen() = 0;
+		
+		int get_x();
+		int get_y();
 	protected:
 		int x;
 		int y;
 };
 
 #endif
+
+//map coord +x means
+	//+24 screen x
+	//-12 screen y
+	
+//map coord -x means
+	//-24 screen x
+	//+12 screen y
+	
+//map coord +y means
+	//+24 screen x
+	//+12 screen y
+	
+//map coord -y means
+	//-24 screen x
+	//-12 screen y
+
+
+	
+//sx = (mx + my) * 24
+//sy = (my - mx) * 12

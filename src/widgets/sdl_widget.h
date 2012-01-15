@@ -2,16 +2,18 @@
 #define __SDL_WIDGET_H_
 
 #include <SDL.h>
+class client;
 
 #include "globals.h"
 #include "resources/sdl_graphic.h"
 
 #include <SDL.h>
+class client;
 
 class sdl_widget
 {
 	public:
-		sdl_widget(int num, int x, int y, graphics_data *packs);
+		sdl_widget(int num, int x, int y, client *who);
 		virtual ~sdl_widget();
 		virtual void draw(SDL_Surface *display);
 		

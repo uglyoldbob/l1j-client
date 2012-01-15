@@ -1,6 +1,7 @@
 #ifndef _SDL_INPUT_BOX_H_
 #define _SDL_INPUT_BOX_H_
 
+class client;
 #include "sdl_widget.h"
 
 #define MAX_LENGTH 100
@@ -8,7 +9,7 @@
 class sdl_input_box : public sdl_widget
 {
 	public:
-		sdl_input_box(int num, int x, int y, graphics_data *packs);
+		sdl_input_box(int num, int x, int y, client *who);
 		virtual ~sdl_input_box();
 		virtual void draw(SDL_Surface *display);
 		

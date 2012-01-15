@@ -163,7 +163,6 @@ config::config(const char *cfile)
 		printf("ERROR: %i errors were found in your config file. Fix them and restart!\n", num_errors);
 	}
 
-	lineage_font.init("Font/eng.fnt");
 }
 
 config::~config()

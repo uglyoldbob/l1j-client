@@ -8,6 +8,15 @@ coord::coord(int tx, int ty)
 	y = ty;
 }
 
+int coord::get_x()
+{
+	return x;
+}
+
+int coord::get_y()
+{
+	return y;
+}
 coord::~coord()
 {
 }

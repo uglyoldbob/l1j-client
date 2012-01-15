@@ -1,11 +1,12 @@
+#include "client.h"
 #include "sdl_animate_button.h"
 
 int sdl_animate_button::frame_time = 67;
 
-sdl_animate_button::sdl_animate_button(int num, int x, int y, graphics_data *packs, funcptr *stuff)
-	: sdl_plain_button(-1, x, y, packs, stuff)
+sdl_animate_button::sdl_animate_button(int num, int x, int y, client *who, funcptr *stuff)
+	: sdl_plain_button(-1, x, y, who, stuff)
 {
-	blabla = packs;
+	blabla = who;
 	animating = false;	
 	this->x = x;
 	this->y = y;

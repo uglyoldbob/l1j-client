@@ -2,6 +2,7 @@
 #define __LIN_MAP_H_
 
 class pack;
+class tile;
 #include "widgets/sdl_widget.h"
 
 struct map_cache_data
@@ -26,10 +27,10 @@ struct unknown4_struct
 
 struct lin_map_data
 {
-	int unknown1[64][128];	//loaded into mapCache[mapNum?] (offset 0)
+	int floor[64][128];	//the floor data for each tile of the map (each tile is a triangle)
 	short num_unknown2;
-	char *unknown2[6];	//char unknown2[num_unknown2][6]
-	short unknown3[64][128];	//loaded into mapCache[mapNum?] (offset 4)
+	//comment placeholder for the unknown2 data
+	short attr[64][128];	//loaded into mapCache[mapNum?] (offset 4)
 	int num_unknown4;
 	unknown4_struct *unknown4;	//unknown4 stored into hideObjs[arg]
 	//7cc8c for loading of unknown4 (contains three more elements than num_unknown4?)
@@ -44,21 +45,52 @@ struct lin_map_data
 
 struct lin_map_segment
 {	//not in file order
-	int tile_data[64][128];
+	sdl_graphic *graphic;
+	lin_map_data *mapdata;	//all the necessary map data
+	int map;
+	//the lowest x,y coordinates of the map section
+	int x;
+	int y;
+	//the offset values for the map section
+	int offsetx;
+	int offsety;
+	//the lowest x,y corresponds to the image coordinates of (0, 756)
 };
 
 class lin_map
 {
 	public:
-		lin_map();
+		lin_map(tile *thetiles, client *who);
 		~lin_map();
-		void load(int which);
-		sdl_graphic *get_map(int x, int y);	//returns an image of a portion of the map
-		int get_amnt();
+		void draw(SDL_Surface *display);	//draws the full map onto display
+		void set_window(int x, int y, int w, int h);
 	private:
-		lin_map_data *mapdata;	//all the necessary map data
+		tile *tile_data;	//used for reference only
+		lin_map_segment segs[4];
+		client *who;
+		sdl_graphic *whole_map;	//the graphic for the visible portion of the map
 		
-		char *filebuf;
+		sdl_graphic *get_map(int mapnum, int x, int y, int segnum);	//returns an image of a portion of the map
 };
 
 #endif
+
+//the s32 file
+
+//64 x 128 of int (4 bytes) data [called floor]
+//a short (mys1)
+	//array of structures 6 bytes in size, there are mys1 of them
+//64 x 128 of short (2 bytes) data [called attr]
+//int mys2
+	//skip 2 bytes
+	//short mys2_1
+		//???
+//int mys3
+	//
+	
+	
+//set a certain point on the screen to a set of map coordinates
+
+//pick the corners of the visible map drawing area
+//get the mapp coordinates for those points
+//determine what map segments need to be drawn, and where to be drawn at

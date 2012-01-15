@@ -8,7 +8,7 @@ class sdl_graphic;
 class draw_maint_map : public sdl_drawmode
 {
 	public:
-		draw_maint_map(graphics_data *stuff, sdl_user *self);
+		draw_maint_map(sdl_user *self);
 		~draw_maint_map();
 		
 		virtual void key_press(SDL_KeyboardEvent *button);
@@ -24,6 +24,7 @@ class draw_maint_map : public sdl_drawmode
 		
 		lin_map *themap;
 		sdl_graphic *map_vis;
+		int x, y;
 };
 
 #endif

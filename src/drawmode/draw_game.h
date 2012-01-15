@@ -6,7 +6,7 @@
 class draw_game : public sdl_drawmode
 {
 	public:
-		draw_game(graphics_data *stuff, sdl_user *self);
+		draw_game(sdl_user *self);
 		~draw_game();
 		
 		virtual void key_press(SDL_KeyboardEvent *button);

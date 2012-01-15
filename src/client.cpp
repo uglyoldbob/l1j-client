@@ -39,6 +39,11 @@ int client::init_tiles()
 	return 0;
 }
 
+tile* client::get_tiles()
+{
+	return map_tiles;
+}
+
 int client::init_packs()
 {
 	textpack = new pack("Text", 1);
@@ -116,7 +121,7 @@ int client::get_updates(connection* server)
 	unsigned short temp2;
 	unsigned int num_files;
 	int status;	//> 0 means update occurred
-	unsigned int magic_number = 0;
+	char hash[65];	//the hash is 64 bytes plus a null terminator
 	status = 0;
 	try
 	{
@@ -124,135 +129,69 @@ int client::get_updates(connection* server)
 		{
 			proc = new packet(this, server);	//init the packet class instance
 			proc->get_packet();	//read packet of server name
-			proc->disassemble("cs", &temp, &server_name);
+			proc->disass("cs", &temp, &server_name);
 			printf("STUB Get checksum for server %s\n", server_name);
 			server_data = new briefcase(server_name);
-			temp2 = 0x0700;
+			strcpy(hash, server_data->get_hash());
+			temp2 = 0x4400;	//68 bytes of packet data
 			server->snd_var(&temp2, 2);
 			temp = 1;
 			server->snd_var(&temp, 1);
-			server->snd_var(&magic_number, 4);
+			printf("The hash is: %s\n", hash);
+			server->snd_var(hash, 65);
 			proc->reset();
 			proc->get_packet();
-			proc->disassemble("cd", &temp, &num_files);
+			proc->disass("cd", &temp, &num_files);
+			if (temp == 2)
+			{
+				server_data->new_data();
+				proc->reset();
+				proc->get_packet();
+				proc->disass("cd", &temp, &num_files);
+			}
+			else
+			{
+				server_data->add_data();
+			}
 			printf("Receiving %d files from %d\n", num_files, temp);
 			for (int i = 0; i < num_files; i++)
 			{
 				unsigned char file_buffer[TRANSFER_AMOUNT];	//buffer space
-				unsigned int filesize;
+				char *file;
+				unsigned int offset = 0;
+				unsigned int filesize, orig_filesize;
 				char *filename;
 				proc->reset();
 				proc->get_packet();
-				proc->disassemble("csd", &temp, &filename, &filesize);
+				proc->disass("csd", &temp, &filename, &filesize);
+				orig_filesize = filesize;
+				file = new char[filesize];
 				printf("Receiving file %s of length %d ...", filename, filesize);
-//				FILE *filedump = fopen(dump_name, "wb");
 				while (filesize > 0)
 				{
 					if (filesize > TRANSFER_AMOUNT)
 					{
 						server->rcv(file_buffer, TRANSFER_AMOUNT);
-//						fwrite(file_buffer, 1, TRANSFER_AMOUNT, filedump);
+						memcpy(&file[offset], file_buffer, TRANSFER_AMOUNT);
+						offset += TRANSFER_AMOUNT;
 						filesize -= TRANSFER_AMOUNT;
 					}
 					else
 					{
 						server->rcv(file_buffer, filesize);
-//						fwrite(file_buffer, 1, file_length, filedump);
+						memcpy(&file[offset], file_buffer, filesize);
+						offset += filesize;
 						filesize = 0;
 					}
 				}
-//				fclose(filedump);
+				server_data->write_file(filename, file, orig_filesize);
 				printf(" done!\n");
 			}
-			for(;;)
-			{
-				SDL_Delay(100);
-			}
+			printf("Closing briefcase\n");
+			server_data->finish_briefcase();
+			status = num_files;
+			delete proc;
 		}			
-	}
-	catch(int e)
-	{
-		printf("An error occurred %d\n", e);
-		status = -1;
-	}
-	return status;
-}
-
-int client::old_get_updates(connection* server)
-{	//the classic way of getting updates
-	//very limited
-	unsigned int temp;
-	unsigned int checksum = 0xdeadbeef;
-	int sign_temp;
-	int status;	//> 0 means update occurred
-	status = 0;
-	printf("STUB Get update magic number\n");
-	try
-	{
-		if (server->connection_ok() == 1)
-		{
-			server->snd_var(&checksum, 4);
-			server->rcv_var(&sign_temp, 4);
-			if (sign_temp < 0)
-			{
-				temp = -sign_temp;
-				printf("Protocol : %lx, ServerId : %lx\n", temp & 0xFFFF, temp>>16);
-				server->rcv_var(&sign_temp, 4);
-			}
-			if (sign_temp > 0)
-			{	//receive files
-				int num_files = sign_temp;
-				printf("Receiving %d files\n", num_files);
-				status = num_files;
-				unsigned char name_length;
-				unsigned int file_length;
-				unsigned char* file_buffer;
-				char *filename;
-				for (int i = 0; i < num_files; i++)
-				{
-					server->rcv(&name_length, 1);
-					filename = new char[name_length+1];
-					server->rcv(filename, name_length);
-					filename[name_length] = 0;
-					server->rcv_var(&file_length, 4);
-					file_buffer = new unsigned char[file_length+1];
-					printf("Downloading %s, %ld bytes ...", filename, file_length);
-					//do stuff so the file can be saved
-					char *dump_name;
-					dump_name = new char[name_length + 6];
-					sprintf(dump_name, "%s.gz", filename);
-//					FILE *filedump = fopen(dump_name, "wb");
-					while (file_length > 0)
-					{
-						if (file_length > TRANSFER_AMOUNT)
-						{
-							server->rcv(file_buffer, TRANSFER_AMOUNT);
-//							fwrite(file_buffer, 1, TRANSFER_AMOUNT, filedump);
-							file_length -= TRANSFER_AMOUNT;
-						}
-						else
-						{
-							server->rcv(file_buffer, file_length);
-//							fwrite(file_buffer, 1, file_length, filedump);
-							file_length = 0;
-						}
-					}
-//					fclose(filedump);
-					printf(" done\n");
-					printf("STUB Update magic number\n");
-					server->rcv_var(&sign_temp, 4);
-					delete [] dump_name;
-					delete [] filename;
-					delete [] file_buffer;
-				}
-			}
-			int num_servers;
-			unsigned short* num_users;
-			server->rcv_var(&num_servers, 4);
-			num_users = new unsigned short[num_servers];
-			for (int j = 0; j < num_servers; j++)
-				server->rcv_var(&num_users[j], 2);
-		}
 	}
 	catch(int e)
 	{
@@ -264,6 +203,7 @@ int client::old_get_updates(connection* server)
 
 client::client(sdl_user *stuff)
 {
+	getfiles = new files(this);
 	login_opts = 0;
 	num_login_opts = 0;
 	login_opts_used = 0;
@@ -284,19 +224,16 @@ void client::init()
 		main_config = 0;
 		throw "ERROR Loading configuration file.\n";
 	}
+	lineage_font.init("Font/eng.fnt", this);
 
 	DesKeyInit("~!@#%^$<");	//TODO : move this code to a class and use an object
 	init_packs();
 	init_tiles();
 	
-	graphics_data *temp = new graphics_data;
-	temp->tilepack = tilepack;
-	temp->spritepack = spritepack;
-	temp->num_sprite_pack = num_sprite_pack;
-	graphics->give_data(temp);	//pack files will not be created or delete during updates
+	graphics->change_drawmode(DRAWMODE_LOADING);
 
-	draw_loading *load;
 	graphics->wait_ready();
+	draw_loading *load;
 	load = (draw_loading*)graphics->get_drawmode();
 	
 	server = new connection(main_config);

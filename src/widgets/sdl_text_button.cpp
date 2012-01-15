@@ -1,7 +1,8 @@
+#include "client.h"
 #include "sdl_text_button.h"
 
-sdl_text_button::sdl_text_button(const char *bla, int x, int y, graphics_data *packs, funcptr *stuff)
-	: sdl_plain_button(-1, x, y, packs, stuff)
+sdl_text_button::sdl_text_button(const char *bla, int x, int y, client *who, funcptr *stuff)
+	: sdl_plain_button(-1, x, y, who, stuff)
 {
 	xpos = x;
 	ypos = y;

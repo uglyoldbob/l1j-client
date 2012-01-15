@@ -14,9 +14,8 @@ void dam_ptr::go()
 	ref->owner->change_drawmode(which);
 }
 
-sdl_drawmode::sdl_drawmode(graphics_data *stuff, sdl_user *self)
+sdl_drawmode::sdl_drawmode(sdl_user *self)
 {
-	graphx = stuff;
 	owner = self;
 	widget_key_focus = 0;
 	pg = 0;

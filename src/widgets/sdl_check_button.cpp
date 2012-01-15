@@ -1,7 +1,8 @@
+#include "client.h"
 #include "sdl_check_button.h"
 
-sdl_check_button::sdl_check_button(int num, int x, int y, graphics_data *packs, funcptr *stuff)
-	: sdl_plain_button(num, x, y, packs, stuff)
+sdl_check_button::sdl_check_button(int num, int x, int y, client *who, funcptr *stuff)
+	: sdl_plain_button(num, x, y, who, stuff)
 {
 	checked = 0;
 }

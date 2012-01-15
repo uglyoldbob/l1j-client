@@ -24,7 +24,7 @@ class packet
 		int assemble(char *format, int max_length, const char *data, va_list array);
 		void disassemble(unsigned char *buf, const char *format, va_list array);
 		void disassemble(unsigned char *buf, const char *format, ...);
-		void disassemble(const char *format, ...);
+		void disass(const char *format, ...);
 		
 		int process_packet();
 	private:

@@ -1,9 +1,10 @@
+#include "client.h"
 #include "sdl_input_box.h"
 
 #include "globals.h"
 
-sdl_input_box::sdl_input_box(int num, int x, int y, graphics_data *packs)
-	: sdl_widget(num, x, y, packs)
+sdl_input_box::sdl_input_box(int num, int x, int y, client *who)
+	: sdl_widget(num, x, y, who)
 {
 	key_focus = false;
 	draw_cursor = false;

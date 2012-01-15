@@ -1,8 +1,9 @@
+#include "client.h"
 #include "sdl_radio_button.h"
 
-sdl_radio_button::sdl_radio_button(int num, int x, int y, graphics_data *packs, funcptr *stuff,
+sdl_radio_button::sdl_radio_button(int num, int x, int y, client *who, funcptr *stuff,
 	sdl_widget**bob, int amnt, int indx)
-	: sdl_check_button(num, x, y, packs, stuff)
+	: sdl_check_button(num, x, y, who, stuff)
 {
 	checked = 0; 
 	options = bob;

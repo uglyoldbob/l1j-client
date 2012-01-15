@@ -46,7 +46,7 @@ void change_mode(void *a, void* b);
 class sdl_drawmode
 {
 	public:
-		sdl_drawmode(graphics_data *stuff, sdl_user *self);
+		sdl_drawmode(sdl_user *self);
 		virtual ~sdl_drawmode();
 		sdl_user *owner;
 	
@@ -59,7 +59,6 @@ class sdl_drawmode
 		virtual void mouse_move(SDL_MouseMotionEvent *from, SDL_MouseMotionEvent *to) = 0;
 		virtual bool mouse_leave() = 0;	//is it ok for the mouse to leave?
 	protected:
-		graphics_data *graphx;
 		prepared_graphics *pg;
 		sdl_widget **widgets;
 		int num_widgets;

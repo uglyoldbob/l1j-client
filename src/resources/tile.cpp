@@ -2,6 +2,8 @@
 #include "SDL_endian.h"
 #include <stdio.h>
 
+#include "client.h"
+#include "files.h"
 #include "globals.h"
 #include "pack.h"
 #include "tile.h"
@@ -113,7 +115,7 @@ sdl_graphic *tile::get_special(int which)
 	return ret;
 }
 
-void tile::load(int which, pack *source)
+void tile::load(int which, client *who)
 {
 	if (tdata == 0)
 	{
@@ -121,8 +123,12 @@ void tile::load(int which, pack *source)
 		char *data;
 		int size;
 		sprintf(name, "%d.til", which);
-		data = source->load_file(name, &size, 0);
+		//SDL_RWops *sdl_buf;
+		data = (char*)who->getfiles->load_file(name, &size, FILE_TILEPACK, 0);
 		filebuf = data;
+		//sdl_buf = SDL_RWFromConstMem(buffer, size);
+		//SDL_RWread(sdl_buf, &moron2, 2, 1);
+
 		if (data == 0)
 		{
 			return;
@@ -157,15 +163,15 @@ void tile::load(int which, pack *source)
 			{
 				if ((tdata->data[tdata->offset[i]] & 2) != 0)
 				{
-//					printf("\tTranspTile\n");
+//					printf("\tTranspTile %d\n", i);
 //					printf("\tLength available is %08x\n", (int)offset[1] - (int)offset[0]);
 //					convertTranspTile(mystery_data, data);
 				}
 				else
 				{
-//					printf("\tNormal Tile\n");
+//					printf("\tNormal Tile %d\n", i);
 //					printf("\tLength available is %08x\n", (int)offset[1] - (int)offset[0]);
-//					short *tile_data = (short*)&mystery_data[1];
+//					short *tile_data = (short*)tdata->data;
 //					for (int j = 0; j < 0x120; j++)
 //					{
 //						tile_data[j] = SWAP16(tile_data[j]);

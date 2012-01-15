@@ -5,6 +5,7 @@
 #include "config.h"
 #include "connection.h"
 #include "resources/briefcase.h"
+#include "resources/files.h"
 #include "resources/table.h"
 #include "resources/tile.h"
 #include "resources/pack.h"
@@ -30,16 +31,15 @@ class client
 		void register_char(lin_char_info *data);
 		int check_login_chars();
 		lin_char_info** get_login_chars();
+		tile *get_tiles();
 		sdl_user *graphics;
+		
+		files *getfiles;
+		briefcase *server_data;	//used to hold all server specific data
 		
 	private:
 		config *main_config;
 		connection *server;
-		briefcase *server_data;	//used to hold all server specific data
-		pack *textpack;
-		pack *tilepack;
-		pack **spritepack;
-		int num_sprite_pack;
 		table bad_words;
 		table strings;
 		table teleport;

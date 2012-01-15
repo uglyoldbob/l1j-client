@@ -25,8 +25,6 @@ map_coord map_coord::get_map()
 screen_coord map_coord::get_screen()
 {
 	int tx, ty;
-	tx = x * 24;
-	ty = y * 24;
-	screen_coord ret((tx-ty) / 2, (tx+ty));
+	screen_coord ret((x+y) * 24, (y - x) * 12);
 	return ret;
 }

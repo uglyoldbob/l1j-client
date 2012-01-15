@@ -1,3 +1,4 @@
+#include "client.h"
 #include "draw_maint_map.h"
 #include "globals.h"
 #include "resources/lin_map.h"
@@ -7,8 +8,8 @@
 #include "widgets/sdl_text_button.h"
 #include "widgets/sdl_widget.h"
 
-draw_maint_map::draw_maint_map(graphics_data *stuff, sdl_user *self)
-	: sdl_drawmode(stuff, self)
+draw_maint_map::draw_maint_map(sdl_user *self)
+	: sdl_drawmode(self)
 {
 	draw_mtx = SDL_CreateMutex();
 	owner->game_music.change_music("sound/music0.mp3");
@@ -17,34 +18,50 @@ draw_maint_map::draw_maint_map(graphics_data *stuff, sdl_user *self)
 	num_widgets = 1;
 	
 	widgets = new sdl_widget*[num_widgets];
-	widgets[0] = new sdl_text_button("Return", 320, 255, graphx, 
+	widgets[0] = new sdl_text_button("Return", 320, 255, owner->game, 
 		(funcptr*)new dam_ptr(this, DRAWMODE_ADMIN_MAIN));
 	widgets[0]->set_key_focus(true);
 	
-	themap = new lin_map;
+	themap = new lin_map(owner->game->get_tiles(), owner->game);
 	map_vis = 0;
-	themap->load(3);
+	
+	x = 32700;
+	y = 32764;
 }
 
 void draw_maint_map::key_press(SDL_KeyboardEvent *button)
 {
+	while (SDL_mutexP(draw_mtx) == -1) {};
 	sdl_drawmode::key_press(button);
 	if (button->type == SDL_KEYDOWN)
 	{
 		switch(button->keysym.sym)
 		{
 			case SDLK_LEFT:
+				y--;
+				delete map_vis;
+				map_vis = 0;
 				break;
 			case SDLK_RIGHT:
+				y++;
+				delete map_vis;
+				map_vis = 0;
 				break;
 			case SDLK_UP:
+				x++;
+				delete map_vis;
+				map_vis = 0;
 				break;
 			case SDLK_DOWN:
+				x--;
+				delete map_vis;
+				map_vis = 0;
 				break;
 			default:
 				break;
 		}
 	}
+	SDL_mutexV(draw_mtx);
 }
 
 bool draw_maint_map::mouse_leave()
@@ -114,19 +131,21 @@ draw_maint_map::~draw_maint_map()
 void draw_maint_map::draw(SDL_Surface *display)
 {
 	while (SDL_mutexP(draw_mtx) == -1) {};
-	SDL_FillRect(display, NULL, 0);
-	sdl_drawmode::draw(display);
-	lineage_font.draw(display, 320, 240, "Loading map 3, 32700, 32800", 0xFFFE);
+	SDL_FillRect(display, NULL, 0x1234);
 	if (themap != 0)
 	{
 		if (map_vis == 0)
 		{
-			map_vis = themap->get_map(32700, 32800);
+			map_vis = 0;//themap->get_map(4, x, y);
 		}
 		if (map_vis != 0)
 		{
 			map_vis->draw(display);
 		}
 	}
+	char dispstr[255];
+	sprintf(dispstr, "Loading map 4, %d, %d", x, y);
+	lineage_font.draw(display, 320, 240, dispstr, 0xFFFE);
+	sdl_drawmode::draw(display);
 	SDL_mutexV(draw_mtx);
 }

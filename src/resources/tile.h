@@ -1,6 +1,7 @@
 #ifndef __TILE_H_
 #define __TILE_H_
 
+class client;
 class pack;
 #include "widgets/sdl_widget.h"
 
@@ -19,7 +20,7 @@ class tile
 	public:
 		tile();
 		~tile();
-		void load(int which, pack *source);
+		void load(int which, client *who);
 		sdl_graphic *get_tile_right(int which);
 		sdl_graphic *get_tile_left(int which);
 		int get_amnt();

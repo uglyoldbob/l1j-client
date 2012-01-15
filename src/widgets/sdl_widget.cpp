@@ -1,15 +1,16 @@
 #include <SDL.h>
 
+#include "client.h"
 #include "globals.h"
 #include "sdl_widget.h"
 
-sdl_widget::sdl_widget(int num, int x, int y, graphics_data *packs)
+sdl_widget::sdl_widget(int num, int x, int y, client *who)
 {
 	visible = false;
 	key_focus = false;
 	allow_key_focus = false;
 	
-	one = new sdl_graphic(num, x, y, packs, GRAPH_IMG);
+	one = new sdl_graphic(num, x, y, who, GRAPH_IMG);
 	if (one != 0)
 	{
 		visible = true;

@@ -1,5 +1,6 @@
 #include <SDL.h>
 
+#include "client.h"
 #include "globals.h"
 #include "sdl_graphic.h"
 
@@ -38,7 +39,6 @@ sdl_graphic::sdl_graphic(int x, int y, short *source, int type)
 			SDL_SetColorKey(img, SDL_SRCCOLORKEY, SDL_MapRGB(img->format, 255,255,255) );
 			SDL_FillRect(img, NULL, SDL_MapRGB(img->format, 255,255,255));
 			short *temp = (short*)img->pixels;	//destination pointer
-			int source_off = 0;
 		//	printf("There are %d rows\n", height);
 			for (int i = 0; i < height; i++)
 			{
@@ -70,7 +70,6 @@ sdl_graphic::sdl_graphic(int x, int y, short *source, int type)
 			SDL_SetColorKey(img, SDL_SRCCOLORKEY, SDL_MapRGB(img->format, 1,1,1) );
 			SDL_FillRect(img, NULL, SDL_MapRGB(img->format, 1,1,1));
 			short *temp = (short*)img->pixels;	//destination pointer
-			int source_off = 0;
 			for (int i = 0; i < 24; i++)
 			{
 				int row_width;
@@ -80,7 +79,7 @@ sdl_graphic::sdl_graphic(int x, int y, short *source, int type)
 					row_width -= (4 * (i - 11));
 				}
 				memcpy(&temp[24 - row_width], source, row_width * 2);
-				source = &source[24];
+				source = &source[row_width];
 				temp = &temp[24];
 			}
 			break;
@@ -95,7 +94,6 @@ sdl_graphic::sdl_graphic(int x, int y, short *source, int type)
 			SDL_SetColorKey(img, SDL_SRCCOLORKEY, SDL_MapRGB(img->format, 1,1,1) );
 			SDL_FillRect(img, NULL, SDL_MapRGB(img->format, 1,1,1));
 			short *temp = (short*)img->pixels;	//destination pointer
-			int source_off = 0;
 			for (int i = 0; i < 24; i++)
 			{
 				int row_width;
@@ -105,7 +103,7 @@ sdl_graphic::sdl_graphic(int x, int y, short *source, int type)
 					row_width -= (4 * (i - 11));
 				}
 				memcpy(temp, source, row_width * 2);
-				source = &source[24];
+				source = &source[row_width];
 				temp = &temp[24];
 			}
 			break;
@@ -115,7 +113,7 @@ sdl_graphic::sdl_graphic(int x, int y, short *source, int type)
 	}
 }
 
-sdl_graphic::sdl_graphic(int num, int x, int y, graphics_data *packs, int type)
+sdl_graphic::sdl_graphic(int num, int x, int y, client *who, int type)
 {
 	if (num == -1)
 	{
@@ -128,7 +126,7 @@ sdl_graphic::sdl_graphic(int num, int x, int y, graphics_data *packs, int type)
 		switch (type)
 		{
 			case GRAPH_IMG:
-				img = get_img(num, packs->spritepack);
+				img = get_img(num, who);
 				if (img != 0)
 				{
 					pos = make_sdl_rect(x, y, img->w, img->h);
@@ -137,7 +135,7 @@ sdl_graphic::sdl_graphic(int num, int x, int y, graphics_data *packs, int type)
 				}
 				break;
 			case GRAPH_PNG:
-				img = get_png_image(num, packs->spritepack);
+				img = get_png_image(num, who);
 				if (img != 0)
 				{
 					SDL_SetColorKey(img, SDL_SRCCOLORKEY, SDL_MapRGB(img->format, 0, 0, 0));
@@ -167,6 +165,17 @@ sdl_graphic::~sdl_graphic()
 	if (cleanup && (img != 0) )
 	{
 		SDL_FreeSurface(img);
+	}
+}
+
+void sdl_graphic::drawat(int x, int y, SDL_Surface *display)
+{
+	if (img != 0)
+	{
+		SDL_Rect *newpos;
+		newpos = make_sdl_rect(x, y, mask->w, mask->h);
+		SDL_BlitSurface(img, mask, display, newpos);
+		delete newpos;
 	}
 }
 

@@ -16,14 +16,14 @@ Admin_OBJS += widgets/sdl_animate_button.o widgets/sdl_button.o \
 
 
 #resource objects
-Lineage_OBJS += resources/briefcase.o resources/music.o resources/pack.o \
+Lineage_OBJS += resources/briefcase.o resources/files.o resources/music.o resources/pack.o \
 	resources/partial_table.o resources/prepared_graphics.o resources/sdl_font.o \
 	resources/sdl_graphic.o resources/table.o resources/tile.o
-Admin_OBJS += resources/briefcase.o resources/lin_map.o resources/music.o \
-	resources/pack.o resources/partial_table.o resources/prepared_graphics.o \
-	resources/sdl_font.o resources/table.o resources/tile.o resources/map_coord.o \
-	resources/pixel_coord.o resources/coord.o resources/screen_coord.o \
-	resources/sdl_graphic.o
+Admin_OBJS += resources/briefcase.o resources/files.o resources/lin_map.o \
+	resources/music.o resources/pack.o resources/partial_table.o \
+	resources/prepared_graphics.o resources/sdl_font.o resources/table.o \
+	resources/tile.o resources/map_coord.o resources/pixel_coord.o \
+	resources/coord.o resources/screen_coord.o resources/sdl_graphic.o
 
 
 #drawmode objects

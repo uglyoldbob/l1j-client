@@ -6,8 +6,8 @@
 #include "widgets/sdl_text_button.h"
 #include "widgets/sdl_widget.h"
 
-draw_maint_til::draw_maint_til(graphics_data *stuff, sdl_user *self)
-	: sdl_drawmode(stuff, self)
+draw_maint_til::draw_maint_til(sdl_user *self)
+	: sdl_drawmode(self)
 {
 	draw_mtx = SDL_CreateMutex();
 	owner->game_music.change_music("sound/music0.mp3");
@@ -16,7 +16,7 @@ draw_maint_til::draw_maint_til(graphics_data *stuff, sdl_user *self)
 	num_widgets = 1;
 	
 	widgets = new sdl_widget*[num_widgets];
-	widgets[0] = new sdl_text_button("Return", 320, 255, graphx, 
+	widgets[0] = new sdl_text_button("Return", 320, 255, owner->game, 
 		(funcptr*)new dam_ptr(this, DRAWMODE_ADMIN_MAIN));
 	widgets[0]->set_key_focus(true);
 	
@@ -24,7 +24,7 @@ draw_maint_til::draw_maint_til(graphics_data *stuff, sdl_user *self)
 	background = 23;
 	tile_num = 0;
 	cur_tile = 0;
-	tileset->load(background, graphx->tilepack);
+	tileset->load(background, owner->game);
 	update_tile();
 }
 
@@ -44,7 +44,7 @@ void draw_maint_til::key_press(SDL_KeyboardEvent *button)
 						delete tileset;
 					}
 					tileset = new tile;
-					tileset->load(background, graphx->tilepack);
+					tileset->load(background, owner->game);
 					update_tile();
 				}
 				break;
@@ -55,7 +55,7 @@ void draw_maint_til::key_press(SDL_KeyboardEvent *button)
 					delete tileset;
 				}
 				tileset = new tile;
-				tileset->load(background, graphx->tilepack);
+				tileset->load(background, owner->game);
 				update_tile();
 				break;
 			case SDLK_UP:

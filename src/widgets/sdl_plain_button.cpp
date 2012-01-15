@@ -1,12 +1,13 @@
+#include "client.h"
 #include "resources/sdl_graphic.h"
 #include "sdl_plain_button.h"
 
-sdl_plain_button::sdl_plain_button(int num, int x, int y, graphics_data *packs, funcptr *stuff)
-	: sdl_button(num, x, y, packs, stuff)
+sdl_plain_button::sdl_plain_button(int num, int x, int y, client *who, funcptr *stuff)
+	: sdl_button(num, x, y, who, stuff)
 {
 	if (num != -1)
 	{
-		two = new sdl_graphic(num+1, x, y, packs, GRAPH_IMG);
+		two = new sdl_graphic(num+1, x, y, who, GRAPH_IMG);
 	}
 	else
 	{

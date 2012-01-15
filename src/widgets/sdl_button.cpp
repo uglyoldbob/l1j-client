@@ -1,7 +1,8 @@
+#include "client.h"
 #include "sdl_button.h"
 
-sdl_button::sdl_button(int num, int x, int y, graphics_data *packs, funcptr *stuff)
-	: sdl_widget(num, x, y, packs)
+sdl_button::sdl_button(int num, int x, int y, client *who, funcptr *stuff)
+	: sdl_widget(num, x, y, who)
 {
 	method = stuff;
 }

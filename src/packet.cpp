@@ -25,7 +25,7 @@ int packet::assemble(char *buf, int max_length, const char *format, ...)
 	return length;
 }
 
-void packet::disassemble(const char *format, ...)
+void packet::disass(const char *format, ...)
 {
 	va_list temp_args;
 	va_start(temp_args, format);
@@ -546,16 +546,16 @@ void packet::key_packet()
 
 void packet::server_version_packet()
 {
-	char version_check;
+	unsigned char version_check;
 	unsigned int serverVersion;
 	unsigned int cacheVersion;
 	unsigned int authVersion;
 	unsigned int npcVersion;
 	unsigned int serverStartTime;
-	char canMakeNewAccount;
-	char englishOnly;
-	char countryCode;
-	char serverCode;
+	unsigned char canMakeNewAccount;
+	unsigned char englishOnly;
+	unsigned char countryCode;
+	unsigned char serverCode;
 	disassemble(&packet_data[1], "c", &version_check);
 	if (version_check == 1)
 	{

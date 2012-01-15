@@ -218,12 +218,6 @@ static int hash(state *s, char *dest)
 
   s->actual_bytes = 0LL;
 
-  if (s->mode & mode_estimate)
-  {
-    time(&(s->start_time));
-    s->last_time = s->start_time;
-  }
-
   while (!done)
   {
     memset(s->hash_result,0,(2 * s->hash_length) + 1);
@@ -243,15 +237,6 @@ static int hash(state *s, char *dest)
     // still need to display a hash.
     if (s->bytes_read != 0 || 0 == s->stat_bytes)
     {
-      if (s->mode & mode_piecewise)
-      {
-	uint64_t tmp_end = 0;
-	if (s->read_end != 0)
-	  tmp_end = s->read_end - 1;
-	snprintf(s->full_name,PATH_MAX,"%s offset %"PRIu64"-%"PRIu64,
-		   tmp_name, s->read_start, tmp_end);
-      }
-      
       HASH_FINALIZE();
 
       HASH_TO_STR(s->hash_sum, s->hash_result, s->hash_length);
@@ -322,15 +307,9 @@ int hash_file(state *s, char *fn, char *dest)
     // We should have the file size already from the stat functions
     // called during digging. If for some reason that failed, we'll
     // try some ioctl calls now to get the full size.
-    if (UNKNOWN_FILE_SIZE == s->stat_bytes)
+    //if (UNKNOWN_FILE_SIZE == s->stat_bytes)
       s->stat_bytes = find_file_size(s->handle);
-
-    if (s->mode & mode_estimate)
-    {
-      s->stat_megs = s->stat_bytes / ONE_MEGABYTE;
-      shorten_filename(s->short_name,s->full_name);    
-    }    
-
+	printf("The handle is %d, size %d\n", s->handle, s->stat_bytes);
     status = hash(s, dest);
 
     fclose(s->handle);
