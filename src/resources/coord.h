@@ -41,7 +41,21 @@ class coord
 	//-24 screen x
 	//-12 screen y
 
+//sx = 24mx + 24my
+//sy = 12my - 12mx
 
-	
-//sx = (mx + my) * 24
-//sy = (my - mx) * 12
+//  sx = 24mx + 24my
+//-2sy = 24mx - 24my
+
+//sx + 2sy = 48my
+
+//sx - 2sy = 48mx
+//mx = (sx - 2sy) / 48
+
+//my = (sx + 2sy)/48
+
+//(sx/24) + (sy/12) = 2*my
+
+//sx/12 + sy/6 = my
+
+//(sx/12 - sy/6) = mx

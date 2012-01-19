@@ -22,11 +22,17 @@ draw_maint_map::draw_maint_map(sdl_user *self)
 		(funcptr*)new dam_ptr(this, DRAWMODE_ADMIN_MAIN));
 	widgets[0]->set_key_focus(true);
 	
-	themap = new lin_map(owner->game->get_tiles(), owner->game);
+	themap = new lin_map(owner->game->get_tiles(), owner->game, 0, 0, 640, 480);
 	map_vis = 0;
 	
-	x = 32700;
-	y = 32764;
+	mapnum = 4;
+	x = 32544;
+	y = 32928;
+	//translates to 7fff8000
+	//x = 32700;
+	//y = 32764;
+	
+	themap->set_hotspot(mapnum, x, y);
 }
 
 void draw_maint_map::key_press(SDL_KeyboardEvent *button)
@@ -39,23 +45,27 @@ void draw_maint_map::key_press(SDL_KeyboardEvent *button)
 		{
 			case SDLK_LEFT:
 				y--;
-				delete map_vis;
-				map_vis = 0;
+				themap->set_hotspot(mapnum, x, y);
 				break;
 			case SDLK_RIGHT:
 				y++;
-				delete map_vis;
-				map_vis = 0;
+				themap->set_hotspot(mapnum, x, y);
 				break;
 			case SDLK_UP:
 				x++;
-				delete map_vis;
-				map_vis = 0;
+				themap->set_hotspot(mapnum, x, y);
 				break;
 			case SDLK_DOWN:
 				x--;
-				delete map_vis;
-				map_vis = 0;
+				themap->set_hotspot(mapnum, x, y);
+				break;
+			case SDLK_PAGEUP:
+				mapnum++;
+				themap->set_hotspot(mapnum, x, y);
+				break;
+			case SDLK_PAGEDOWN:
+				mapnum--;
+				themap->set_hotspot(mapnum, x, y);
 				break;
 			default:
 				break;
@@ -134,17 +144,10 @@ void draw_maint_map::draw(SDL_Surface *display)
 	SDL_FillRect(display, NULL, 0x1234);
 	if (themap != 0)
 	{
-		if (map_vis == 0)
-		{
-			map_vis = 0;//themap->get_map(4, x, y);
-		}
-		if (map_vis != 0)
-		{
-			map_vis->draw(display);
-		}
+		themap->draw(display);
 	}
 	char dispstr[255];
-	sprintf(dispstr, "Loading map 4, %d, %d", x, y);
+	sprintf(dispstr, "Loading map %d, %d, %d", mapnum, x, y);
 	lineage_font.draw(display, 320, 240, dispstr, 0xFFFE);
 	sdl_drawmode::draw(display);
 	SDL_mutexV(draw_mtx);

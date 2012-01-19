@@ -27,7 +27,7 @@ struct unknown4_struct
 
 struct lin_map_data
 {
-	int floor[64][128];	//the floor data for each tile of the map (each tile is a triangle)
+	unsigned int floor[64][128];	//the floor data for each tile of the map (each tile is a triangle)
 	short num_unknown2;
 	//comment placeholder for the unknown2 data
 	short attr[64][128];	//loaded into mapCache[mapNum?] (offset 4)
@@ -60,17 +60,22 @@ struct lin_map_segment
 class lin_map
 {
 	public:
-		lin_map(tile *thetiles, client *who);
+		lin_map(tile *thetiles, client *who, int x, int y, int w, int h);
 		~lin_map();
 		void draw(SDL_Surface *display);	//draws the full map onto display
-		void set_window(int x, int y, int w, int h);
+		void set_hotspot(int mapn, int x, int y);	//sets the coordinates for the hotspot (the middle of the screen)
 	private:
 		tile *tile_data;	//used for reference only
 		lin_map_segment segs[4];
+		int map;
 		client *who;
 		sdl_graphic *whole_map;	//the graphic for the visible portion of the map
 		
-		sdl_graphic *get_map(int mapnum, int x, int y, int segnum);	//returns an image of a portion of the map
+		//the master set of offsets for the x and y coordinates of translated coordinates
+		int master_offsetx;
+		int master_offsety;
+		
+		lin_map_segment get_map(int mapnum, int x, int y);	//returns a map section
 };
 
 #endif

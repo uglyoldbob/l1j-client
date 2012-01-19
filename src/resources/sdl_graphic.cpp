@@ -20,7 +20,11 @@ sdl_graphic::sdl_graphic(int x, int y, short *source, int type)
 	switch(type)
 	{
 		case GRAPH_STIL:
-		{
+		{	//these tiles are not done correctly (but this will allow them to show up as empty spots)
+			pos = 0;
+			mask = 0;
+			img = 0;
+			break;
 		//	printf("TranspTile %d\n", which);
 			unsigned char *data = (unsigned char*)source;
 			int data_offset = 0;
@@ -78,9 +82,8 @@ sdl_graphic::sdl_graphic(int x, int y, short *source, int type)
 				{
 					row_width -= (4 * (i - 11));
 				}
-				memcpy(&temp[24 - row_width], source, row_width * 2);
+				memcpy(&temp[24*i+(24 - row_width)], source, row_width * 2);
 				source = &source[row_width];
-				temp = &temp[24];
 			}
 			break;
 		}
@@ -102,9 +105,8 @@ sdl_graphic::sdl_graphic(int x, int y, short *source, int type)
 				{
 					row_width -= (4 * (i - 11));
 				}
-				memcpy(temp, source, row_width * 2);
+				memcpy(&temp[i*24], source, row_width * 2);
 				source = &source[row_width];
-				temp = &temp[24];
 			}
 			break;
 		}
@@ -242,7 +244,7 @@ SDL_Surface *sdl_graphic::get_surf()
 
 Uint32 sdl_graphic::color(Uint8 r, Uint8 g, Uint8 b)
 {
-	SDL_MapRGB(img->format, r, g, b);
+	return SDL_MapRGB(img->format, r, g, b);
 }
 
 void sdl_graphic::mod_with(SDL_Surface *display)

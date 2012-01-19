@@ -81,6 +81,8 @@ draw_game::~draw_game()
 {
 }
 
+//1042.img for chat window?
+
 void draw_game::draw(SDL_Surface *display)
 {
 	while (SDL_mutexP(draw_mtx) == -1) {};

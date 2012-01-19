@@ -20,9 +20,9 @@ pixel_coord screen_coord::get_pixel()
 map_coord screen_coord::get_map()
 {
 	int tx, ty;
-	tx = y/2 + x;
-	ty = y/2 - x;
-	map_coord ret(tx/24, ty/24);
+	tx = x - 2*y;
+	ty = x + 2*y;
+	map_coord ret(tx/48, ty/48);
 	return ret;
 }
 

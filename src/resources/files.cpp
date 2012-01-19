@@ -51,8 +51,10 @@ unsigned char* files::load_file(const char *name, int *size, file_locations loca
 				fseek(thefile, 0, SEEK_END);
 				filesize = ftell(thefile);
 				fseek(thefile, 0, SEEK_SET);
-				if (filesize == 0)
+				if (filesize <= 0)
 					return 0;
+				if (size != 0)
+					*size = filesize;
 				buffer = new unsigned char[filesize];
 				result = fread(buffer, 1, filesize, thefile);
 				if (result != filesize)
@@ -107,8 +109,8 @@ unsigned char* files::load_file(const char *name, int *size, file_locations loca
 	}
 	if (buffer == 0)
 		printf("File %s was not loaded properly\n", name);
-	else
-		printf("File %s was loaded properly\n", name);
+//	else
+//		printf("File %s was loaded properly\n", name);
 	
 	return buffer;
 }

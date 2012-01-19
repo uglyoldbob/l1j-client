@@ -23,5 +23,5 @@ coord::~coord()
 
 void coord::print()
 {
-	printf("Coordinate: %d, %d", x, y);
+	printf("%d, %d", x, y);
 }

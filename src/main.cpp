@@ -15,10 +15,6 @@ int main(int argc, char* argv[])
 //		perror("WSAStartup failed!\n");
 	}
 
-	char hash1[65], hash2[65];
-	sha256_hash("test server.bce", hash1);
-	printf("Test Server.bce: %s\n", hash1);
-	
 	if (SDL_Init(SDL_INIT_EVERYTHING) == -1)
 	{
 		printf("Failed to start SDL\n");
