@@ -97,7 +97,6 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y)
 	
 	//mystery data
 	SDL_RWread(sdl_buf, &ret.mapdata->num_unknown2, 2, 1);
-	
 	if (ret.mapdata->num_unknown2 > 0)
 	{	//7d068
 		unsigned char *waste = new unsigned char[ret.mapdata->num_unknown2 * 6];

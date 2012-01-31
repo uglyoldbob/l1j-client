@@ -1,4 +1,6 @@
 EXTRA_FLAGS=-s -O3
+CFLAGS += -arch ppc
+LFLAGS += -arch ppc
 
 all: Lineage package Admin
 

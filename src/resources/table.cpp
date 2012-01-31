@@ -80,7 +80,7 @@ void table::load(const char *real_name, pack *from)
 	int i = 0;
 	
 	temp_entry = strtok(NULL, delimiters);
-	while (temp_entry != NULL)
+	while (temp_entry != 0)
 	{
 		if (i < num_entries)
 		{

@@ -51,14 +51,14 @@ CC=g++
 
 VPATH = ../src
 
-CFLAGS =-c -Wall -I../src \
+CFLAGS +=-c -Wall -I../src \
     -I/Library/Frameworks/SDL.framework/Headers \
     -I/Library/Frameworks/SDL_mixer.framework/Headers \
     -I/Library/Frameworks/SDL_image.framework/Headers
 INCLUDE = -I../src/
 OUTPUT = ../src/
 LIB_LOC = ../libs/
-LFLAGS=-framework SDL -framework SDL_image -framework SDL_mixer \
+LFLAGS+=-framework SDL -framework SDL_image -framework SDL_mixer \
 	-framework Cocoa \
 	-dylib_file @loader_path/Frameworks/mikmod.framework/Versions/A/mikmod:/Library/Frameworks/SDL_mixer.framework/Versions/A/Frameworks/mikmod.framework/Versions/A/mikmod \
 	-dylib_file @loader_path/Frameworks/smpeg.framework/Versions/A/smpeg:/Library/Frameworks/SDL_mixer.framework/Versions/A/Frameworks/smpeg.framework/Versions/A/smpeg
@@ -97,6 +97,7 @@ SDLMain.o: SDLMain.m
 	$(CC) $(EXTRA_FLAGS) $(CFLAGS) $(INCLUDE)$(@D) $< -o $@
 	$(CC) $(EXTRA_FLAGS) $(CFLAGS) $(INCLUDE)$(@D) $< -MM -MF $(@D)/$(*F).d
 	
+
 .cpp.o:
 	@if [ ! -d $(@D) ]; then\
 		echo mkdir $(@D);\
