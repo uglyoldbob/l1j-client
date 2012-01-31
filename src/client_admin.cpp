@@ -8,6 +8,7 @@
 #include "globals.h"
 #include "lindes.h"
 #include "packet.h"
+#include "resources/briefcase.h"
 #include "resources/music.h"
 #include "resources/pack.h"
 #include "resources/partial_table.h"
@@ -17,6 +18,30 @@
 int client::pack_resources()
 {
 	return 0;
+}
+
+int client::init_tiles()
+{
+	int last_good = 100;
+	for (int i = 0; i < (last_good * 2); i++)
+	{
+		char fname[100];
+		sprintf(fname, "%d.til", i);
+		if (tilepack->check_file(fname) != -1)
+		{	//the tileset is good
+			if (i > last_good)
+				last_good = i;
+		}
+	}
+	number_map_tiles = last_good;
+	map_tiles = new tile[number_map_tiles];
+	
+	return 0;
+}
+
+tile* client::get_tiles()
+{
+	return map_tiles;
 }
 
 int client::init_packs()
@@ -89,90 +114,9 @@ int client::init_strings()
 	return 0;
 }
 
-int client::get_updates(connection* server)
-{
-	unsigned int temp;
-	int sign_temp;
-	int status;	//> 0 means update occurred
-	status = 0;
-	printf("STUB Get update magic number\n");
-	try
-	{
-		if (server->connection_ok() == 1)
-		{
-			server->snd_var(&checksum, 4);
-			server->rcv_var(&sign_temp, 4);
-			if (sign_temp < 0)
-			{
-				temp = -sign_temp;
-				printf("Protocol : %lx, ServerId : %lx\n", temp & 0xFFFF, temp>>16);
-				server->rcv_var(&sign_temp, 4);
-			}
-			if (sign_temp > 0)
-			{	//receive files
-				int num_files = sign_temp;
-				printf("Receiving %d files\n", num_files);
-				status = num_files;
-				unsigned char name_length;
-				unsigned int file_length;
-				unsigned char* file_buffer;
-				char *filename;
-				for (int i = 0; i < num_files; i++)
-				{
-					server->rcv(&name_length, 1);
-					filename = new char[name_length+1];
-					server->rcv(filename, name_length);
-					filename[name_length] = 0;
-					server->rcv_var(&file_length, 4);
-					file_buffer = new unsigned char[file_length+1];
-					printf("Downloading %s, %ld bytes ...", filename, file_length);
-					//do stuff so the file can be saved
-					char *dump_name;
-					dump_name = new char[name_length + 6];
-					sprintf(dump_name, "%s.gz", filename);
-//					FILE *filedump = fopen(dump_name, "wb");
-					while (file_length > 0)
-					{
-						if (file_length > TRANSFER_AMOUNT)
-						{
-							server->rcv(file_buffer, TRANSFER_AMOUNT);
-//							fwrite(file_buffer, 1, TRANSFER_AMOUNT, filedump);
-							file_length -= TRANSFER_AMOUNT;
-						}
-						else
-						{
-							server->rcv(file_buffer, file_length);
-//							fwrite(file_buffer, 1, file_length, filedump);
-							file_length = 0;
-						}
-					}
-//					fclose(filedump);
-					printf(" done\n");
-					printf("STUB Update magic number\n");
-					server->rcv_var(&sign_temp, 4);
-					delete [] dump_name;
-					delete [] filename;
-					delete [] file_buffer;
-				}
-			}
-			int num_servers;
-			unsigned short* num_users;
-			server->rcv_var(&num_servers, 4);
-			num_users = new unsigned short[num_servers];
-			for (int j = 0; j < num_servers; j++)
-				server->rcv_var(&num_users[j], 2);
-		}
-	}
-	catch(int e)
-	{
-		printf("An error occurred %d\n", e);
-		status = -1;
-	}
-	return status;
-}
-
 client::client(sdl_user *stuff)
 {
+	getfiles = new files(this);
 	login_opts = 0;
 	num_login_opts = 0;
 	login_opts_used = 0;
@@ -180,7 +124,7 @@ client::client(sdl_user *stuff)
 	main_config = 0;
 	graphics = stuff;
 	server = 0;
-	checksum = 0xdeadbeef;
+	server_data = 0;
 	num_sprite_pack = 17;
 }
 
@@ -193,16 +137,13 @@ void client::init()
 		main_config = 0;
 		throw "ERROR Loading configuration file.\n";
 	}
+	lineage_font.init("Font/eng.fnt", this);
 
 	DesKeyInit("~!@#%^$<");	//TODO : move this code to a class and use an object
 	init_packs();
+	init_tiles();
 	
-	graphics_data *temp = new graphics_data;
-	temp->tilepack = tilepack;
-	temp->spritepack = spritepack;
-	temp->num_sprite_pack = num_sprite_pack;
-	graphics->give_data(temp);	//pack files will not be created or delete during updates
-
+	graphics->change_drawmode(DRAWMODE_ADMIN_MAIN);
 	graphics->wait_ready();
 	
 	init_codepage(0);
@@ -210,6 +151,10 @@ void client::init()
 	printf("STUB Load player config\n");
 	printf("STUB Initialize emblem cache\n");
 	init_strings();
+}
+
+void client::send_packet(const char *format, ...)
+{
 }
 
 client::~client()
