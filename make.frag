@@ -65,7 +65,7 @@ PACKAGE_FILES = Lineage $(OUTPUT)Lineage.ini $(OUTPUT)README.txt
 
 clean:
 	rm -rf *.o *.a *.exe *.d
-	rm -rf drawmode resources widgets
+	rm -rf drawmode resources widgets encryption
 
 Admin: $(Admin_OBJS) package
 	$(CC) $(EXTRA_FLAGS) $(LFLAGS) $(Admin_OBJS) $(LDADD) -o Admin
@@ -74,6 +74,14 @@ Admin: $(Admin_OBJS) package
 Lineage: $(Lineage_OBJS)
 	$(CC) $(EXTRA_FLAGS) $(LFLAGS) $(Lineage_OBJS) $(LDADD) -o Lineage
 
+.c.o:
+	@if [ ! -d $(@D) ]; then\
+		echo mkdir $(@D);\
+		mkdir $(@D);\
+	fi
+	$(CC) $(EXTRA_FLAGS) $(CFLAGS) $(INCLUDE)$(@D) $< -o $@
+	$(CC) $(EXTRA_FLAGS) $(CFLAGS) $(INCLUDE)$(@D) $< -MM -MF $(@D)/$(*F).d
+	
 .cpp.o:
 	@if [ ! -d $(@D) ]; then\
 		echo mkdir $(@D);\
