@@ -7,17 +7,6 @@
 #include "widgets/sdl_input_box.h"
 #include "widgets/sdl_text_button.h"
 
-void change_mode(void *a, void* b)
-{
-	sdl_user *owner;
-	owner = (sdl_user*)a;
-	enum drawmode temp;
-	int temp2;
-	temp2 = reinterpret_cast<int>(b);
-	temp = (drawmode)temp2;
-	owner->change_drawmode(temp);
-}
-
 draw_admin_main::draw_admin_main(sdl_user *self)
 	: sdl_drawmode(self)
 {

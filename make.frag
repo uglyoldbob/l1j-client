@@ -53,7 +53,7 @@ CC=g++
 VPATH = ../src
 
 CFLAGS =-c -Wall -I../src
-INCLUDE = -I../src/
+INCLUDE = -I/usr/include/SDL -I../src/
 OUTPUT = ../src/
 LIB_LOC = ../libs/
 LFLAGS=-lSDL -lSDL_mixer -lSDL_image
