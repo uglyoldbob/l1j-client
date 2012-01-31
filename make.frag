@@ -71,7 +71,7 @@ PACKAGE_FILES = Lineage $(OUTPUT)Lineage.ini $(OUTPUT)README.txt \
 
 clean:
 	rm -rf *.o *.a *.exe *.d
-	rm -rf drawmode resources widgets
+	rm -rf drawmode resources widgets encryption
 
 Admin: $(Admin_OBJS) package
 	$(CC) $(EXTRA_FLAGS) $(LFLAGS) $(Admin_OBJS) $(LDADD) -o Admin
