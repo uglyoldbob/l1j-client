@@ -137,6 +137,13 @@ void client::init()
 		main_config = 0;
 		throw "ERROR Loading configuration file.\n";
 	}
+	char *test;
+	test = (char*)getfiles->load_file("Sprite00.idx", 0, FILE_REGULAR1, 0);
+	if (test == 0)
+	{
+		throw "Lineage Data not found";
+	}
+	delete [] test;
 	lineage_font.init("Font/eng.fnt", this);
 
 	DesKeyInit("~!@#%^$<");	//TODO : move this code to a class and use an object
@@ -164,14 +171,6 @@ client::~client()
 		delete server;
 	if (main_config != 0)
 		delete main_config;
-		
-	delete textpack;
-	delete tilepack;
-	for (int i = 0; i < num_sprite_pack; i++)
-	{
-		delete spritepack[i];
-	}
-	delete [] spritepack;
 }
 
 int run_client(void *moron)
@@ -190,8 +189,9 @@ int run_client(void *moron)
 	}
 	catch (const char *error)
 	{
-		printf("FATAL ERROR: %s", error);
+		printf("FATAL ERROR: %s\n", error);
+		game.graphics->done = true;
 	}
-	printf("Client is done\n");
+	while (1);
 	return 0;
 }

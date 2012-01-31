@@ -214,6 +214,24 @@ client::client(sdl_user *stuff)
 	num_sprite_pack = 17;
 }
 
+client::~client()
+{
+	printf("Exiting client now\n");
+	if (server != 0)
+		delete server;
+	if (main_config != 0)
+		delete main_config;
+	
+	if (num_login_opts > 0)
+	{
+		for (int i = 0; i < num_login_opts; i++)
+		{
+			delete login_opts[i];
+		}
+		delete [] login_opts;
+	}
+}
+
 void client::init()
 {
 	main_config = new config("Lineage.ini");
@@ -223,6 +241,13 @@ void client::init()
 		main_config = 0;
 		throw "ERROR Loading configuration file.\n";
 	}
+	char *test;
+	test = (char*)getfiles->load_file("Sprite00.idx", 0, FILE_REGULAR1, 0);
+	if (test == 0)
+	{
+		throw "Lineage Data not found";
+	}
+	delete [] test;
 	lineage_font.init("Font/eng.fnt", this);
 
 	DesKeyInit("~!@#%^$<");	//TODO : move this code to a class and use an object
@@ -327,32 +352,6 @@ void client::register_char(lin_char_info *data)
 	}
 }
 
-client::~client()
-{
-	printf("Exiting client now\n");
-	if (server != 0)
-		delete server;
-	if (main_config != 0)
-		delete main_config;
-		
-	delete textpack;
-	delete tilepack;
-	for (int i = 0; i < num_sprite_pack; i++)
-	{
-		delete spritepack[i];
-	}
-	delete [] spritepack;
-	
-	if (num_login_opts > 0)
-	{
-		for (int i = 0; i < num_login_opts; i++)
-		{
-			delete login_opts[i];
-		}
-		delete [] login_opts;
-	}
-}
-
 int run_client(void *moron)
 {	//the main thread for each client
 	client game((sdl_user*)moron);
@@ -368,8 +367,10 @@ int run_client(void *moron)
 	}
 	catch (const char *error)
 	{
-		printf("FATAL ERROR: %s", error);
+		printf("FATAL ERROR: %s\n", error);
+		game.graphics->done = true;
 	}
+	while (1);
 	
 	return 0;
 }
