@@ -131,8 +131,17 @@ void sdl_input_box::key_press(SDL_KeyboardEvent *button)
 		case SDLK_CLEAR:
 		case SDLK_RETURN:
 		case SDLK_ESCAPE:
-		case SDLK_UP:
-		case SDLK_DOWN:		
+		case SDLK_UP:	case SDLK_DOWN:
+		case SDLK_LALT:	case SDLK_RALT:
+		case SDLK_LCTRL:	case SDLK_RCTRL:
+		case SDLK_INSERT:
+		case SDLK_CAPSLOCK:	case SDLK_NUMLOCK:	case SDLK_SCROLLOCK:
+		case SDLK_PAUSE: case SDLK_BREAK:	case SDLK_SYSREQ:	case SDLK_PRINT:
+		case SDLK_HOME:	case SDLK_END:
+		case SDLK_PAGEUP:	case SDLK_PAGEDOWN:
+		case SDLK_LSHIFT:	case SDLK_RSHIFT:
+		case SDLK_LMETA:	case SDLK_RMETA:
+		case SDLK_LSUPER:	case SDLK_RSUPER:
 			break;
 		default:
 			//TODO: check for valid character
