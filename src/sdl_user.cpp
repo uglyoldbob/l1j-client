@@ -17,10 +17,10 @@ void sdl_user::quit_client()
 	done = true;
 }
 
-void sdl_user::login()
+void sdl_user::login(const char *name, const char *pass)
 {
 	//TODO : use the entered usernames and passwords
-	game->send_packet("css", CLIENT_LOGIN, "moron", "moron");
+	game->send_packet("css", CLIENT_LOGIN, name, pass);
 }
 
 sdl_user::sdl_user(Uint32 flags)
