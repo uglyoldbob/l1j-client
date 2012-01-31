@@ -84,6 +84,7 @@ void sdl_master::process_events()
 						break;
 					case SDL_QUIT:
 						done = true;
+						printf("Quitting with SDL_QUIT\n");
 						SDL_KillThread(game_client[0]);
 						break;
 					case SDL_VIDEORESIZE: //User resized window

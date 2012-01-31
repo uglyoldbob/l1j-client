@@ -1,6 +1,8 @@
-client/documents/*
+client/*
+powerpc/*
 release/*.o
 release/*.a
+release/*.tar.gz
 release/client/*
 debug/*.o
 debug/*.a

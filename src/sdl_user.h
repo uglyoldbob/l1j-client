@@ -45,7 +45,6 @@ class sdl_user
 		bool ready;
 		volatile enum drawmode draw_mode;
 
-		graphics_data *graphx;
 		SDL_Surface *display;
 		
 		sdl_drawmode *drawmode;

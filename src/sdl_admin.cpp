@@ -25,7 +25,6 @@ void sdl_user::login()
 sdl_user::sdl_user(Uint32 flags)
 {
 	draw_mode = INVALID;
-	graphx = 0;
 	done = false;
 	
 	draw_mtx = SDL_CreateMutex();
@@ -132,7 +131,7 @@ void sdl_user::key_press(SDL_KeyboardEvent *button)
 					sprintf(filename, "%s", asctime(timeinfo));
 					filename[strlen(filename)-1] = 0;
 					strcat(filename, ".bmp");
-					for (int i = 0; i < strlen(filename); i++)
+					for (unsigned int i = 0; i < strlen(filename); i++)
 					{
 						if ((filename[i] == ' ') || (filename[i] == ':'))
 							filename[i] = '_';
@@ -147,16 +146,6 @@ void sdl_user::key_press(SDL_KeyboardEvent *button)
 		}
 	}
 	SDL_mutexV(draw_mtx);
-}
-
-
-void sdl_user::give_data(graphics_data *abc)
-{
-	if (graphx == 0)
-	{
-		graphx = abc;
-		change_drawmode(DRAWMODE_ADMIN_MAIN);
-	}
 }
 
 sdl_drawmode *sdl_user::get_drawmode()
@@ -181,22 +170,22 @@ void sdl_user::change_drawmode(enum drawmode chg)
 	switch(chg)
 	{
 		case DRAWMODE_ADMIN_MAIN:
-			drawmode = new draw_admin_main(graphx, this);
+			drawmode = new draw_admin_main(this);
 			draw_mode = chg;
 			ready = true;
 			break;
 		case DRAWMODE_MAINT_IMG:
-			drawmode = new draw_maint_img(graphx, this);
+			drawmode = new draw_maint_img(this);
 			draw_mode = chg;
 			ready = true;
 			break;
 		case DRAWMODE_MAINT_TIL:
-			drawmode = new draw_maint_til(graphx, this);
+			drawmode = new draw_maint_til(this);
 			draw_mode = chg;
 			ready = true;
 			break;
 		case DRAWMODE_MAINT_MAP:
-			drawmode = new draw_maint_map(graphx, this);
+			drawmode = new draw_maint_map(this);
 			draw_mode = chg;
 			ready = true;
 			break;

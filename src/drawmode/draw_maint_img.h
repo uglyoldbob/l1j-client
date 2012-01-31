@@ -6,7 +6,7 @@
 class draw_maint_img : public sdl_drawmode
 {
 	public:
-		draw_maint_img(graphics_data *stuff, sdl_user *self);
+		draw_maint_img(sdl_user *self);
 		~draw_maint_img();
 		
 		virtual void key_press(SDL_KeyboardEvent *button);

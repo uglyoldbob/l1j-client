@@ -43,8 +43,8 @@ void dcs_ptr::go()
 	}
 }
 
-draw_char_sel::draw_char_sel(graphics_data *stuff, sdl_user *self)
-	: sdl_drawmode(stuff, self)
+draw_char_sel::draw_char_sel(sdl_user *self)
+	: sdl_drawmode(self)
 {	
 	draw_mtx = SDL_CreateMutex();
 	ready = false;
@@ -57,7 +57,7 @@ draw_char_sel::draw_char_sel(graphics_data *stuff, sdl_user *self)
 	//1c1
 	//0
 	
-	pg->pg[0].surf = get_png_image(815, graphx->spritepack);	
+	pg->pg[0].surf = get_png_image(815, owner->game);
 		//TODO Replace with 105.img
 		//or 1763.img
 		//1764.img locked
@@ -71,10 +71,10 @@ draw_char_sel::draw_char_sel(graphics_data *stuff, sdl_user *self)
 	widgets = new sdl_widget*[num_widgets];
 	
 	//character select animating buttons
-	widgets[0] = new sdl_animate_button(0xf4, 0x013, 0, graphx, 0);
-	widgets[1] = new sdl_animate_button(0xf4, 0x0b0, 0, graphx, 0);
-	widgets[2] = new sdl_animate_button(0xf4, 0x14d, 0, graphx, 0);
-	widgets[3] = new sdl_animate_button(0xf4, 0x1ea, 0, graphx, 0);
+	widgets[0] = new sdl_animate_button(0xf4, 0x013, 0, owner->game, 0);
+	widgets[1] = new sdl_animate_button(0xf4, 0x0b0, 0, owner->game, 0);
+	widgets[2] = new sdl_animate_button(0xf4, 0x14d, 0, owner->game, 0);
+	widgets[3] = new sdl_animate_button(0xf4, 0x1ea, 0, owner->game, 0);
 	widgets[0]->set_key_focus(true);
 	widgets[1]->set_key_focus(true);
 	widgets[2]->set_key_focus(true);
@@ -82,14 +82,14 @@ draw_char_sel::draw_char_sel(graphics_data *stuff, sdl_user *self)
 	widgets[0]->cursor_on();
 	widget_key_focus = 0;
 	
-	widgets[4] = new sdl_plain_button(0x6e5, 0x0f7, 0x10b, graphx, 
+	widgets[4] = new sdl_plain_button(0x6e5, 0x0f7, 0x10b, owner->game, 
 		(funcptr*)new dcs_ptr(this, DCS_FUNC_PREVPAGE));	//left arrow
-	widgets[5] = new sdl_plain_button(0x6e7, 0x16c, 0x10b, graphx, 
+	widgets[5] = new sdl_plain_button(0x6e7, 0x16c, 0x10b, owner->game, 
 		(funcptr*)new dcs_ptr(this, DCS_FUNC_NEXTPAGE));	//left arrow
-	widgets[6] = new sdl_plain_button(0x334, 0x20d, 0x185, graphx, 
+	widgets[6] = new sdl_plain_button(0x334, 0x20d, 0x185, owner->game, 
 		(funcptr*)new dcs_ptr(this, DCS_FUNC_SELCHAR));	//login
-	widgets[7] = new sdl_plain_button(0x336, 0x20d, 0x19a, graphx, 0);	//cancel
-	widgets[8] = new sdl_plain_button(0x134, 0x20d, 0x1b5, graphx, 
+	widgets[7] = new sdl_plain_button(0x336, 0x20d, 0x19a, owner->game, 0);	//cancel
+	widgets[8] = new sdl_plain_button(0x134, 0x20d, 0x1b5, owner->game, 
 		(funcptr*)new dcs_ptr(this, DCS_FUNC_DELCHAR, &cur_char_slot));	//delete
 	widgets[4]->set_key_focus(true);
 	widgets[5]->set_key_focus(true);
@@ -97,9 +97,9 @@ draw_char_sel::draw_char_sel(graphics_data *stuff, sdl_user *self)
 	widgets[7]->set_key_focus(true);
 	widgets[8]->set_key_focus(true);
 	
-	widgets[9] = new sdl_widget(0x6e9, 0x127, 0x10f, graphx);
-	widgets[10] = new sdl_widget(0x6eb, 0x146, 0x10f, graphx);
-	widgets[11] = new sdl_char_info(graphx);
+	widgets[9] = new sdl_widget(0x6e9, 0x127, 0x10f, owner->game);
+	widgets[10] = new sdl_widget(0x6eb, 0x146, 0x10f, owner->game);
+	widgets[11] = new sdl_char_info(owner->game);
 
 	if (owner->game->check_login_chars() != 0)
 	{
@@ -196,6 +196,16 @@ void draw_char_sel::get_login_chars()
 		chars[i]->set_info(data[i + (page_num*4)]);
 	}
 	ready = true;
+	
+	sdl_char_info *stuff;
+	stuff = (sdl_char_info*)widgets[11];
+	stuff->hand_info(chars[0]->get_info());
+	cur_char_slot = 0;
+	chars[0]->animate(true);
+	chars[1]->animate(false);
+	chars[2]->animate(false);
+	chars[3]->animate(false);
+
 	SDL_mutexV(draw_mtx);
 }
 

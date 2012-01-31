@@ -30,7 +30,7 @@ class dcs_ptr : public funcptr
 class draw_char_sel : public sdl_drawmode
 {
 	public:
-		draw_char_sel(graphics_data *stuff, sdl_user *self);
+		draw_char_sel(sdl_user *self);
 		~draw_char_sel();
 		
 		virtual void draw(SDL_Surface *display);

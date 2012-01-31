@@ -2,6 +2,7 @@
 #define __SDL_CLASS_INFO_H_
 
 #include <SDL.h>
+class client;
 
 #include "globals.h"
 #include "sdl_widget.h"
@@ -9,7 +10,7 @@
 class sdl_char_info : public sdl_widget
 {
 	public:
-		sdl_char_info(graphics_data *packs);
+		sdl_char_info(client *who);
 		virtual ~sdl_char_info();
 		virtual void draw(SDL_Surface *display);
 		void hand_info(lin_char_info *bla);

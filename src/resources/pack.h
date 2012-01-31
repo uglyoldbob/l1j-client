@@ -23,11 +23,13 @@ class pack
 	public:
 		pack(const char *name, int encrypted);
 		int add_file(const char *file);
-		int sort();
 		int detect_dupes();	//detects duplicate files
 		unsigned char* load_file(int which, int decrypting);
 		unsigned char* load_png(const char *name, int *size, int decrypting);
 		char *load_file(const char *name, int *size, int decrypting);
+		int check_file(const char *name);
+		void sort();
+		static int compare(const void *a, const void *b);
 		~pack();
 	private:
 		char* data_file;
@@ -38,6 +40,7 @@ class pack
 		FILE* index_buf;
 		int num_files;
 		int encrypted;
+		int sorted;	//has the pack been sorted
 		file_entry* files;	//the list of files
 		char** file_data;	//the contents for every file
 //		des crypt;

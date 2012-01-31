@@ -31,7 +31,7 @@ class dnc_ptr : public funcptr
 class draw_new_char : public sdl_drawmode
 {
 	public:
-		draw_new_char(graphics_data *stuff, sdl_user *self);
+		draw_new_char(sdl_user *self);
 		~draw_new_char();
 		
 		virtual void draw(SDL_Surface *display);

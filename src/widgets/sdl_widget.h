@@ -2,18 +2,19 @@
 #define __SDL_WIDGET_H_
 
 #include <SDL.h>
+class client;
 
 #include "globals.h"
-
-sdl_graphic *make_sdl_graphic(int num, int x, int y, graphics_data *packs);
-SDL_Rect *make_sdl_rect(int x, int y, int w, int h);
+#include "resources/sdl_graphic.h"
 
 #include <SDL.h>
+class client;
 
 class sdl_widget
 {
 	public:
-		sdl_widget(int num, int x, int y, graphics_data *packs);
+		sdl_widget(int x, int y, client *who);
+		sdl_widget(int num, int x, int y, client *who);
 		virtual ~sdl_widget();
 		virtual void draw(SDL_Surface *display);
 		
@@ -40,6 +41,7 @@ class sdl_widget
 		sdl_graphic *one;
 		
 		bool have_mouse;
+		client *myclient;
 };
 
 #endif
@@ -47,7 +49,7 @@ class sdl_widget
 //these are all img files
 //game tips 808
 //x 809-810
-//help 811
+//help window 811
 //up arrow 812 - 813
 //down arrow 814 - 815
 //check box 817 - 818

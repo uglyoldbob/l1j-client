@@ -6,7 +6,7 @@
 
 void client::init_codepage(unsigned int arg)
 {
-	printf("STUB init_codepage\n");
+//	printf("STUB init_codepage\n");
 //	memset(lead_table, 0, 0x100);
 //	for (int i = 0; i < 0x100; i++)
 //	{
@@ -16,7 +16,7 @@ void client::init_codepage(unsigned int arg)
 
 void client::init_math_tables()
 {
-	printf("STUB InitMathTables\n");	
+//	printf("STUB InitMathTables\n");	
 }
 
 int client::getNumber(char **buf)
@@ -64,7 +64,7 @@ void client::LoadDurationTable(const char *file)
 			arg2 = getNumber(&buffer);
 			if (arg1 != 0)
 			{
-				printf("STUB UpdateEffectInfo %d, %d\n", arg1, arg2);
+//				printf("STUB UpdateEffectInfo %d, %d\n", arg1, arg2);
 //				UpdateEffectInfo(arg1, arg2);
 			}
 		}

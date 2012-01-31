@@ -6,8 +6,8 @@
 #include "widgets/sdl_animate_button.h"
 #include "widgets/sdl_input_box.h"
 
-draw_loading::draw_loading(graphics_data *stuff, sdl_user *self)
-	: sdl_drawmode(stuff, self)
+draw_loading::draw_loading(sdl_user *self)
+	: sdl_drawmode(self)
 {
 	owner->game_music.change_music("sound/music0.mp3");
 	load_progress = 0;
@@ -20,12 +20,12 @@ draw_loading::draw_loading(graphics_data *stuff, sdl_user *self)
 
 	pg->pg = new prepared_graphic[2];
 	
-	pg->pg[0].surf = get_png_image(811, graphx->spritepack);
+	pg->pg[0].surf = get_png_image(811, owner->game);
 	pg->pg[0].mask = NULL;
 	pg->pg[0].position = NULL;
 	pg->pg[0].cleanup = false;
 	
-	pg->pg[1].surf = get_img(330, graphx->spritepack);
+	pg->pg[1].surf = get_img(330, owner->game);
 	rect = new SDL_Rect;
   	rect->x = 0xf1;
   	rect->y = 0x181;
