@@ -76,7 +76,7 @@ void draw_login::key_press(SDL_KeyboardEvent *button)
 {
 	if (button->type == SDL_KEYDOWN)
 	{
-		if (widget_key_focus != 3)
+		if (widget_key_focus == 2)
 		{
 			if ((button->keysym.sym == SDLK_RETURN) ||
 				(button->keysym.sym == SDLK_KP_ENTER))
