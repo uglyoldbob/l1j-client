@@ -12,6 +12,12 @@
 extern char *lineage_dir;	//string to hold the absolute path to the lineage directory
 extern sdl_font lineage_font;
 
+//pack data is the same for all clients thanks to the briefcase object
+extern pack *textpack;
+extern pack *tilepack;
+extern pack **spritepack;
+extern int num_sprite_pack;
+
 //these are used so that the correct byte order is used
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN
 #undef DO_SWAP
@@ -25,10 +31,13 @@ extern sdl_font lineage_font;
 
 enum server_packet_types
 {	//the numbers will eventually be deleted
+	SERVER_CHAT_NORM = 8,	//?
 	SERVER_VERSIONS = 10,
+	SERVER_CHAT_WHISP = 13,
 	SERVER_DISCONNECT = 18,
 	SERVER_LOGIN = 21,
 	SERVER_CHAR_DELETE = 33,
+	SERVER_CHAT_GLOBAL = 40,
 	SERVER_ENTERGAME = 63,
 	SERVER_KEY = 65,
 	SERVER_MAP = 76,
@@ -56,6 +65,7 @@ enum client_packet_types
 	CLIENT_INITGAME = 92,
 	CLIENT_MYSTERY = 96,	//todo	reply to 109 "c" (bad)
 	CLIENT_STATUS_REPLY,	//todo reply to status packet "ccc" (bad)
+	CLIENT_CHAT = 104,
 	CLIENT_LAST
 };
 
@@ -109,14 +119,6 @@ struct lin_char_info
 	char max_int;
 };
 
-struct sdl_graphic
-{	//TODO : convert this to a class, with other classes inheriting this
-	SDL_Surface *img;
-	SDL_Rect *pos;
-	SDL_Rect *mask;
-	bool cleanup;
-};
-
 struct graphics_data
 {
 	pack *tilepack;
@@ -125,9 +127,14 @@ struct graphics_data
 };
 
 lin_char_info *make_lin_char_info(int char_type, int gender);
-SDL_Surface *get_image(const char *name, pack *source);
-SDL_Surface *get_png_image(int num, pack **source);
-SDL_Surface *get_img(int num, pack **source);	//loads raw image data
+
+SDL_Surface *get_png_image(int num, client *who);
+void check_fix_png(char *buffer, int *size);
+SDL_Surface *get_img(int num, client *who);	//loads raw image data
 SDL_Surface *get_image(SDL_RWops *buf);
+
+SDL_Rect *make_sdl_rect(int x, int y, int w, int h);
+
+int sha256_hash(char *filename, char *dest);
 
 #endif

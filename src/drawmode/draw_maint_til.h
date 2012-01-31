@@ -8,7 +8,7 @@ class sdl_graphic;
 class draw_maint_til : public sdl_drawmode
 {
 	public:
-		draw_maint_til(graphics_data *stuff, sdl_user *self);
+		draw_maint_til(sdl_user *self);
 		~draw_maint_til();
 		
 		virtual void key_press(SDL_KeyboardEvent *button);

@@ -14,14 +14,25 @@ void dam_ptr::go()
 	ref->owner->change_drawmode(which);
 }
 
-sdl_drawmode::sdl_drawmode(graphics_data *stuff, sdl_user *self)
+sdl_drawmode::sdl_drawmode(sdl_user *self)
 {
-	graphx = stuff;
 	owner = self;
 	widget_key_focus = 0;
 	pg = 0;
 	num_widgets = 0;
 	widgets = 0;
+}
+
+sdl_widget *sdl_drawmode::get_widget(int i)
+{
+	if ((i >= 0) && (i < num_widgets))
+	{
+		return widgets[i];
+	}
+	else
+	{
+		return 0;
+	}
 }
 
 sdl_drawmode::~sdl_drawmode()
@@ -36,7 +47,6 @@ sdl_drawmode::~sdl_drawmode()
 		}
 		delete [] widgets;
 	}
-
 }
 
 int sdl_drawmode::get_widget(int x, int y)

@@ -7,7 +7,7 @@
 class draw_admin_main : public sdl_drawmode
 {
 	public:
-		draw_admin_main(graphics_data *stuff, sdl_user *self);
+		draw_admin_main(sdl_user *self);
 		~draw_admin_main();
 
 		virtual void mouse_click(SDL_MouseButtonEvent *here);

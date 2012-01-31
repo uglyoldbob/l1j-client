@@ -27,11 +27,12 @@ class quit_ptr : public funcptr
 class draw_login : public sdl_drawmode
 {
 	public:
-		draw_login(graphics_data *stuff, sdl_user *self);
+		draw_login(sdl_user *self);
 		~draw_login();
 		void login();
 		void quit();
 		
+		virtual void key_press(SDL_KeyboardEvent *button);
 		virtual void mouse_click(SDL_MouseButtonEvent *here);
 		virtual void mouse_to(SDL_MouseMotionEvent *to);
 		virtual void mouse_from(SDL_MouseMotionEvent *from);

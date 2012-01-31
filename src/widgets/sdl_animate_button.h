@@ -2,20 +2,18 @@
 #define __SDL_ANIMATE_BUTTON_H_
 
 #include <SDL.h>
+class client;
 
 #include "globals.h"
 #include "sdl_plain_button.h"
 #include "sdl_widget.h"
-
-sdl_graphic *make_sdl_graphic_png(int num, int x, int y, graphics_data *packs);
-void delete_sdl_graphic_png(sdl_graphic *stuff);
 
 #include <SDL.h>
 
 class sdl_animate_button : public sdl_plain_button
 {
 	public:
-		sdl_animate_button(int num, int x, int y, graphics_data *packs, funcptr *stuff);
+		sdl_animate_button(int num, int x, int y, client *who, funcptr *stuff);
 		virtual ~sdl_animate_button();
 		virtual void draw(SDL_Surface *display);
 		
@@ -34,7 +32,7 @@ class sdl_animate_button : public sdl_plain_button
 		int num_anim;
 		int first_anim;
 		int first_repeat;
-		graphics_data *blabla;
+		client *blabla;
 		static int frame_time;
 		int cur_frame;
 		Uint32 change_time;

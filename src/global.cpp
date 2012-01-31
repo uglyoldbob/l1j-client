@@ -1,5 +1,13 @@
+#include "client.h"
 #include "globals.h"
+#include "resources/files.h"
 #include "resources/sdl_font.h"
+
+pack *textpack;
+pack *tilepack;
+pack **spritepack;
+int num_sprite_pack;
+
 
 sdl_font lineage_font;
 char *lineage_dir;
@@ -84,33 +92,51 @@ lin_char_info *make_lin_char_info(int char_type, int gender)
 	return ret;
 }
 
-SDL_Surface *get_image(const char *name, pack *source)
+SDL_Rect *make_sdl_rect(int x, int y, int w, int h)
 {
-	char *buffer;
-	SDL_RWops *sdl_buf;
-	int size;
-	buffer = (char*)source->load_file(name, &size, 0);
-	sdl_buf = SDL_RWFromConstMem(buffer, size);
-	return get_image(sdl_buf);
+	SDL_Rect *ret;
+	ret = new SDL_Rect;
+	ret->x = x;
+	ret->y = y;
+	ret->w = w;
+	ret->h = h;
+	return ret;
 }
 
-SDL_Surface *get_png_image(int num, pack **source)
+void check_fix_png(char *buffer, int *size)
+{
+	if (buffer[3] == 0x58)
+	{	//c963c
+//		printf("Normalizing mangled PNG file\n");
+		buffer[3] = 0x47;
+		if (*size > 5)
+		{	//c9654
+			for (int i = 1; i <= (*size-5); i++)
+			{	//c9660, i = ctr
+				buffer[*size-i] ^= buffer[*size-i-1];
+				buffer[*size-i] ^= 0x52;
+			}
+		}
+	}
+}
+
+SDL_Surface *get_png_image(int num, client *who)
 {
 	char name[256];
 	sprintf(name, "%d.png", num);
-	int index = getHashIndex(name) + 1;
 	
 	char *buffer;
 	SDL_Surface *ret;
 	SDL_RWops *sdl_buf;
 	int size;
-	if (source != 0)
+	if (who != 0)
 	{
-		buffer = (char*)source[index]->load_png(name, &size, 0);
+		buffer = (char*)who->getfiles->load_file(name, &size, FILE_SPRITESPACK, 0);
 		if (buffer == 0)
 		{
-			buffer = (char*)source[0]->load_png(name, &size, 0);
+			buffer = (char*)who->getfiles->load_file(name, &size, FILE_SPRITEPACK, 0);
 		}
+		check_fix_png(buffer, &size);
 		if (buffer != 0)
 		{
 			sdl_buf = SDL_RWFromConstMem(buffer, size);
@@ -139,7 +165,7 @@ SDL_Surface *get_image(SDL_RWops *buf)
 	return (SDL_Surface *)0;
 }
 
-SDL_Surface *get_img(int num, pack **source)
+SDL_Surface *get_img(int num, client *who)
 {
 	SDL_Surface *image;
 	image = (SDL_Surface *)0;
@@ -150,23 +176,21 @@ SDL_Surface *get_img(int num, pack **source)
 	char *buffer;
 	SDL_RWops *sdl_buf;
 	int size;
-	int index = getHashIndex(name) + 1;
-	if (source != 0)
+	if (who != 0)
 	{
-		buffer = (char*)source[index]->load_file(name, &size, 0);
+		buffer = (char*)who->getfiles->load_file(name, &size, FILE_SPRITESPACK, 0);
 		if (buffer == 0)
 		{
-			buffer = (char*)source[0]->load_file(name, &size, 0);
+			buffer = (char*)who->getfiles->load_file(name, &size, FILE_SPRITEPACK, 0);
 		}
 		if (buffer == 0)
 		{
 			sprintf(name, "%d.img", num);
-			index = getHashIndex(name) + 1;
-			buffer = (char*)source[index]->load_file(name, &size, 0);
+			buffer = (char*)who->getfiles->load_file(name, &size, FILE_SPRITESPACK, 0);
 		}
 		if (buffer == 0)
 		{
-			buffer = (char*)source[0]->load_file(name, &size, 0);
+			buffer = (char*)who->getfiles->load_file(name, &size, FILE_SPRITEPACK, 0);
 		}
 		if (buffer != 0)
 		{

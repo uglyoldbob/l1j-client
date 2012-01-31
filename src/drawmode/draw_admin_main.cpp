@@ -14,8 +14,8 @@ void change_mode(void *a, void* b)
 	owner->change_drawmode(*(drawmode*)b);
 }
 
-draw_admin_main::draw_admin_main(graphics_data *stuff, sdl_user *self)
-	: sdl_drawmode(stuff, self)
+draw_admin_main::draw_admin_main(sdl_user *self)
+	: sdl_drawmode(self)
 {
 	owner->game_music.change_music("sound/music1.mp3");
 	pg = new prepared_graphics;
@@ -26,7 +26,7 @@ draw_admin_main::draw_admin_main(graphics_data *stuff, sdl_user *self)
 
 	pg->pg = new prepared_graphic[1];
 	
-	pg->pg[0].surf = get_png_image(811, graphx->spritepack);
+	pg->pg[0].surf = get_png_image(811, owner->game);
 	pg->pg[0].mask = NULL;
 	pg->pg[0].position = NULL;
 	pg->pg[0].cleanup = false;
@@ -37,20 +37,20 @@ draw_admin_main::draw_admin_main(graphics_data *stuff, sdl_user *self)
 	
 	int x = 200;
 	int y = 200;
-	widgets[0] = new sdl_text_button("IMG Files", x, y, graphx, 
+	widgets[0] = new sdl_text_button("IMG Files", x, y, owner->game, 
 		(funcptr*)new dam_ptr(this, DRAWMODE_MAINT_IMG));
 	widgets[0]->set_key_focus(true);
 	widgets[0]->cursor_on();
-	widgets[1] = new sdl_text_button("PNG Files", x, y+(15*1), graphx, 
+	widgets[1] = new sdl_text_button("PNG Files", x, y+(15*1), owner->game, 
 		(funcptr*)new dam_ptr(this, DRAWMODE_MAINT_PNG));
 	widgets[1]->set_key_focus(true);
-	widgets[2] = new sdl_text_button("TIL Files", x, y+(15*2), graphx, 
+	widgets[2] = new sdl_text_button("TIL Files", x, y+(15*2), owner->game, 
 		(funcptr*)new dam_ptr(this, DRAWMODE_MAINT_TIL));
 	widgets[2]->set_key_focus(true);
-	widgets[3] = new sdl_text_button("MAPS", x, y+(15*3), graphx, 
+	widgets[3] = new sdl_text_button("MAPS", x, y+(15*3), owner->game, 
 		(funcptr*)new dam_ptr(this, DRAWMODE_MAINT_MAP));
 	widgets[3]->set_key_focus(true);
-	widgets[4] = new sdl_text_button("Exit", x, y+(15*4), graphx, 0);
+	widgets[4] = new sdl_text_button("Exit", x, y+(15*4), owner->game, 0);
 	widgets[4]->set_key_focus(true);
 }
 

@@ -16,7 +16,7 @@ int connection::change()
 	printf("\nConnecting to game server\n");
 	if (sock != -1)
 	{
-//		closesocket(sock);
+		close(sock);
 		sock = -1;
 	}
 	conn_ok = 0;
@@ -214,7 +214,7 @@ int connection::make_connection()
 
 		if (connect(sock, p->ai_addr, p->ai_addrlen) == -1) 
 		{
-//			closesocket(sock);
+			close(sock);
 //			perror("ERROR: connect");
 			continue;
 		}
@@ -264,7 +264,7 @@ void connection::try_names(const char *port)
 {
 	for (int i = 0; i < the_config->get_num_names(); i++)
 	{
-		printf("\tAttempting %s [%d of %d]...", the_config->get_addr(i), i+1, the_config->get_num_names());
+		printf("\tAttempting %s [%d of %d] port %s...", the_config->get_addr(i), i+1, the_config->get_num_names(), port);
 		get_addr(port, the_config->get_addr(i));
 		make_connection();
 		if (connection_ok() == 1)
@@ -284,7 +284,7 @@ connection::~connection()
 {
 	printf("Deleting connection\n");
 	if (sock != -1)
-//		closesocket(sock);
+		close(sock);
 	if (servinfo != 0)
 		freeaddrinfo(servinfo); // free the linked-list
 	printf("\tDone\n");

@@ -4,8 +4,8 @@
 #include "widgets/sdl_text_button.h"
 #include "widgets/sdl_widget.h"
 
-draw_maint_img::draw_maint_img(graphics_data *stuff, sdl_user *self)
-	: sdl_drawmode(stuff, self)
+draw_maint_img::draw_maint_img(sdl_user *self)
+	: sdl_drawmode(self)
 {
 	background = 0;
 	draw_mtx = SDL_CreateMutex();
@@ -15,8 +15,8 @@ draw_maint_img::draw_maint_img(graphics_data *stuff, sdl_user *self)
 	num_widgets = 2;
 	
 	widgets = new sdl_widget*[num_widgets];
-	widgets[0] = new sdl_widget(background, 0, 0, graphx);
-	widgets[1] = new sdl_text_button("Return", 320, 255, graphx, 
+	widgets[0] = new sdl_widget(background, 0, 0, owner->game);
+	widgets[1] = new sdl_text_button("Return", 320, 255, owner->game, 
 		(funcptr*)new dam_ptr(this, DRAWMODE_ADMIN_MAIN));
 	widgets[1]->set_key_focus(true);
 }
@@ -36,7 +36,7 @@ void draw_maint_img::key_press(SDL_KeyboardEvent *button)
 					{
 						delete widgets[0];
 					}
-					widgets[0] = new sdl_widget(background, 0, 0, graphx);
+					widgets[0] = new sdl_widget(background, 0, 0, owner->game);
 					//SDL_FreeSurface(pg->pg[0].surf);
 					//pg->pg[0].surf = get_png_image(background, graphx->spritepack);
 				}
@@ -47,7 +47,7 @@ void draw_maint_img::key_press(SDL_KeyboardEvent *button)
 				{
 					delete widgets[0];
 				}
-				widgets[0] = new sdl_widget(background, 0, 0, graphx);
+				widgets[0] = new sdl_widget(background, 0, 0, owner->game);
 				//SDL_FreeSurface(pg->pg[0].surf);
 				//pg->pg[0].surf = get_png_image(background, graphx->spritepack);
 				break;

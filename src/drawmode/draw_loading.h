@@ -6,7 +6,7 @@
 class draw_loading : public sdl_drawmode
 {
 	public:
-		draw_loading(graphics_data *stuff, sdl_user *self);
+		draw_loading(sdl_user *self);
 		~draw_loading();
 
 		void update_load();
