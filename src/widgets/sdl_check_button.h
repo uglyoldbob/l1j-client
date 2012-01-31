@@ -2,6 +2,7 @@
 #define __SDL_CHECK_BUTTON_H_
 
 #include <SDL.h>
+class client;
 
 #include "globals.h"
 #include "sdl_plain_button.h"
@@ -11,7 +12,7 @@
 class sdl_check_button : public sdl_plain_button
 {
 	public:
-		sdl_check_button(int num, int x, int y, graphics_data *packs, funcptr *stuff);
+		sdl_check_button(int num, int x, int y, client *who, funcptr *stuff);
 		virtual ~sdl_check_button();
 		virtual void draw(SDL_Surface *display);
 		

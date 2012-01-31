@@ -23,6 +23,22 @@ int getHashIndex(const char *name)
 	return j&0xF;
 }
 
+void pack::sort()
+{
+	if (sorted == 0)
+	{
+		qsort(files, num_files, sizeof(struct file_entry), pack::compare);
+		sorted = 1;
+	}
+}
+
+int pack::compare(const void *a, const void *b)
+{
+	const file_entry *aa = (const file_entry*)a;
+	const file_entry *ba = (const file_entry*)b;
+	return strncmp(aa->name, ba->name, 20);
+}
+
 int pack::load_index()
 {
 	bool reverse_file = false;	//flag to determine if the file contents are backwards
@@ -213,6 +229,7 @@ pack::pack(const char *name, int encrypt)
 {
 	int size;
 	encrypted = encrypt;
+	sorted = 0;
 	size = strlen(lineage_dir) + strlen(name) + strlen(DATA_EXT) + 1;
 	data_file = new char[size];
 	sprintf(data_file, "%s%s%s", lineage_dir, name, DATA_EXT);
@@ -227,7 +244,7 @@ pack::pack(const char *name, int encrypt)
 	
 	num_files = 0;
 	
-	printf("Loading %s%s\n", lineage_dir, name);
+//	printf("Loading %s%s\n", lineage_dir, name);
 	
 	data_buf = 0;
 	index_buf = 0;
@@ -267,10 +284,11 @@ unsigned char* pack::load_png(const char *name, int *size, int decrypting)
 	return (unsigned char*)buffer;
 }
 
-char *pack::load_file(const char *name, int *size, int decrypting)
-{
-	char *ret_buf = (char*)0;
+int pack::check_file(const char *name)
+{	//TODO change to a binary search
+	//because the list of files is sorted alphabetically
 	int i;
+	sort();	//make sure the list of sorted before searching
 	for (i = 0; i < num_files; i++)
 	{
 		if (strncmp(name, files[i].name, 20) == 0)
@@ -280,8 +298,23 @@ char *pack::load_file(const char *name, int *size, int decrypting)
 	}
 	if (i < num_files)
 	{
+		return i;
+	}
+	else
+	{
+		return -1;
+	}
+}
+
+char *pack::load_file(const char *name, int *size, int decrypting)
+{
+	char *ret_buf = (char*)0;
+	int i = check_file(name);
+	if (i >= 0)
+	{
 //		printf("Loading %s from %s\n", files[i].name, data_file);
-		*size = files[i].size;
+		if (size != 0)
+			*size = files[i].size;
 		ret_buf = (char*)load_file(i, decrypting);
 	}
 	else

@@ -8,17 +8,17 @@
 const char* config::get_port()
 {
 	if (port[0] == 0)
-		return 0;
-	else
 		return DEFAULT_PORT;
+	else
+		return port;
 }
 
 const char* config::get_game_port()
 {
 	if (game_port[0] == 0)
-		return 0;
-	else
 		return DEFAULT_GAME_PORT;
+	else
+		return game_port;
 }
 
 
@@ -170,7 +170,6 @@ config::config(const char *cfile)
 		printf("ERROR: %i errors were found in your config file. Fix them and restart!\n", num_errors);
 	}
 
-	lineage_font.init("Font/eng.fnt");
 }
 
 config::~config()

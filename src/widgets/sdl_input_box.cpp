@@ -1,9 +1,10 @@
+#include "client.h"
 #include "sdl_input_box.h"
 
 #include "globals.h"
 
-sdl_input_box::sdl_input_box(int num, int x, int y, graphics_data *packs)
-	: sdl_widget(num, x, y, packs)
+sdl_input_box::sdl_input_box(int num, int x, int y, client *who)
+	: sdl_widget(num, x, y, who)
 {
 	key_focus = false;
 	draw_cursor = false;
@@ -24,12 +25,22 @@ const char *sdl_input_box::get_str()
 	return field;
 }
 
+void sdl_input_box::clear()
+{
+	delete [] field;
+	cursor_pos = 0;
+	cursor_idx = 0;
+	field_length = 1;
+	field = new char[field_length];
+	field[field_length - 1] = 0;	
+}
+
 void sdl_input_box::draw(SDL_Surface *display)
 {	//TODO : implement password field masking (print '****' instead of 'asdf')
-	lineage_font.draw(display, one->pos->x, one->pos->y, field, 0xFFFE);
+	lineage_font.draw(display, one->getx(), one->gety(), field, 0xFFFE);
 	if (draw_cursor)
 	{
-		lineage_font.draw_cursor(display, one->pos->x + cursor_pos, one->pos->y, 0xFFFE);
+		lineage_font.draw_cursor(display, one->getx() + cursor_pos, one->gety(), 0xFFFE);
 	}
 	cursor_toggle();
 }

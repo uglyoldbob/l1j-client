@@ -1,7 +1,8 @@
+#include "client.h"
 #include "sdl_check_button.h"
 
-sdl_check_button::sdl_check_button(int num, int x, int y, graphics_data *packs, funcptr *stuff)
-	: sdl_plain_button(num, x, y, packs, stuff)
+sdl_check_button::sdl_check_button(int num, int x, int y, client *who, funcptr *stuff)
+	: sdl_plain_button(num, x, y, who, stuff)
 {
 	checked = 0;
 }
@@ -12,16 +13,16 @@ void sdl_check_button::draw(SDL_Surface *display)
 	{
 		if (have_mouse || key_focus || checked)
 		{
-			if (two->img != 0)
+			if (two != 0)
 			{
-				SDL_BlitSurface(two->img, two->mask, display, two->pos);
+				two->draw(display);
 			}
 		}
 		else
 		{
-			if (one->img != 0)
+			if (one != 0)
 			{
-				SDL_BlitSurface(one->img, one->mask, display, one->pos);
+				one->draw(display);
 			}
 		}
 	}

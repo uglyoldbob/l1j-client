@@ -2,6 +2,7 @@
 #define __SDL_TEXT_BUTTON_H_
 
 #include <SDL.h>
+class client;
 
 #include "globals.h"
 #include "sdl_plain_button.h"
@@ -14,7 +15,7 @@ SDL_Rect *make_sdl_rect(int x, int y, int w, int h);
 class sdl_text_button : public sdl_plain_button
 {
 	public:
-		sdl_text_button(const char *bla, int x, int y, graphics_data *packs, funcptr *stuff);
+		sdl_text_button(const char *bla, int x, int y, client *who, funcptr *stuff);
 		virtual ~sdl_text_button();
 		void set_display(const char* disp);
 		virtual void draw(SDL_Surface *display);
