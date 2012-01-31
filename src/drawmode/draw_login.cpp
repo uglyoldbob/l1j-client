@@ -76,10 +76,13 @@ void draw_login::key_press(SDL_KeyboardEvent *button)
 {
 	if (button->type == SDL_KEYDOWN)
 	{
-		if ((button->keysym.sym == SDLK_RETURN) ||
-			(button->keysym.sym == SDLK_KP_ENTER))
+		if (widget_key_focus == 2)
 		{
-			widgets[3]->key_press(button);
+			if ((button->keysym.sym == SDLK_RETURN) ||
+				(button->keysym.sym == SDLK_KP_ENTER))
+			{
+				widgets[3]->key_press(button);
+			}
 		}
 	}
 	sdl_drawmode::key_press(button);
@@ -87,7 +90,11 @@ void draw_login::key_press(SDL_KeyboardEvent *button)
 
 void draw_login::login()
 {
-	owner->login();
+	sdl_input_box *name;
+	sdl_input_box *pass;
+	name = (sdl_input_box*) widgets[1];
+	pass = (sdl_input_box*) widgets[2];
+	owner->login(name->get_str(), pass->get_str());
 	//send login packet with username and password
 	//clear username and password information
 }
