@@ -329,7 +329,7 @@ lin_char_info** client::get_login_chars()
 
 void client::register_char(lin_char_info *data)
 {	//puts character data into the array
-	if (num_login_opts > 0)
+	if ((num_login_opts > 0) && (data != 0))
 	{
 		int i;
 		for (i = 0; i <= num_login_opts; i++)

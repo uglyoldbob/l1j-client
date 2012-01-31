@@ -90,7 +90,11 @@ void draw_login::key_press(SDL_KeyboardEvent *button)
 
 void draw_login::login()
 {
-	owner->login();
+	sdl_input_box *name;
+	sdl_input_box *pass;
+	name = (sdl_input_box*) widgets[1];
+	pass = (sdl_input_box*) widgets[2];
+	owner->login(name->get_str(), pass->get_str());
 	//send login packet with username and password
 	//clear username and password information
 }

@@ -18,7 +18,7 @@ void sdl_user::quit_client()
 	done = true;
 }
 
-void sdl_user::login()
+void sdl_user::login(const char *name, const char *pass)
 {
 }
 

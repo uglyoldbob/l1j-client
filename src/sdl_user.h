@@ -25,7 +25,7 @@ class sdl_user
 		sdl_user(Uint32 flags = SDL_SWSURFACE);
 		~sdl_user();
 		void quit_client();
-		void login();
+		void login(const char *name, const char *pass);
 		
 		void init_client(client *clnt);
 		

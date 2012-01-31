@@ -464,7 +464,7 @@ void packet::enter_game()
 
 void packet::delete_char_packet()
 {
-	char result;
+	unsigned char result;
 	disassemble(&packet_data[1], "c", &result);
 	
 	draw_char_sel* bob;
@@ -481,7 +481,7 @@ void packet::delete_char_packet()
 
 void packet::char_create_result()
 {
-	char result;
+	unsigned char result;
 	disassemble(&packet_data[1], "c", &result);
 	printf("The result from character creation is %d\n", result);
 	lin_char_info *temp;
@@ -499,6 +499,7 @@ void packet::num_char_packet()
 	disassemble(&packet_data[1], "cc", &num_characters, &max_characters);
 	
 	game->create_chars(num_characters, max_characters, 8);
+	game->register_char(0);
 }
 
 void packet::login_char_packet()
