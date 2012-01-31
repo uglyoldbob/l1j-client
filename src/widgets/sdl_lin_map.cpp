@@ -97,16 +97,13 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y)
 	
 	//mystery data
 	SDL_RWread(sdl_buf, &ret.mapdata->num_unknown2, 2, 1);
-
-	unsigned char *waste = new unsigned char[ret.mapdata->num_unknown2 * 6];
 	
 	if (ret.mapdata->num_unknown2 > 0)
 	{	//7d068
-		
-	}
-	
-	SDL_RWread(sdl_buf, waste, 6, ret.mapdata->num_unknown2);
-	delete [] waste;
+		unsigned char *waste = new unsigned char[ret.mapdata->num_unknown2 * 6];
+		SDL_RWread(sdl_buf, waste, 6, ret.mapdata->num_unknown2);
+		delete [] waste;
+	}	
 		
 	//read attributes for each half tile
 	for (int tx = 0; tx < 64; tx++)
