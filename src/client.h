@@ -58,11 +58,6 @@ class client
 		int login_opts_stored;
 		volatile int login_opts_used;
 		
-		lin_char_info **login_opts;
-		int num_login_opts;	//number of elements present
-		int login_opts_stored;
-		volatile int login_opts_used;
-		
 		int acp[2];	//-1, 0xec8a0 (a function pointer to badwords compare?)
 		unsigned int serverId;	//0
 		unsigned char countryCode;
