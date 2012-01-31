@@ -1,6 +1,8 @@
 
 // $Id: common.h 311 2011-06-15 22:39:59Z jessekornblum $ 
 
+#include <sys/types.h>
+
 #ifndef __COMMON_H
 #define __COMMON_H
 
