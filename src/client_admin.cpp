@@ -154,6 +154,10 @@ void client::init()
 	init_strings();
 }
 
+void client::send_packet(const char *format, ...)
+{
+}
+
 client::~client()
 {
 	printf("Exiting client now\n");

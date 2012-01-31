@@ -2,7 +2,7 @@
 #define __DRAW_MAINT_MAP_H_
 
 #include "sdl_drawmode.h"
-class lin_map;
+class sdl_lin_map;
 class sdl_graphic;
 
 class draw_maint_map : public sdl_drawmode
@@ -22,7 +22,7 @@ class draw_maint_map : public sdl_drawmode
 	private:
 		SDL_mutex *draw_mtx;
 		
-		lin_map *themap;
+		sdl_lin_map *themap;
 		sdl_graphic *map_vis;
 		int x, y, mapnum;
 };

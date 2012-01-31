@@ -17,6 +17,7 @@ class sdl_input_box : public sdl_widget
 		virtual void cursor_off();
 		
 		const char *get_str();
+		void clear();
 	protected:
 		bool have_cursor;
 		bool draw_cursor;

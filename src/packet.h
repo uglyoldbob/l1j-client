@@ -54,6 +54,7 @@ class packet
 		void login_char_packet();
 		void login_check();
 		void char_create_result();
+		void handle_chat();
 };
 
 #endif

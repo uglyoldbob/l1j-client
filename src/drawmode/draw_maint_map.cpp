@@ -1,10 +1,10 @@
 #include "client.h"
 #include "draw_maint_map.h"
 #include "globals.h"
-#include "resources/lin_map.h"
 #include "resources/prepared_graphics.h"
 #include "resources/tile.h"
 #include "sdl_user.h"
+#include "widgets/sdl_lin_map.h"
 #include "widgets/sdl_text_button.h"
 #include "widgets/sdl_widget.h"
 
@@ -22,12 +22,12 @@ draw_maint_map::draw_maint_map(sdl_user *self)
 		(funcptr*)new dam_ptr(this, DRAWMODE_ADMIN_MAIN));
 	widgets[0]->set_key_focus(true);
 	
-	themap = new lin_map(owner->game->get_tiles(), owner->game, 0, 0, 640, 480);
+	themap = new sdl_lin_map(owner->game->get_tiles(), owner->game, 50, 50, 540, 380);
 	map_vis = 0;
 	
 	mapnum = 4;
-	x = 32544;
-	y = 32928;
+	x = 32549;
+	y = 32925;
 	//translates to 7fff8000
 	//x = 32700;
 	//y = 32764;

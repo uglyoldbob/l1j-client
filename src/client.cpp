@@ -69,7 +69,7 @@ int client::init_strings()
 	int acp = -1;
 	if (acp == -1)
 	{
-		printf("STUB GetACP()\n");
+//		printf("STUB GetACP()\n");
 		//acp = GetACP();
 	}
 	
@@ -82,8 +82,8 @@ int client::init_strings()
 	
 	//list of tips for new players?
 	todays_tip.load_local("todaystip", textpack);
-	printf("STUB Load MercenaryIconData\n");
-	printf("STUB Load MagicDollData\n");
+//	printf("STUB Load MercenaryIconData\n");
+//	printf("STUB Load MagicDollData\n");
 	
 	//list of items
 	solvent.load_local("solvent", textpack);
@@ -94,7 +94,7 @@ int client::init_strings()
 	//no important items?
 	important_items.load("itemimportant.tbl", textpack);
 	
-	printf("STUB Load BaseStatus\n");
+//	printf("STUB Load BaseStatus\n");
 	
 	//unknown
 	teleport.load("telbook.tbl", textpack);
@@ -130,7 +130,6 @@ int client::get_updates(connection* server)
 			proc = new packet(this, server);	//init the packet class instance
 			proc->get_packet();	//read packet of server name
 			proc->disass("cs", &temp, &server_name);
-			printf("STUB Get checksum for server %s\n", server_name);
 			server_data = new briefcase(server_name);
 			strcpy(hash, server_data->get_hash());
 			temp2 = 0x4400;	//68 bytes of packet data
@@ -237,10 +236,10 @@ void client::init()
 	load = (draw_loading*)graphics->get_drawmode();
 	
 	server = new connection(main_config);
-	if (get_updates(server) > 0)
-	{
-		printf("STUB Packing resources\n");
-	}
+//	if (get_updates(server) > 0)
+//	{
+//		printf("STUB Packing resources\n");
+//	}
 	
 	//begin game portion of client
 	if (server->change() != 1)
@@ -250,8 +249,8 @@ void client::init()
 
 	init_codepage(0);
 	init_math_tables();
-	printf("STUB Load player config\n");
-	printf("STUB Initialize emblem cache\n");
+//	printf("STUB Load player config\n");
+//	printf("STUB Initialize emblem cache\n");
 	init_strings();
 	load->load_done();
 }

@@ -3,10 +3,12 @@
 
 #include "client.h"
 #include "drawmode/draw_char_sel.h"
+#include "drawmode/draw_game.h"
 #include "drawmode/draw_new_char.h"
 #include "globals.h"
 #include "packet.h"
 #include "unsorted.h"
+#include "widgets/chat_window.h"
 
 static const int MAX_LENGTH = 0x13fe;
 
@@ -373,6 +375,11 @@ int packet::process_packet()
 		case SERVER_LOGIN_CHAR: login_char_packet(); break;
 		case SERVER_CREATE_STAT: char_create_result();	break;
 		case SERVER_NUM_CHARS: num_char_packet(); break;
+		case SERVER_CHAT_NORM:
+		case SERVER_CHAT_WHISP:
+		case SERVER_CHAT_GLOBAL:
+			handle_chat();
+			break;
 		default: print_packet(); break;
 	}
 	reset();
@@ -396,6 +403,24 @@ void packet::print_packet()
 		}
 	}
 	printf("\n");
+}
+
+void packet::handle_chat()
+{
+	unsigned char type;
+	int player_id;
+	char *message;
+	disassemble(&packet_data[1], "cds", &type, &player_id, &message);
+	
+	chat_window *temp;
+	temp = (chat_window*)(game->graphics->get_drawmode()->get_widget(1));
+	temp->add_line(message);
+	
+	printf("Received chat message: %s\n", message);
+	//char opcode
+	//char type
+	//int char id
+	//char *message
 }
 
 void packet::set_map()
@@ -605,9 +630,9 @@ void packet::server_version_packet()
 		game->init_codepage(0x4e4);
 //		serverCP = 0;
 	}
-	printf("STUB AdjustExp()\n");
+//	printf("STUB AdjustExp()\n");
 //	AdjustExp();
-	printf("STUB Modify serverCP and acp\n");
+//	printf("STUB Modify serverCP and acp\n");
 //	useOtherLang = 0;
 //	if (serverCP == 0x3a4)
 //	{
@@ -670,7 +695,7 @@ void packet::server_version_packet()
 //	{
 //		changeNewAccountInfo();
 //	}
-	printf("STUB LoadEmblemFile()\n");
+//	printf("STUB LoadEmblemFile()\n");
 //	LoadEmblemFile(serverId);
 	return;
 }

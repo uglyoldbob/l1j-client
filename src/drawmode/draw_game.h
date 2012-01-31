@@ -10,7 +10,7 @@ class draw_game : public sdl_drawmode
 		~draw_game();
 		
 		virtual void key_press(SDL_KeyboardEvent *button);
-		
+
 		virtual void draw(SDL_Surface *display);
 		virtual void mouse_click(SDL_MouseButtonEvent *here);
 		virtual void mouse_to(SDL_MouseMotionEvent *to);

@@ -12,7 +12,13 @@ sdl_graphic::sdl_graphic(int x, int y, int w, int h)
 	pos = make_sdl_rect(x, y, w, h);
 	mask = make_sdl_rect(0, 0, w, h);
 	SDL_SetColorKey(img, SDL_SRCCOLORKEY, SDL_MapRGB(img->format, 255,255,255) );
+	transp_color = SDL_MapRGB(img->format, 255,255,255);
 	SDL_FillRect(img, NULL, SDL_MapRGB(img->format, 255,255,255));
+}
+
+void sdl_graphic::erase()
+{
+	SDL_FillRect(img, NULL, transp_color);
 }
 
 sdl_graphic::sdl_graphic(int x, int y, short *source, int type)
@@ -41,6 +47,7 @@ sdl_graphic::sdl_graphic(int x, int y, short *source, int type)
 			pos = make_sdl_rect(x, y, width, height);
 			mask = make_sdl_rect(0, 0, width, height);
 			SDL_SetColorKey(img, SDL_SRCCOLORKEY, SDL_MapRGB(img->format, 255,255,255) );
+			transp_color = SDL_MapRGB(img->format, 255,255,255);
 			SDL_FillRect(img, NULL, SDL_MapRGB(img->format, 255,255,255));
 			short *temp = (short*)img->pixels;	//destination pointer
 		//	printf("There are %d rows\n", height);
@@ -72,6 +79,7 @@ sdl_graphic::sdl_graphic(int x, int y, short *source, int type)
 			pos = make_sdl_rect(0, 0, 24, 24);
 			mask = make_sdl_rect(0, 0, 24, 24);
 			SDL_SetColorKey(img, SDL_SRCCOLORKEY, SDL_MapRGB(img->format, 1,1,1) );
+			transp_color = SDL_MapRGB(img->format, 1, 1, 1);
 			SDL_FillRect(img, NULL, SDL_MapRGB(img->format, 1,1,1));
 			short *temp = (short*)img->pixels;	//destination pointer
 			for (int i = 0; i < 24; i++)
@@ -95,6 +103,7 @@ sdl_graphic::sdl_graphic(int x, int y, short *source, int type)
 			pos = make_sdl_rect(10, 10, 24, 24);
 			mask = make_sdl_rect(0, 0, 24, 24);
 			SDL_SetColorKey(img, SDL_SRCCOLORKEY, SDL_MapRGB(img->format, 1,1,1) );
+			SDL_MapRGB(img->format, 1, 1, 1);
 			SDL_FillRect(img, NULL, SDL_MapRGB(img->format, 1,1,1));
 			short *temp = (short*)img->pixels;	//destination pointer
 			for (int i = 0; i < 24; i++)
@@ -141,6 +150,7 @@ sdl_graphic::sdl_graphic(int num, int x, int y, client *who, int type)
 				if (img != 0)
 				{
 					SDL_SetColorKey(img, SDL_SRCCOLORKEY, SDL_MapRGB(img->format, 0, 0, 0));
+					SDL_MapRGB(img->format, 0, 0, 0);
 					pos = make_sdl_rect(x, y, img->w, img->h);
 					mask = make_sdl_rect(0, 0, img->w, img->h);
 					cleanup = false;

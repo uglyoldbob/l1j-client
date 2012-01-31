@@ -6,24 +6,25 @@ Admin_OBJS = client_admin.o config.o connection.o funcptr.o global.o lindes.o \
 
 
 #widget objects
-Lineage_OBJS += widgets/sdl_animate_button.o widgets/sdl_button.o \
-	widgets/sdl_char_info.o widgets/sdl_check_button.o widgets/sdl_radio_button.o \
-	widgets/sdl_input_box.o widgets/sdl_plain_button.o widgets/sdl_widget.o
-Admin_OBJS += widgets/sdl_animate_button.o widgets/sdl_button.o \
-	widgets/sdl_char_info.o widgets/sdl_check_button.o widgets/sdl_radio_button.o \
-	widgets/sdl_input_box.o widgets/sdl_plain_button.o widgets/sdl_text_button.o \
-	widgets/sdl_widget.o
+Lineage_OBJS += widgets/chat_window.o widgets/sdl_animate_button.o widgets/sdl_button.o \
+	widgets/sdl_char_info.o widgets/sdl_check_button.o widgets/sdl_lin_map.o \
+	widgets/sdl_radio_button.o widgets/sdl_input_box.o widgets/sdl_plain_button.o \
+	widgets/sdl_widget.o widgets/sdl_window.o widgets/text_box.o
+Admin_OBJS += widgets/chat_window.o widgets/sdl_animate_button.o widgets/sdl_button.o \
+	widgets/sdl_char_info.o widgets/sdl_check_button.o widgets/sdl_lin_map.o \
+	widgets/sdl_radio_button.o widgets/sdl_input_box.o widgets/sdl_plain_button.o \
+	widgets/sdl_text_button.o widgets/sdl_widget.o widgets/sdl_window.o widgets/text_box.o
 
 
 #resource objects
-Lineage_OBJS += resources/briefcase.o resources/files.o resources/music.o resources/pack.o \
-	resources/partial_table.o resources/prepared_graphics.o resources/sdl_font.o \
-	resources/sdl_graphic.o resources/table.o resources/tile.o
-Admin_OBJS += resources/briefcase.o resources/files.o resources/lin_map.o \
-	resources/music.o resources/pack.o resources/partial_table.o \
-	resources/prepared_graphics.o resources/sdl_font.o resources/table.o \
-	resources/tile.o resources/map_coord.o resources/pixel_coord.o \
-	resources/coord.o resources/screen_coord.o resources/sdl_graphic.o
+Lineage_OBJS += resources/briefcase.o resources/files.o resources/music.o \
+	resources/pack.o resources/partial_table.o resources/prepared_graphics.o \
+	resources/sdl_font.o resources/map_coord.o resources/pixel_coord.o resources/coord.o \
+	resources/screen_coord.o resources/sdl_graphic.o resources/table.o resources/tile.o
+Admin_OBJS += resources/briefcase.o resources/files.o resources/music.o \
+	resources/pack.o resources/partial_table.o resources/prepared_graphics.o \
+	resources/sdl_font.o resources/map_coord.o resources/pixel_coord.o resources/coord.o \
+	resources/screen_coord.o resources/sdl_graphic.o resources/table.o resources/tile.o
 
 
 #drawmode objects

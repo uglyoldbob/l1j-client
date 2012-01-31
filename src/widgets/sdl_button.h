@@ -20,7 +20,8 @@ class sdl_button : public sdl_widget
 		virtual ~sdl_button();
 		
 		virtual void cursor_on();
-		virtual void cursor_off();		
+		virtual void cursor_off();
+		virtual void key_press(SDL_KeyboardEvent *button);
 	protected:
 		funcptr *method;
 		

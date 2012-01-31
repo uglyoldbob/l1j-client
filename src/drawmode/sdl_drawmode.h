@@ -58,6 +58,8 @@ class sdl_drawmode
 		virtual void mouse_from(SDL_MouseMotionEvent *from) = 0;
 		virtual void mouse_move(SDL_MouseMotionEvent *from, SDL_MouseMotionEvent *to) = 0;
 		virtual bool mouse_leave() = 0;	//is it ok for the mouse to leave?
+		
+		sdl_widget *get_widget(int i);
 	protected:
 		prepared_graphics *pg;
 		sdl_widget **widgets;

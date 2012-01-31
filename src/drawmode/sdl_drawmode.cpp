@@ -23,6 +23,18 @@ sdl_drawmode::sdl_drawmode(sdl_user *self)
 	widgets = 0;
 }
 
+sdl_widget *sdl_drawmode::get_widget(int i)
+{
+	if ((i >= 0) && (i < num_widgets))
+	{
+		return widgets[i];
+	}
+	else
+	{
+		return 0;
+	}
+}
+
 sdl_drawmode::~sdl_drawmode()
 {
 	if (pg != 0)
@@ -35,7 +47,6 @@ sdl_drawmode::~sdl_drawmode()
 		}
 		delete [] widgets;
 	}
-
 }
 
 int sdl_drawmode::get_widget(int x, int y)

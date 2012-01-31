@@ -244,7 +244,7 @@ pack::pack(const char *name, int encrypt)
 	
 	num_files = 0;
 	
-	printf("Loading %s%s\n", lineage_dir, name);
+//	printf("Loading %s%s\n", lineage_dir, name);
 	
 	data_buf = 0;
 	index_buf = 0;

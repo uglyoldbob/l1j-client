@@ -3,20 +3,21 @@
 #include <stdio.h>
 
 #include "client.h"
-#include "coord.h"
-#include "map_coord.h"
-#include "pixel_coord.h"
-#include "screen_coord.h"
-#include "tile.h"
+#include "resources/coord.h"
+#include "resources/map_coord.h"
+#include "resources/pixel_coord.h"
+#include "resources/screen_coord.h"
+#include "resources/tile.h"
 #include "globals.h"
-#include "pack.h"
-#include "lin_map.h"
-#include "widgets/sdl_widget.h"
+#include "resources/pack.h"
+#include "sdl_lin_map.h"
+#include "sdl_widget.h"
 
-lin_map::lin_map(tile *thetiles, client *who, int x, int y, int w, int h)
+sdl_lin_map::sdl_lin_map(tile *thetiles, client *who, int x, int y, int w, int h)
+	: sdl_widget(x, y, who)
 {
 	tile_data = thetiles;
-	whole_map = 0;
+	one = 0;
 	this->who = who;
 	
 	for (int i = 0; i < 4; i++)
@@ -25,10 +26,10 @@ lin_map::lin_map(tile *thetiles, client *who, int x, int y, int w, int h)
 		segs[i].mapdata = 0;
 	}
 	
-	whole_map = new sdl_graphic(x, y, w, h);
+	one = new sdl_graphic(x, y, w, h);
 }
 
-lin_map::~lin_map()
+sdl_lin_map::~sdl_lin_map()
 {
 	for (int i = 0; i < 4; i++)
 	{
@@ -48,7 +49,7 @@ lin_map::~lin_map()
 //east		  0, +48
 //west		  0, -48
 	
-lin_map_segment lin_map::get_map(int mapnum, int x, int y)
+lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y)
 {
 //	Uint32 timecheck = SDL_GetTicks();
 	lin_map_segment ret;
@@ -97,8 +98,14 @@ lin_map_segment lin_map::get_map(int mapnum, int x, int y)
 	//mystery data
 	SDL_RWread(sdl_buf, &ret.mapdata->num_unknown2, 2, 1);
 
-	short *waste = new short[ret.mapdata->num_unknown2];
-	SDL_RWread(sdl_buf, waste, 2, ret.mapdata->num_unknown2);
+	unsigned char *waste = new unsigned char[ret.mapdata->num_unknown2 * 6];
+	
+	if (ret.mapdata->num_unknown2 > 0)
+	{	//7d068
+		
+	}
+	
+	SDL_RWread(sdl_buf, waste, 6, ret.mapdata->num_unknown2);
 	delete [] waste;
 		
 	//read attributes for each half tile
@@ -113,9 +120,12 @@ lin_map_segment lin_map::get_map(int mapnum, int x, int y)
 		}
 	}
 	
+	
+	
 	int bla;
 	SDL_RWread(sdl_buf, &bla, 4, 1);
 	printf("amount for HideObjs is %d\n", bla);
+	
 	for (int i = 0; i < bla; i++)
 	{
 		short a;
@@ -132,6 +142,8 @@ lin_map_segment lin_map::get_map(int mapnum, int x, int y)
 				char dummy[5];
 				SDL_RWread(sdl_buf, dummy, 1, 5);
 				//skip 5 bytes
+				j--;
+				a--;
 				//decrement j and a
 				//destination increments by 4
 			}
@@ -144,6 +156,11 @@ lin_map_segment lin_map::get_map(int mapnum, int x, int y)
 				//destination increments by 12
 			}
 		}
+	}
+	
+	if (bla > 0)
+	{	//7d12c
+		//bla bla putObjecTile()
 	}
 	
 	SDL_RWread(sdl_buf, &bla, 4, 1);
@@ -159,21 +176,22 @@ lin_map_segment lin_map::get_map(int mapnum, int x, int y)
 	}
 	
 	SDL_RWread(sdl_buf, &bla, 4, 1);
-	printf("amount for tilesets is %d\n", bla);
+	printf("amount for tilesets is %d\nset: ", bla);
 	for (int i = 0; i < bla; i++)
 	{
 		int set;
 		SDL_RWread(sdl_buf, &set, 4, 1);
-		printf("\tset %d\n", set);
+		printf("%d, ", set);
 	}
+	printf("\n");
 	
 	//portalList
-	//array of Portal (uchar xOff, uchar yOff, targetmap, short tx, short ty
+	//array of Portal (uchar xOff, uchar yOff, targetmap, short tx, short ty)
 	
 	//TODO : check for end of file?
 	unsigned short num_portals;
 	SDL_RWread(sdl_buf, &num_portals, 2, 1);
-	printf("There are %d portals\n", num_portals);
+	printf("There are %d portals ", num_portals);
 	for (int i = 0; i < num_portals; i++)
 	{	//7cf54
 		char a, b, c;
@@ -188,7 +206,13 @@ lin_map_segment lin_map::get_map(int mapnum, int x, int y)
 		SDL_RWread(sdl_buf, &f, 2, 1);
 		printf("Data %d %d %d %d %d %d\n", a, b, c, d, e, f);
 	}
-	
+
+	//if no at the end of file?
+	{	//7d24c
+		
+	}
+		
+	printf("Finish loading\n");
 	
 	SDL_RWclose(sdl_buf);
 
@@ -247,7 +271,8 @@ lin_map_segment lin_map::get_map(int mapnum, int x, int y)
 	ret.offsetx = offsetx;
 	ret.offsety = offsety;
 	
-	printf("%d_%d_%d\n", mapnum, ret.x, ret.y);
+	printf("\t%s %d_%d_%d\n", name, mapnum, ret.x, ret.y);
+	
 //	sprintf(name, "%d_%d_%d.bmp", mapnum, ret.x, ret.y);
 //	SDL_SaveBMP(ret.graphic->get_surf(), name);
 	
@@ -255,18 +280,18 @@ lin_map_segment lin_map::get_map(int mapnum, int x, int y)
 	return ret;
 }
 
-
-void lin_map::draw(SDL_Surface *display)
+void sdl_lin_map::check_sections()
 {
 	int width, height;
-	width = whole_map->getw();
-	height = whole_map->geth();
+	width = one->getw();
+	height = one->geth();
 	
 	int corner_x[4], corner_y[4];
+	int goal_x[4], goal_y[4];
+	int present[4];	//covers the 4 possible sections required
+	int lowx, lowy;
 	
-	SDL_FillRect(whole_map->get_surf(), NULL, 0x1234);
-	
-	screen_coord corner1(width/2 - master_offsetx, height/2 - master_offsety);
+	screen_coord corner1(0 - master_offsetx, 0 - master_offsety);
 	corner_x[0] = corner1.get_map().get_x() & (~0x3F);
 	corner_y[0] = corner1.get_map().get_y() & (~0x3F);
 
@@ -282,59 +307,91 @@ void lin_map::draw(SDL_Surface *display)
 	corner_x[3] = corner4.get_map().get_x() & (~0x3F);
 	corner_y[3] = corner4.get_map().get_y() & (~0x3F);
 	
-//	for (int i = 0; i < 4; i++)
-//	{
-//		printf("Corner %d [%d, %d]\n", i, corner_x[i], corner_y[i]);
-//	}
+	lowx = corner_x[0];
+	lowy = corner_y[0];
+	
 	for (int i = 0; i < 4; i++)
 	{
-		bool drawthis = true;
-		for (int j = 0; j < i; j++)
-		{	//check all previously drawn segments
-			if ( (corner_x[i] == corner_x[j]) && 
-				(corner_y[i] == corner_y[j]) )
-			{
-				drawthis = false;
+		present[i] = -1;
+		if (corner_x[i] < lowx)
+			lowx = corner_x[i];
+		if (corner_y[i] < lowy)
+			lowy = corner_y[i];
+	}
+	
+	goal_x[0] = lowx;
+	goal_y[0] = lowy;
+	
+	goal_x[1] = lowx;
+	goal_y[1] = lowy + 64;
+	
+	goal_x[2] = lowx + 64;
+	goal_y[2] = lowy;
+	
+	goal_x[3] = lowx + 64;
+	goal_y[3] = lowy + 64;
+
+	for (int i = 0; i < 4; i++)
+	{	//check to see if each segment is loaded properly
+		if ((segs[i].x != goal_x[i]) ||
+			(segs[i].y != goal_y[i]) ||
+			(segs[i].map != map))
+		{
+			int match = -1;
+			for (int j = i + 1; j < 4; j++)
+			{	//check the other segments to see if they match
+				if ((segs[j].x == goal_x[i]) &&
+					(segs[j].y == goal_y[i]) &&
+					(segs[j].map == map))
+				{
+					match = j;
+				}
+			}
+			if (match != -1)
+			{	//swap the segments because a match was found
+				lin_map_segment temp;
+				temp = segs[i];
+				segs[i] = segs[match];
+				segs[match] = temp;
+			}
+			else
+			{	//load a section because it's not already loaded
+				segs[i] = get_map(map, goal_x[i], goal_y[i]);
 			}
 		}
-		if (drawthis)
+	}
+}
+
+void sdl_lin_map::draw(SDL_Surface *display)
+{
+	SDL_FillRect(one->get_surf(), NULL, 0x1234);
+
+	check_sections();
+	for (int i = 0; i < 4; i++)
+	{
+		int temp_offx, temp_offy;
+			
+		if (segs[i].graphic != 0)
 		{
-			int temp_offx, temp_offy;
-			
-			if ((segs[i].x != corner_x[i]) ||
-				(segs[i].y != corner_y[i]) ||
-				(segs[i].map != map) ||
-				(segs[i].graphic == 0) )
-			{
-//				printf("Section differs (%d, %d) {%d, %d} map %d %d\n",
-//					segs[i].x, segs[i].y, corner_x[i], corner_y[i], segs[i].map, map);
-				segs[i] = get_map(map, corner_x[i], corner_y[i]);
-			}
-//			printf("Section offset {%d, %d} master offset [%d, %d]\n",
-//				segs[i].offsetx, segs[i].offsety, master_offsetx, master_offsety);
-			
-			if (segs[i].graphic != 0)
-			{
-				temp_offx = master_offsetx - segs[i].offsetx;
-				temp_offy = master_offsety - segs[i].offsety;
-			
-				segs[i].graphic->drawat(temp_offx, temp_offy, whole_map->get_surf());
-			}
+			temp_offx = master_offsetx - segs[i].offsetx;
+			temp_offy = master_offsety - segs[i].offsety;
+		
+			segs[i].graphic->drawat(temp_offx, temp_offy, one->get_surf());
 		}
 	}
 	
 	//TODO!
 	//draws the full map onto display
-	whole_map->draw(display);
+	one->draw(display);
 }
 
-void lin_map::set_hotspot(int mapn, int x, int y)
+void sdl_lin_map::set_hotspot(int mapn, int x, int y)
 {
 	int width, height;
 	
 	map = mapn;
-	width = whole_map->getw();
-	height = whole_map->geth();
+	width = one->getw();
+	height = one->geth();
 	
 	map_coord themap(x, y);
 	screen_coord thescreen = themap.get_screen();

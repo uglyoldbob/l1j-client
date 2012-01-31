@@ -32,10 +32,13 @@ extern int num_sprite_pack;
 
 enum server_packet_types
 {	//the numbers will eventually be deleted
+	SERVER_CHAT_NORM = 8,	//?
 	SERVER_VERSIONS = 10,
+	SERVER_CHAT_WHISP = 13,
 	SERVER_DISCONNECT = 18,
 	SERVER_LOGIN = 21,
 	SERVER_CHAR_DELETE = 33,
+	SERVER_CHAT_GLOBAL = 40,
 	SERVER_ENTERGAME = 63,
 	SERVER_KEY = 65,
 	SERVER_MAP = 76,
@@ -63,6 +66,7 @@ enum client_packet_types
 	CLIENT_INITGAME = 92,
 	CLIENT_MYSTERY = 96,	//todo	reply to 109 "c" (bad)
 	CLIENT_STATUS_REPLY,	//todo reply to status packet "ccc" (bad)
+	CLIENT_CHAT = 104,
 	CLIENT_LAST
 };
 

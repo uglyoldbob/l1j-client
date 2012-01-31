@@ -4,6 +4,17 @@
 #include "globals.h"
 #include "sdl_widget.h"
 
+sdl_widget::sdl_widget(int x, int y, client *who)
+{
+	visible = false;
+	key_focus = false;
+	allow_key_focus = false;
+	
+	one = 0;
+	have_mouse = false;
+	myclient = who;
+}
+
 sdl_widget::sdl_widget(int num, int x, int y, client *who)
 {
 	visible = false;
@@ -16,6 +27,7 @@ sdl_widget::sdl_widget(int num, int x, int y, client *who)
 		visible = true;
 	}
 	have_mouse = false;
+	myclient = who;
 }
 
 void sdl_widget::set_key_focus(bool arg)

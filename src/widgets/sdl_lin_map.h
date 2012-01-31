@@ -1,5 +1,5 @@
-#ifndef __LIN_MAP_H_
-#define __LIN_MAP_H_
+#ifndef __SDL_LIN_MAP_H_
+#define __SDL_LIN_MAP_H_
 
 class pack;
 class tile;
@@ -57,11 +57,11 @@ struct lin_map_segment
 	//the lowest x,y corresponds to the image coordinates of (0, 756)
 };
 
-class lin_map
+class sdl_lin_map : public sdl_widget
 {
 	public:
-		lin_map(tile *thetiles, client *who, int x, int y, int w, int h);
-		~lin_map();
+		sdl_lin_map(tile *thetiles, client *who, int x, int y, int w, int h);
+		~sdl_lin_map();
 		void draw(SDL_Surface *display);	//draws the full map onto display
 		void set_hotspot(int mapn, int x, int y);	//sets the coordinates for the hotspot (the middle of the screen)
 	private:
@@ -69,13 +69,13 @@ class lin_map
 		lin_map_segment segs[4];
 		int map;
 		client *who;
-		sdl_graphic *whole_map;	//the graphic for the visible portion of the map
 		
 		//the master set of offsets for the x and y coordinates of translated coordinates
 		int master_offsetx;
 		int master_offsety;
 		
 		lin_map_segment get_map(int mapnum, int x, int y);	//returns a map section
+		void check_sections();	//check the loaded sections
 };
 
 #endif
@@ -99,3 +99,21 @@ class lin_map
 //pick the corners of the visible map drawing area
 //get the mapp coordinates for those points
 //determine what map segments need to be drawn, and where to be drawn at
+
+
+//break 0x7cbcc disp /s $r3
+//break 0x7cc28 disp $r0
+//break 0x7cc80 if ($r23 > 0)
+
+//4/7ffd8003
+	//1196
+	//181
+//4/7ffc8003
+	//97
+	//34
+//4/7ffd8002
+	//1298
+	//487
+//4/7ffc8002
+	//237
+	//82

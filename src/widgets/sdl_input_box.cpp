@@ -25,6 +25,16 @@ const char *sdl_input_box::get_str()
 	return field;
 }
 
+void sdl_input_box::clear()
+{
+	delete [] field;
+	cursor_pos = 0;
+	cursor_idx = 0;
+	field_length = 1;
+	field = new char[field_length];
+	field[field_length - 1] = 0;	
+}
+
 void sdl_input_box::draw(SDL_Surface *display)
 {	//TODO : implement password field masking (print '****' instead of 'asdf')
 	lineage_font.draw(display, one->getx(), one->gety(), field, 0xFFFE);

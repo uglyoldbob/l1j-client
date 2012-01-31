@@ -107,8 +107,8 @@ unsigned char* files::load_file(const char *name, int *size, file_locations loca
 			break;
 		}
 	}
-	if (buffer == 0)
-		printf("File %s was not loaded properly\n", name);
+//	if (buffer == 0)
+//		printf("File %s was not loaded properly\n", name);
 //	else
 //		printf("File %s was loaded properly\n", name);
 	

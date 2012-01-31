@@ -113,6 +113,6 @@ void table::load_local(const char *name, pack* from)
 
 char table::get_lang_char()
 {
-	printf("STUB Get Language Character\n");
+//	printf("STUB Get Language Character\n");
 	return 'e';
 }

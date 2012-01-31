@@ -32,10 +32,12 @@ class sdl_graphic
 		int gety();
 		int getw();
 		int geth();
+		void erase();
 	private:
 		SDL_Surface *img;
 		SDL_Rect *pos;
 		SDL_Rect *mask;
+		Uint32 transp_color;
 		bool cleanup;
 };
 

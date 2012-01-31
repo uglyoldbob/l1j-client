@@ -72,6 +72,20 @@ bool draw_login::mouse_leave()
 	return false;
 }
 
+void draw_login::key_press(SDL_KeyboardEvent *button)
+{
+	if (button->type == SDL_KEYDOWN)
+	{
+		if ((button->keysym.sym == SDLK_RETURN) ||
+			(button->keysym.sym == SDLK_KP_ENTER))
+		{
+			widgets[3]->key_press(button);
+		}
+	}
+	sdl_drawmode::key_press(button);
+}
+
+
 void draw_login::login()
 {
 	owner->login();
@@ -138,3 +152,5 @@ void draw_login::mouse_move(SDL_MouseMotionEvent *from, SDL_MouseMotionEvent *to
 		}
 	}
 }
+
+

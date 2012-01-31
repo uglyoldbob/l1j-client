@@ -196,6 +196,16 @@ void draw_char_sel::get_login_chars()
 		chars[i]->set_info(data[i + (page_num*4)]);
 	}
 	ready = true;
+	
+	sdl_char_info *stuff;
+	stuff = (sdl_char_info*)widgets[11];
+	stuff->hand_info(chars[0]->get_info());
+	cur_char_slot = 0;
+	chars[0]->animate(true);
+	chars[1]->animate(false);
+	chars[2]->animate(false);
+	chars[3]->animate(false);
+
 	SDL_mutexV(draw_mtx);
 }
 
