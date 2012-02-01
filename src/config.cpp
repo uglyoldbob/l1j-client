@@ -86,7 +86,7 @@ config::config(const char *cfile)
 				}
 				else if (sscanf(line_read, "Path = %[^\t\n\r]", all_names) == 1)
 				{
-					lineage_dir = new char[strlen(line_read)];
+					lineage_dir = new char[strlen(line_read)+256];
 					strcpy(lineage_dir, all_names);
 		
 					wordexp_t exp_result;
