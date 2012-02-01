@@ -27,6 +27,8 @@ release.tar.gz: $(PACKAGE_FILES)
 	fi
 	@echo "Copying files to package folder"
 	cp -f $(OUTPUT)Lineage.ini ./client.app/Contents/Resources
+	cp -f $(OUTPUT)Info.PList ./client.app/Contents
+	cp -f $(OUTPUT)PkgInfo ./client.app/Contents
 	cp -f Lineage ./client.app/Contents/MacOS
 	cp -f Admin ./client.app/Contents/MacOS
 	tar -zcvf release.tar.gz client.app
