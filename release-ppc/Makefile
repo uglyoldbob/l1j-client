@@ -2,13 +2,13 @@ EXTRA_FLAGS=-s -O3
 CFLAGS += -arch ppc
 LFLAGS += -arch ppc
 
-all: Lineage package Admin
+all: Lineage Admin package
 
 -include ../make.frag
 	
 package: release.tar.gz
 
-release.tar.gz: $(PACKAGE_FILES)
+release.tar.gz: Lineage $(PACKAGE_FILES)
 	@if [ ! -d client.app ]; then\
 		echo mkdir client.app;\
 		mkdir client.app;\

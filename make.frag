@@ -74,7 +74,7 @@ clean:
 	rm -rf *.o *.a *.exe *.d
 	rm -rf drawmode resources widgets encryption
 
-Admin: $(Admin_OBJS) package
+Admin: $(Admin_OBJS)
 	$(CC) $(EXTRA_FLAGS) $(LFLAGS) $(Admin_OBJS) $(LDADD) -o Admin
 	cp Admin ./client
 

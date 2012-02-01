@@ -126,6 +126,7 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y)
 	
 	int bla;
 	SDL_RWread(sdl_buf, &bla, 4, 1);
+	bla = SWAP32(bla);
 	printf("amount for HideObjs is %d\n", bla);
 	
 	for (int i = 0; i < bla; i++)

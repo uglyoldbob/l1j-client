@@ -138,6 +138,7 @@ void tile::load(int which, client *who)
 
 		tdata = new tileset;
 		tdata->num_tiles = *(short*)data;
+		tdata->num_tiles = SWAP16(tdata->num_tiles);
 //		printf("\tThere are %d tiles\n", tdata->num_tiles);
 		tdata->offset = new int[tdata->num_tiles + 1];
 		
@@ -149,7 +150,7 @@ void tile::load(int which, client *who)
 		for (int i = 0; i <= tdata->num_tiles; i++)
 		{
 			int *temp = (int*)data;
-			tdata->offset[i] = temp[i+1];
+			tdata->offset[i] = SWAP32(temp[i+1]);
 		}
 		
 		//initialize the data pointer
