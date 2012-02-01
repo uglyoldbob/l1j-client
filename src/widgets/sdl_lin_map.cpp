@@ -91,16 +91,20 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y)
 		for (int ty = 0; ty < 64; ty++)
 		{
 			SDL_RWread(sdl_buf, &(ret.mapdata->floor[ty][tx*2]), 4, 1);
+			ret.mapdata->floor[ty][tx*2] = SWAP32(ret.mapdata->floor[ty][tx*2]);
 			SDL_RWread(sdl_buf, &(ret.mapdata->floor[ty][tx*2+1]), 4, 1);
+			ret.mapdata->floor[ty][tx*2+1] = SWAP32(ret.mapdata->floor[ty][tx*2+1]);
 		}
 	}
 	
 	//mystery data
 	SDL_RWread(sdl_buf, &ret.mapdata->num_unknown2, 2, 1);
+	ret.mapdata->num_unknown2 = SWAP16(ret.mapdata->num_unknown2);
 	if (ret.mapdata->num_unknown2 > 0)
 	{	//7d068
 		unsigned char *waste = new unsigned char[ret.mapdata->num_unknown2 * 6];
 		SDL_RWread(sdl_buf, waste, 6, ret.mapdata->num_unknown2);
+		//TODO : SWAP16 all the values in the array
 		delete [] waste;
 	}	
 		
@@ -112,7 +116,9 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y)
 			ret.mapdata->attr[tx][ty*2] = 0;
 			ret.mapdata->attr[tx][ty*2+1] = 0;
 			SDL_RWread(sdl_buf, &ret.mapdata->attr[ty][tx*2], 2, 1);
+			ret.mapdata->attr[ty][tx*2] = SWAP16(ret.mapdata->attr[ty][tx*2]);
 			SDL_RWread(sdl_buf, &ret.mapdata->attr[ty][tx*2+1], 2, 1);
+			ret.mapdata->attr[ty][tx*2+1] = SWAP16(ret.mapdata->attr[ty][tx*2+1]);
 		}
 	}
 	
@@ -127,11 +133,13 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y)
 		short a;
 		SDL_RWread(sdl_buf, &a, 2, 1);
 		SDL_RWread(sdl_buf, &a, 2, 1);
+		a = SWAP16(a);
 		printf("\t%d\n", a);
 		for (int j = 0; j < a; j++)
 		{
 			unsigned char b, c;
 			SDL_RWread(sdl_buf, &b, 1, 1);
+			b = SWAP16(b);
 			SDL_RWread(sdl_buf, &c, 1, 1);
 			if ((b == 0xcd) && (c == 0xcd))
 			{
@@ -160,6 +168,7 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y)
 	}
 	
 	SDL_RWread(sdl_buf, &bla, 4, 1);
+	bla = SWAP32(bla);
 	printf("amount for HideSwitches is %d\n", bla);
 	for (int i = 0; i < bla; i++)
 	{
@@ -168,15 +177,18 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y)
 		SDL_RWread(sdl_buf, &a, 1, 1);
 		SDL_RWread(sdl_buf, &b, 1, 1);
 		SDL_RWread(sdl_buf, &c, 2, 1);
+		c = SWAP16(c);
 		SDL_RWread(sdl_buf, &d, 1, 1);
 	}
 	
 	SDL_RWread(sdl_buf, &bla, 4, 1);
+	bla = SWAP32(bla);
 	printf("amount for tilesets is %d\nset: ", bla);
 	for (int i = 0; i < bla; i++)
 	{
 		int set;
 		SDL_RWread(sdl_buf, &set, 4, 1);
+		set = SWAP32(set);
 		printf("%d, ", set);
 	}
 	printf("\n");
@@ -187,6 +199,7 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y)
 	//TODO : check for end of file?
 	unsigned short num_portals;
 	SDL_RWread(sdl_buf, &num_portals, 2, 1);
+	num_portals = SWAP16(num_portals);
 	printf("There are %d portals ", num_portals);
 	for (int i = 0; i < num_portals; i++)
 	{	//7cf54
@@ -198,8 +211,11 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y)
 		SDL_RWread(sdl_buf, &b, 1, 1);
 		SDL_RWread(sdl_buf, &c, 1, 1);
 		SDL_RWread(sdl_buf, &d, 2, 1);
+		d = SWAP16(d);
 		SDL_RWread(sdl_buf, &e, 2, 1);
+		e = SWAP16(e);
 		SDL_RWread(sdl_buf, &f, 2, 1);
+		f = SWAP16(f);
 		printf("Data %d %d %d %d %d %d\n", a, b, c, d, e, f);
 	}
 
