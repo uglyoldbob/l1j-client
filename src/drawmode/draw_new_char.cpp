@@ -69,8 +69,10 @@ draw_new_char::draw_new_char(sdl_user *self)
 	widget_key_focus = 14;
 	widgets[0] = new sdl_plain_button(825, 476, 403, owner->game, 
 		(funcptr*)new dnc_ptr(this, DNC_FUNC_SUBMIT));	//ok
+	widgets[0]->set_key_focus(true);
 	widgets[1] = new sdl_plain_button(827, 476, 430, owner->game, 
 		(funcptr*)new dnc_ptr(this, DNC_FUNC_CANCEL));	//cancel
+	widgets[1]->set_key_focus(true);
 	widgets[2] = new sdl_plain_button(556, 424, 317, owner->game, 
 		(funcptr*)new dnc_ptr(this, DNC_FUNC_STATDOWN, STAT_STR));	//str down
 	widgets[3] = new sdl_plain_button(554, 435, 317, owner->game, 
@@ -98,6 +100,8 @@ draw_new_char::draw_new_char(sdl_user *self)
 	
 	widgets[14] = new sdl_input_box(13, 440, 381, owner->game);
 	widgets[14]->cursor_on();
+	widgets[14]->set_key_focus(true);
+	widget_key_focus = 14;
 	
 	widgets[15] = new sdl_radio_button(1753, 332, 11, owner->game, 
 		(funcptr*)new dnc_ptr(this, DNC_FUNC_NEWCHAR, 0), &widgets[15], 7, 0);
