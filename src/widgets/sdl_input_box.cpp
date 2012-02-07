@@ -130,7 +130,11 @@ void sdl_input_box::key_press(SDL_KeyboardEvent *button)
 			break;
 		case SDLK_CLEAR:
 		case SDLK_RETURN:
-		case SDLK_ESCAPE:
+		case SDLK_ESCAPE:	case SDLK_TAB:
+		case SDLK_F1: case SDLK_F2: case SDLK_F3: case SDLK_F4:
+		case SDLK_F5: case SDLK_F6: case SDLK_F7: case SDLK_F8: 
+		case SDLK_F9: case SDLK_F10: case SDLK_F11: case SDLK_F12: 
+		case SDLK_F13: case SDLK_F14: case SDLK_F15: 
 		case SDLK_UP:	case SDLK_DOWN:
 		case SDLK_LALT:	case SDLK_RALT:
 		case SDLK_LCTRL:	case SDLK_RCTRL:

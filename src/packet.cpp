@@ -491,12 +491,15 @@ void packet::char_create_result()
 	unsigned char result;
 	disassemble(&packet_data[1], "c", &result);
 	printf("The result from character creation is %d\n", result);
-	lin_char_info *temp;
-	draw_new_char* bob;
-	bob = (draw_new_char*)game->graphics->get_drawmode();
-	temp = bob->get_char();
-	game->register_char(temp);
-	game->graphics->change_drawmode(DRAWMODE_CHARSEL);
+	if (result != 6)
+	{
+		lin_char_info *temp;
+		draw_new_char* bob;
+		bob = (draw_new_char*)game->graphics->get_drawmode();
+		temp = bob->get_char();
+		game->register_char(temp);
+		game->graphics->change_drawmode(DRAWMODE_CHARSEL);
+	}
 }
 
 void packet::num_char_packet()
