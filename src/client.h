@@ -32,11 +32,17 @@ class client
 		int check_login_chars();
 		lin_char_info** get_login_chars();
 		tile *get_tiles();
+		
 		sdl_user *graphics;
 		
 		files *getfiles;
 		briefcase *server_data;	//used to hold all server specific data
 		
+		//these two variables are used to translate packets
+			//for servers using different opcodes
+		char convert_client_packets[256];
+		char convert_server_packets[256];
+		config *get_config();
 	private:
 		config *main_config;
 		connection *server;
