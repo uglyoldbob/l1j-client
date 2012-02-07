@@ -86,13 +86,19 @@ config::config(const char *cfile)
 				}
 				else if (sscanf(line_read, "Path = %[^\t\n\r]", all_names) == 1)
 				{
-					lineage_dir = new char[strlen(line_read)+256];
-					strcpy(lineage_dir, all_names);
-		
 					wordexp_t exp_result;
-					wordexp(lineage_dir, &exp_result, 0);
-					strcpy(lineage_dir, exp_result.we_wordv[0]);
-					wordfree(&exp_result);
+					wordexp(all_names, &exp_result, 0);
+					if (exp_result.we_wordc > 0)
+					{
+						lineage_dir = new char[strlen(exp_result.we_wordv[0])+1];
+						strcpy(lineage_dir, exp_result.we_wordv[0]);
+						wordfree(&exp_result);
+					}
+					else
+					{
+						lineage_dir = new char[strlen(all_names)+1];
+						strcpy(lineage_dir, all_names);
+					}
 
 					printf("Lineage is located at: %s\n", lineage_dir);
 				}
