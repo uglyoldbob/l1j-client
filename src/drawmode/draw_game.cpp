@@ -34,15 +34,6 @@ draw_game::draw_game(sdl_user *self)
 void draw_game::key_press(SDL_KeyboardEvent *button)
 {
 	sdl_drawmode::key_press(button);
-	if (button->type == SDL_KEYDOWN)
-	{
-		switch(button->keysym.sym)
-		{
-			default:
-				widgets[1]->key_press(button);
-				break;
-		}
-	}
 }
 
 void draw_game::mouse_click(SDL_MouseButtonEvent *here)
