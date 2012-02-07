@@ -23,6 +23,9 @@ draw_game::draw_game(sdl_user *self)
 	widgets = new sdl_widget*[num_widgets];
 	widgets[0] = themap;
 	widgets[1] = new chat_window(124, 363, self->game);
+	widgets[1]->set_key_focus(true);
+	widgets[1]->cursor_on();
+	widget_key_focus = 1;
 		//new sdl_widget(1019, 485, 366, self->game);
 		//new sdl_widget(1028, 0, 368, self->game);
 		//new sdl_widget(1042, 124, 363, self->game);

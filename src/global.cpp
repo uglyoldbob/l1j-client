@@ -105,16 +105,19 @@ SDL_Rect *make_sdl_rect(int x, int y, int w, int h)
 
 void check_fix_png(char *buffer, int *size)
 {
-	if (buffer[3] == 0x58)
-	{	//c963c
-//		printf("Normalizing mangled PNG file\n");
-		buffer[3] = 0x47;
-		if (*size > 5)
-		{	//c9654
-			for (int i = 1; i <= (*size-5); i++)
-			{	//c9660, i = ctr
-				buffer[*size-i] ^= buffer[*size-i-1];
-				buffer[*size-i] ^= 0x52;
+	if (buffer != 0)
+	{
+		if (buffer[3] == 0x58)
+		{	//c963c
+//			printf("Normalizing mangled PNG file\n");
+			buffer[3] = 0x47;
+			if (*size > 5)
+			{	//c9654
+				for (int i = 1; i <= (*size-5); i++)
+				{	//c9660, i = ctr
+					buffer[*size-i] ^= buffer[*size-i-1];
+					buffer[*size-i] ^= 0x52;
+				}
 			}
 		}
 	}
