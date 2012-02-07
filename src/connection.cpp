@@ -28,7 +28,7 @@ int connection::change()
 		sock = -1;
 	}
 	conn_ok = 0;
-	try_names(the_config->get_game_port());
+	try_names(the_config->get_game_port(srv_num));
 	return conn_ok;
 }
 
@@ -259,21 +259,24 @@ int connection::get_addr(const char* port, const char* conto)
 	return 0;
 }
 
-connection::connection(config* lcfg)
+connection::connection(config* lcfg, int srv_n)
 {
 	the_config = lcfg;
+	srv_num = srv_n;
 	conn_ok = 0;
 	sock = -1;
 	servinfo = 0;
-	try_names(the_config->get_port());
+	try_names(the_config->get_port(srv_n));
 }
 
 void connection::try_names(const char *port)
 {
-	for (int i = 0; i < the_config->get_num_names(); i++)
+	for (int i = 0; i < the_config->get_num_names(srv_num); i++)
 	{
-		printf("\tAttempting %s [%d of %d] port %s...", the_config->get_addr(i), i+1, the_config->get_num_names(), port);
-		get_addr(port, the_config->get_addr(i));
+		printf("\tAttempting %s [%d of %d] port %s...", 
+			the_config->get_addr(srv_num, i), i+1, 
+			the_config->get_num_names(srv_num), port);
+		get_addr(port, the_config->get_addr(srv_num, i));
 		make_connection();
 		if (connection_ok() == 1)
 		{

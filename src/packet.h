@@ -16,7 +16,7 @@ class packet
 		
 		void send_packet(const char* args, ...);
 		void send_packet(const char* args, va_list array);
-		void get_packet();
+		void get_packet(bool translate);
 		void print_packet();
 		void reset();
 		

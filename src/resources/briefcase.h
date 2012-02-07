@@ -47,6 +47,8 @@ class briefcase
 		
 		int load();
 		void open_data();
+		
+		int get_size();
 };
 
 #endif

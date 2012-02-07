@@ -88,20 +88,19 @@ int briefcase::load()
 	open_data();
 	if (data_buf != 0)
 	{
+		fread(&num_files, 1, 4, data_buf);
+		printf("There are %d files\n", num_files);
 		file_data = new char*[num_files];
+		files = new briefcase_entry[num_files];
 		for (int i = 0; i < num_files; i++)
 		{
-			//check for actual file size
-			if (fseek(data_buf, files[i].offset, SEEK_SET) != 0)
-			{
-				printf("Error seeking to file offset\n");
-				file_data[i] = 0;
-			}
-			else
-			{
-				file_data[i] = new char[files[i].size];
-				fread(file_data[i], 1, files[i].size, data_buf);
-			}
+			fread(&files[i].namelen, 1, 4, data_buf);
+			files[i].name = new char[files[i].namelen];
+			fread(files[i].name, files[i].namelen+1, 1, data_buf);
+			fread(&files[i].size, 1, 4, data_buf);
+			fread(&files[i].offset, 1, 4, data_buf); 
+			file_data[i] = new char[files[i].size];
+			fread(file_data[i], 1, files[i].size, data_buf);
 		}
 	}
 	return 0;
@@ -146,15 +145,27 @@ int briefcase::check_file(const char *name)
 
 void briefcase::write_file(char *name, char *data, int size)
 {
+	printf("Adding file %s\n", name);
 	int len = strlen(name);
 	if (data_buf == 0)
 		return;
+	num_files++;
 	fwrite(&len, sizeof(int), 1, data_buf);
 	fwrite(name, sizeof(char), len+1, data_buf);
 	fwrite(&size, sizeof(int), 1, data_buf);
 	long offset = ftell(data_buf) + sizeof(long);
 	fwrite(&offset, sizeof(long), 1, data_buf);
 	fwrite(data, sizeof(char), size, data_buf);
+}
+
+int briefcase::get_size()
+{
+	int save_spot = ftell(data_buf);
+	int size;
+	fseek(data_buf, 0, SEEK_END);
+	size = ftell(data_buf);
+	fseek(data_buf, save_spot, SEEK_SET);
+	return size;
 }
 
 char* briefcase::load_file(const char *name, int *size)
@@ -164,7 +175,10 @@ char* briefcase::load_file(const char *name, int *size)
 	if (i >= 0)
 	{
 //		printf("Loading %s from %s\n", files[i].name, data_file);
-		*size = files[i].size;
+		if (size != 0)
+		{
+			*size = files[i].size;
+		}
 		ret_buf = (char*)load_file(i);
 	}
 	else
@@ -210,8 +224,11 @@ unsigned char* briefcase::load_file(int which)
 
 void briefcase::finish_briefcase()
 {
-	if (data_buf == 0)
+	if (data_buf != 0)
 	{
+		printf("Updating the num_files to %d\n", num_files);
+		fseek(data_buf, 0, SEEK_SET);
+		fwrite(&num_files, 1, 4, data_buf);
 		fclose(data_buf);
 		data_buf = 0;
 	}
@@ -221,10 +238,14 @@ void briefcase::new_data()
 {
 	if (data_buf == 0)
 		data_buf = fopen(data_file, "wb");
+	printf("Writing dummy value for num_files\n");
+	num_files = 0;
+	fwrite(&num_files, 1, 4, data_buf);
 }
 
 void briefcase::add_data()
 {
+	printf("Appending to existing briefcase\n");
 	if (data_buf == 0)
 		data_buf = fopen(data_file, "ab");
 }

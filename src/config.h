@@ -10,6 +10,15 @@
 
 char *get_string(const char* data);
 
+struct server_data
+{
+	char *server_name;
+	char *port;
+	char *game_port;
+	char **names;	//address to use to connect to the server
+	int num_names;
+};
+
 class config
 {
 	public:
@@ -17,17 +26,17 @@ class config
 		~config();
 
 		int config_ok();	//1 means success
-		const char* get_port();
-		const char* get_game_port();
-		int get_num_names();
-		const char* get_addr(int which);
+		const char* get_name(int srv);
+		const char* get_port(int srv);
+		const char* get_game_port(int srv);
+		int get_num_names(int srv);
+		int get_num_servers();
+		const char* get_addr(int srv, int which);
 	private:
 		int num_errors;
-		char* port;
-		char* game_port;
 		
-		char** names;
-		int num_names;
+		server_data *sdata;
+		int num_servers;
 };
 
 #endif

@@ -128,8 +128,6 @@ int client::get_updates(connection* server)
 		if (server->connection_ok() == 1)
 		{
 			proc = new packet(this, server);	//init the packet class instance
-			proc->get_packet();	//read packet of server name
-			proc->disass("cs", &temp, &server_name);
 			server_data = new briefcase(server_name);
 			strcpy(hash, server_data->get_hash());
 			temp2 = 0x4400;	//68 bytes of packet data
@@ -139,21 +137,25 @@ int client::get_updates(connection* server)
 			printf("The hash is: %s\n", hash);
 			server->snd_var(hash, 65);
 			proc->reset();
-			proc->get_packet();
+			proc->get_packet(false);
 			proc->disass("cd", &temp, &num_files);
-			if (temp == 2)
+			if ((temp == 2) || 
+				(strcmp(hash, "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855") == 0) )
 			{
 				server_data->new_data();
-				proc->reset();
-				proc->get_packet();
-				proc->disass("cd", &temp, &num_files);
+				if (temp == 2)
+				{
+					proc->reset();
+					proc->get_packet(false);
+					proc->disass("cd", &temp, &num_files);
+				}
 			}
 			else
 			{
 				server_data->add_data();
 			}
 			printf("Receiving %d files from %d\n", num_files, temp);
-			for (int i = 0; i < num_files; i++)
+			for (unsigned int i = 0; i < num_files; i++)
 			{
 				unsigned char file_buffer[TRANSFER_AMOUNT];	//buffer space
 				char *file;
@@ -161,7 +163,7 @@ int client::get_updates(connection* server)
 				unsigned int filesize, orig_filesize;
 				char *filename;
 				proc->reset();
-				proc->get_packet();
+				proc->get_packet(false);
 				proc->disass("csd", &temp, &filename, &filesize);
 				orig_filesize = filesize;
 				file = new char[filesize];
@@ -188,6 +190,8 @@ int client::get_updates(connection* server)
 			}
 			printf("Closing briefcase\n");
 			server_data->finish_briefcase();
+			delete server_data;
+			server_data = new briefcase(server_name);
 			status = num_files;
 			delete proc;
 		}			
@@ -212,6 +216,11 @@ client::client(sdl_user *stuff)
 	server = 0;
 	server_data = 0;
 	num_sprite_pack = 17;
+	for (int i = 0; i < 256; i++)
+	{	//this loop sets up a no translation scheme for default
+		convert_client_packets[i] = i;
+		convert_server_packets[i] = i;
+	}
 }
 
 client::~client()
@@ -249,7 +258,7 @@ void client::init()
 	}
 	delete [] test;
 	lineage_font.init("Font/eng.fnt", this);
-
+	
 	DesKeyInit("~!@#%^$<");	//TODO : move this code to a class and use an object
 	init_packs();
 	init_tiles();
@@ -258,14 +267,50 @@ void client::init()
 
 	graphics->wait_ready();
 	draw_loading *load;
+	int what_server;
 	load = (draw_loading*)graphics->get_drawmode();
+
+	//wait for the user to pick a server
+	what_server = load->wait_server_pick();
 	
-	server = new connection(main_config);
-//	if (get_updates(server) > 0)
-//	{
-//		printf("STUB Packing resources\n");
-//	}
+	server_name = new char[strlen(main_config->get_name(what_server)) + 1];
+	strcpy(server_name, main_config->get_name(what_server));
 	
+	server = new connection(main_config, what_server);
+	if (get_updates(server) > 0)
+	{
+		printf("STUB Packing resources\n");
+	}
+
+	//check for custom opcodes
+	unsigned char *copcodes;
+	copcodes = (unsigned char*)getfiles->load_file("opcodes.txt", 0, FILE_REGULAR3, 0);
+	if (copcodes != 0)
+	{	//there are custom opcodes for this server
+		int offset;
+		char *data = (char*)copcodes;
+		for (int i = 0; i < 256; i++)
+		{
+			char *p;
+			p = strtok(data, "\n");
+			if (data != NULL)
+				data = NULL;
+			int temp;
+			sscanf(p, "%d", &temp);
+			convert_client_packets[i] = (unsigned char)temp; 
+		}
+		for (int i = 0; i < 256; i++)
+		{
+			char *p;
+			p = strtok(data, "\n");
+			if (data != NULL)
+				data = NULL;
+			int temp;
+			sscanf(p, "%d", &temp);
+			convert_server_packets[i] = (unsigned char)temp;
+		}
+	}
+
 	//begin game portion of client
 	if (server->change() != 1)
 	{
@@ -284,7 +329,7 @@ int client::process_packet()
 {
 	packet bob(this, server);
 	
-	bob.get_packet();
+	bob.get_packet(true);
 	return bob.process_packet();
 }
 
@@ -320,6 +365,11 @@ void client::create_chars(int used, int usable, int slots)
 			printf("STUB: Slot %d is not usable\n", i+1);
 		}
 	}
+}
+
+config *client::get_config()
+{
+	return main_config;
 }
 
 lin_char_info** client::get_login_chars()

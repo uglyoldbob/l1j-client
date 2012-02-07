@@ -7,6 +7,7 @@ enum file_locations
 {
 	FILE_REGULAR1,		//regular file in the lineage folder
 	FILE_REGULAR2,		//regular file in the custom client folder
+	FILE_REGULAR3,		//file that only is in the server specific data
 	FILE_TILEPACK,		//tile.pak
 	FILE_SPRITEPACK,	//sprite.pak
 	FILE_SPRITESPACK,	//sprite00.pak - sprite15.pak

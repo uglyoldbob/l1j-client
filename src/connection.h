@@ -9,7 +9,7 @@
 class connection
 {
 	public:
-		connection(config* lcfg);
+		connection(config* lcfg, int srv_n);
 		~connection();
 		int connection_ok();
 		int snd(const void* msg, int len);
@@ -29,6 +29,7 @@ class connection
 		config *the_config;
 		SOCKET sock;
 		int conn_ok;
+		int srv_num;
 		
 		int get_addr(const char* port, const char *conto);
 		int make_connection();
