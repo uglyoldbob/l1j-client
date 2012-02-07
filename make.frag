@@ -9,7 +9,7 @@ Admin_OBJS = client_admin.o config.o connection.o funcptr.o global.o lindes.o \
 Lineage_OBJS += widgets/chat_window.o widgets/sdl_animate_button.o widgets/sdl_button.o \
 	widgets/sdl_char_info.o widgets/sdl_check_button.o widgets/sdl_lin_map.o \
 	widgets/sdl_radio_button.o widgets/sdl_input_box.o widgets/sdl_plain_button.o \
-	widgets/sdl_widget.o widgets/sdl_window.o widgets/text_box.o
+	widgets/sdl_text_button.o widgets/sdl_widget.o widgets/sdl_window.o widgets/text_box.o
 Admin_OBJS += widgets/chat_window.o widgets/sdl_animate_button.o widgets/sdl_button.o \
 	widgets/sdl_char_info.o widgets/sdl_check_button.o widgets/sdl_lin_map.o \
 	widgets/sdl_radio_button.o widgets/sdl_input_box.o widgets/sdl_plain_button.o \

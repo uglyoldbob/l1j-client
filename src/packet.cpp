@@ -210,6 +210,9 @@ void packet::send_packet(const char* args, va_list array)
 			memcpy(packet_data, sendbuf, packet_length);
 			memcpy(key_change, &sendbuf[2], 4);
 			
+			//convert opcode before sending to the server
+			packet_data[2] = game->convert_client_packets[packet_data[2]];
+			
 			this->encrypt();
 
 			this->change_key(encryptionKey, key_change);
@@ -227,7 +230,7 @@ void packet::send_packet(const char* args, ...)
 	va_end(temp_args);
 }
 
-void packet::get_packet()
+void packet::get_packet(bool translate)
 {
 	unsigned short length = 0;
 	server->rcv_varg(&length, 2);
@@ -248,6 +251,10 @@ void packet::get_packet()
 		{
 			printf("ERROR: trying to load 2 packets\n");
 		}
+	}
+	if (translate)
+	{
+		packet_data[0] = game->convert_server_packets[packet_data[0]];
 	}
 }
 
