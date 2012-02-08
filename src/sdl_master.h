@@ -2,7 +2,7 @@
 #define __SDL_MASTER_H_
 
 #include <SDL/SDL.h>
-#include <SDL/SDL_Thread.h>
+#include <SDL/SDL_thread.h>
 
 #include "sdl_user.h"
 
