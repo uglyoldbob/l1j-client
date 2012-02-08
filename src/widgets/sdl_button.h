@@ -1,7 +1,7 @@
 #ifndef __SDL_BUTTON_H_
 #define __SDL_BUTTON_H_
 
-#include <SDL.h>
+#include <SDL/SDL.h>
 class client;
 
 #include "funcptr.h"
@@ -10,8 +10,6 @@ class client;
 
 sdl_graphic *make_sdl_graphic(int num, int x, int y, client *who);
 SDL_Rect *make_sdl_rect(int x, int y, int w, int h);
-
-#include <SDL.h>
 
 class sdl_button : public sdl_widget
 {

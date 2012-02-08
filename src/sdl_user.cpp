@@ -1,5 +1,5 @@
-#include <SDL.h>
-#include "SDL_image.h"
+#include <SDL/SDL.h>
+#include <SDL/SDL_image.h>
 #include <time.h>
 
 #include "client.h"

@@ -2,7 +2,7 @@
 
 #include "resources/music.h"
 #include "sdl_master.h"
-#include "SDL_mixer.h"
+#include <SDL/SDL_mixer.h>
 
 int main(int argc, char* argv[])
 {

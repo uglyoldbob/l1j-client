@@ -1,5 +1,5 @@
-#include <SDL.h>
-#include "SDL_endian.h"
+#include <SDL/SDL.h>
+#include <SDL/SDL_endian.h>
 #include <stdio.h>
 
 #include "client.h"
