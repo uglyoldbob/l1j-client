@@ -48,7 +48,7 @@ Admin_DEPS := $(Admin_OBJS:.o=.d)
 -include $(Admin_DEPS)
 
 
-CC=g++
+CC=`../compiler.sh`
 
 VPATH = ../src
 
@@ -74,11 +74,11 @@ clean:
 	rm -rf drawmode resources widgets encryption
 
 Admin: $(Admin_OBJS) package
-	$(CC) $(EXTRA_FLAGS) $(LFLAGS) $(Admin_OBJS) $(LDADD) -o Admin
+	$(CC) $(EXTRA_FLAGS) $(Admin_OBJS) $(LDADD) -o Admin $(LFLAGS)
 	cp Admin ./client
 
 Lineage: $(Lineage_OBJS)
-	$(CC) $(EXTRA_FLAGS) $(LFLAGS) $(Lineage_OBJS) $(LDADD) -o Lineage
+	$(CC) $(EXTRA_FLAGS) $(Lineage_OBJS) $(LDADD) -o Lineage $(LFLAGS)
 
 .c.o:
 	@if [ ! -d $(@D) ]; then\
