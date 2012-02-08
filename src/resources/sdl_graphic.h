@@ -1,7 +1,7 @@
 #ifndef _SDL_GRAPHIC_H_
 #define _SDL_GRAPHIC_H_
 
-#include <SDL.h>
+#include <SDL/SDL.h>
 
 class client;
 

@@ -1,4 +1,4 @@
-#include <SDL.h>
+#include <SDL/SDL.h>
 
 #include "client.h"
 #include "globals.h"

@@ -1,13 +1,11 @@
 #ifndef __SDL_CHECK_BUTTON_H_
 #define __SDL_CHECK_BUTTON_H_
 
-#include <SDL.h>
+#include <SDL/SDL.h>
 class client;
 
 #include "globals.h"
 #include "sdl_plain_button.h"
-
-#include <SDL.h>
 
 class sdl_check_button : public sdl_plain_button
 {

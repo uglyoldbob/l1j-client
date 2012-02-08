@@ -2,7 +2,7 @@
 #define __SDL_DRAWMODE_H_
 
 #include "funcptr.h"
-#include <SDL.h>
+#include <SDL/SDL.h>
 
 class graphics_data;
 class prepared_graphics;

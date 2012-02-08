@@ -1,7 +1,7 @@
 #ifndef _SDL_USER_H_
 #define _SDL_USER_H_
 
-#include <SDL.h>
+#include <SDL/SDL.h>
 
 class client;
 #include "globals.h"
