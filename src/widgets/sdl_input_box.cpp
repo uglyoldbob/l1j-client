@@ -149,7 +149,7 @@ void sdl_input_box::key_press(SDL_KeyboardEvent *button)
 			break;
 		default:
 			//TODO: check for valid character
-			add_char(button->keysym.sym);
+			add_char(button->keysym.unicode & 0x7F);
 			cursor_idx++;
 			cursor_pos += 6;
 			break;
