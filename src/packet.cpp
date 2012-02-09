@@ -204,13 +204,16 @@ void packet::send_packet(const char* args, va_list array)
 			length += 2;
 			sendbuf[0] = length & 0xff;
 			sendbuf[1] = (length>>8) & 0xff;
+			
+			//convert opcode before sending to the server
+			sendbuf[2] = game->convert_client_packets[sendbuf[2]];
+			
+			
 			packet_length = length;
 			packet_data = new unsigned char[packet_length];
 			memcpy(packet_data, sendbuf, packet_length);
+						
 			memcpy(key_change, &sendbuf[2], 4);
-			
-			//convert opcode before sending to the server
-			packet_data[2] = game->convert_client_packets[packet_data[2]];
 			
 			this->encrypt();
 
@@ -244,16 +247,16 @@ void packet::get_packet(bool translate)
 			{
 				this->decrypt();
 				this->change_key(decryptionKey, (char*)(packet_data));
+			}	
+			if (translate)
+			{
+				packet_data[0] = game->convert_server_packets[packet_data[0]];
 			}
 		}
 		else
 		{
 			printf("ERROR: trying to load 2 packets\n");
 		}
-	}
-	if (translate)
-	{
-		packet_data[0] = game->convert_server_packets[packet_data[0]];
 	}
 }
 
@@ -363,7 +366,7 @@ int packet::process_packet()
 	{
 		if (packet_data[0] != SERVER_KEY)
 		{
-			printf("This server is not compatible with this client\n");
+			printf("This server (%d) is not compatible with this client\n", packet_data[0]);
 			return -1;
 		}
 	}
@@ -371,10 +374,10 @@ int packet::process_packet()
 	switch(packet_data[0])
 	{	//the second list
 		case SERVER_VERSIONS: server_version_packet(); break;
-		case SERVER_CHAR_DELETE: delete_char_packet(); break;
 		case SERVER_DISCONNECT: return -1; break;
 		case SERVER_CHAR_STAT: char_status(); break;
-		case SERVER_ENTERGAME: enter_game(); break;
+		case SERVER_ENTERGAME:
+		case SERVER_CHAR_DELETE:
 		case SERVER_LOGIN: login_check(); break;
 		case SERVER_KEY: key_packet(); break;
 		case SERVER_MAP: set_map(); break;
@@ -461,31 +464,6 @@ void packet::char_status()
 		food, weight, alignment);
 }
 
-void packet::enter_game()
-{
-	//send 9?
-	send_packet("cdd", CLIENT_ALIVE, 0, 0);
-	send_packet("ccdd", CLIENT_INITGAME, 0, 0, 0);
-	game->graphics->change_drawmode(DRAWMODE_GAME);
-}
-
-void packet::delete_char_packet()
-{
-	unsigned char result;
-	disassemble(&packet_data[1], "c", &result);
-	
-	draw_char_sel* bob;
-	bob = (draw_char_sel*)game->graphics->get_drawmode();
-	if (result == 5)
-	{	//delete right now
-		bob->do_delete();
-	}
-	else if (result == 0x51)
-	{	//char is to be deleted in the future
-	}
-	
-}
-
 void packet::char_create_result()
 {
 	unsigned char result;
@@ -507,6 +485,13 @@ void packet::num_char_packet()
 	unsigned char num_characters;
 	unsigned char max_characters;
 	disassemble(&packet_data[1], "cc", &num_characters, &max_characters);
+	
+	printf("Max characters is %d\n", max_characters);
+	if (max_characters == 0)
+	{
+		printf("WARNING : Max characters is 0 (ZERO) this is bad!\n");
+		max_characters = 8;
+	}
 	
 	game->create_chars(num_characters, max_characters, 8);
 	game->register_char(0);
@@ -553,6 +538,31 @@ void packet::login_char_packet()
 
 void packet::login_check()
 {
+	printf("Login check packet\n");
+	
+	unsigned char result;
+	disassemble(&packet_data[1], "c", &result);
+	
+	switch (result)
+	{
+		case 3:
+			//send 9?
+			send_packet("cdd", CLIENT_ALIVE, 0, 0);
+			send_packet("ccdd", CLIENT_INITGAME, 0, 0, 0);
+			game->graphics->change_drawmode(DRAWMODE_GAME);
+			break;
+		case 5:
+			{
+			draw_char_sel* bob;
+			bob = (draw_char_sel*)game->graphics->get_drawmode();
+			bob->do_delete();
+			}
+			break;
+		case 0x51:
+			printf("Char will be deleted in the future\n");
+			break;
+	}
+	
 	print_packet();
 }
 

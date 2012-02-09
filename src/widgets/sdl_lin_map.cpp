@@ -121,14 +121,14 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y)
 	
 	int bla;
 	SDL_RWread(sdl_buf, &bla, 4, 1);
-	printf("amount for HideObjs is %d\n", bla);
+//	printf("amount for HideObjs is %d\n", bla);
 	
 	for (int i = 0; i < bla; i++)
 	{
 		short a;
 		SDL_RWread(sdl_buf, &a, 2, 1);
 		SDL_RWread(sdl_buf, &a, 2, 1);
-		printf("\t%d\n", a);
+//		printf("\t%d\n", a);
 		for (int j = 0; j < a; j++)
 		{
 			unsigned char b, c;
@@ -161,7 +161,7 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y)
 	}
 	
 	SDL_RWread(sdl_buf, &bla, 4, 1);
-	printf("amount for HideSwitches is %d\n", bla);
+//	printf("amount for HideSwitches is %d\n", bla);
 	for (int i = 0; i < bla; i++)
 	{
 		unsigned char a, b, d;
@@ -173,14 +173,14 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y)
 	}
 	
 	SDL_RWread(sdl_buf, &bla, 4, 1);
-	printf("amount for tilesets is %d\nset: ", bla);
+//	printf("amount for tilesets is %d\nset: ", bla);
 	for (int i = 0; i < bla; i++)
 	{
 		int set;
 		SDL_RWread(sdl_buf, &set, 4, 1);
-		printf("%d, ", set);
+//		printf("%d, ", set);
 	}
-	printf("\n");
+//	printf("\n");
 	
 	//portalList
 	//array of Portal (uchar xOff, uchar yOff, targetmap, short tx, short ty)
@@ -188,7 +188,7 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y)
 	//TODO : check for end of file?
 	unsigned short num_portals;
 	SDL_RWread(sdl_buf, &num_portals, 2, 1);
-	printf("There are %d portals ", num_portals);
+//	printf("There are %d portals ", num_portals);
 	for (int i = 0; i < num_portals; i++)
 	{	//7cf54
 		char a, b, c;
@@ -201,7 +201,7 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y)
 		SDL_RWread(sdl_buf, &d, 2, 1);
 		SDL_RWread(sdl_buf, &e, 2, 1);
 		SDL_RWread(sdl_buf, &f, 2, 1);
-		printf("Data %d %d %d %d %d %d\n", a, b, c, d, e, f);
+//		printf("Data %d %d %d %d %d %d\n", a, b, c, d, e, f);
 	}
 
 	//if no at the end of file?
@@ -209,7 +209,7 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y)
 		
 	}
 		
-	printf("Finish loading\n");
+//	printf("Finish loading\n");
 	
 	SDL_RWclose(sdl_buf);
 
@@ -268,7 +268,7 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y)
 	ret.offsetx = offsetx;
 	ret.offsety = offsety;
 	
-	printf("\t%s %d_%d_%d\n", name, mapnum, ret.x, ret.y);
+//	printf("\t%s %d_%d_%d\n", name, mapnum, ret.x, ret.y);
 	
 //	sprintf(name, "%d_%d_%d.bmp", mapnum, ret.x, ret.y);
 //	SDL_SaveBMP(ret.graphic->get_surf(), name);

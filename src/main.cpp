@@ -21,6 +21,8 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 	
+	SDL_EnableUNICODE(1);
+	
 	sdl_master graphics;
 	graphics.create_client();
 	graphics.process_events();
