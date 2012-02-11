@@ -217,8 +217,12 @@ int connection::make_connection()
 		break;
 	}
 
-	int x = fcntl(sock, F_GETFL, 0);
-	fcntl(sock, F_SETFL, x | O_NONBLOCK);
+	// If iMode!=0, non-blocking mode is enabled.
+	u_long iMode=1;
+	ioctlsocket(sock,FIONBIO,&iMode);
+	
+//	int x = fcntl(sock, F_GETFL, 0);
+//	fcntl(sock, F_SETFL, x | O_NONBLOCK);
 	
 	if (p == NULL) 
 	{
