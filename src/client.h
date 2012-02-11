@@ -43,6 +43,8 @@ class client
 		char convert_client_packets[256];
 		char convert_server_packets[256];
 		config *get_config();
+		void stop();
+		bool stop_thread;
 	private:
 		config *main_config;
 		connection *server;

@@ -158,6 +158,11 @@ void sdl_user::wait_ready()
 	while (!ready) {};
 }
 
+bool sdl_user::quit_request()
+{
+	return false;
+}
+
 void sdl_user::change_drawmode(enum drawmode chg)
 {
 	while (SDL_mutexP(draw_mtx) == -1) {};

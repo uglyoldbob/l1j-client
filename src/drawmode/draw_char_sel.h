@@ -40,6 +40,8 @@ class draw_char_sel : public sdl_drawmode
 		virtual void mouse_move(SDL_MouseMotionEvent *from, SDL_MouseMotionEvent *to);
 		virtual bool mouse_leave();	//is it ok for the mouse to leave?
 		
+		virtual bool quit_request();
+		
 		void select_char();
 		void get_login_chars();
 		void delete_char(int which);

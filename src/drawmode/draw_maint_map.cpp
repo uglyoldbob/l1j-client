@@ -13,7 +13,9 @@ draw_maint_map::draw_maint_map(sdl_user *self)
 {
 	draw_mtx = SDL_CreateMutex();
 	owner->game_music.change_music("sound/music0.mp3");
-	pg = 0;
+	
+	num_gfx = 0;
+	gfx = 0;
 	
 	num_widgets = 1;
 	
@@ -136,6 +138,12 @@ void draw_maint_map::mouse_move(SDL_MouseMotionEvent *from, SDL_MouseMotionEvent
 
 draw_maint_map::~draw_maint_map()
 {
+}
+
+bool draw_maint_map::quit_request()
+{
+	owner->game->stop_thread = true;
+	return true;
 }
 
 void draw_maint_map::draw(SDL_Surface *display)

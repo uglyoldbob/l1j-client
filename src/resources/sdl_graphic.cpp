@@ -130,6 +130,7 @@ sdl_graphic::sdl_graphic(int num, int x, int y, client *who, int type)
 	{
 		pos = 0;
 		mask = 0;
+		img = 0;
 		cleanup = false;
 	}
 	else
@@ -168,14 +169,21 @@ sdl_graphic::sdl_graphic(int num, int x, int y, client *who, int type)
 	}
 }
 
+void sdl_graphic::disable_clear()
+{
+	SDL_SetColorKey(img, 0, 0);
+}
+
 sdl_graphic::~sdl_graphic()
 {
 	if (pos != 0)
 		delete pos;
 	if (mask != 0)
 		delete mask;
-	if (cleanup && (img != 0) )
+	if (img != 0)
 	{
+		if (cleanup)
+			delete [] (short*)img->pixels;
 		SDL_FreeSurface(img);
 	}
 }
@@ -232,6 +240,14 @@ int sdl_graphic::getw()
 	else
 	{
 		return 0;
+	}
+}
+
+void sdl_graphic::setmw(int nmw)
+{
+	if (mask != 0)
+	{
+		mask->w = nmw;
 	}
 }
 

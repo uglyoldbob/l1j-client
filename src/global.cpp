@@ -144,6 +144,7 @@ SDL_Surface *get_png_image(int num, client *who)
 		{
 			sdl_buf = SDL_RWFromConstMem(buffer, size);
 			ret = get_image(sdl_buf);
+			SDL_RWclose(sdl_buf);
 			delete [] buffer;
 		}
 		else
@@ -213,6 +214,7 @@ SDL_Surface *get_img(int num, client *who)
 			data = new unsigned short[width * height];
 			SDL_RWread(sdl_buf, data, 2, width * height);
 			SDL_RWclose(sdl_buf);
+			delete [] buffer;
 			
 			for (int i = 0; i < (width * height); i++)
 			{

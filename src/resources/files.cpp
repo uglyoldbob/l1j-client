@@ -45,6 +45,7 @@ unsigned char* files::load_file(const char *name, int *size, file_locations loca
 				strcpy(realname, lineage_dir);
 				strcat(realname, name);
 				FILE *thefile = fopen(realname, "rb");
+				delete [] realname;
 				if (thefile == 0)
 					return 0;
 				unsigned int result;
