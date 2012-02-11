@@ -3,7 +3,7 @@
 
 #include <SDL/SDL.h>
 #include <SDL/SDL_endian.h>
-#include <SDL/SDL_image.h>
+#include <SDL_image.h>
 
 #include "resources/pack.h"
 #include "resources/sdl_font.h"

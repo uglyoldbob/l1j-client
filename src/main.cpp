@@ -3,7 +3,7 @@
 
 #include "resources/music.h"
 #include "sdl_master.h"
-#include <SDL/SDL_mixer.h>
+#include <SDL_mixer.h>
 #include "CoreFoundation/CoreFoundation.h"
 
 void change_working_directory()
