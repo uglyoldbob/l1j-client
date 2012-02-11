@@ -40,3 +40,4 @@ class connection
 };
 
 #endif
+

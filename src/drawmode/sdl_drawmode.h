@@ -2,10 +2,11 @@
 #define __SDL_DRAWMODE_H_
 
 #include "funcptr.h"
-#include <SDL.h>
+#include <SDL/SDL.h>
+
+#include "resources/sdl_graphic.h"
 
 class graphics_data;
-class prepared_graphics;
 class sdl_user;
 class sdl_widget;
 
@@ -60,11 +61,16 @@ class sdl_drawmode
 		virtual bool mouse_leave() = 0;	//is it ok for the mouse to leave?
 		
 		sdl_widget *get_widget(int i);
+		virtual bool quit_request();		
 	protected:
-		prepared_graphics *pg;
+		sdl_graphic **gfx;
+		int num_gfx;
 		sdl_widget **widgets;
 		int num_widgets;
 		int widget_key_focus;
+
+		SDL_mutex *draw_mtx;
+		bool draw_scene;
 		
 		int get_widget(int x, int y);	//returns the index of the widget for this point (-1 for none)
 };

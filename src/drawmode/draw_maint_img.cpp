@@ -1,3 +1,4 @@
+#include "client.h"
 #include "draw_maint_img.h"
 #include "resources/prepared_graphics.h"
 #include "sdl_user.h"
@@ -10,10 +11,12 @@ draw_maint_img::draw_maint_img(sdl_user *self)
 	background = 0;
 	draw_mtx = SDL_CreateMutex();
 	owner->game_music.change_music("sound/music0.mp3");
-	pg = 0;
-	
+
+	num_gfx = 0;
+	gfx = 0;
+
 	num_widgets = 2;
-	
+
 	widgets = new sdl_widget*[num_widgets];
 	widgets[0] = new sdl_widget(background, 0, 0, owner->game);
 	widgets[1] = new sdl_text_button("Return", 320, 255, owner->game, 
@@ -119,6 +122,12 @@ void draw_maint_img::mouse_move(SDL_MouseMotionEvent *from, SDL_MouseMotionEvent
 
 draw_maint_img::~draw_maint_img()
 {
+}
+
+bool draw_maint_img::quit_request()
+{
+	owner->game->stop_thread = true;
+	return true;
 }
 
 void draw_maint_img::draw(SDL_Surface *display)

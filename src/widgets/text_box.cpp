@@ -26,6 +26,14 @@ text_box::text_box(int x, int y, int w, int h, client *who)
 
 text_box::~text_box()
 {
+	if (lines != 0)
+	{
+		for (int i = 0; i < num_lines; i++)
+		{
+			delete [] lines[i];
+		}
+		delete [] lines;
+	}
 }
 
 void text_box::set_visible(int top, int height)
@@ -73,6 +81,11 @@ void text_box::add_line(char *data)
 	{	//toss out the lines at the beginning
 		new_line_data = new char*[max_lines];
 		int i;
+		for (i = 0; i < extra_lines; i++)
+		{	//data no longer needed
+			if (lines[i] != 0)
+				delete [] lines[i];
+		}
 		for (i = 0; i < (max_lines - extra_lines); i++)
 		{
 			new_line_data[i] = lines[i + extra_lines];
@@ -112,6 +125,8 @@ void text_box::add_line(char *data)
 		num_lines = number_lines;
 		lines = new_line_data;
 	}
+	
+	delete [] proper_width;
 	
 	//put the broken up lines into the lines variable
 	//redraw all the visible text

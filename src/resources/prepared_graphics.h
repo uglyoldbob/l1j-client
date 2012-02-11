@@ -1,7 +1,7 @@
 #ifndef __PREPARED_GRAPHICS_H_
 #define __PREPARED_GRAPHICS_H_
 
-#include <SDL.h>
+#include <SDL/SDL.h>
 
 struct prepared_graphic
 {

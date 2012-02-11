@@ -39,5 +39,6 @@ void sdl_plain_button::draw(SDL_Surface *display)
 
 sdl_plain_button::~sdl_plain_button()
 {
-	delete two;
+	if (two != 0)
+		delete two;
 }

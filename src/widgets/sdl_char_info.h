@@ -1,7 +1,7 @@
 #ifndef __SDL_CLASS_INFO_H_
 #define __SDL_CLASS_INFO_H_
 
-#include <SDL.h>
+#include <SDL/SDL.h>
 class client;
 
 #include "globals.h"

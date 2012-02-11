@@ -1,7 +1,7 @@
 #ifndef _SDL_GRAPHIC_H_
 #define _SDL_GRAPHIC_H_
 
-#include <SDL.h>
+#include <SDL/SDL.h>
 
 class client;
 
@@ -22,6 +22,7 @@ class sdl_graphic
 		sdl_graphic(int num, int x, int y, client *packs, int type);
 		sdl_graphic(int x, int y, short *source, int type);
 		sdl_graphic(int x, int y, int w, int h);
+		void disable_clear();
 		Uint32 color(Uint8 r, Uint8 g, Uint8 b);
 		void drawat(int x, int y, SDL_Surface *display);
 		void draw(SDL_Surface *display);	//draws this tile onto display
@@ -33,6 +34,8 @@ class sdl_graphic
 		int getw();
 		int geth();
 		void erase();
+		
+		void setmw(int nmw);
 	private:
 		SDL_Surface *img;
 		SDL_Rect *pos;

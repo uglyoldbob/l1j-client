@@ -12,7 +12,9 @@ draw_game::draw_game(sdl_user *self)
 	background = 811;
 	draw_mtx = SDL_CreateMutex();
 	owner->game_music.change_music("sound/music0.mp3");
-	pg = 0;
+	
+	num_gfx = 0;
+	gfx = 0;
 	
 	num_widgets = 2;
 	
@@ -59,6 +61,12 @@ bool draw_game::mouse_leave()	//is it ok for the mouse to leave?
 
 draw_game::~draw_game()
 {
+}
+
+bool draw_game::quit_request()
+{
+	owner->game->stop_thread = true;
+	return true;
 }
 
 //1042.img for chat window?

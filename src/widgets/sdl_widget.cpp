@@ -1,4 +1,4 @@
-#include <SDL.h>
+#include <SDL/SDL.h>
 
 #include "client.h"
 #include "globals.h"
@@ -21,7 +21,14 @@ sdl_widget::sdl_widget(int num, int x, int y, client *who)
 	key_focus = false;
 	allow_key_focus = false;
 	
-	one = new sdl_graphic(num, x, y, who, GRAPH_IMG);
+	if (num != -1)
+	{
+		one = new sdl_graphic(num, x, y, who, GRAPH_IMG);
+	}
+	else
+	{
+		one = 0;
+	}
 	if (one != 0)
 	{
 		visible = true;

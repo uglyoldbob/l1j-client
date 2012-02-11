@@ -8,8 +8,6 @@
 void partial_table::load(const char *real_name, pack *from)
 {
 	char *buffer;
-	table_name = new char[strlen(real_name) + 1];
-	strcpy(table_name, real_name);
 	int size;
 	buffer = from->load_file(real_name, &size, 1);
 

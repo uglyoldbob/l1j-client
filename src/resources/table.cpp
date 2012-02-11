@@ -14,6 +14,15 @@ table::table()
 
 table::~table()
 {
+	if (entries != 0)
+	{
+		for (int i = 0; i < num_entries; i++)
+		{
+			if (entries[i] != 0)
+				delete [] entries[i];
+		}
+		delete [] entries;
+	}
 }
 
 //constant because tables will not be modified by the [] operator
@@ -62,8 +71,6 @@ void table::print()
 void table::load(const char *real_name, pack *from)
 {
 	char *buffer;
-	table_name = new char[strlen(real_name) + 1];
-	strcpy(table_name, real_name);
 	int size;
 	buffer = from->load_file(real_name, &size, 1);
 
@@ -71,6 +78,11 @@ void table::load(const char *real_name, pack *from)
 	char delimiters[] = {0x0d, 0x0a, 0};
 	temp_entry = strtok(buffer, delimiters);
 	num_entries = atoi(temp_entry);
+	if (num_entries == 0)
+	{
+		entries = 0;
+		return;
+	}
 	entries = new char*[num_entries];
 	
 	for (int i = 0; i < num_entries; i++)

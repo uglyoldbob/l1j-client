@@ -1,14 +1,12 @@
 #ifndef __SDL_ANIMATE_BUTTON_H_
 #define __SDL_ANIMATE_BUTTON_H_
 
-#include <SDL.h>
+#include <SDL/SDL.h>
 class client;
 
 #include "globals.h"
 #include "sdl_plain_button.h"
 #include "sdl_widget.h"
-
-#include <SDL.h>
 
 class sdl_animate_button : public sdl_plain_button
 {

@@ -1,7 +1,7 @@
 #ifndef _SDL_USER_H_
 #define _SDL_USER_H_
 
-#include <SDL.h>
+#include <SDL/SDL.h>
 
 class client;
 #include "globals.h"
@@ -58,6 +58,7 @@ class sdl_user
 		void mouse_to(SDL_MouseMotionEvent *to);
 		void mouse_from(SDL_MouseMotionEvent *from);
 		void mouse_move(SDL_MouseMotionEvent *from, SDL_MouseMotionEvent *to);
+		bool quit_request();
 		bool mouse_leave();	//is it ok for the mouse to leave?
 				
 		void mouse_click(SDL_MouseButtonEvent *here);

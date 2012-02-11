@@ -1,5 +1,6 @@
 #include "draw_admin_main.h"
 
+#include "client.h"
 #include "globals.h"
 #include "resources/prepared_graphics.h"
 #include "sdl_user.h"
@@ -18,20 +19,15 @@ draw_admin_main::draw_admin_main(sdl_user *self)
 	: sdl_drawmode(self)
 {
 	owner->game_music.change_music("sound/music1.mp3");
-	pg = new prepared_graphics;
-	pg->num_pg = 1;
 	
 	int index;
 	SDL_Rect *rect;
 
-	pg->pg = new prepared_graphic[1];
+	num_gfx = 1;
+	gfx = new sdl_graphic*[num_gfx];
+	gfx[0] = new sdl_graphic(811, 0, 0, owner->game, GRAPH_PNG);
+	gfx[0]->disable_clear();
 	
-	pg->pg[0].surf = get_png_image(811, owner->game);
-	pg->pg[0].mask = NULL;
-	pg->pg[0].position = NULL;
-	pg->pg[0].cleanup = false;
-	
-	pg->ready = true;
 	num_widgets = 5;
 	widgets = new sdl_widget*[num_widgets];
 	
@@ -56,6 +52,12 @@ draw_admin_main::draw_admin_main(sdl_user *self)
 
 draw_admin_main::~draw_admin_main()
 {
+}
+
+bool draw_admin_main::quit_request()
+{
+	owner->game->stop_thread = true;
+	return true;
 }
 
 bool draw_admin_main::mouse_leave()

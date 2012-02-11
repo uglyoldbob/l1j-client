@@ -3,7 +3,7 @@
 
 #include "resources/music.h"
 #include "sdl_master.h"
-#include "SDL_mixer.h"
+#include <SDL/SDL_mixer.h>
 #include "CoreFoundation/CoreFoundation.h"
 
 void change_working_directory()
@@ -31,6 +31,8 @@ int main(int argc, char* argv[])
 		printf("Failed to start SDL\n");
 		return 1;
 	}
+	
+	SDL_EnableUNICODE(1);
 	
 	sdl_master graphics;
 	graphics.create_client();

@@ -1,4 +1,4 @@
-#include <SDL.h>
+#include <SDL/SDL.h>
 #include <string.h>
 
 #include "client.h"
@@ -63,7 +63,8 @@ bool sdl_font::init(const char *name, client *who)
 int sdl_font::draw(SDL_Surface *surf, int x, int y, const char *str, Uint32 color)
 {
 	int total = 0;
-	for (unsigned int i = 0; i < strlen(str); i++)
+	int len = strlen(str);
+	for (unsigned int i = 0; i < len; i++)
 	{
 		total += draw(surf, x + total, y, str[i], color);
 	}
