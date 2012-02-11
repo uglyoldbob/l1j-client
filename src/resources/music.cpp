@@ -8,6 +8,7 @@ bool music::initialized = false;
 music::music()
 {	
 	printf("STUB Check for midi only\n");
+	cur_music_name = 0;
 	if (!initialized)
 	{
 		initialized = init();
@@ -20,6 +21,17 @@ music::~music()
 	{
 		Mix_CloseAudio();
 		initialized = false;
+	}
+	if (cur_music != 0)
+	{
+		Mix_HaltMusic();
+		Mix_FreeMusic(cur_music);
+		cur_music = 0;
+	}
+	if (cur_music_name != 0)
+	{
+		delete [] cur_music_name;
+		cur_music_name = 0;
 	}
 }
 
@@ -38,6 +50,8 @@ bool music::init()
 	
 	//Mix_QuerySpec(&audio_rate, &audio_format, &audio_channels);
 	cur_music = 0;
+	
+	cur_music_name = 0;
 	cur_music_name = new char[5];
 	strcpy(cur_music_name, "");
 
@@ -53,8 +67,14 @@ void music::change_music(const char *name)
 			if (cur_music != 0)
 			{
 				Mix_HaltMusic();
-//				delete cur_music;
+				Mix_FreeMusic(cur_music);
+				cur_music = 0;
+			}
+			
+			if (cur_music_name != 0)
+			{
 				delete [] cur_music_name;
+				cur_music_name = 0;
 			}
 			
 			cur_music_name = new char[strlen(name) + 1];

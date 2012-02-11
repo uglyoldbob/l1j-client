@@ -33,6 +33,8 @@ class draw_loading : public sdl_drawmode
 		virtual void mouse_from(SDL_MouseMotionEvent *from);
 		virtual void mouse_move(SDL_MouseMotionEvent *from, SDL_MouseMotionEvent *to);
 		virtual bool mouse_leave();	//is it ok for the mouse to leave?
+		
+		virtual bool quit_request();
 	private:
 		int load_progress;
 		int load_amount;
@@ -40,6 +42,7 @@ class draw_loading : public sdl_drawmode
 		int num_servers;
 		int server_pick;
 		SDL_mutex *spick_mtx;
+		bool quitting;
 };
 
 #endif

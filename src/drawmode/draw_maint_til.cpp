@@ -1,3 +1,4 @@
+#include "client.h"
 #include "draw_maint_til.h"
 #include "globals.h"
 #include "resources/prepared_graphics.h"
@@ -11,7 +12,9 @@ draw_maint_til::draw_maint_til(sdl_user *self)
 {
 	draw_mtx = SDL_CreateMutex();
 	owner->game_music.change_music("sound/music0.mp3");
-	pg = 0;
+	
+	num_gfx = 0;
+	gfx = 0;
 	
 	num_widgets = 1;
 	
@@ -76,6 +79,12 @@ void draw_maint_til::key_press(SDL_KeyboardEvent *button)
 				break;
 		}
 	}
+}
+
+bool draw_maint_til::quit_request()
+{
+	owner->game->stop_thread = true;
+	return true;
 }
 
 bool draw_maint_til::mouse_leave()

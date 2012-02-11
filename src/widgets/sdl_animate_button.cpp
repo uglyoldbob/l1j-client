@@ -240,7 +240,7 @@ void sdl_animate_button::delete_animation()
 				delete animates[i];
 			}
 		}
-		delete animates;
+		delete [] animates;
 	}
 }
 

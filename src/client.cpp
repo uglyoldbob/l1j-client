@@ -187,6 +187,7 @@ int client::get_updates(connection* server)
 				}
 				server_data->write_file(filename, file, orig_filesize);
 				printf(" done!\n");
+				//TODO : tell drawmode we received the file
 			}
 			printf("Closing briefcase\n");
 			server_data->finish_briefcase();
@@ -206,6 +207,7 @@ int client::get_updates(connection* server)
 
 client::client(sdl_user *stuff)
 {
+	stop_thread = false;
 	getfiles = new files(this);
 	login_opts = 0;
 	num_login_opts = 0;
@@ -225,7 +227,7 @@ client::client(sdl_user *stuff)
 
 client::~client()
 {
-	printf("Exiting client now\n");
+	delete getfiles;
 	if (server != 0)
 		delete server;
 	if (main_config != 0)
@@ -239,6 +241,8 @@ client::~client()
 		}
 		delete [] login_opts;
 	}
+
+	delete [] map_tiles;
 }
 
 void client::init()
@@ -402,25 +406,29 @@ void client::register_char(lin_char_info *data)
 	}
 }
 
+void client::stop()
+{
+	stop_thread = true;
+}
+
 int run_client(void *moron)
 {	//the main thread for each client
-	client game((sdl_user*)moron);
+	client *game = new client((sdl_user*)moron);
 	sdl_user *temp;
 	temp = (sdl_user*)moron;
-	temp->init_client(&game);
+	temp->init_client(game);
 	try
 	{
-		game.init();
-		while (game.process_packet() == 0)
+		game->init();
+		while (game->process_packet() == 0)
 		{
 		}
 	}
 	catch (const char *error)
 	{
 		printf("FATAL ERROR: %s\n", error);
-		game.graphics->done = true;
 	}
-	while (1);
-	
+	game->graphics->done = true;
+	delete game;
 	return 0;
 }

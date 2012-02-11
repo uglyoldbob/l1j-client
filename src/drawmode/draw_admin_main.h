@@ -15,6 +15,8 @@ class draw_admin_main : public sdl_drawmode
 		virtual void mouse_from(SDL_MouseMotionEvent *from);
 		virtual void mouse_move(SDL_MouseMotionEvent *from, SDL_MouseMotionEvent *to);
 		virtual bool mouse_leave();	//is it ok for the mouse to leave?
+		
+		virtual bool quit_request();
 	private:
 };
 

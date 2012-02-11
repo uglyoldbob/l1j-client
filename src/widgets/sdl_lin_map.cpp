@@ -25,6 +25,7 @@ sdl_lin_map::sdl_lin_map(tile *thetiles, client *who, int x, int y, int w, int h
 		segs[i].graphic = 0;
 		segs[i].mapdata = 0;
 	}
+	map = -1;
 	
 	one = new sdl_graphic(x, y, w, h);
 }
@@ -213,6 +214,8 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y)
 	
 	SDL_RWclose(sdl_buf);
 
+	delete [] buffer;
+	
 //end loading map data
 
 //	printf("Took %d millis to load a section\n", SDL_GetTicks() - timecheck);

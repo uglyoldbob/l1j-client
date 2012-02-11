@@ -30,10 +30,12 @@ class sdl_master
 		
 		void draw();
 		
+		bool check_users(bool last);
 		int get_client(int x, int y);
 		void mouse_move(SDL_MouseMotionEvent *old, SDL_MouseMotionEvent *fresh);
 		void mouse_click(SDL_MouseButtonEvent *here);
 		void key_press(SDL_KeyboardEvent *button);
+		bool quit_request();
 };
 
 #endif

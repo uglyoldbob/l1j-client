@@ -42,6 +42,8 @@ class draw_new_char : public sdl_drawmode
 		virtual void mouse_move(SDL_MouseMotionEvent *from, SDL_MouseMotionEvent *to);
 		virtual bool mouse_leave();	//is it ok for the mouse to leave?
 
+		virtual bool quit_request();
+		
 		void set_gender(int bla);
 		void init_new_char(int type);
 		void update_char();

@@ -95,7 +95,7 @@ int briefcase::load()
 		for (int i = 0; i < num_files; i++)
 		{
 			fread(&files[i].namelen, 1, 4, data_buf);
-			files[i].name = new char[files[i].namelen];
+			files[i].name = new char[files[i].namelen+1];
 			fread(files[i].name, files[i].namelen+1, 1, data_buf);
 			fread(&files[i].size, 1, 4, data_buf);
 			fread(&files[i].offset, 1, 4, data_buf); 

@@ -235,29 +235,33 @@ void packet::send_packet(const char* args, ...)
 void packet::get_packet(bool translate)
 {
 	unsigned short length = 0;
-	server->rcv_varg(&length, 2);
-	if (length != 0)
+	do
 	{
-		if (packet_length == 0)
+		reset();
+		server->rcv_varg(&length, 2);
+		if (length != 0)
 		{
-			packet_length = length - 2;
-			packet_data = new unsigned char[packet_length];
-			server->rcv(packet_data, packet_length);
-			if (key_initialized == 1)
+			if (packet_length == 0)
 			{
-				this->decrypt();
-				this->change_key(decryptionKey, (char*)(packet_data));
-			}	
-			if (translate)
+				packet_length = length - 2;
+				packet_data = new unsigned char[packet_length];
+				server->rcv(packet_data, packet_length);
+				if (key_initialized == 1)
+				{
+					this->decrypt();
+					this->change_key(decryptionKey, (char*)(packet_data));
+				}	
+				if (translate)
+				{
+					packet_data[0] = game->convert_server_packets[packet_data[0]];
+				}
+			}
+			else
 			{
-				packet_data[0] = game->convert_server_packets[packet_data[0]];
+				printf("ERROR: trying to load 2 packets\n");
 			}
 		}
-		else
-		{
-			printf("ERROR: trying to load 2 packets\n");
-		}
-	}
+	} while ((!translate) && (length == 0));
 }
 
 void packet::create_key(const unsigned int seed)
@@ -362,6 +366,10 @@ void packet::reset()
 
 int packet::process_packet()
 {
+	if (game->stop_thread)
+		throw "Stop client thread requested";
+	if (packet_data == 0)
+		return 0;
 	if (key_initialized == 0)
 	{
 		if (packet_data[0] != SERVER_KEY)

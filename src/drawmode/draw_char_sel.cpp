@@ -50,22 +50,18 @@ draw_char_sel::draw_char_sel(sdl_user *self)
 	ready = false;
 	cur_char_slot = -1;
 	page_num = 0;
-	pg = new prepared_graphics;
-	pg->num_pg = 1;
-	pg->pg = new prepared_graphic[1];
 	
 	//1c1
 	//0
 	
-	pg->pg[0].surf = get_png_image(815, owner->game);
+	num_gfx = 1;
+	gfx = new sdl_graphic*[num_gfx];
+	gfx[0] = new sdl_graphic(815, 0, 0, owner->game, GRAPH_PNG);
 		//TODO Replace with 105.img
 		//or 1763.img
 		//1764.img locked
 		//1769-1772 - numeric indicators
-	pg->pg[0].mask = NULL;
-	pg->pg[0].position = NULL;
-	pg->pg[0].cleanup = false;
-	pg->ready = true;
+	gfx[0]->disable_clear();
 	
 	num_widgets = 12;
 	widgets = new sdl_widget*[num_widgets];
@@ -109,6 +105,15 @@ draw_char_sel::draw_char_sel(sdl_user *self)
 
 draw_char_sel::~draw_char_sel()
 {
+}
+
+bool draw_char_sel::quit_request()
+{
+	while (SDL_mutexP(draw_mtx) == -1) {};
+	draw_scene = false;
+	SDL_mutexV(draw_mtx);
+	owner->game->stop_thread = true;
+	return true;
 }
 
 void draw_char_sel::nextpage()
