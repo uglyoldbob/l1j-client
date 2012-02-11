@@ -1,5 +1,6 @@
 #include "draw_login.h"
 
+#include "client.h"
 #include "globals.h"
 #include "resources/prepared_graphics.h"
 #include "sdl_user.h"
@@ -31,15 +32,11 @@ draw_login::draw_login(sdl_user *self)
 {	
 	//273 - 300 is the lantern animation (img)
 	owner->game_music.change_music("sound/music0.mp3");
-	pg = new prepared_graphics;
-	pg->num_pg = 1;
-	pg->pg = new prepared_graphic[1];
 	
-	pg->pg[0].surf = get_png_image(814, owner->game);
-	pg->pg[0].mask = NULL;
-	pg->pg[0].position = NULL;
-	pg->pg[0].cleanup = false;
-	pg->ready = true;
+	num_gfx = 1;
+	gfx = new sdl_graphic*[num_gfx];
+	gfx[0] = new sdl_graphic(814, 0, 0, owner->game, GRAPH_PNG);
+	gfx[0]->disable_clear();
 	
 	num_widgets = 7;
 	widgets = new sdl_widget*[num_widgets];
@@ -66,6 +63,13 @@ draw_login::draw_login(sdl_user *self)
 draw_login::~draw_login()
 {
 }
+
+bool draw_login::quit_request()
+{
+	owner->game->stop_thread = true;
+	return true;
+}
+
 
 bool draw_login::mouse_leave()
 {
@@ -101,7 +105,8 @@ void draw_login::login()
 
 void draw_login::quit()
 {
-	owner->quit_client();
+	owner->game->stop_thread = true;
+	//owner->quit_client();
 }
 
 void draw_login::mouse_click(SDL_MouseButtonEvent *here)

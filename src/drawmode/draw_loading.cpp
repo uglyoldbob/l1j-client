@@ -23,35 +23,20 @@ void load_ptr::go()
 draw_loading::draw_loading(sdl_user *self)
 	: sdl_drawmode(self)
 {
+	quitting = false;
 	owner->game_music.change_music("sound/music0.mp3");
 	load_progress = 0;
 	load_amount = 0x249f0;	//not sure how this number is generated
-	pg = new prepared_graphics;
-	pg->num_pg = 2;
-	
+		
 	int index;
 	SDL_Rect *rect;
 
-	pg->pg = new prepared_graphic[2];
-	
-	pg->pg[0].surf = get_png_image(811, owner->game);
-	pg->pg[0].mask = NULL;
-	pg->pg[0].position = NULL;
-	pg->pg[0].cleanup = false;
-	
-	pg->pg[1].surf = get_img(330, owner->game);
-	rect = new SDL_Rect;
-  	rect->x = 0xf1;
-  	rect->y = 0x181;
-	pg->pg[1].position = rect;
-	rect = new SDL_Rect;
-	rect->x = 0;
-	rect->y = 0;
-	rect->h = pg->pg[1].surf->h;
-	rect->w = 0;
-	pg->pg[1].mask = rect;
-	pg->pg[1].cleanup = true;
-	pg->ready = true;
+	num_gfx = 2;
+	gfx = new sdl_graphic*[num_gfx];
+	gfx[0] = new sdl_graphic(811, 0, 0, owner->game, GRAPH_PNG);
+	gfx[0]->disable_clear();
+	gfx[1] = new sdl_graphic(330, 241, 385, owner->game, GRAPH_IMG);
+	gfx[1]->disable_clear();
 	
 	num_servers = owner->game->get_config()->get_num_servers();
 	
@@ -88,9 +73,17 @@ int draw_loading::wait_server_pick()
 		if (!done)
 		{
 			SDL_Delay(100);
+			if (quitting) 
+				throw "Quit client thread requested";
 		}
 	}
 	return server_pick;
+}
+
+bool draw_loading::quit_request()
+{
+	quitting = true;
+	return true;
 }
 
 void draw_loading::server_picked(int i)
@@ -107,8 +100,8 @@ void draw_loading::set_load_amount(int size)
 
 void draw_loading::update_load()
 {
-	float temp = (float)pg->pg[1].surf->w * ((float)load_progress / (float)load_amount);
-	pg->pg[1].mask->w = (Uint16)temp;
+	float temp = (float)gfx[1]->getw() * ((float)load_progress / (float)load_amount);
+	gfx[1]->setmw(temp);
 }
 
 void draw_loading::add_loaded(int size)
@@ -119,6 +112,8 @@ void draw_loading::add_loaded(int size)
 
 void draw_loading::load_done()
 {
+	if (quitting) 
+		throw "Quit client thread requested.";
 	load_progress = load_amount;
 	update_load();
 	SDL_Delay(250);
@@ -127,6 +122,7 @@ void draw_loading::load_done()
 
 draw_loading::~draw_loading()
 {
+	SDL_DestroyMutex(spick_mtx);
 }
 
 bool draw_loading::mouse_leave()

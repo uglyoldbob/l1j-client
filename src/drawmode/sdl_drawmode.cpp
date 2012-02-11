@@ -16,11 +16,19 @@ void dam_ptr::go()
 
 sdl_drawmode::sdl_drawmode(sdl_user *self)
 {
+	draw_mtx = SDL_CreateMutex();
+	draw_scene = true;
 	owner = self;
 	widget_key_focus = 0;
-	pg = 0;
+	gfx = 0;
+	num_gfx = 0;
 	num_widgets = 0;
 	widgets = 0;
+}
+
+bool sdl_drawmode::quit_request()
+{
+	return false;
 }
 
 sdl_widget *sdl_drawmode::get_widget(int i)
@@ -37,8 +45,16 @@ sdl_widget *sdl_drawmode::get_widget(int i)
 
 sdl_drawmode::~sdl_drawmode()
 {
-	if (pg != 0)
-		delete pg;
+	SDL_DestroyMutex(draw_mtx);
+	if (num_gfx > 0)
+	{
+		for (int i = 0; i < num_gfx; i++)
+		{
+			if (gfx[i] != 0)
+				delete gfx[i];
+		}
+		delete [] gfx;
+	}
 	if (widgets != 0)
 	{
 		for (int i = 0; i < num_widgets; i++)
@@ -65,15 +81,21 @@ int sdl_drawmode::get_widget(int x, int y)
 
 void sdl_drawmode::draw(SDL_Surface *display)
 {
-	if (pg != 0)
+	while (SDL_mutexP(draw_mtx) == -1) {};
+	if (draw_scene)
 	{
-		pg->draw(display);
+		for (int i = 0; i < num_gfx; i++)
+		{
+			if (gfx[i] != 0)
+				gfx[i]->draw(display);
+		}
+		for (int i = 0; i < num_widgets; i++)
+		{
+			if (widgets[i] != 0)
+				widgets[i]->draw(display);
+		}
 	}
-	for (int i = 0; i < num_widgets; i++)
-	{
-		if (widgets[i] != 0)
-			widgets[i]->draw(display);
-	}
+	SDL_mutexV(draw_mtx);
 }
 
 void sdl_drawmode::key_press(SDL_KeyboardEvent *button)

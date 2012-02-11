@@ -218,6 +218,11 @@ config::config(const char *cfile)
 		{
 			printf("ERROR: %s is missing\n", cfile);
 		}
+		if (num_servers <= 0)
+		{
+			printf("ERROR: Invalid number of servers specified (%d)\n", num_servers);
+			num_errors++;
+		}
 		for (int i = 0; i < num_servers; i++)
 		{
 			if (sdata[i].port[0] == 0)
@@ -242,18 +247,25 @@ config::config(const char *cfile)
 		printf("ERROR: %i errors were found in your config file. Fix them and restart!\n", num_errors);
 	}
 
+	delete [] all_names;
+	delete [] line_read;
 }
 
 config::~config()
 {
-	for (int j = 0; j < num_servers; j++)
+	if (num_servers > 0)
 	{
-		for (int i = 0; i < sdata[j].num_names; i++)
+		for (int j = 0; j < num_servers; j++)
 		{
-			delete [] sdata[j].names[i];
+			for (int i = 0; i < sdata[j].num_names; i++)
+			{
+				delete [] sdata[j].names[i];
+			}
+			delete [] sdata[j].names;
+			delete [] sdata[j].server_name;
+			delete [] sdata[j].port;
+			delete [] sdata[j].game_port;
 		}
-//		delete [] sdata[j].names;
-		delete [] sdata[j].port;
-		delete [] sdata[j].game_port;
+		delete [] sdata;
 	}
 }

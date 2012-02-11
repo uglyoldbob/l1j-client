@@ -14,6 +14,7 @@
 
 void sdl_user::quit_client()
 {
+	game->stop();
 	done = true;
 }
 
@@ -44,7 +45,7 @@ void sdl_user::init_client(client *clnt)
 
 sdl_user::~sdl_user()
 {
-//	delete game;
+	SDL_DestroyMutex(draw_mtx);
 	if (drawmode != 0)
 		delete drawmode;
 	SDL_FreeSurface(display);
@@ -157,6 +158,11 @@ sdl_drawmode *sdl_user::get_drawmode()
 void sdl_user::wait_ready()
 {
 	while (!ready) {};
+}
+
+bool sdl_user::quit_request()
+{
+	return drawmode->quit_request();
 }
 
 void sdl_user::change_drawmode(enum drawmode chg)

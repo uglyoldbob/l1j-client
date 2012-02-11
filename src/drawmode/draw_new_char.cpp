@@ -54,15 +54,10 @@ void dnc_ptr::go()
 draw_new_char::draw_new_char(sdl_user *self)
 	: sdl_drawmode(self)
 {
-	pg = new prepared_graphics;
-	pg->num_pg = 1;
-	pg->pg = new prepared_graphic[1];
-	pg->pg[0].surf = get_img(824, owner->game);
-	pg->pg[0].mask = NULL;
-	pg->pg[0].position = NULL;
-	pg->pg[0].cleanup = true;
-	
-	pg->ready = true;
+	num_gfx = 1;
+	gfx = new sdl_graphic*[num_gfx];
+	gfx[0] = new sdl_graphic(824, 0, 0, owner->game, GRAPH_IMG);
+	gfx[0]->disable_clear();
 	
 	num_widgets = 25;
 	widgets = new sdl_widget*[num_widgets];
@@ -142,6 +137,12 @@ draw_new_char::~draw_new_char()
 void draw_new_char::cancel()
 {
 	owner->change_drawmode(DRAWMODE_CHARSEL);
+}
+
+bool draw_new_char::quit_request()
+{
+	cancel();
+	return false;
 }
 
 void draw_new_char::submit()

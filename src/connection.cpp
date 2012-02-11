@@ -1,4 +1,5 @@
 #include <errno.h>
+#include <fcntl.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
@@ -37,13 +38,10 @@ int connection::snd(const void* msg, int len)
 		buf = (char*)msg;
 		buf = &buf[sent];
 		trans = send(sock, buf, len-sent, 0);
-		if (trans < 0)
+		if (trans > 0)
 		{
-			printf("Error sending %d \n", errno);
-			throw 2;
-			return trans;
+			sent += trans;
 		}
-		sent += trans;
 	}
 	return len;
 }
@@ -68,13 +66,10 @@ int connection::snd_var(const void* msg, int len)
 		buf = (char*)msg;
 		buf = &buf[sent];
 		trans = send(sock, buf, len-sent, 0);
-		if (trans < 0)
+		if (trans > 0)
 		{
-			printf("Error sending %d \n", errno);
-			throw 2;
-			return trans;
+			sent += trans;
 		}
-		sent += trans;
 	}
 	return len;
 }
@@ -100,13 +95,10 @@ int connection::snd_varg(const void* msg, int len)
 		buf = (char*)msg;
 		buf = &buf[sent];
 		trans = send(sock, buf, len-sent, 0);
-		if (trans < 0)
+		if (trans > 0)
 		{
-			printf("Error sending %d \n", errno);
-			throw 2;
-			return trans;
+			sent += trans;
 		}
-		sent += trans;
 	}
 	return len;
 }
@@ -121,13 +113,10 @@ int connection::rcv(void *buf, int len)
 		temp = (char*)buf;
 		temp = &temp[recvd];
 		trans = recv(sock, temp, len-recvd, 0);
-		if (trans < 0)
+		if (trans > 0)
 		{
-			printf("Error receiving %d\n", errno);
-			throw 1;
-			return recvd;
+			recvd += trans;
 		}
-		recvd += trans;
 	}
 
 	return len;
@@ -143,13 +132,10 @@ int connection::rcv_var(void *buf, int len)
 		temp = (char*)buf;
 		temp = &temp[recvd];
 		trans = recv(sock, temp, len-recvd, 0);
-		if (trans < 0)
+		if (trans > 0)
 		{
-			printf("Error receiving %d\n", errno);
-			throw 1;
-			return recvd;
+			recvd += trans;
 		}
-		recvd += trans;
 	}
 	
 	if (len == 4)
@@ -176,13 +162,14 @@ int connection::rcv_varg(void *buf, int len)
 		temp = (char*)buf;
 		temp = &temp[recvd];
 		trans = recv(sock, temp, len-recvd, 0);
-		if (trans < 0)
+		if (trans > 0)
 		{
-			printf("Error receiving %d\n", errno);
-			throw 1;
-			return recvd;
+			recvd += trans;
 		}
-		recvd += trans;
+		else
+		{
+			return 0;
+		}
 	}
 	
 	if (len == 4)
@@ -222,6 +209,9 @@ int connection::make_connection()
 		break;
 	}
 
+	int x = fcntl(sock, F_GETFL, 0);
+	fcntl(sock, F_SETFL, x | O_NONBLOCK);
+	
 	if (p == NULL) 
 	{
 //		fprintf(stderr, "client: failed to connect\n");
