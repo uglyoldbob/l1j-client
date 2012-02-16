@@ -1,6 +1,6 @@
 EXTRA_FLAGS=-s -O3
 
-all: Lineage package Admin
+all: Lineage.exe Admin.exe package
 
 -include ../make.frag
 	

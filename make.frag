@@ -61,7 +61,7 @@ LFLAGS=-lmswsock -lws2_32 --enable-stdcall-fixup -Wl,-subsystem,windows -lmingw3
 LDADD=$(LIB_LOC)ws2_32.dll $(LIB_LOC)mswsock.dll $(LIB_LOC)SDL.dll \
 	$(LIB_LOC)SDL_image.dll $(LIB_LOC)SDL_mixer.dll $(LIB_LOC)smpeg.dll
 
-PACKAGE_FILES = Lineage $(OUTPUT)Lineage.ini $(OUTPUT)README.txt \
+PACKAGE_FILES = Lineage.exe $(OUTPUT)Lineage.ini $(OUTPUT)README.txt \
 	$(OUTPUT)README-SDL.txt $(OUTPUT)README-SDL-image.txt $(LIB_LOC)SDL.dll \
 	$(LIB_LOC)SDL_image.dll $(LIB_LOC)SDL_mixer.dll $(LIB_LOC)smpeg.dll \
 	$(LIB_LOC)zlib1.dll $(LIB_LOC)libpng12-0.dll \
@@ -73,12 +73,12 @@ clean:
 	rm -rf *.o *.a *.exe *.d
 	rm -rf drawmode resources widgets encryption
 
-Admin: $(Admin_OBJS) package
-	$(CC) $(EXTRA_FLAGS) $(Admin_OBJS) $(LDADD) -o Admin $(LFLAGS)
-	cp Admin ./client
+Admin.exe: $(Admin_OBJS) package
+	$(CC) $(EXTRA_FLAGS) $(Admin_OBJS) $(LDADD) -o Admin.exe $(LFLAGS)
+	cp Admin.exe ./client
 
-Lineage: $(Lineage_OBJS)
-	$(CC) $(EXTRA_FLAGS) $(Lineage_OBJS) $(LDADD) -o Lineage $(LFLAGS)
+Lineage.exe: $(Lineage_OBJS)
+	$(CC) $(EXTRA_FLAGS) $(Lineage_OBJS) $(LDADD) -o Lineage.exe $(LFLAGS)
 
 .c.o:
 	@if [ ! -d $(@D) ]; then\
