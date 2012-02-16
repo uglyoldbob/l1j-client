@@ -43,11 +43,17 @@ draw_login::draw_login(sdl_user *self)
 	
 	widgets[0] = new sdl_widget(59, 0x1a9, 0x138, owner->game);
 	widgets[1] = new sdl_input_box(12, 0x1fb, 0x14a, owner->game);
+	
 	widgets[1]->set_key_focus(true);
 	widgets[1]->cursor_on();
 	widget_key_focus = 1;
 	widgets[2] = new sdl_input_box(13, 0x1fb, 0x160, owner->game);
 	widgets[2]->set_key_focus(true);
+	
+	//set max length for username and password
+	((sdl_input_box*)widgets[1])->set_max(20);
+	((sdl_input_box*)widgets[2])->set_max(20);
+	
 	widgets[3] = new sdl_plain_button(53, 0x213, 0x183, owner->game, (funcptr*)new login_ptr(this));
 	widgets[3]->set_key_focus(true);
 	widgets[4] = new sdl_plain_button(65, 0x213, 0x195, owner->game, 0);

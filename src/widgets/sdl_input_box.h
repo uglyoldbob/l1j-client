@@ -11,6 +11,8 @@ class sdl_input_box : public sdl_widget
 	public:
 		sdl_input_box(int num, int x, int y, client *who);
 		virtual ~sdl_input_box();
+		
+		void set_max(int m);
 		virtual void draw(SDL_Surface *display);
 		
 		virtual void cursor_on();
@@ -24,6 +26,7 @@ class sdl_input_box : public sdl_widget
 		int cursor_pos;	//pixel offset
 		int cursor_idx;	//character number offset
 		char *field;
+		int max_length;
 		int field_length;
 		void add_char(char dat);
 		

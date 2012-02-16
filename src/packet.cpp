@@ -477,7 +477,7 @@ void packet::char_create_result()
 	unsigned char result;
 	disassemble(&packet_data[1], "c", &result);
 	printf("The result from character creation is %d\n", result);
-	if (result != 6)
+	if (result == 2)
 	{
 		lin_char_info *temp;
 		draw_new_char* bob;
