@@ -13,11 +13,17 @@ sdl_input_box::sdl_input_box(int num, int x, int y, client *who)
 	field_length = 1;
 	field = new char[field_length];
 	field[field_length - 1] = 0;
+	max_length = 0;
 }
 
 sdl_input_box::~sdl_input_box()
 {
 	delete [] field;
+}
+
+void sdl_input_box::set_max(int m)
+{
+	max_length = m;
 }
 
 const char *sdl_input_box::get_str()
@@ -71,21 +77,24 @@ void sdl_input_box::cursor_off()
 
 void sdl_input_box::add_char(char dat)
 {
-	char *temp;
-	temp = new char[field_length + 1];
-	int i;
-	for (i = 0; i < cursor_idx; i++)
+	if ((max_length == 0) || (field_length < max_length))
 	{
-		temp[i] = field[i];
+		char *temp;
+		temp = new char[field_length + 1];
+		int i;
+		for (i = 0; i < cursor_idx; i++)
+		{
+			temp[i] = field[i];
+		}
+		temp[i++] = dat;
+		for (; i < (field_length + 1); i++)
+		{
+			temp[i] = field[i-1];
+		}
+		delete [] field;
+		field_length++;
+		field = temp;
 	}
-	temp[i++] = dat;
-	for (; i < (field_length + 1); i++)
-	{
-		temp[i] = field[i-1];
-	}
-	delete [] field;
-	field_length++;
-	field = temp;
 }
 
 void sdl_input_box::key_press(SDL_KeyboardEvent *button)
@@ -149,9 +158,12 @@ void sdl_input_box::key_press(SDL_KeyboardEvent *button)
 			break;
 		default:
 			//TODO: check for valid character
-			add_char(button->keysym.unicode & 0x7F);
-			cursor_idx++;
-			cursor_pos += 6;
+			if ((max_length == 0) || (field_length < max_length))
+			{
+				add_char(button->keysym.unicode & 0x7F);
+				cursor_idx++;
+				cursor_pos += 6;
+			}
 			break;
 	}
 }
