@@ -98,6 +98,8 @@ draw_new_char::draw_new_char(sdl_user *self)
 	widgets[14]->set_key_focus(true);
 	widget_key_focus = 14;
 	
+	((sdl_input_box*)widgets[14])->set_max(20);
+	
 	widgets[15] = new sdl_radio_button(1753, 332, 11, owner->game, 
 		(funcptr*)new dnc_ptr(this, DNC_FUNC_NEWCHAR, 0), &widgets[15], 7, 0);
 	widgets[16] = new sdl_radio_button(1755, 542, 11, owner->game, 
