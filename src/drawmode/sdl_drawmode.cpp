@@ -71,7 +71,7 @@ int sdl_drawmode::get_widget(int x, int y)
 		//implement a tracking variable and update it using rules
 	for (int i = 0; i < num_widgets; i++)
 	{
-		if (widgets[i]->contains(x,y))
+		if ((widgets[i]->contains(x,y)) && (widgets[i]->is_visible()) )
 		{
 			return i;
 		}

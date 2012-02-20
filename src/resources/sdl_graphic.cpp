@@ -26,11 +26,7 @@ sdl_graphic::sdl_graphic(int x, int y, short *source, int type)
 	switch(type)
 	{
 		case GRAPH_STIL:
-		{	//these tiles are not done correctly (but this will allow them to show up as empty spots)
-			pos = 0;
-			mask = 0;
-			img = 0;
-			break;
+		{
 		//	printf("TranspTile %d\n", which);
 			unsigned char *data = (unsigned char*)source;
 			int data_offset = 0;
@@ -124,6 +120,42 @@ sdl_graphic::sdl_graphic(int x, int y, short *source, int type)
 	}
 }
 
+sdl_graphic::sdl_graphic(char *name, int x, int y, client *who, int type)
+{
+	if (name == 0)
+	{
+		pos = 0;
+		mask = 0;
+		img = 0;
+		cleanup = false;
+	}
+	else
+	{
+		switch (type)
+		{
+			case GRAPH_PNG:
+				img = get_png_image(name, who);
+				if (img != 0)
+				{
+					SDL_SetColorKey(img, SDL_SRCCOLORKEY, SDL_MapRGB(img->format, 0, 0, 0));
+					SDL_MapRGB(img->format, 0, 0, 0);
+					pos = make_sdl_rect(x, y, img->w, img->h);
+					mask = make_sdl_rect(0, 0, img->w, img->h);
+					cleanup = false;
+				}
+				break;
+			default:
+				break;
+		}
+		if (img == 0)
+		{
+			pos = 0;
+			mask = 0;
+			cleanup = false;
+		}
+	}
+}
+
 sdl_graphic::sdl_graphic(int num, int x, int y, client *who, int type)
 {
 	if (num == -1)
@@ -166,6 +198,14 @@ sdl_graphic::sdl_graphic(int num, int x, int y, client *who, int type)
 			mask = 0;
 			cleanup = false;
 		}
+	}
+}
+
+void sdl_graphic::make_bmp(char *name)
+{
+	if (img != 0)
+	{
+		SDL_SaveBMP(img, name);
 	}
 }
 
@@ -243,11 +283,35 @@ int sdl_graphic::getw()
 	}
 }
 
+void sdl_graphic::setmx(int nmx)
+{
+	if (mask != 0)
+	{
+		mask->x = nmx;
+	}
+}
+
+void sdl_graphic::setmy(int nmy)
+{
+	if (mask != 0)
+	{
+		mask->y = nmy;
+	}
+}
+
 void sdl_graphic::setmw(int nmw)
 {
 	if (mask != 0)
 	{
 		mask->w = nmw;
+	}
+}
+
+void sdl_graphic::setmh(int nmh)
+{
+	if (mask != 0)
+	{
+		mask->h = nmh;
 	}
 }
 

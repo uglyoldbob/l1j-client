@@ -25,6 +25,7 @@ class draw_loading : public sdl_drawmode
 		void set_load_amount(int size);
 		void add_loaded(int size);
 		void load_done();
+		void add_text(char *bla);
 		int wait_server_pick();
 		void server_picked(int i);
 		

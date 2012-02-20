@@ -13,6 +13,7 @@ class table
 						
 		void load_local(const char *name, pack* from);
 		virtual void load(const char *real_name, pack* from);
+		int get_num_entries();
 		void sort();
 		static int compare(const void *a, const void *b);
 		void print();

@@ -98,6 +98,36 @@ sdl_widget::~sdl_widget()
 	}
 }
 
+int sdl_widget::getw()
+{
+	if (one != 0)
+	{
+		return one->getw();
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+void sdl_widget::setmw(int nmw)
+{
+	if (one != 0)
+	{
+		one->setmw(nmw);
+	}
+}
+
+void sdl_widget::hide(bool vis)
+{
+	visible = vis;
+}
+
+bool sdl_widget::is_visible()
+{
+	return visible;
+}
+
 void sdl_widget::cursor_on()
 {
 }
