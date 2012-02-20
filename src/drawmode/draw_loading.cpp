@@ -53,7 +53,7 @@ draw_loading::draw_loading(sdl_user *self)
 			(funcptr*)new load_ptr(this, i));
 		widgets[i]->set_key_focus(true);
 	}
-	widgets[num_servers] = new text_box(257, 254, 150, 12, owner->game);
+	widgets[num_servers] = new text_box(257, 254, 150, 10*12, owner->game);
 	
 	((text_box*)widgets[num_servers])->add_line("Please select a server:");
 		
@@ -86,9 +86,22 @@ bool draw_loading::quit_request()
 	return true;
 }
 
+void draw_loading::add_text(char *bla)
+{
+	if (quitting)
+		throw "Quit client thread requested..";
+	while (SDL_mutexP(draw_mtx) == -1) {};
+	((text_box*)widgets[num_servers])->add_line(bla);
+	SDL_mutexV(draw_mtx);
+}
+
 void draw_loading::server_picked(int i)
 {
 	while (SDL_mutexP(spick_mtx) == -1) {};
+	//hide buttons, add text to the textbox
+	for (int i = 0; i < num_servers; i++)
+		widgets[i]->hide(false);
+	((text_box*)widgets[num_servers])->add_line("Checking for updates");
 	server_pick = i;
 	SDL_mutexV(spick_mtx);
 }

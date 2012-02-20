@@ -23,6 +23,11 @@ class sdl_widget
 		
 		virtual void cursor_on();
 		virtual void cursor_off();
+		void hide(bool vis);
+		bool is_visible();
+		
+		int getw();
+		void setmw(int nmw);
 		
 		virtual void set_key_focus(bool arg);
 		bool check_key_focus();

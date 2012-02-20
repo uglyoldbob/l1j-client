@@ -20,6 +20,7 @@ class sdl_graphic
 {
 	public:
 		sdl_graphic(int num, int x, int y, client *packs, int type);
+		sdl_graphic(char *name, int x, int y, client *packs, int type);
 		sdl_graphic(int x, int y, short *source, int type);
 		sdl_graphic(int x, int y, int w, int h);
 		void disable_clear();
@@ -36,6 +37,11 @@ class sdl_graphic
 		void erase();
 		
 		void setmw(int nmw);
+		void setmh(int nmh);
+		void setmx(int nmx);
+		void setmy(int nmy);
+		
+		void make_bmp(char *name);
 	private:
 		SDL_Surface *img;
 		SDL_Rect *pos;

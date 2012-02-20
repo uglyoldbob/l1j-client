@@ -44,9 +44,58 @@ void chat_window::add_line(char *data)
 	tb->add_line(data);
 }
 
-void chat_window::submit_chat(const char *blabla, char type)
+void chat_window::submit_chat(const char *blabla)
 {
-	myclient->send_packet("ccs", CLIENT_CHAT, type, blabla);
+	switch (blabla[0])
+	{
+		case '"':
+		{
+			char *temp = new char [strlen(blabla) + 1];
+			strcpy(temp, blabla);
+			char *temp2 = strchr(temp, ' ');
+			temp2[0] = 0;
+			myclient->send_packet("css", CLIENT_CHAT_WHISPER, &temp[1], &temp2[1]);
+			delete [] temp;
+		}
+			break;
+		case '@':
+			myclient->send_packet("ccs", CLIENT_CHAT, 104, &blabla[1]);
+			break;
+		case '#':
+			myclient->send_packet("ccs", CLIENT_CHAT, 11, &blabla[1]);
+			break;
+		case '$':
+			myclient->send_packet("ccs", CLIENT_CHAT_GLOBAL, 12, &blabla[1]);
+			break;
+		case '&':
+			myclient->send_packet("ccs", CLIENT_CHAT_GLOBAL, 3, &blabla[1]);
+			break;
+		case '%':
+			myclient->send_packet("ccs", CLIENT_CHAT, 13, &blabla[1]);
+			break;
+		case '*':
+			myclient->send_packet("ccs", CLIENT_CHAT, 14, &blabla[1]);
+			break;
+		case '/':
+		{
+			char version[256];
+			if (strcmp(&blabla[1], "version") == 0)
+			{
+				sprintf(version, "VERSION: UNSTABLE BETA compiled on %s", __DATE__);
+				add_line(version);
+			}
+			else
+			{
+				sprintf(version, "Invalid command \"%s\"", blabla);
+				add_line(version);
+			}
+		}
+			break;
+		default:
+			myclient->send_packet("ccs", CLIENT_CHAT, 0, blabla);
+			break;
+	}
+	
 }
 
 void chat_window::key_press(SDL_KeyboardEvent *button)
@@ -59,7 +108,7 @@ void chat_window::key_press(SDL_KeyboardEvent *button)
 			case SDLK_KP_ENTER:
 			{
 				sdl_input_box *temp = (sdl_input_box*)widgets[2];
-				submit_chat(temp->get_str(), 0);
+				submit_chat(temp->get_str());
 				temp->clear();
 			}
 				break;

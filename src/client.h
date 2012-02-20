@@ -8,9 +8,13 @@
 #include "resources/files.h"
 #include "resources/table.h"
 #include "resources/tile.h"
+#include "resources/sdl_font.h"
+#include "resources/small_font.h"
 #include "resources/pack.h"
 
 #define TRANSFER_AMOUNT 0x400
+
+class draw_loading;
 
 int run_client(void *moron);
 
@@ -45,6 +49,7 @@ class client
 		config *get_config();
 		void stop();
 		bool stop_thread;
+		small_font smallfont;
 	private:
 		config *main_config;
 		connection *server;
@@ -57,6 +62,7 @@ class client
 		table solvent;
 		table todays_tip;
 		tile *map_tiles;
+		
 		int number_map_tiles;
 		
 		char *server_name;
@@ -70,7 +76,7 @@ class client
 		unsigned int serverId;	//0
 		unsigned char countryCode;
 
-		int get_updates(connection* server);
+		int get_updates(connection* server, draw_loading *scrn);
 		int old_get_updates(connection* server);
 		int pack_resources();
 		int init_packs();

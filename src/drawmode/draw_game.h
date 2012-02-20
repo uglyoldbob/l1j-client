@@ -19,10 +19,21 @@ class draw_game : public sdl_drawmode
 		virtual bool mouse_leave();	//is it ok for the mouse to leave?
 		
 		virtual bool quit_request();
+		
+		void update_hpbar(int cur, int max);
+		void update_mpbar(int cur, int max);
 	private:
 		SDL_mutex *draw_mtx;
 		
-		int background;
+		char *exp_str;
+		char *hp_str;
+		float hp_width;
+		char *mp_str;
+		float mp_width;
+		char *ac_str;
+		char *evil_str;
+		char *weight_str;
+		char *food_str;
 };
 
 #endif

@@ -6,6 +6,7 @@
 #include "sdl_user.h"
 #include "widgets/sdl_animate_button.h"
 #include "widgets/sdl_input_box.h"
+#include "widgets/text_box.h"
 
 login_ptr::login_ptr(draw_login *bla)
 {
@@ -38,7 +39,7 @@ draw_login::draw_login(sdl_user *self)
 	gfx[0] = new sdl_graphic(814, 0, 0, owner->game, GRAPH_PNG);
 	gfx[0]->disable_clear();
 	
-	num_widgets = 7;
+	num_widgets = 8;
 	widgets = new sdl_widget*[num_widgets];
 	
 	widgets[0] = new sdl_widget(59, 0x1a9, 0x138, owner->game);
@@ -62,6 +63,26 @@ draw_login::draw_login(sdl_user *self)
 	widgets[5]->set_key_focus(true);
 	widgets[6] = new sdl_plain_button(57, 0x213, 0x1c2, owner->game, (funcptr*)new quit_ptr(this));
 	widgets[6]->set_key_focus(true);
+	
+	intro.load("intro-e.tbl", textpack);
+	widgets[7] = new text_box(34, 59, 6*57, intro.get_num_entries()*12, owner->game);
+	text_box *temp;
+	temp = (text_box*)(widgets[7]);
+	for (int i = 0; i < intro.get_num_entries(); i++)
+	{
+		char temp_bob[256];
+		if (intro[i] != 0)
+		{
+			sprintf(temp_bob, "%s", intro[i]);
+		}
+		else
+		{
+			sprintf(temp_bob, " ");
+		}
+		temp->add_line(temp_bob);
+	}
+	temp->set_visible(0, 18*12);
+	
 //	widgets[7] = new sdl_widget(814, 0x1a, 0x3b, graphx);
 		//type 1, null("intro"), px=0xcf, py=0x11a
 }

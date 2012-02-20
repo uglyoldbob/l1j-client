@@ -13,7 +13,6 @@ struct briefcase_entry
 	char *name;
 	int size;
 	long offset;
-	unsigned char *data;	//a buffer to hold the data for this entry
 };
 
 class briefcase
@@ -42,6 +41,7 @@ class briefcase
 		char hash[65];
 		int sorted;	//is the list of files properly sorted?
 		int num_files;
+		bool change_num_files;
 		briefcase_entry* files;	//the list of files
 		char** file_data;	//the contents for every file
 		

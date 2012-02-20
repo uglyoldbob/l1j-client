@@ -16,7 +16,7 @@ class chat_window : public sdl_window
 	private:
 		
 		void resize();	//reconfigures the height of the chat window
-		void submit_chat(const char *blabla, char type);
+		void submit_chat(const char *blabla);
 };
 
 #endif
