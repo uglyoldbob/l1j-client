@@ -22,8 +22,8 @@ class packet
 		
 		int assemble(char *format, int max_length, const char *data, ...);
 		int assemble(char *format, int max_length, const char *data, va_list array);
-		void disassemble(unsigned char *buf, const char *format, va_list array);
-		void disassemble(unsigned char *buf, const char *format, ...);
+		int disassemble(unsigned char *buf, const char *format, va_list array);
+		int disassemble(unsigned char *buf, const char *format, ...);
 		void disass(const char *format, ...);
 		
 		int process_packet();
@@ -53,6 +53,15 @@ class packet
 		void login_check();
 		void char_create_result();
 		void handle_chat();
+		void game_time();
+		void update_mp();
+		void update_hp();
+		void ground_item();
+		void place_light();
+		void change_spmr();
+		void weather();
+		void add_inv_items();
+		void server_message();
 };
 
 #endif

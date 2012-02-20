@@ -81,8 +81,8 @@ void sdl_master::process_events()
 						SDL_HWSURFACE | SDL_DOUBLEBUF); // Create new window
 					break;
 			}
-			done = check_users(done);
 		}
+		done = check_users(done);
 	}
 //	int status;
 //	if (game_client[0] != 0)

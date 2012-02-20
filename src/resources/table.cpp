@@ -25,6 +25,11 @@ table::~table()
 	}
 }
 
+int table::get_num_entries()
+{
+	return num_entries;
+}
+
 //constant because tables will not be modified by the [] operator
 const char *table::operator[](int i)
 {

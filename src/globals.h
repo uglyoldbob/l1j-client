@@ -6,11 +6,11 @@
 #include <SDL_image.h>
 
 #include "resources/pack.h"
-#include "resources/sdl_font.h"
+#include "resources/reg_font.h"
 #include "resources/table.h"
 
 extern char *lineage_dir;	//string to hold the absolute path to the lineage directory
-extern sdl_font lineage_font;
+extern reg_font lineage_font;
 
 //pack data is the same for all clients thanks to the briefcase object
 extern pack *textpack;
@@ -33,18 +33,28 @@ enum server_packet_types
 {	//the numbers will eventually be deleted
 	SERVER_CHAT_NORM = 8,	//?
 	SERVER_VERSIONS = 10,
-	SERVER_CHAT_WHISP = 13,
 	SERVER_DISCONNECT = 18,
 	SERVER_LOGIN = 21,
 	SERVER_CHAR_DELETE = 33,
-	SERVER_CHAT_GLOBAL = 40,
+	SERVER_CHAT_SHOUT = 42,
+	SERVER_INV_ITEMS = 47,
 	SERVER_ENTERGAME = 63,
-	SERVER_KEY = 65,
-	SERVER_MAP = 76,
+	SERVER_GROUNDITEM,
+	SERVER_KEY,
 	SERVER_CHAR_STAT = 69,
+	SERVER_TIME,
+	SERVER_MAP = 76,
+	SERVER_CHANGE_SPMR = 80,
+	SERVER_WEATHER = 83,
+	SERVER_MESSAGE = 87,
 	SERVER_NEWS = 90,
+	SERVER_CHAT_WHISPER,
+	SERVER_MPVALS = 96,
 	SERVER_LOGIN_CHAR = 99,
-	SERVER_CREATE_STAT = 106,
+	SERVER_HPVALS = 101,
+	SERVER_LIGHT,
+	SERVER_CHAT_GLOBAL = 105,
+	SERVER_CREATE_STAT,
 	SERVER_NUM_CHARS = 113,
 	SERVER_LAST
 };
@@ -56,7 +66,9 @@ enum server_packet_types
 enum client_packet_types
 {	//the numbers will eventually be deleted
 	CLIENT_LOGIN = 12,
+	CLIENT_CHAT_WHISPER,
 	CLIENT_DELETE_CHAR = 34,
+	CLIENT_CHAT_GLOBAL = 40,
 	CLIENT_CLICK = 43,
 	CLIENT_ALIVE = 57,
 	CLIENT_VERSION = 71,
@@ -129,6 +141,7 @@ struct graphics_data
 lin_char_info *make_lin_char_info(int char_type, int gender);
 
 SDL_Surface *get_png_image(int num, client *who);
+SDL_Surface *get_png_image(char *name, client *who);
 void check_fix_png(char *buffer, int *size);
 SDL_Surface *get_img(int num, client *who);	//loads raw image data
 SDL_Surface *get_image(SDL_RWops *buf);
