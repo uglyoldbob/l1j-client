@@ -15,6 +15,8 @@
 #include "resources/table.h"
 #include "unsorted.h"
 
+#include <math.h>
+
 int client::pack_resources()
 {
 	return 0;
@@ -114,7 +116,7 @@ int client::init_strings()
 	return 0;
 }
 
-int client::get_updates(connection* server)
+int client::get_updates(connection* server, draw_loading *scrn)
 {
 	packet *proc;
 	unsigned char temp;
@@ -122,6 +124,7 @@ int client::get_updates(connection* server)
 	unsigned int num_files;
 	int status;	//> 0 means update occurred
 	char hash[65];	//the hash is 64 bytes plus a null terminator
+	char display[256];	//the string for displaying stuff
 	status = 0;
 	try
 	{
@@ -154,7 +157,6 @@ int client::get_updates(connection* server)
 			{
 				server_data->add_data();
 			}
-			printf("Receiving %d files from %d\n", num_files, temp);
 			for (unsigned int i = 0; i < num_files; i++)
 			{
 				unsigned char file_buffer[TRANSFER_AMOUNT];	//buffer space
@@ -167,7 +169,8 @@ int client::get_updates(connection* server)
 				proc->disass("csd", &temp, &filename, &filesize);
 				orig_filesize = filesize;
 				file = new char[filesize];
-				printf("Receiving file %s of length %d ...", filename, filesize);
+				sprintf(display, "Receiving %s size %d (%d of %d)", filename, filesize, i+1, num_files);
+				scrn->add_text(display);
 				while (filesize > 0)
 				{
 					if (filesize > TRANSFER_AMOUNT)
@@ -186,10 +189,7 @@ int client::get_updates(connection* server)
 					}
 				}
 				server_data->write_file(filename, file, orig_filesize);
-				printf(" done!\n");
-				//TODO : tell drawmode we received the file
 			}
-			printf("Closing briefcase\n");
 			server_data->finish_briefcase();
 			delete server_data;
 			server_data = new briefcase(server_name);
@@ -261,12 +261,30 @@ void client::init()
 		throw "Lineage Data not found";
 	}
 	delete [] test;
-	lineage_font.init("Font/eng.fnt", this);
+	lineage_font.init("Font/eng.fnt", this);	//TODO : make a client specific version of the font
+	smallfont.init("Font/SMALL.FNT", this);
 	
 	DesKeyInit("~!@#%^$<");	//TODO : move this code to a class and use an object
 	init_packs();
 	init_tiles();
 	
+	int spritesize;
+	short *sprite_test = (short*)getfiles->load_file("2786-284.spr", &spritesize, FILE_SPRITESPACK, 0);
+	
+	if (sprite_test != 0)
+	{	
+		printf("Size: %d\n\t", spritesize);
+		spritesize /= 2;
+		spritesize = (int)sqrt(spritesize) + 1;
+		printf("Size %d x %d = %d\n", spritesize, spritesize, spritesize * spritesize * 2);
+		SDL_Surface *spriteing = SDL_CreateRGBSurfaceFrom(sprite_test, spritesize, spritesize, 16, spritesize*2, 
+			0x7C00, 0x03E0, 0x001F, 0);
+		SDL_SaveBMP(spriteing, "sprite.bmp");
+	}
+	else
+	{
+		printf("File not found\n");
+	}
 	graphics->change_drawmode(DRAWMODE_LOADING);
 
 	graphics->wait_ready();
@@ -281,9 +299,8 @@ void client::init()
 	strcpy(server_name, main_config->get_name(what_server));
 	
 	server = new connection(main_config, what_server);
-	if (get_updates(server) > 0)
+	if (get_updates(server, load) > 0)
 	{
-		printf("STUB Packing resources\n");
 	}
 
 	//check for custom opcodes

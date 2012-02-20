@@ -3,6 +3,7 @@
 
 #include "funcptr.h"
 #include "sdl_drawmode.h"
+#include "resources/table.h"
 
 class draw_login;
 
@@ -40,6 +41,8 @@ class draw_login : public sdl_drawmode
 		virtual bool mouse_leave();	//is it ok for the mouse to leave?
 		
 		virtual bool quit_request();
+	private:
+		table intro;
 };
 
 #endif

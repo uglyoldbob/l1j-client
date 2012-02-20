@@ -1,7 +1,7 @@
 #include "client.h"
 #include "globals.h"
 #include "resources/files.h"
-#include "resources/sdl_font.h"
+#include "resources/reg_font.h"
 
 pack *textpack;
 pack *tilepack;
@@ -9,7 +9,7 @@ pack **spritepack;
 int num_sprite_pack;
 
 
-sdl_font lineage_font;
+reg_font lineage_font;
 char *lineage_dir;
 
 lin_char_info *make_lin_char_info(int char_type, int gender)
@@ -123,11 +123,8 @@ void check_fix_png(char *buffer, int *size)
 	}
 }
 
-SDL_Surface *get_png_image(int num, client *who)
+SDL_Surface *get_png_image(char *name, client *who)
 {
-	char name[256];
-	sprintf(name, "%d.png", num);
-	
 	char *buffer;
 	SDL_Surface *ret;
 	SDL_RWops *sdl_buf;
@@ -158,6 +155,15 @@ SDL_Surface *get_png_image(int num, client *who)
 		ret = (SDL_Surface*) 0;
 	}
 	return ret;
+}
+
+
+SDL_Surface *get_png_image(int num, client *who)
+{
+	char name[256];
+	sprintf(name, "%d.png", num);
+	
+	return get_png_image(name, who);
 }
 
 SDL_Surface *get_image(SDL_RWops *buf)

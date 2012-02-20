@@ -90,17 +90,25 @@ int briefcase::load()
 	{
 		fread(&num_files, 1, 4, data_buf);
 		printf("There are %d files\n", num_files);
-		file_data = new char*[num_files];
-		files = new briefcase_entry[num_files];
-		for (int i = 0; i < num_files; i++)
+		if (num_files > 0)
 		{
-			fread(&files[i].namelen, 1, 4, data_buf);
-			files[i].name = new char[files[i].namelen+1];
-			fread(files[i].name, files[i].namelen+1, 1, data_buf);
-			fread(&files[i].size, 1, 4, data_buf);
-			fread(&files[i].offset, 1, 4, data_buf); 
-			file_data[i] = new char[files[i].size];
-			fread(file_data[i], 1, files[i].size, data_buf);
+			file_data = new char*[num_files];
+			files = new briefcase_entry[num_files];
+			for (int i = 0; i < num_files; i++)
+			{
+				fread(&files[i].namelen, 1, 4, data_buf);
+				files[i].name = new char[files[i].namelen+1];
+				fread(files[i].name, files[i].namelen+1, 1, data_buf);
+				fread(&files[i].size, 1, 4, data_buf);
+				fread(&files[i].offset, 1, 4, data_buf); 
+				file_data[i] = new char[files[i].size];
+				fread(file_data[i], 1, files[i].size, data_buf);
+			}
+		}
+		else
+		{
+			file_data = 0;
+			files = 0;
 		}
 	}
 	return 0;
@@ -114,6 +122,8 @@ briefcase::briefcase(const char *name)
 	sprintf(data_file, "%s%s", name, BCE_EXT);
 	
 	num_files = 0;
+	change_num_files = false;
+	files = 0;
 	
 	printf("Loading SERVER DATA: %s\n", name);
 	
@@ -144,18 +154,49 @@ int briefcase::check_file(const char *name)
 }
 
 void briefcase::write_file(char *name, char *data, int size)
-{
-	printf("Adding file %s\n", name);
-	int len = strlen(name);
-	if (data_buf == 0)
-		return;
-	num_files++;
-	fwrite(&len, sizeof(int), 1, data_buf);
-	fwrite(name, sizeof(char), len+1, data_buf);
-	fwrite(&size, sizeof(int), 1, data_buf);
-	long offset = ftell(data_buf) + sizeof(long);
-	fwrite(&offset, sizeof(long), 1, data_buf);
-	fwrite(data, sizeof(char), size, data_buf);
+{	
+	int exists = check_file(name); 
+	if (exists == -1)
+	{
+		briefcase_entry *temp = files;
+		char **temp2 = file_data;
+		
+		file_data = new char*[num_files + 1];
+		files = new briefcase_entry[num_files + 1];
+		change_num_files = true;
+		int i;
+		for (i = 0; i < num_files; i++)
+		{
+			file_data[i] = temp2[i];
+			files[i] = temp[i];
+		}
+		num_files++;
+		file_data[i] = 0;
+		files[i].namelen = strlen(name)+1;
+		files[i].name = new char[files[i].namelen];
+		strcpy(files[i].name, name);
+		files[i].size = size; 
+				
+		int len = strlen(name);
+		if (data_buf == 0)
+			return;
+		fwrite(&len, sizeof(int), 1, data_buf);
+		fwrite(name, sizeof(char), len+1, data_buf);
+		fwrite(&size, sizeof(int), 1, data_buf);
+		long offset = ftell(data_buf) + sizeof(long);
+		files[i].offset = offset;
+		fwrite(&offset, sizeof(long), 1, data_buf);
+		fwrite(data, sizeof(char), size, data_buf);
+		
+		if (temp != 0)
+			delete [] temp;
+		if (temp2 != 0)
+			delete [] temp2;
+	}
+	else
+	{
+		throw ("File replacement not supported");
+	}
 }
 
 int briefcase::get_size()
@@ -193,7 +234,7 @@ unsigned char* briefcase::load_file(int which)
 {
 	unsigned char *buf;
 	open_data();
-	if ((which > 0) && (which < num_files))
+	if ((which >= 0) && (which < num_files))
 	{
 		if ((files[which].size > 0) && (files[which].offset > 0))
 		{
@@ -224,14 +265,14 @@ unsigned char* briefcase::load_file(int which)
 
 void briefcase::finish_briefcase()
 {
-	if (data_buf != 0)
+	if ((data_buf != 0) && (change_num_files))
 	{
 		printf("Updating the num_files to %d\n", num_files);
 		fseek(data_buf, 0, SEEK_SET);
 		fwrite(&num_files, 1, 4, data_buf);
-		fclose(data_buf);
-		data_buf = 0;
 	}
+	fclose(data_buf);
+	data_buf = 0;
 }
 
 void briefcase::new_data()

@@ -36,15 +36,17 @@ void packet::disass(const char *format, ...)
 	va_end(temp_args);
 }
 
-void packet::disassemble(unsigned char *buf, const char *format, ...)
+int packet::disassemble(unsigned char *buf, const char *format, ...)
 {
+	int ret_val;
 	va_list temp_args;
 	va_start(temp_args, format);
-	disassemble(buf, format, temp_args);
+	ret_val = disassemble(buf, format, temp_args);
 	va_end(temp_args);
+	return ret_val;
 }
 
-void packet::disassemble(unsigned char *buf, const char *format, va_list args)
+int packet::disassemble(unsigned char *buf, const char *format, va_list args)
 {
 	int i = 0;
 	int buf_offset = 0;
@@ -54,7 +56,7 @@ void packet::disassemble(unsigned char *buf, const char *format, va_list args)
 		{
 			case 's':
 			{
-				unsigned char length = 0;
+				unsigned short length = 0;
 				while (buf[buf_offset+length] != 0)
 				{
 					length++;
@@ -95,6 +97,7 @@ void packet::disassemble(unsigned char *buf, const char *format, va_list args)
 		}
 		i++;
 	}
+	return buf_offset;
 }
 
 int packet::assemble(char *send, int max_length, const char *format, va_list array)
@@ -213,7 +216,7 @@ void packet::send_packet(const char* args, va_list array)
 			packet_length = length;
 			packet_data = new unsigned char[packet_length];
 			memcpy(packet_data, sendbuf, packet_length);
-						
+
 			memcpy(key_change, &sendbuf[2], 4);
 			
 			this->encrypt();
@@ -385,6 +388,15 @@ int packet::process_packet()
 		case SERVER_VERSIONS: server_version_packet(); break;
 		case SERVER_DISCONNECT: return -1; break;
 		case SERVER_CHAR_STAT: char_status(); break;
+		case SERVER_TIME: game_time(); break;
+		case SERVER_MPVALS: update_mp(); break;
+		case SERVER_HPVALS: update_hp(); break;
+		case SERVER_GROUNDITEM: ground_item(); break;
+		case SERVER_LIGHT: place_light(); break;
+		case SERVER_WEATHER: weather(); break;
+		case SERVER_INV_ITEMS: add_inv_items(); break;
+		case SERVER_MESSAGE: server_message(); break;
+		case SERVER_CHANGE_SPMR: change_spmr(); break;
 		case SERVER_ENTERGAME:
 		case SERVER_CHAR_DELETE:
 		case SERVER_LOGIN: login_check(); break;
@@ -395,8 +407,9 @@ int packet::process_packet()
 		case SERVER_CREATE_STAT: char_create_result();	break;
 		case SERVER_NUM_CHARS: num_char_packet(); break;
 		case SERVER_CHAT_NORM:
-		case SERVER_CHAT_WHISP:
+		case SERVER_CHAT_WHISPER:
 		case SERVER_CHAT_GLOBAL:
+		case SERVER_CHAT_SHOUT:
 			handle_chat();
 			break;
 		default: print_packet(); break;
@@ -424,22 +437,197 @@ void packet::print_packet()
 	printf("\n");
 }
 
+void packet::server_message()
+{
+	unsigned char num_msgs;
+	unsigned short offset = 1;
+	unsigned short type;
+	disassemble(&packet_data[offset], "hc", &type, &num_msgs);
+	offset++;
+	printf("There are %d messages of type %d\n", num_msgs, type);
+	for (int i = 0; i < num_msgs; i++)
+	{
+		char *message;
+		offset += disassemble(&packet_data[offset], "s", &message);
+		printf("Message %d is %s\n", i, message);
+		delete [] message;
+	}
+}
+
 void packet::handle_chat()
 {
 	unsigned char type;
 	int player_id;
 	char *message;
-	disassemble(&packet_data[1], "cds", &type, &player_id, &message);
 	
-	chat_window *temp;
-	temp = (chat_window*)(game->graphics->get_drawmode()->get_widget(1));
-	temp->add_line(message);
+	switch(packet_data[0])
+	{
+		case SERVER_CHAT_NORM:
+		{
+			disassemble(&packet_data[1], "cds", &type, &player_id, &message);
+			chat_window *temp;
+			temp = (chat_window*)(game->graphics->get_drawmode()->get_widget(1));
+			temp->add_line(message);
+			delete [] message;
+		}
+			break;
+		case SERVER_CHAT_SHOUT:
+		{	//605 - 612.img are the direction icons
+			short x, y;
+			disassemble(&packet_data[1], "cdshh", &type, &player_id, &message, &x, &y);
+			chat_window *temp;
+			temp = (chat_window*)(game->graphics->get_drawmode()->get_widget(1));
+			temp->add_line(message);
+			delete [] message;
+		}
+			break;
+		case SERVER_CHAT_GLOBAL:
+		{	
+			int offset = 1;
+			offset += disassemble(&packet_data[offset], "c", &type);
+			switch(type)
+			{
+				case 9:
+				{	//return from a command like .help
+					disassemble(&packet_data[offset], "s", &message);
+					chat_window *temp;
+					temp = (chat_window*)(game->graphics->get_drawmode()->get_widget(1));
+					temp->add_line(message);
+					delete [] message;
+				}	
+					break;
+				case 3:
+				{	//regular global chat
+					disassemble(&packet_data[offset], "s", &message);
+					chat_window *temp;
+					temp = (chat_window*)(game->graphics->get_drawmode()->get_widget(1));
+					temp->add_line(message);
+					delete [] message;
+				}
+					break;
+				default:
+					break;
+			}
+			
+		}
+			break;
+		case SERVER_CHAT_WHISPER:
+		{
+			char *act_msg;
+			char *display;
+			disassemble(&packet_data[1], "ss", &message, &act_msg);
+			display = new char[strlen(message) + strlen(act_msg) + 4];
+			sprintf(display, "(%s) %s", message, act_msg);
+			chat_window *temp;
+			temp = (chat_window*)(game->graphics->get_drawmode()->get_widget(1));
+			temp->add_line(display);
+			delete [] message;
+			delete [] act_msg;
+			delete [] display;
+		}
+			break;
+		default:
+		{
+			disassemble(&packet_data[1], "cds", &type, &player_id, &message);
+			printf("Received chat message: %s\n", message);
+			delete [] message;
+		}
+			break;
+	}
+}
+
+void packet::add_inv_items()
+{
+	unsigned short offset = 1;
 	
-	printf("Received chat message: %s\n", message);
-	//char opcode
-	//char type
-	//int char id
-	//char *message
+	unsigned char num_items;
+	disassemble(&packet_data[offset], "c", &num_items);
+	offset += 1;
+	printf("Adding %d items to your inventory\n", num_items);
+	for (int i = 0; i < num_items; i++)
+	{
+		int item_id, count;
+		unsigned char use_type, blessed_status, identified, dummy;
+		short icon;
+		char *name;
+		unsigned char status_length;
+		
+		offset += disassemble(&packet_data[offset], "dcchcdcsc", &item_id,
+			&use_type, &dummy, &icon, &blessed_status, &count,
+			&identified, &name, &status_length);
+		printf("%d of Item %d usage %d (bless %d) icon %d. ", count,
+			name, use_type, blessed_status, icon);
+		
+		if (status_length > 0)
+		{
+			printf("\nStatus: ");
+		}
+		for (int j = 0; j < status_length; j++)
+		{
+			unsigned char mys;
+			offset += disassemble(&packet_data[offset], "c", &mys);
+			printf("%02x", mys);
+		}
+		printf("\n");
+	}
+}
+
+void packet::ground_item()
+{
+	unsigned short x, y, gnd_icon;
+	int id, count;
+	unsigned char emit_light, d1, d2, d3, d4, d5;
+ 	char *name;
+ 	disassemble(&packet_data[1], "hhdhccccdccs", &x, &y, &id, &gnd_icon,
+ 		&d1, &d2, &emit_light, &d3, &count, &d4, &d5, &name);
+ 	printf("There is %s [%d] at (%d, %d)\n", name, id, x, y); 
+}
+
+void packet::update_mp()
+{
+	short max_mp, cur_mp;
+	disassemble(&packet_data[1], "hh", &cur_mp, &max_mp);
+	game->graphics->wait_for_mode(DRAWMODE_GAME);
+	draw_game *bla = (draw_game*)game->graphics->get_drawmode();
+	bla->update_mpbar(cur_mp, max_mp);
+}
+
+void packet::update_hp()
+{
+	short max_hp, cur_hp;
+	disassemble(&packet_data[1], "hh", &cur_hp, &max_hp);
+	game->graphics->wait_for_mode(DRAWMODE_GAME);
+	draw_game *bla = (draw_game*)game->graphics->get_drawmode();
+	bla->update_hpbar(cur_hp, max_hp);
+}
+
+void packet::game_time()
+{
+	int time;
+	disassemble(&packet_data[1], "d", &time);
+//	printf("The time is %d\n", time);
+}
+
+void packet::place_light()
+{
+	int id;
+	unsigned char type;
+	disassemble(&packet_data[1], "dc", &id, &type);
+	printf("Light id %d is type %d\n", id, type); 
+}
+
+void packet::change_spmr()
+{
+	unsigned char delta_sp, delta_mr;
+	disassemble(&packet_data[1], "cc", &delta_sp, &delta_mr);
+	printf("Your SP changed by %d and MR changed by %d\n", delta_sp, delta_mr);
+}
+
+void packet::weather()
+{
+	unsigned char theweather;
+	disassemble(&packet_data[1], "c", &theweather);
+	printf("The weather is %d\n", theweather);
 }
 
 void packet::set_map()
@@ -447,7 +635,7 @@ void packet::set_map()
 	short mapid;
 	char underwater;
 	disassemble(&packet_data[1], "hc", &mapid, &underwater);
-	printf("The map is %d and underwater:%d\n", mapid, underwater);
+//	printf("The map is %d and underwater:%d\n", mapid, underwater);
 }
 
 void packet::char_status()
@@ -468,7 +656,10 @@ void packet::char_status()
 	printf("\tLevel : %d\tExp %d\n", level, exp);
 	printf("\tSTR %2d CON %2d DEX %2d WIS %2d INT %2d CHA %2d\n", str, con, dex,
 		wis, intl, cha);
-	printf("\tHP %d/%d\tMP %d/%d\n", cur_hp, max_hp, cur_mp, max_mp);
+	game->graphics->wait_for_mode(DRAWMODE_GAME);
+	draw_game *bla = (draw_game*)game->graphics->get_drawmode();
+	bla->update_hpbar(cur_hp, max_hp);
+	bla->update_mpbar(cur_mp, max_mp);
 	printf("\tAC %d\tTIME %d\tFood %d\tWeight %d\tAlignment %d\n", ac, time, 
 		food, weight, alignment);
 }
@@ -495,7 +686,6 @@ void packet::num_char_packet()
 	unsigned char max_characters;
 	disassemble(&packet_data[1], "cc", &num_characters, &max_characters);
 	
-	printf("Max characters is %d\n", max_characters);
 	if (max_characters == 0)
 	{
 		printf("WARNING : Max characters is 0 (ZERO) this is bad!\n");
@@ -547,8 +737,6 @@ void packet::login_char_packet()
 
 void packet::login_check()
 {
-	printf("Login check packet\n");
-	
 	unsigned char result;
 	disassemble(&packet_data[1], "c", &result);
 	
@@ -569,6 +757,9 @@ void packet::login_check()
 			break;
 		case 0x51:
 			printf("Char will be deleted in the future\n");
+			break;
+		default:
+			printf("Unhandled Login check packet (%d)\n", result);
 			break;
 	}
 	
