@@ -148,6 +148,6 @@ SDL_Surface *get_image(SDL_RWops *buf);
 
 SDL_Rect *make_sdl_rect(int x, int y, int w, int h);
 
-int sha256_hash(char *filename, char *dest);
+extern "C" int sha256_hash(char *filename, char *dest);
 
 #endif
