@@ -1,6 +1,7 @@
 AC_INIT([l1j_client], [0.1])
+LDFLAGS=LDFLAGS -L${srcdir}/libs
 AM_INIT_AUTOMAKE
-AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_HEADER([ac_config.h:config.h.in])
 AC_PROG_CXX
 AC_PROG_CC
 AC_PROG_CPP
@@ -39,26 +40,28 @@ case $build_os in
 	;;
 esac
 
+AC_CHECK_LIB([SDL_mixer], [Mix_Init], [], [AC_MSG_ERROR("SDL_mixer Library not found")])
+AC_CHECK_LIB([SDL_image], [IMG_Init], [], [AC_MSG_ERROR("SDL_image Library not found")])
+AC_CHECK_LIB([SDL], [SDL_Init], [], [AC_MSG_ERROR("SDL_Init Library not found")])
+
 case $host_os in
   darwin* )
 	#mac
 	BUILD_FOR="MAC"
+	AC_DEFINE(MAC, [1], [Enable code specific to mac])
 	AC_MSG_NOTICE("Building for mac")
 	;;
   linux* )
 	BUILD_FOR="LINUX"
+	AC_DEFINE(LINUX, [1], [Enable code specific to linux])
 	AC_MSG_NOTICE("Building for linux")
 	;;
-  mingw32* )
+  mingw32* | mingw32msvc* )
 	BUILD_FOR="WINDOWS"
+	AC_DEFINE(WINDOWS, [1], [Enable code specific to windows])
 	USE_DLLS="mingwm10.dll"	
-#	AC_MSG_ERROR("Library specs for wxwidgets unknown")
-	AC_MSG_NOTICE("Building for windows")
-	;;
-  mingw32msvc* )
-	BUILD_FOR="WINDOWS"
-	USE_DLLS="mingwm10.dll"	
-#	AC_MSG_ERROR("Library specs for wxwidgets unknown")
+	AC_CHECK_LIB([SDLmain], [main], [], [AC_MSG_ERROR("SDLmain Library not found")])
+	AC_CHECK_LIB([ws2_32], [puts], [], [AC_MSG_ERROR("ws2_32 Library not found")])
 	AC_MSG_NOTICE("Building for windows")
 	;;
   * )
@@ -72,7 +75,6 @@ AC_SUBST(BUILD_FROM)
 
 AM_CONDITIONAL([WINDOWS], [test \"$BUILD_FOR\" = \"WINDOWS\"])
 AM_CONDITIONAL([LINUX], [test \"$BUILD_FOR\" = \"LINUX\"])
-AC_MSG_NOTICE("Testing $BUILD_FOR")
 
 AC_CONFIG_FILES([
 	Makefile

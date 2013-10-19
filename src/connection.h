@@ -1,11 +1,21 @@
 #ifndef _CONNECTION_H_
 #define _CONNECTION_H_
 
+#ifdef HAVE_CONFIG_H
+#include <ac_config.h>
+#endif
+
+#ifdef WINDOWS
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#else
+
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <sys/types.h>
+#endif
 
 #include "config.h"
 
@@ -30,7 +40,11 @@ class connection
 		struct addrinfo *servinfo;  //used for connecting
 		struct addrinfo hints;
 		config *the_config;
-		int sock;
+		#ifdef WINDOWS
+			SOCKET sock;
+		#else
+			int sock;
+		#endif
 		int conn_ok;
 		int srv_num;
 		

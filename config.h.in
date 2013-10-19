@@ -1,5 +1,26 @@
 /* config.h.in.  Generated from configure.ac by autoheader.  */
 
+/* Define to 1 if you have the `SDL' library (-lSDL). */
+#undef HAVE_LIBSDL
+
+/* Define to 1 if you have the `SDLmain' library (-lSDLmain). */
+#undef HAVE_LIBSDLMAIN
+
+/* Define to 1 if you have the `SDL_image' library (-lSDL_image). */
+#undef HAVE_LIBSDL_IMAGE
+
+/* Define to 1 if you have the `SDL_mixer' library (-lSDL_mixer). */
+#undef HAVE_LIBSDL_MIXER
+
+/* Define to 1 if you have the `ws2_32' library (-lws2_32). */
+#undef HAVE_LIBWS2_32
+
+/* Enable code specific to linux */
+#undef LINUX
+
+/* Enable code specific to mac */
+#undef MAC
+
 /* Name of package */
 #undef PACKAGE
 
@@ -23,3 +44,6 @@
 
 /* Version number of package */
 #undef VERSION
+
+/* Enable code specific to windows */
+#undef WINDOWS

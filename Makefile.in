@@ -47,7 +47,7 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
-CONFIG_HEADER = config.h
+CONFIG_HEADER = ac_config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
@@ -73,7 +73,9 @@ am_Admin_OBJECTS = client_admin.$(OBJEXT) config.$(OBJEXT) \
 	draw_maint_til.$(OBJEXT) mains.$(OBJEXT) sha256deep.$(OBJEXT) \
 	hash.$(OBJEXT) helpers.$(OBJEXT) sha256.$(OBJEXT)
 Admin_OBJECTS = $(am_Admin_OBJECTS)
-Admin_DEPENDENCIES =
+Admin_LDADD = $(LDADD)
+Admin_LINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(Admin_LDFLAGS) \
+	$(LDFLAGS) -o $@
 am_Lineage_OBJECTS = client.$(OBJEXT) config.$(OBJEXT) \
 	connection.$(OBJEXT) funcptr.$(OBJEXT) global.$(OBJEXT) \
 	lindes.$(OBJEXT) main.$(OBJEXT) packet.$(OBJEXT) \
@@ -96,7 +98,7 @@ am_Lineage_OBJECTS = client.$(OBJEXT) config.$(OBJEXT) \
 	mains.$(OBJEXT) sha256deep.$(OBJEXT) hash.$(OBJEXT) \
 	helpers.$(OBJEXT) sha256.$(OBJEXT)
 Lineage_OBJECTS = $(am_Lineage_OBJECTS)
-Lineage_DEPENDENCIES =
+Lineage_LDADD = $(LDADD)
 Lineage_LINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(Lineage_LDFLAGS) \
 	$(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@
@@ -230,9 +232,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 @DEBUG_TRUE@AM_CFLAGS = -g
-@LINUX_FALSE@@WINDOWS_TRUE@Lineage_LDADD = 
-@LINUX_TRUE@Lineage_LDADD = -lSDL -lSDL_mixer -lSDL_image
-@LINUX_FALSE@@WINDOWS_TRUE@Lineage_LDFLAGS = 
+@WINDOWS_TRUE@Lineage_LDFLAGS = -lmingw32
 Lineage_SOURCES = \
 src/client.cpp \
 src/config.cpp \
@@ -287,8 +287,7 @@ src/encryption/hash.c \
 src/encryption/helpers.c \
 src/encryption/sha256.c
 
-@LINUX_FALSE@@WINDOWS_TRUE@Admin_LDADD = 
-@LINUX_TRUE@Admin_LDADD = -lSDL -lSDL_mixer -lSDL_image
+@WINDOWS_TRUE@Admin_LDFLAGS = -lmingw32
 Admin_SOURCES = \
 src/client_admin.cpp \
 src/config.cpp \
@@ -350,7 +349,7 @@ AM_CPPFLAGS = -I${top_srcdir}/src -I${top_srcdir}/include
 @DEBUG_TRUE@@LINUX_TRUE@INSTALLER_DEP = fail
 @LINUX_FALSE@@WINDOWS_FALSE@INSTALLER_DEP = nothing
 @LINUX_TRUE@PACKAGE_FILES = Lineage${EXEEXT} ${top_srcdir}/src/Lineage.ini ${top_srcdir}/src/README.txt
-all: config.h
+all: ac_config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
@@ -390,20 +389,20 @@ $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	$(am__cd) $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
 $(am__aclocal_m4_deps):
 
-config.h: stamp-h1
+ac_config.h: stamp-h1
 	@if test ! -f $@; then rm -f stamp-h1; else :; fi
 	@if test ! -f $@; then $(MAKE) $(AM_MAKEFLAGS) stamp-h1; else :; fi
 
 stamp-h1: $(srcdir)/config.h.in $(top_builddir)/config.status
 	@rm -f stamp-h1
-	cd $(top_builddir) && $(SHELL) ./config.status config.h
+	cd $(top_builddir) && $(SHELL) ./config.status ac_config.h
 $(srcdir)/config.h.in:  $(am__configure_deps) 
 	($(am__cd) $(top_srcdir) && $(AUTOHEADER))
 	rm -f stamp-h1
 	touch $@
 
 distclean-hdr:
-	-rm -f config.h stamp-h1
+	-rm -f ac_config.h stamp-h1
 install-binPROGRAMS: $(bin_PROGRAMS)
 	@$(NORMAL_INSTALL)
 	test -z "$(bindir)" || $(MKDIR_P) "$(DESTDIR)$(bindir)"
@@ -443,7 +442,7 @@ clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
 Admin$(EXEEXT): $(Admin_OBJECTS) $(Admin_DEPENDENCIES) $(EXTRA_Admin_DEPENDENCIES) 
 	@rm -f Admin$(EXEEXT)
-	$(CXXLINK) $(Admin_OBJECTS) $(Admin_LDADD) $(LIBS)
+	$(Admin_LINK) $(Admin_OBJECTS) $(Admin_LDADD) $(LIBS)
 Lineage$(EXEEXT): $(Lineage_OBJECTS) $(Lineage_DEPENDENCIES) $(EXTRA_Lineage_DEPENDENCIES) 
 	@rm -f Lineage$(EXEEXT)
 	$(Lineage_LINK) $(Lineage_OBJECTS) $(Lineage_LDADD) $(LIBS)
@@ -1569,7 +1568,7 @@ distcleancheck: distclean
 	       exit 1; } >&2
 check-am: all-am
 check: check-am
-all-am: Makefile $(PROGRAMS) config.h
+all-am: Makefile $(PROGRAMS) ac_config.h
 installdirs:
 	for dir in "$(DESTDIR)$(bindir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \

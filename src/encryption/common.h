@@ -6,8 +6,10 @@
 #ifndef __COMMON_H
 #define __COMMON_H
 
+#if 0
 #ifdef HAVE_CONFIG_H
 # include "config.h"
+#endif
 #endif
 
 #ifdef _WIN32

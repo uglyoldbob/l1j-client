@@ -3,13 +3,8 @@ AM_CFLAGS = -g
 endif
 
 bin_PROGRAMS = Lineage Admin
-if LINUX
-Lineage_LDADD = -lSDL -lSDL_mixer -lSDL_image
-else
 if WINDOWS
-Lineage_LDADD = 
-Lineage_LDFLAGS = 
-endif
+Lineage_LDFLAGS = -lmingw32
 endif
 Lineage_SOURCES = \
 src/client.cpp \
@@ -65,13 +60,10 @@ src/encryption/hash.c \
 src/encryption/helpers.c \
 src/encryption/sha256.c
 
-if LINUX
-Admin_LDADD = -lSDL -lSDL_mixer -lSDL_image
-else
 if WINDOWS
-Admin_LDADD = 
+Admin_LDFLAGS = -lmingw32
 endif
-endif
+
 Admin_SOURCES = \
 src/client_admin.cpp \
 src/config.cpp \

@@ -1,6 +1,12 @@
+#ifdef HAVE_CONFIG_H
+#include <ac_config.h>
+#endif
+
 #include <stdio.h>
 #include <string.h>
+#ifdef LINUX
 #include <wordexp.h>
+#endif
 
 #include "config.h"
 #include "globals.h"
@@ -102,6 +108,7 @@ config::config(const char *cfile)
 			{	//ignore comments
 				if (read_mode == 0)
 				{
+					#ifdef LINUX
 					if (sscanf(line_read, "Path = %[^\t\n\r]", all_names) == 1)
 					{
 						wordexp_t exp_result;
@@ -120,7 +127,9 @@ config::config(const char *cfile)
 
 						printf("Lineage is located at: %s\n", lineage_dir);
 					}
-					else if (sscanf(line_read, "NumServers = %d ", &num_servers) == 1)
+					else 
+					#endif
+					if (sscanf(line_read, "NumServers = %d ", &num_servers) == 1)
 					{
 						printf("There are %d servers\n", num_servers);
 						

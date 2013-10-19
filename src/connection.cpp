@@ -1,3 +1,7 @@
+#ifdef HAVE_CONFIG_H
+#include <ac_config.h>
+#endif
+
 #include <errno.h>
 #include <fcntl.h>
 #include <stdio.h>
@@ -200,8 +204,12 @@ int connection::make_connection()
 		}
 
 		if (connect(sock, p->ai_addr, p->ai_addrlen) == -1) 
-		{
+		{	
+			#ifdef WINDOWS
+			closesocket(sock);
+			#else
 			close(sock);
+			#endif
 //			perror("ERROR: connect");
 			continue;
 		}
@@ -209,9 +217,14 @@ int connection::make_connection()
 		break;
 	}
 
+	#ifdef WINDOWS
+	// If iMode!=0, non-blocking mode is enabled.
+	u_long iMode=1;
+	ioctlsocket(sock,FIONBIO,&iMode);
+	#else
 	int x = fcntl(sock, F_GETFL, 0);
 	fcntl(sock, F_SETFL, x | O_NONBLOCK);
-	
+	#endif
 	if (p == NULL) 
 	{
 //		fprintf(stderr, "client: failed to connect\n");
@@ -277,7 +290,13 @@ connection::~connection()
 {
 	printf("Deleting connection\n");
 	if (sock != -1)
+	{
+		#ifdef WINDOWS
+		closesocket(sock);
+		#else
 		close(sock);
+		#endif
+	}
 	if (servinfo != 0)
 		freeaddrinfo(servinfo); // free the linked-list
 	printf("\tDone\n");
