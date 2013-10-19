@@ -101,6 +101,11 @@ sdl_graphic::sdl_graphic(int x, int y, short *source, int type)
 		//	printf("\tx: %d y:%d w:%d h:%d\n", x, y, width, height);
 			img = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 16,
 				0x7C00, 0x03E0, 0x001F, 0);
+			short *manip = (short*) &data[data_offset];
+			for (int i = 0; i < width * height / 2; i++)
+			{
+				manip[i] = SWAP16(manip[i]);
+			}
 			cleanup = false;
 			pos = make_sdl_rect(x, y, width, height);
 			mask = make_sdl_rect(0, 0, width, height);
@@ -149,6 +154,10 @@ sdl_graphic::sdl_graphic(int x, int y, short *source, int type)
 				{
 					row_width -= (4 * (i - 11));
 				}
+				for (int j = 0; j < row_width; j++)
+				{
+					source[j] = SWAP16(source[j]);
+				}
 				memcpy(&temp[24*i+(24 - row_width)], source, row_width * 2);
 				source = &source[row_width];
 			}
@@ -172,6 +181,10 @@ sdl_graphic::sdl_graphic(int x, int y, short *source, int type)
 				if (i > 11)
 				{
 					row_width -= (4 * (i - 11));
+				}
+				for (int j = 0; j < row_width; j++)
+				{
+					source[j] = SWAP16(source[j]);
 				}
 				memcpy(&temp[i*24], source, row_width * 2);
 				source = &source[row_width];

@@ -1,3 +1,7 @@
+#ifdef HAVE_CONFIG_H
+#include <ac_config.h>
+#endif
+
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
@@ -56,8 +60,12 @@ int pack::load_index()
 	fread(&size1, 4, 1, index_buf);
 	if (size1 != size2)
 	{
-		size1 = SWAP32(size1);
 		reverse_file = true;
+		#ifdef MAC
+		size1 = ntohl(size1);
+		#else
+		size1 = SWAP32(size1);
+		#endif
 		if (size1 != size2)
 		{
 			printf("Size mismatch (%d) (%d)\n", size1, size2);
@@ -87,8 +95,13 @@ int pack::load_index()
 		}
 		if (reverse_file)
 		{
+			#ifdef MAC
+			files[i].offset = ntohl(files[i].offset);
+			files[i].size = ntohl(files[i].size);
+			#else
 			files[i].offset = SWAP32(files[i].offset);
 			files[i].size = SWAP32(files[i].size);
+			#endif
 		}
 	}
 	

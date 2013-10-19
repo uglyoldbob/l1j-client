@@ -18,8 +18,6 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
-
-
 uint64_t find_block_size(state *s, char *input_str)
 {
   unsigned char c;

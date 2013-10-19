@@ -8,6 +8,13 @@
 #include "widgets/sdl_input_box.h"
 #include "widgets/sdl_text_button.h"
 
+void change_mode(void *a, void* b)
+{
+	sdl_user *owner;
+	owner = (sdl_user*)a;
+	owner->change_drawmode(*(drawmode*)b);
+}
+
 draw_admin_main::draw_admin_main(sdl_user *self)
 	: sdl_drawmode(self)
 {

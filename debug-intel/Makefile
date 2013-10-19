@@ -1,4 +1,6 @@
 EXTRA_FLAGS=-g
+CFLAGS = -arch i386
+LFLAGS = -arch i386
 	
 PACKAGE_FILES += $(OUTPUT)run.bat
 

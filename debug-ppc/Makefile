@@ -1,17 +1,18 @@
-EXTRA_FLAGS=-s -O3
+EXTRA_FLAGS=-g
+CFLAGS = -arch ppc
+LFLAGS = -arch ppc
+	
+PACKAGE_FILES += $(OUTPUT)run.bat
 
 all: Lineage.exe Admin.exe package
 
 -include ../make.frag
-	
-package: release.tar.gz
 
-release.tar.gz: $(PACKAGE_FILES)
+package: $(PACKAGE_FILES)
 	@if [ ! -d client ]; then\
 		echo mkdir client;\
 		mkdir client;\
 	fi
 	@echo "Copying files to package folder"
-	rm -f ./client/std* ./client/*.exe
 	cp -f $(PACKAGE_FILES) ./client/
-	tar -zcvf release.tar.gz client
+	touch ./client/DEBUG_DO_NOT_RELEASE.txt
