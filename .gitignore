@@ -7,10 +7,14 @@ release/client/*
 debug/*.o
 debug/*.a
 debug/client/*
+build/*
 src/documents/*
 libs/*
 *.o
 *.exe
+*.bmp
 *.a
 *.d
 ~*
+*~
+autom4te.cache/*

@@ -1,10 +1,11 @@
 AC_INIT([l1j_client], [0.1])
-LDFLAGS=LDFLAGS -L${srcdir}/libs
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADER([ac_config.h:config.h.in])
 AC_PROG_CXX
 AC_PROG_CC
 AC_PROG_CPP
+
+m4_include([m4/libs.m4])
 
 #BUILD_FROM = system doing the compiling
 #BUILD_FOR  = system the program will run on
