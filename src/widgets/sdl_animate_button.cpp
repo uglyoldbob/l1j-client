@@ -212,10 +212,13 @@ void sdl_animate_button::draw(SDL_Surface *display)
 			if (cur_frame == num_anim)
 				cur_frame = first_repeat;
 		}
-		//TODO : account for missing images on male illusionist
+		//TODO : account for "missing" images on male illusionist
 		//TODO : delay image loading time to when image is first displayed
 		if (animates[cur_frame] == (sdl_graphic*)-1)
+		{
 			animates[cur_frame] = new sdl_graphic(first_anim+cur_frame, x, y, blabla, GRAPH_PNG);
+			SDL_SetAlpha(animates[cur_frame]->get_surf(), SDL_SRCALPHA, 150);
+		}
 		if (animates[cur_frame] != 0)
 			animates[cur_frame]->draw(display);
 	}

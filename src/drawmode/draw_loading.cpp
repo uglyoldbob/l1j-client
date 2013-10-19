@@ -7,6 +7,7 @@
 #include "widgets/sdl_animate_button.h"
 #include "widgets/sdl_input_box.h"
 #include "widgets/sdl_text_button.h"
+#include "widgets/sprite.h"
 #include "widgets/text_box.h"
 
 load_ptr::load_ptr(draw_loading *bla, int val)
@@ -40,7 +41,7 @@ draw_loading::draw_loading(sdl_user *self)
 	
 	num_servers = owner->game->get_config()->get_num_servers();
 	
-	num_widgets = num_servers + 1;
+	num_widgets = num_servers + 2;
 	widgets = new sdl_widget*[num_widgets];
 	
 	server_pick = -1;
@@ -54,6 +55,12 @@ draw_loading::draw_loading(sdl_user *self)
 		widgets[i]->set_key_focus(true);
 	}
 	widgets[num_servers] = new text_box(257, 254, 150, 10*12, owner->game);
+	
+	widgets[num_servers+1] = new sprite(320, 200, "2786-0.spr", owner->game);
+	//widgets[num_servers+1] = new sprite(50, 50, "6258-0.spr", owner->game);
+		//6256-173 nothing?
+		//6256-181 nothing?
+		//		
 	
 	((text_box*)widgets[num_servers])->add_line("Please select a server:");
 		

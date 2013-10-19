@@ -21,6 +21,7 @@ class sdl_graphic
 	public:
 		sdl_graphic(int num, int x, int y, client *packs, int type);
 		sdl_graphic(char *name, int x, int y, client *packs, int type);
+		sdl_graphic(int x, int y, SDL_RWops *source, short *palette, int type);
 		sdl_graphic(int x, int y, short *source, int type);
 		sdl_graphic(int x, int y, int w, int h);
 		void disable_clear();

@@ -67,8 +67,8 @@ draw_game::draw_game(sdl_user *self)
 	hp_width = (float)widgets[4]->getw();
 	mp_width = (float)widgets[5]->getw();
 	
-	//widgets[6] = new sprite(50, 50, "2786-156.spr", owner->game);
-	widgets[6] = new sprite(50, 50, "3226-305.spr", owner->game);
+	widgets[6] = new sprite(320, 200, "2786-0.spr", owner->game);   //0, 5, 8, 
+	//widgets[6] = new sprite(50, 50, "3226-305.spr", owner->game);
 }
 
 void draw_game::update_hpbar(int cur, int max)

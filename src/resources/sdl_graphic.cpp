@@ -21,6 +21,68 @@ void sdl_graphic::erase()
 	SDL_FillRect(img, NULL, transp_color);
 }
 
+sdl_graphic::sdl_graphic(int x, int y, SDL_RWops *source, short *palette, int type)
+{
+	switch(type)
+	{
+		case GRAPH_STIL:
+		{	//	printf("TranspTile %d\n", which);
+			int x = 0, y = 0;
+			int width = 0, height = 0;
+			int read = 0;
+			SDL_RWread(source, &x, 1, 1);
+			SDL_RWread(source, &y, 1, 1);
+			SDL_RWread(source, &width, 1, 1);
+			SDL_RWread(source, &height, 1, 1);
+			printf("\t\tx: %d y:%d w:%d h:%d\n", x, y, width, height);
+			img = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 16,
+				0x7C00, 0x03E0, 0x001F, 0);
+			cleanup = false;
+			pos = make_sdl_rect(0, 0, width, height);
+			mask = make_sdl_rect(0, 0, width, height);
+			SDL_SetColorKey(img, SDL_SRCCOLORKEY, SDL_MapRGB(img->format, 255,255,0) );
+			transp_color = SDL_MapRGB(img->format, 255,255,0);
+			SDL_FillRect(img, NULL, SDL_MapRGB(img->format, 255,255,0));
+			short *temp = (short*)img->pixels;	//destination pointer
+			printf("\t\tThere are %d rows\n", height);
+			for (int i = 0; i < height; i++)
+			{
+				int row_segs = 0;
+				SDL_RWread(source, &row_segs, 1, 1);
+				read++;
+				short *row_temp = temp;
+				printf("\t\tThere are %d segments in this row\n", row_segs);
+				for (int j = 0; j < row_segs; j++)
+				{
+					int skip = 0;
+					SDL_RWread(source, &skip, 1, 1);
+					read++;
+					skip /= 2;
+					int seg_width = 0;
+					SDL_RWread(source, &seg_width, 1, 1);
+					read++;
+					row_temp = &row_temp[skip];
+					printf("\t\t\tSkip %d, print %d [", skip, seg_width);
+					for (int k = 0; k < seg_width; k++)
+					{
+						char pal_color= 0;
+						SDL_RWread(source, &pal_color, 1, 1);
+						read++;
+						row_temp[k] = palette[pal_color&0xFF];
+						printf("%02x ", pal_color&0xFF);
+					}
+					printf("] %d\n", read);
+					row_temp = &row_temp[seg_width];
+				}
+				temp = &temp[width];
+			}
+		}
+			break;
+		default:
+			break;
+	}
+}
+
 sdl_graphic::sdl_graphic(int x, int y, short *source, int type)
 {
 	switch(type)
@@ -69,8 +131,9 @@ sdl_graphic::sdl_graphic(int x, int y, short *source, int type)
 		}
 		case GRAPH_LTIL:
 		{
-			img = SDL_CreateRGBSurface(SDL_SWSURFACE, 24, 24, 16,
-				0x7C00, 0x03E0, 0x001F, 0);
+			img = 0;//SDL_CreateRGBSurface(SDL_SWSURFACE, 24, 24, 16,
+				//0x7C00, 0x03E0, 0x001F, 0);
+			break;
 			cleanup = false;
 			pos = make_sdl_rect(0, 0, 24, 24);
 			mask = make_sdl_rect(0, 0, 24, 24);
