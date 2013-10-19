@@ -341,7 +341,7 @@ src/encryption/hash.c \
 src/encryption/helpers.c \
 src/encryption/sha256.c
 
-AM_CPPFLAGS = -I${top_srcdir}/src
+AM_CPPFLAGS = -I${top_srcdir}/src -I${top_srcdir}/include
 @DEBUG_TRUE@@LINUX_FALSE@@WINDOWS_TRUE@TEST_DEP = win_test
 @LINUX_TRUE@TEST_DEP = linux_test
 @DEBUG_FALSE@@LINUX_FALSE@@WINDOWS_TRUE@INSTALLER_DEP = win_installer

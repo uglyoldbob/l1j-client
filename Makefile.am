@@ -124,7 +124,7 @@ src/encryption/hash.c \
 src/encryption/helpers.c \
 src/encryption/sha256.c
 
-AM_CPPFLAGS = -I${top_srcdir}/src
+AM_CPPFLAGS = -I${top_srcdir}/src -I${top_srcdir}/include
 
 if LINUX
 TEST_DEP = linux_test
