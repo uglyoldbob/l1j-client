@@ -217,6 +217,7 @@ int connection::make_connection()
 		break;
 	}
 
+
 	#ifdef WINDOWS
 	// If iMode!=0, non-blocking mode is enabled.
 	u_long iMode=1;
@@ -225,6 +226,7 @@ int connection::make_connection()
 	int x = fcntl(sock, F_GETFL, 0);
 	fcntl(sock, F_SETFL, x | O_NONBLOCK);
 	#endif
+
 	if (p == NULL) 
 	{
 //		fprintf(stderr, "client: failed to connect\n");

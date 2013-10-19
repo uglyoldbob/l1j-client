@@ -4086,7 +4086,7 @@ _ACEOF
   LIBS="-lSDL_mixer $LIBS"
 
 else
-  as_fn_error $? "\"Library not found\"" "$LINENO" 5
+  as_fn_error $? "\"SDL_mixer Library not found\"" "$LINENO" 5
 fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for IMG_Init in -lSDL_image" >&5
@@ -4133,7 +4133,7 @@ _ACEOF
   LIBS="-lSDL_image $LIBS"
 
 else
-  as_fn_error $? "\"Library not found\"" "$LINENO" 5
+  as_fn_error $? "\"SDL_image Library not found\"" "$LINENO" 5
 fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for SDL_Init in -lSDL" >&5
@@ -4180,7 +4180,7 @@ _ACEOF
   LIBS="-lSDL $LIBS"
 
 else
-  as_fn_error $? "\"Library not found\"" "$LINENO" 5
+  as_fn_error $? "\"SDL_Init Library not found\"" "$LINENO" 5
 fi
 
 
@@ -4246,7 +4246,7 @@ _ACEOF
   LIBS="-lSDLmain $LIBS"
 
 else
-  as_fn_error $? "\"Library not found\"" "$LINENO" 5
+  as_fn_error $? "\"SDLmain Library not found\"" "$LINENO" 5
 fi
 
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for puts in -lws2_32" >&5
@@ -4293,7 +4293,7 @@ _ACEOF
   LIBS="-lws2_32 $LIBS"
 
 else
-  as_fn_error $? "\"Library not found\"" "$LINENO" 5
+  as_fn_error $? "\"ws2_32 Library not found\"" "$LINENO" 5
 fi
 
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: \"Building for windows\"" >&5

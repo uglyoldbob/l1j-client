@@ -2,7 +2,7 @@ EXTRA_FLAGS=-g
 	
 PACKAGE_FILES += $(OUTPUT)run.bat
 
-all: Lineage package Admin
+all: Lineage.exe Admin.exe package
 
 -include ../make.frag
 
