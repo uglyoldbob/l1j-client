@@ -1,5 +1,8 @@
 /* config.h.in.  Generated from configure.ac by autoheader.  */
 
+/* Define to 1 if you have the `Cocoa' framework (-lCocoa). */
+#undef HAVE_LIBCOCOA
+
 /* Define to 1 if you have the `SDL' library (-lSDL). */
 #undef HAVE_LIBSDL
 

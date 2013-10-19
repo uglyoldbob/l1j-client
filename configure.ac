@@ -1,9 +1,11 @@
 AC_INIT([l1j_client], [0.1])
+AC_PREREQ([2.61])
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADER([ac_config.h:config.h.in])
 AC_PROG_CXX
 AC_PROG_CC
 AC_PROG_CPP
+AC_PROG_OBJC
 
 m4_include([m4/libs.m4])
 
@@ -27,7 +29,6 @@ case $build_os in
 	#mac
 	BUILD_FROM="MAC"
 	AC_MSG_NOTICE("Building on mac")
-	AC_MSG_ERROR("library specs for wxwidgets unknown")
 	;;
   linux* )
 	#linux
@@ -41,19 +42,22 @@ case $build_os in
 	;;
 esac
 
-AC_CHECK_LIB([SDL_mixer], [Mix_Init], [], [AC_MSG_ERROR("SDL_mixer Library not found")])
-AC_CHECK_LIB([SDL_image], [IMG_Init], [], [AC_MSG_ERROR("SDL_image Library not found")])
-AC_CHECK_LIB([SDL], [SDL_Init], [], [AC_MSG_ERROR("SDL_Init Library not found")])
-
 case $host_os in
   darwin* )
 	#mac
 	BUILD_FOR="MAC"
 	AC_DEFINE(MAC, [1], [Enable code specific to mac])
+	AC_CHECK_FRAMEWORK([SDL_mixer], [Mix_Init], [], [AC_MSG_ERROR("SDL_mixer framework not found")])
+	AC_CHECK_FRAMEWORK([SDL_image], [IMG_Init], [], [AC_MSG_ERROR("SDL_image framework not found")])
+	AC_CHECK_FRAMEWORK([SDL], [SDL_Init], [], [AC_MSG_ERROR("SDL framework not found")])
+	AC_CHECK_FRAMEWORK([Cocoa], [main], [], [AC_MSG_ERROR("Cocoa framework not found")])
 	AC_MSG_NOTICE("Building for mac")
 	;;
   linux* )
 	BUILD_FOR="LINUX"
+	AC_CHECK_LIB([SDL_mixer], [Mix_Init], [], [AC_MSG_ERROR("SDL_mixer Library not found")])
+	AC_CHECK_LIB([SDL_image], [IMG_Init], [], [AC_MSG_ERROR("SDL_image Library not found")])
+	AC_CHECK_LIB([SDL], [SDL_Init], [], [AC_MSG_ERROR("SDL Library not found")])
 	AC_DEFINE(LINUX, [1], [Enable code specific to linux])
 	AC_MSG_NOTICE("Building for linux")
 	;;
@@ -61,6 +65,9 @@ case $host_os in
 	BUILD_FOR="WINDOWS"
 	AC_DEFINE(WINDOWS, [1], [Enable code specific to windows])
 	USE_DLLS="mingwm10.dll"	
+	AC_CHECK_LIB([SDL_mixer], [Mix_Init], [], [AC_MSG_ERROR("SDL_mixer Library not found")])
+	AC_CHECK_LIB([SDL_image], [IMG_Init], [], [AC_MSG_ERROR("SDL_image Library not found")])
+	AC_CHECK_LIB([SDL], [SDL_Init], [], [AC_MSG_ERROR("SDL_Init Library not found")])
 	AC_CHECK_LIB([SDLmain], [main], [], [AC_MSG_ERROR("SDLmain Library not found")])
 	AC_CHECK_LIB([ws2_32], [puts], [], [AC_MSG_ERROR("ws2_32 Library not found")])
 	AC_MSG_NOTICE("Building for windows")
@@ -76,6 +83,7 @@ AC_SUBST(BUILD_FROM)
 
 AM_CONDITIONAL([WINDOWS], [test \"$BUILD_FOR\" = \"WINDOWS\"])
 AM_CONDITIONAL([LINUX], [test \"$BUILD_FOR\" = \"LINUX\"])
+AM_CONDITIONAL([MAC], [test \"$BUILD_FOR\" = \"MAC\"])
 
 AC_CONFIG_FILES([
 	Makefile

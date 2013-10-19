@@ -5,7 +5,7 @@
     Feel free to customize this file to suit your needs
 */
 
-#include "SDL.h"
+#include "SDL/SDL.h"
 #include "SDLMain.h"
 #include <sys/param.h> /* for MAXPATHLEN */
 #include <unistd.h>
@@ -276,7 +276,8 @@ static void CustomApplicationMain (int argc, char **argv)
     }
     gArgv = newargv;
 
-    SDL_strlcpy(arg, temparg, arglen);
+    //SDL_strlcpy
+    strlcpy(arg, temparg, arglen);
     gArgv[gArgc++] = arg;
     gArgv[gArgc] = NULL;
     return TRUE;

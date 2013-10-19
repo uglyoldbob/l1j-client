@@ -1,1 +1,15 @@
 This is the source code for the lineage1 client.
+
+Compiling:
+	Windows:
+		(host is only for cross compiling to windows)
+		../configure --host=i686-w64-mingw32 LDFLAGS=-L../libs
+		make
+
+	Linux
+		../configure
+		make
+
+	OSX
+		../configure
+		make

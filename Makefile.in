@@ -35,6 +35,8 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = Lineage$(EXEEXT) Admin$(EXEEXT)
+@MAC_TRUE@am__append_1 = src/SDLMain.m
+@MAC_TRUE@am__append_2 = src/SDLMain.m
 subdir = .
 DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
@@ -53,6 +55,32 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
+am__Admin_SOURCES_DIST = src/client_admin.cpp src/config.cpp \
+	src/connection.cpp src/funcptr.cpp src/global.cpp \
+	src/lindes.cpp src/main.cpp src/sdl_master.cpp \
+	src/sdl_admin.cpp src/unsorted.cpp src/widgets/chat_window.cpp \
+	src/widgets/sdl_animate_button.cpp src/widgets/sdl_button.cpp \
+	src/widgets/sdl_char_info.cpp src/widgets/sdl_check_button.cpp \
+	src/widgets/sdl_lin_map.cpp src/widgets/sdl_radio_button.cpp \
+	src/widgets/sdl_input_box.cpp src/widgets/sdl_plain_button.cpp \
+	src/widgets/sdl_text_button.cpp src/widgets/sdl_widget.cpp \
+	src/widgets/sdl_window.cpp src/widgets/sprite.cpp \
+	src/widgets/text_box.cpp src/resources/briefcase.cpp \
+	src/resources/files.cpp src/resources/music.cpp \
+	src/resources/pack.cpp src/resources/partial_table.cpp \
+	src/resources/prepared_graphics.cpp src/resources/sdl_font.cpp \
+	src/resources/reg_font.cpp src/resources/small_font.cpp \
+	src/resources/map_coord.cpp src/resources/pixel_coord.cpp \
+	src/resources/coord.cpp src/resources/screen_coord.cpp \
+	src/resources/sdl_graphic.cpp src/resources/table.cpp \
+	src/resources/tile.cpp src/drawmode/sdl_drawmode.cpp \
+	src/drawmode/draw_admin_main.cpp \
+	src/drawmode/draw_maint_img.cpp \
+	src/drawmode/draw_maint_map.cpp \
+	src/drawmode/draw_maint_til.cpp src/encryption/mains.c \
+	src/encryption/sha256deep.c src/encryption/hash.c \
+	src/encryption/helpers.c src/encryption/sha256.c src/SDLMain.m
+@MAC_TRUE@am__objects_1 = SDLMain.$(OBJEXT)
 am_Admin_OBJECTS = client_admin.$(OBJEXT) config.$(OBJEXT) \
 	connection.$(OBJEXT) funcptr.$(OBJEXT) global.$(OBJEXT) \
 	lindes.$(OBJEXT) main.$(OBJEXT) sdl_master.$(OBJEXT) \
@@ -72,11 +100,36 @@ am_Admin_OBJECTS = client_admin.$(OBJEXT) config.$(OBJEXT) \
 	sdl_drawmode.$(OBJEXT) draw_admin_main.$(OBJEXT) \
 	draw_maint_img.$(OBJEXT) draw_maint_map.$(OBJEXT) \
 	draw_maint_til.$(OBJEXT) mains.$(OBJEXT) sha256deep.$(OBJEXT) \
-	hash.$(OBJEXT) helpers.$(OBJEXT) sha256.$(OBJEXT)
+	hash.$(OBJEXT) helpers.$(OBJEXT) sha256.$(OBJEXT) \
+	$(am__objects_1)
 Admin_OBJECTS = $(am_Admin_OBJECTS)
 Admin_LDADD = $(LDADD)
 Admin_LINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(Admin_LDFLAGS) \
 	$(LDFLAGS) -o $@
+am__Lineage_SOURCES_DIST = src/client.cpp src/config.cpp \
+	src/connection.cpp src/funcptr.cpp src/global.cpp \
+	src/lindes.cpp src/main.cpp src/packet.cpp src/sdl_master.cpp \
+	src/sdl_user.cpp src/unsorted.cpp src/widgets/chat_window.cpp \
+	src/widgets/sdl_animate_button.cpp src/widgets/sdl_button.cpp \
+	src/widgets/sdl_char_info.cpp src/widgets/sdl_check_button.cpp \
+	src/widgets/sdl_lin_map.cpp src/widgets/sdl_radio_button.cpp \
+	src/widgets/sdl_input_box.cpp src/widgets/sdl_plain_button.cpp \
+	src/widgets/sdl_text_button.cpp src/widgets/sdl_widget.cpp \
+	src/widgets/sdl_window.cpp src/widgets/sprite.cpp \
+	src/widgets/text_box.cpp src/resources/briefcase.cpp \
+	src/resources/files.cpp src/resources/music.cpp \
+	src/resources/pack.cpp src/resources/partial_table.cpp \
+	src/resources/prepared_graphics.cpp src/resources/sdl_font.cpp \
+	src/resources/reg_font.cpp src/resources/small_font.cpp \
+	src/resources/map_coord.cpp src/resources/pixel_coord.cpp \
+	src/resources/coord.cpp src/resources/screen_coord.cpp \
+	src/resources/sdl_graphic.cpp src/resources/table.cpp \
+	src/resources/tile.cpp src/drawmode/sdl_drawmode.cpp \
+	src/drawmode/draw_game.cpp src/drawmode/draw_login.cpp \
+	src/drawmode/draw_loading.cpp src/drawmode/draw_char_sel.cpp \
+	src/drawmode/draw_new_char.cpp src/encryption/mains.c \
+	src/encryption/sha256deep.c src/encryption/hash.c \
+	src/encryption/helpers.c src/encryption/sha256.c src/SDLMain.m
 am_Lineage_OBJECTS = client.$(OBJEXT) config.$(OBJEXT) \
 	connection.$(OBJEXT) funcptr.$(OBJEXT) global.$(OBJEXT) \
 	lindes.$(OBJEXT) main.$(OBJEXT) packet.$(OBJEXT) \
@@ -97,7 +150,7 @@ am_Lineage_OBJECTS = client.$(OBJEXT) config.$(OBJEXT) \
 	draw_login.$(OBJEXT) draw_loading.$(OBJEXT) \
 	draw_char_sel.$(OBJEXT) draw_new_char.$(OBJEXT) \
 	mains.$(OBJEXT) sha256deep.$(OBJEXT) hash.$(OBJEXT) \
-	helpers.$(OBJEXT) sha256.$(OBJEXT)
+	helpers.$(OBJEXT) sha256.$(OBJEXT) $(am__objects_1)
 Lineage_OBJECTS = $(am_Lineage_OBJECTS)
 Lineage_LDADD = $(LDADD)
 Lineage_LINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(Lineage_LDFLAGS) \
@@ -115,8 +168,13 @@ CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
+OBJCCOMPILE = $(OBJC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
+	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_OBJCFLAGS) $(OBJCFLAGS)
+OBJCLD = $(OBJC)
+OBJCLINK = $(OBJCLD) $(AM_OBJCFLAGS) $(OBJCFLAGS) $(AM_LDFLAGS) \
+	$(LDFLAGS) -o $@
 SOURCES = $(Admin_SOURCES) $(Lineage_SOURCES)
-DIST_SOURCES = $(Admin_SOURCES) $(Lineage_SOURCES)
+DIST_SOURCES = $(am__Admin_SOURCES_DIST) $(am__Lineage_SOURCES_DIST)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -168,6 +226,9 @@ LIBS = @LIBS@
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
+OBJC = @OBJC@
+OBJCDEPMODE = @OBJCDEPMODE@
+OBJCFLAGS = @OBJCFLAGS@
 OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
 PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
@@ -187,6 +248,7 @@ abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
+ac_ct_OBJC = @ac_ct_OBJC@
 am__include = @am__include@
 am__leading_dot = @am__leading_dot@
 am__quote = @am__quote@
@@ -234,113 +296,58 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 @DEBUG_TRUE@AM_CFLAGS = -g
 @WINDOWS_TRUE@Lineage_LDFLAGS = -lmingw32
-Lineage_SOURCES = \
-src/client.cpp \
-src/config.cpp \
-src/connection.cpp \
-src/funcptr.cpp \
-src/global.cpp \
-src/lindes.cpp \
-src/main.cpp \
-src/packet.cpp \
-src/sdl_master.cpp \
-src/sdl_user.cpp \
-src/unsorted.cpp \
-src/widgets/chat_window.cpp \
-src/widgets/sdl_animate_button.cpp \
-src/widgets/sdl_button.cpp \
-src/widgets/sdl_char_info.cpp \
-src/widgets/sdl_check_button.cpp \
-src/widgets/sdl_lin_map.cpp \
-src/widgets/sdl_radio_button.cpp \
-src/widgets/sdl_input_box.cpp \
-src/widgets/sdl_plain_button.cpp \
-src/widgets/sdl_text_button.cpp \
-src/widgets/sdl_widget.cpp \
-src/widgets/sdl_window.cpp \
-src/widgets/sprite.cpp \
-src/widgets/text_box.cpp \
-src/resources/briefcase.cpp \
-src/resources/files.cpp \
-src/resources/music.cpp \
-src/resources/pack.cpp \
-src/resources/partial_table.cpp \
-src/resources/prepared_graphics.cpp \
-src/resources/sdl_font.cpp \
-src/resources/reg_font.cpp \
-src/resources/small_font.cpp \
-src/resources/map_coord.cpp \
-src/resources/pixel_coord.cpp \
-src/resources/coord.cpp \
-src/resources/screen_coord.cpp \
-src/resources/sdl_graphic.cpp \
-src/resources/table.cpp \
-src/resources/tile.cpp \
-src/drawmode/sdl_drawmode.cpp \
-src/drawmode/draw_game.cpp \
-src/drawmode/draw_login.cpp \
-src/drawmode/draw_loading.cpp \
-src/drawmode/draw_char_sel.cpp \
-src/drawmode/draw_new_char.cpp \
-src/encryption/mains.c \
-src/encryption/sha256deep.c \
-src/encryption/hash.c \
-src/encryption/helpers.c \
-src/encryption/sha256.c
-
+Lineage_SOURCES = src/client.cpp src/config.cpp src/connection.cpp \
+	src/funcptr.cpp src/global.cpp src/lindes.cpp src/main.cpp \
+	src/packet.cpp src/sdl_master.cpp src/sdl_user.cpp \
+	src/unsorted.cpp src/widgets/chat_window.cpp \
+	src/widgets/sdl_animate_button.cpp src/widgets/sdl_button.cpp \
+	src/widgets/sdl_char_info.cpp src/widgets/sdl_check_button.cpp \
+	src/widgets/sdl_lin_map.cpp src/widgets/sdl_radio_button.cpp \
+	src/widgets/sdl_input_box.cpp src/widgets/sdl_plain_button.cpp \
+	src/widgets/sdl_text_button.cpp src/widgets/sdl_widget.cpp \
+	src/widgets/sdl_window.cpp src/widgets/sprite.cpp \
+	src/widgets/text_box.cpp src/resources/briefcase.cpp \
+	src/resources/files.cpp src/resources/music.cpp \
+	src/resources/pack.cpp src/resources/partial_table.cpp \
+	src/resources/prepared_graphics.cpp src/resources/sdl_font.cpp \
+	src/resources/reg_font.cpp src/resources/small_font.cpp \
+	src/resources/map_coord.cpp src/resources/pixel_coord.cpp \
+	src/resources/coord.cpp src/resources/screen_coord.cpp \
+	src/resources/sdl_graphic.cpp src/resources/table.cpp \
+	src/resources/tile.cpp src/drawmode/sdl_drawmode.cpp \
+	src/drawmode/draw_game.cpp src/drawmode/draw_login.cpp \
+	src/drawmode/draw_loading.cpp src/drawmode/draw_char_sel.cpp \
+	src/drawmode/draw_new_char.cpp src/encryption/mains.c \
+	src/encryption/sha256deep.c src/encryption/hash.c \
+	src/encryption/helpers.c src/encryption/sha256.c \
+	$(am__append_1)
 @WINDOWS_TRUE@Admin_LDFLAGS = -lmingw32
-Admin_SOURCES = \
-src/client_admin.cpp \
-src/config.cpp \
-src/connection.cpp \
-src/funcptr.cpp \
-src/global.cpp \
-src/lindes.cpp \
-src/main.cpp \
-src/sdl_master.cpp \
-src/sdl_admin.cpp \
-src/unsorted.cpp \
-src/widgets/chat_window.cpp \
-src/widgets/sdl_animate_button.cpp \
-src/widgets/sdl_button.cpp \
-src/widgets/sdl_char_info.cpp \
-src/widgets/sdl_check_button.cpp \
-src/widgets/sdl_lin_map.cpp \
-src/widgets/sdl_radio_button.cpp \
-src/widgets/sdl_input_box.cpp \
-src/widgets/sdl_plain_button.cpp \
-src/widgets/sdl_text_button.cpp \
-src/widgets/sdl_widget.cpp \
-src/widgets/sdl_window.cpp \
-src/widgets/sprite.cpp \
-src/widgets/text_box.cpp \
-src/resources/briefcase.cpp \
-src/resources/files.cpp \
-src/resources/music.cpp \
-src/resources/pack.cpp \
-src/resources/partial_table.cpp \
-src/resources/prepared_graphics.cpp \
-src/resources/sdl_font.cpp \
-src/resources/reg_font.cpp \
-src/resources/small_font.cpp \
-src/resources/map_coord.cpp \
-src/resources/pixel_coord.cpp \
-src/resources/coord.cpp \
-src/resources/screen_coord.cpp \
-src/resources/sdl_graphic.cpp \
-src/resources/table.cpp \
-src/resources/tile.cpp \
-src/drawmode/sdl_drawmode.cpp \
-src/drawmode/draw_admin_main.cpp \
-src/drawmode/draw_maint_img.cpp \
-src/drawmode/draw_maint_map.cpp \
-src/drawmode/draw_maint_til.cpp \
-src/encryption/mains.c \
-src/encryption/sha256deep.c \
-src/encryption/hash.c \
-src/encryption/helpers.c \
-src/encryption/sha256.c
-
+Admin_SOURCES = src/client_admin.cpp src/config.cpp src/connection.cpp \
+	src/funcptr.cpp src/global.cpp src/lindes.cpp src/main.cpp \
+	src/sdl_master.cpp src/sdl_admin.cpp src/unsorted.cpp \
+	src/widgets/chat_window.cpp src/widgets/sdl_animate_button.cpp \
+	src/widgets/sdl_button.cpp src/widgets/sdl_char_info.cpp \
+	src/widgets/sdl_check_button.cpp src/widgets/sdl_lin_map.cpp \
+	src/widgets/sdl_radio_button.cpp src/widgets/sdl_input_box.cpp \
+	src/widgets/sdl_plain_button.cpp \
+	src/widgets/sdl_text_button.cpp src/widgets/sdl_widget.cpp \
+	src/widgets/sdl_window.cpp src/widgets/sprite.cpp \
+	src/widgets/text_box.cpp src/resources/briefcase.cpp \
+	src/resources/files.cpp src/resources/music.cpp \
+	src/resources/pack.cpp src/resources/partial_table.cpp \
+	src/resources/prepared_graphics.cpp src/resources/sdl_font.cpp \
+	src/resources/reg_font.cpp src/resources/small_font.cpp \
+	src/resources/map_coord.cpp src/resources/pixel_coord.cpp \
+	src/resources/coord.cpp src/resources/screen_coord.cpp \
+	src/resources/sdl_graphic.cpp src/resources/table.cpp \
+	src/resources/tile.cpp src/drawmode/sdl_drawmode.cpp \
+	src/drawmode/draw_admin_main.cpp \
+	src/drawmode/draw_maint_img.cpp \
+	src/drawmode/draw_maint_map.cpp \
+	src/drawmode/draw_maint_til.cpp src/encryption/mains.c \
+	src/encryption/sha256deep.c src/encryption/hash.c \
+	src/encryption/helpers.c src/encryption/sha256.c \
+	$(am__append_2)
 AM_CPPFLAGS = -I${top_srcdir}/src -I${top_srcdir}/include
 @DEBUG_TRUE@@LINUX_FALSE@@WINDOWS_TRUE@TEST_DEP = win_test
 @LINUX_TRUE@TEST_DEP = linux_test
@@ -354,7 +361,7 @@ all: ac_config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .cpp .o .obj
+.SUFFIXES: .c .cpp .m .o .obj
 am--refresh: Makefile
 	@:
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
@@ -454,6 +461,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SDLMain.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/briefcase.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/chat_window.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/client.Po@am__quote@
@@ -1352,6 +1360,34 @@ draw_new_char.obj: src/drawmode/draw_new_char.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/drawmode/draw_new_char.cpp' object='draw_new_char.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o draw_new_char.obj `if test -f 'src/drawmode/draw_new_char.cpp'; then $(CYGPATH_W) 'src/drawmode/draw_new_char.cpp'; else $(CYGPATH_W) '$(srcdir)/src/drawmode/draw_new_char.cpp'; fi`
+
+.m.o:
+@am__fastdepOBJC_TRUE@	$(OBJCCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepOBJC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepOBJC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepOBJC_FALSE@	DEPDIR=$(DEPDIR) $(OBJCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepOBJC_FALSE@	$(OBJCCOMPILE) -c -o $@ $<
+
+.m.obj:
+@am__fastdepOBJC_TRUE@	$(OBJCCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepOBJC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepOBJC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepOBJC_FALSE@	DEPDIR=$(DEPDIR) $(OBJCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepOBJC_FALSE@	$(OBJCCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+
+SDLMain.o: src/SDLMain.m
+@am__fastdepOBJC_TRUE@	$(OBJC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_OBJCFLAGS) $(OBJCFLAGS) -MT SDLMain.o -MD -MP -MF $(DEPDIR)/SDLMain.Tpo -c -o SDLMain.o `test -f 'src/SDLMain.m' || echo '$(srcdir)/'`src/SDLMain.m
+@am__fastdepOBJC_TRUE@	$(am__mv) $(DEPDIR)/SDLMain.Tpo $(DEPDIR)/SDLMain.Po
+@AMDEP_TRUE@@am__fastdepOBJC_FALSE@	source='src/SDLMain.m' object='SDLMain.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepOBJC_FALSE@	DEPDIR=$(DEPDIR) $(OBJCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepOBJC_FALSE@	$(OBJC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_OBJCFLAGS) $(OBJCFLAGS) -c -o SDLMain.o `test -f 'src/SDLMain.m' || echo '$(srcdir)/'`src/SDLMain.m
+
+SDLMain.obj: src/SDLMain.m
+@am__fastdepOBJC_TRUE@	$(OBJC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_OBJCFLAGS) $(OBJCFLAGS) -MT SDLMain.obj -MD -MP -MF $(DEPDIR)/SDLMain.Tpo -c -o SDLMain.obj `if test -f 'src/SDLMain.m'; then $(CYGPATH_W) 'src/SDLMain.m'; else $(CYGPATH_W) '$(srcdir)/src/SDLMain.m'; fi`
+@am__fastdepOBJC_TRUE@	$(am__mv) $(DEPDIR)/SDLMain.Tpo $(DEPDIR)/SDLMain.Po
+@AMDEP_TRUE@@am__fastdepOBJC_FALSE@	source='src/SDLMain.m' object='SDLMain.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepOBJC_FALSE@	DEPDIR=$(DEPDIR) $(OBJCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepOBJC_FALSE@	$(OBJC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_OBJCFLAGS) $(OBJCFLAGS) -c -o SDLMain.obj `if test -f 'src/SDLMain.m'; then $(CYGPATH_W) 'src/SDLMain.m'; else $(CYGPATH_W) '$(srcdir)/src/SDLMain.m'; fi`
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \

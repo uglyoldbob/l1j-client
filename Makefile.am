@@ -59,6 +59,9 @@ src/encryption/sha256deep.c \
 src/encryption/hash.c \
 src/encryption/helpers.c \
 src/encryption/sha256.c
+if MAC
+Lineage_SOURCES += src/SDLMain.m
+endif
 
 if WINDOWS
 Admin_LDFLAGS = -lmingw32
@@ -115,6 +118,9 @@ src/encryption/sha256deep.c \
 src/encryption/hash.c \
 src/encryption/helpers.c \
 src/encryption/sha256.c
+if MAC
+Admin_SOURCES += src/SDLMain.m
+endif
 
 AM_CPPFLAGS = -I${top_srcdir}/src -I${top_srcdir}/include
 
