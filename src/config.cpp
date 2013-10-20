@@ -127,8 +127,15 @@ config::config(const char *cfile)
 
 						printf("Lineage is located at: %s\n", lineage_dir);
 					}
-					else 
+					#else
+					if (sscanf(line_read, "Path = %[^\t\n\r]", all_names) == 1)
+					{
+						lineage_dir = new char[strlen(line_read)];
+						strcpy(lineage_dir, all_names);
+						printf("Lineage is located at: %s\n", lineage_dir);
+					}
 					#endif
+					else 
 					if (sscanf(line_read, "NumServers = %d ", &num_servers) == 1)
 					{
 						printf("There are %d servers\n", num_servers);

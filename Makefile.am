@@ -1,7 +1,3 @@
-if DEBUG
-AM_CFLAGS = -g
-endif
-
 bin_PROGRAMS = Lineage Admin
 if WINDOWS
 Lineage_LDFLAGS = -lmingw32
@@ -126,47 +122,60 @@ AM_CPPFLAGS = -I${top_srcdir}/src -I${top_srcdir}/include
 
 if LINUX
 TEST_DEP = linux_test
-if DEBUG
-INSTALLER_DEP = fail
-else
 INSTALLER_DEP = linux_installer
-endif
-PACKAGE_FILES = Lineage${EXEEXT} ${top_srcdir}/src/Lineage.ini ${top_srcdir}/src/README.txt
+PACKAGE_FILES = Lineage${EXEEXT} ${top_srcdir}/src/README.txt
 else
+
 if WINDOWS
-if DEBUG
 TEST_DEP = win_test
-INSTALLER_DEP = fail
-else
 INSTALLER_DEP = win_installer
-endif
 else
-INSTALLER_DEP = nothing
+
+if MAC
+TEST_DEP = mac_test
+INSTALLER_DEP = mac_installer
+else
+
+INSTALLER_DEP = fail
 endif
 endif
+endif
+
+mac_test:
+	echo "Making test folder for mac"
+	false
+
+mac_installer:
+	echo "Cannot make installer for mac"
+	false
 
 win_test:
-	echo "Making test install for windows"
+	echo "Making test folder for windows"
+	false
 
 win_installer:
-	echo "making installer for windows"
+	echo "Cannot make installer for windows"
+	false
 
 linux_installer:
-	@echo "making installer for linux"
-	@if [ ! -d client ]; then\
-		echo mkdir client;\
-		mkdir client;\
+	echo "making installer for linux"
+	@if [ ! -d installer ]; then\
+		echo mkdir installer;\
+		mkdir installer;\
 	fi
-	@echo "Copying files to package folder"
-	cp -f $(PACKAGE_FILES) ./client/
+	@echo "Copying files to installer folder"
+	cp -f ${top_srcdir}/src/LineageLinux.ini ./installer/Lineage.ini
+	cp -f $(PACKAGE_FILES) ./installer/
+	$(STRIP) -s ./installer/Lineage${EXEEXT}
 
 linux_test:
-	@echo "making tester for linux"
+	@echo "making test folder for linux"
 	@if [ ! -d client ]; then\
 		echo mkdir client;\
 		mkdir client;\
 	fi
 	@echo "Copying files to test folder"
+	cp -f ${top_srcdir}/src/LineageLinux.ini ./client/Lineage.ini
 	cp -f $(PACKAGE_FILES) ./client/
 
 installer: Lineage$(EXEEXT) $(INSTALLER_DEP)
@@ -177,4 +186,5 @@ test: Lineage$(EXEEXT) $(TEST_DEP)
 
 #no installers shall be made when debugging is enabled
 fail:
-	true
+	echo "Unknown system - cannot make an installer"
+	false
