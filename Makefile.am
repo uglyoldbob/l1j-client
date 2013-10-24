@@ -144,17 +144,56 @@ endif
 
 mac_test:
 	echo "Making test folder for mac"
-	@if [ ! -d client ]; then\
-		echo mkdir client;\
-		mkdir client;\
+	@if [ ! -d client.app ]; then\
+		echo mkdir client.app;\
+		mkdir client.app;\
 	fi
-	@echo "Copying files to test folder"
-	cp -f ${top_srcdir}/src/LineageMac.ini ./client/Lineage.ini
-	cp -f $(PACKAGE_FILES) ./client/
+	@if [ ! -d client.app/Contents ]; then\
+		echo mkdir client.app/Contents;\
+		mkdir client.app/Contents;\
+	fi
+	@if [ ! -d client.app/Contents/MacOS ]; then\
+		echo mkdir client.app/Contents/MacOS;\
+		mkdir client.app/Contents/MacOS;\
+	fi
+	@if [ ! -d client.app/Contents/Resources ]; then\
+		echo mkdir client.app/Contents/Resources;\
+		mkdir client.app/Contents/Resources;\
+	fi
+	@echo "Copying files to package folder"
+	cp -f $(OUTPUT)LineageMac.ini ./release_client.app/Contents/Resources/Lineage.ini
+	cp -f Lineage ./client.app/Contents/MacOS
+	cp -f $(OUTPUT)Info.PList ./client.app/Contents
+	cp -f $(OUTPUT)PkgInfo ./client.app/Contents
+	cp -f Admin ./client.app/Contents/MacOS
 
 mac_installer:
-	echo "Cannot make installer for mac"
-	false
+	echo "Making app folder for mac"
+	@if [ ! -d release_client.app ]; then\
+		echo mkdir release_client.app;\
+		mkdir release_client.app;\
+	fi
+	@if [ ! -d release_client.app/Contents ]; then\
+		echo mkdir release_client.app/Contents;\
+		mkdir release_client.app/Contents;\
+	fi
+	@if [ ! -d release_client.app/Contents/MacOS ]; then\
+		echo mkdir release_client.app/Contents/MacOS;\
+		mkdir release_client.app/Contents/MacOS;\
+	fi
+	@if [ ! -d release_client.app/Contents/Resources ]; then\
+		echo mkdir release_client.app/Contents/Resources;\
+		mkdir release_client.app/Contents/Resources;\
+	fi
+	@echo "Copying files to package folder"
+	cp -f $(OUTPUT)LineageMac.ini ./release_client.app/Contents/Resources/Lineage.ini
+	cp -f Lineage ./release_client.app/Contents/MacOS
+	$(STRIP) -s ./release_client.app/Contents/MacOS/Lineage${EXEEXT}
+	cp -f $(OUTPUT)Info.PList ./release_client.app/Contents
+	cp -f $(OUTPUT)PkgInfo ./release_client.app/Contents
+	cp -f Admin ./release_client.app/Contents/MacOS
+	$(STRIP) -s ./release_client.app/Contents/MacOS/Lineage${EXEEXT}
+	tar -zcvf release.tar.gz release_client.app
 
 win_test:
 	echo "Making test folder for windows"
