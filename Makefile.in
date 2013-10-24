@@ -1826,7 +1826,7 @@ mac_test:
 		mkdir client.app/Contents/Resources;\
 	fi
 	@echo "Copying files to package folder"
-	cp -f ${top_srcdir}/src/LineageMac.ini ./release_client.app/Contents/Resources/Lineage.ini
+	cp -f ${top_srcdir}/src/LineageMac.ini ./client.app/Contents/Resources/Lineage.ini
 	cp -f Lineage ./client.app/Contents/MacOS
 	cp -f ${top_srcdir}/src/Info.PList ./client.app/Contents
 	cp -f ${top_srcdir}/src/PkgInfo ./client.app/Contents
