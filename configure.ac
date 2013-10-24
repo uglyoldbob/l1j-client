@@ -8,6 +8,14 @@ AC_PROG_CPP
 AC_PROG_OBJC
 AC_CHECK_TOOL([STRIP],[strip])
 
+AC_CHECK_PROGS([DOXYGEN], [doxygen])
+if test -z "$DOXYGEN";
+  then AC_MSG_WARN([Doxygen not found - documentation cannot be built])
+fi
+AM_CONDITIONAL([HAVE_DOXYGEN],
+ [test -n "$DOXYGEN"])AM_COND_IF([HAVE_DOXYGEN],
+[AC_CONFIG_FILES([Doxyfile])])
+
 m4_include([m4/libs.m4])
 
 #BUILD_FROM = system doing the compiling
@@ -47,9 +55,9 @@ case $host_os in
 	;;
   linux* )
 	BUILD_FOR="LINUX"
-	AC_CHECK_LIB([SDL_mixer], [Mix_Init], [], [AC_MSG_ERROR("SDL_mixer Library not found")])
-	AC_CHECK_LIB([SDL_image], [IMG_Init], [], [AC_MSG_ERROR("SDL_image Library not found")])
-	AC_CHECK_LIB([SDL], [SDL_Init], [], [AC_MSG_ERROR("SDL Library not found")])
+	AC_CHECK_LIB([SDL_mixer], [main], [], [AC_MSG_ERROR("SDL_mixer Library not found")])
+	AC_CHECK_LIB([SDL_image], [main], [], [AC_MSG_ERROR("SDL_image Library not found")])
+	AC_CHECK_LIB([SDL], [main], [], [AC_MSG_ERROR("SDL Library not found")])
 	AC_DEFINE(LINUX, [1], [Enable code specific to linux])
 	AC_MSG_NOTICE("Building for linux")
 	;;

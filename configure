@@ -573,6 +573,9 @@ build_os
 build_vendor
 build_cpu
 build
+HAVE_DOXYGEN_FALSE
+HAVE_DOXYGEN_TRUE
+DOXYGEN
 am__fastdepOBJC_FALSE
 am__fastdepOBJC_TRUE
 OBJCDEPMODE
@@ -4418,6 +4421,64 @@ else
 fi
 
 
+for ac_prog in doxygen
+do
+  # Extract the first word of "$ac_prog", so it can be a program name with args.
+set dummy $ac_prog; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if test "${ac_cv_prog_DOXYGEN+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$DOXYGEN"; then
+  ac_cv_prog_DOXYGEN="$DOXYGEN" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_prog_DOXYGEN="$ac_prog"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi
+fi
+DOXYGEN=$ac_cv_prog_DOXYGEN
+if test -n "$DOXYGEN"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $DOXYGEN" >&5
+$as_echo "$DOXYGEN" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+  test -n "$DOXYGEN" && break
+done
+
+if test -z "$DOXYGEN";
+  then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Doxygen not found - documentation cannot be built" >&5
+$as_echo "$as_me: WARNING: Doxygen not found - documentation cannot be built" >&2;}
+fi
+ if test -n "$DOXYGEN"; then
+  HAVE_DOXYGEN_TRUE=
+  HAVE_DOXYGEN_FALSE='#'
+else
+  HAVE_DOXYGEN_TRUE='#'
+  HAVE_DOXYGEN_FALSE=
+fi
+if test -n "$DOXYGEN"; then
+  ac_config_files="$ac_config_files Doxyfile"
+
+fi
+
 # AC_CHECK_FRAMEWORK(FRAMEWORK, FUNCTION,
 #              [ACTION-IF-FOUND], [ACTION-IF-NOT-FOUND],
 #              [OTHER-FRAMEWORKS])
@@ -4737,9 +4798,9 @@ $as_echo "$as_me: \"Building for mac\"" >&6;}
 	;;
   linux* )
 	BUILD_FOR="LINUX"
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for Mix_Init in -lSDL_mixer" >&5
-$as_echo_n "checking for Mix_Init in -lSDL_mixer... " >&6; }
-if test "${ac_cv_lib_SDL_mixer_Mix_Init+set}" = set; then :
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for main in -lSDL_mixer" >&5
+$as_echo_n "checking for main in -lSDL_mixer... " >&6; }
+if test "${ac_cv_lib_SDL_mixer_main+set}" = set; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
@@ -4747,33 +4808,27 @@ LIBS="-lSDL_mixer  $LIBS"
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char Mix_Init ();
+
 int
 main ()
 {
-return Mix_Init ();
+return main ();
   ;
   return 0;
 }
 _ACEOF
 if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_lib_SDL_mixer_Mix_Init=yes
+  ac_cv_lib_SDL_mixer_main=yes
 else
-  ac_cv_lib_SDL_mixer_Mix_Init=no
+  ac_cv_lib_SDL_mixer_main=no
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_SDL_mixer_Mix_Init" >&5
-$as_echo "$ac_cv_lib_SDL_mixer_Mix_Init" >&6; }
-if test "x$ac_cv_lib_SDL_mixer_Mix_Init" = x""yes; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_SDL_mixer_main" >&5
+$as_echo "$ac_cv_lib_SDL_mixer_main" >&6; }
+if test "x$ac_cv_lib_SDL_mixer_main" = x""yes; then :
   cat >>confdefs.h <<_ACEOF
 #define HAVE_LIBSDL_MIXER 1
 _ACEOF
@@ -4784,9 +4839,9 @@ else
   as_fn_error "\"SDL_mixer Library not found\"" "$LINENO" 5
 fi
 
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for IMG_Init in -lSDL_image" >&5
-$as_echo_n "checking for IMG_Init in -lSDL_image... " >&6; }
-if test "${ac_cv_lib_SDL_image_IMG_Init+set}" = set; then :
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for main in -lSDL_image" >&5
+$as_echo_n "checking for main in -lSDL_image... " >&6; }
+if test "${ac_cv_lib_SDL_image_main+set}" = set; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
@@ -4794,33 +4849,27 @@ LIBS="-lSDL_image  $LIBS"
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char IMG_Init ();
+
 int
 main ()
 {
-return IMG_Init ();
+return main ();
   ;
   return 0;
 }
 _ACEOF
 if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_lib_SDL_image_IMG_Init=yes
+  ac_cv_lib_SDL_image_main=yes
 else
-  ac_cv_lib_SDL_image_IMG_Init=no
+  ac_cv_lib_SDL_image_main=no
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_SDL_image_IMG_Init" >&5
-$as_echo "$ac_cv_lib_SDL_image_IMG_Init" >&6; }
-if test "x$ac_cv_lib_SDL_image_IMG_Init" = x""yes; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_SDL_image_main" >&5
+$as_echo "$ac_cv_lib_SDL_image_main" >&6; }
+if test "x$ac_cv_lib_SDL_image_main" = x""yes; then :
   cat >>confdefs.h <<_ACEOF
 #define HAVE_LIBSDL_IMAGE 1
 _ACEOF
@@ -4831,9 +4880,9 @@ else
   as_fn_error "\"SDL_image Library not found\"" "$LINENO" 5
 fi
 
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for SDL_Init in -lSDL" >&5
-$as_echo_n "checking for SDL_Init in -lSDL... " >&6; }
-if test "${ac_cv_lib_SDL_SDL_Init+set}" = set; then :
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for main in -lSDL" >&5
+$as_echo_n "checking for main in -lSDL... " >&6; }
+if test "${ac_cv_lib_SDL_main+set}" = set; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
@@ -4841,33 +4890,27 @@ LIBS="-lSDL  $LIBS"
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char SDL_Init ();
+
 int
 main ()
 {
-return SDL_Init ();
+return main ();
   ;
   return 0;
 }
 _ACEOF
 if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_lib_SDL_SDL_Init=yes
+  ac_cv_lib_SDL_main=yes
 else
-  ac_cv_lib_SDL_SDL_Init=no
+  ac_cv_lib_SDL_main=no
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_SDL_SDL_Init" >&5
-$as_echo "$ac_cv_lib_SDL_SDL_Init" >&6; }
-if test "x$ac_cv_lib_SDL_SDL_Init" = x""yes; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_SDL_main" >&5
+$as_echo "$ac_cv_lib_SDL_main" >&6; }
+if test "x$ac_cv_lib_SDL_main" = x""yes; then :
   cat >>confdefs.h <<_ACEOF
 #define HAVE_LIBSDL 1
 _ACEOF
@@ -5277,6 +5320,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${am__fastdepOBJC_TRUE}" && test -z "${am__fastdepOBJC_FALSE}"; then
   as_fn_error "conditional \"am__fastdepOBJC\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${HAVE_DOXYGEN_TRUE}" && test -z "${HAVE_DOXYGEN_FALSE}"; then
+  as_fn_error "conditional \"HAVE_DOXYGEN\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${WINDOWS_TRUE}" && test -z "${WINDOWS_FALSE}"; then
@@ -5890,6 +5937,7 @@ do
   case $ac_config_target in
     "ac_config.h") CONFIG_HEADERS="$CONFIG_HEADERS ac_config.h:config.h.in" ;;
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
+    "Doxyfile") CONFIG_FILES="$CONFIG_FILES Doxyfile" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
 
   *) as_fn_error "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
