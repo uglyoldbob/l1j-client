@@ -143,11 +143,18 @@ endif
 
 mac_test:
 	echo "Making test folder for mac"
+	
 	false
 
 mac_installer:
 	echo "Cannot make installer for mac"
-	false
+	@if [ ! -d client ]; then\
+		echo mkdir client;\
+		mkdir client;\
+	fi
+	@echo "Copying files to test folder"
+	cp -f ${top_srcdir}/src/LineageMac.ini ./client/Lineage.ini
+	cp -f $(PACKAGE_FILES) ./client/
 
 win_test:
 	echo "Making test folder for windows"

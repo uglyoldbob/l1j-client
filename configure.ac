@@ -1,5 +1,5 @@
+AC_PREREQ([2.62])
 AC_INIT([l1j_client], [0.1])
-AC_PREREQ([2.61])
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADER([ac_config.h:config.h.in])
 AC_PROG_CXX

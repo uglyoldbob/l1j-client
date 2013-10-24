@@ -24,7 +24,7 @@
 # freedom.
 AC_DEFUN([AC_CHECK_FRAMEWORK],
 [m4_ifval([$3], , [AH_CHECK_FRAMEWORK([$1])])dnl
-AS_LITERAL_WORD_IF([$1],
+AS_LITERAL_IF([$1],
 	      [AS_VAR_PUSHDEF([ac_Lib], [ac_cv_lib_$1_$2])],
 	      [AS_VAR_PUSHDEF([ac_Lib], [ac_cv_lib_$1''_$2])])dnl
 AC_CACHE_CHECK([for $2 in -framework $1], [ac_Lib],
@@ -34,11 +34,11 @@ AC_LINK_IFELSE([AC_LANG_CALL([], [$2])],
 	       [AS_VAR_SET([ac_Lib], [yes])],
 	       [AS_VAR_SET([ac_Lib], [no])])
 LIBS=$ac_check_lib_save_LIBS])
-AS_VAR_IF([ac_Lib], [yes],
+AS_IF([test AS_VAR_GET([ac_Lib]) = yes],
       [m4_default([$3], [AC_DEFINE_UNQUOTED(AS_TR_CPP(HAVE_LIB$1))
   LIBS="-framework $1 $LIBS"
 ])],
-      [$4])
+      [$4])dnl
 AS_VAR_POPDEF([ac_Lib])dnl
 ])# AC_CHECK_FRAMEWORK
 
