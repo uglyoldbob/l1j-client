@@ -134,6 +134,7 @@ else
 if MAC
 TEST_DEP = mac_test
 INSTALLER_DEP = mac_installer
+PACKAGE_FILES = Lineage$(EXEECT) ${top_srcdir}/src/README.txt
 else
 
 INSTALLER_DEP = fail
@@ -143,11 +144,6 @@ endif
 
 mac_test:
 	echo "Making test folder for mac"
-	
-	false
-
-mac_installer:
-	echo "Cannot make installer for mac"
 	@if [ ! -d client ]; then\
 		echo mkdir client;\
 		mkdir client;\
@@ -155,6 +151,10 @@ mac_installer:
 	@echo "Copying files to test folder"
 	cp -f ${top_srcdir}/src/LineageMac.ini ./client/Lineage.ini
 	cp -f $(PACKAGE_FILES) ./client/
+
+mac_installer:
+	echo "Cannot make installer for mac"
+	false
 
 win_test:
 	echo "Making test folder for windows"

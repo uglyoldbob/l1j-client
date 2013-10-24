@@ -351,6 +351,7 @@ AM_CPPFLAGS = -I${top_srcdir}/src -I${top_srcdir}/include
 @LINUX_FALSE@@MAC_TRUE@@WINDOWS_FALSE@INSTALLER_DEP = mac_installer
 @LINUX_FALSE@@WINDOWS_TRUE@INSTALLER_DEP = win_installer
 @LINUX_TRUE@INSTALLER_DEP = linux_installer
+@LINUX_FALSE@@MAC_TRUE@@WINDOWS_FALSE@PACKAGE_FILES = Lineage$(EXEECT) ${top_srcdir}/src/README.txt
 @LINUX_TRUE@PACKAGE_FILES = Lineage${EXEEXT} ${top_srcdir}/src/README.txt
 all: ac_config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
@@ -1710,11 +1711,6 @@ uninstall-am: uninstall-binPROGRAMS
 
 mac_test:
 	echo "Making test folder for mac"
-
-	false
-
-mac_installer:
-	echo "Cannot make installer for mac"
 	@if [ ! -d client ]; then\
 		echo mkdir client;\
 		mkdir client;\
@@ -1722,6 +1718,10 @@ mac_installer:
 	@echo "Copying files to test folder"
 	cp -f ${top_srcdir}/src/LineageMac.ini ./client/Lineage.ini
 	cp -f $(PACKAGE_FILES) ./client/
+
+mac_installer:
+	echo "Cannot make installer for mac"
+	false
 
 win_test:
 	echo "Making test folder for windows"
