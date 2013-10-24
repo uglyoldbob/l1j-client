@@ -12,11 +12,11 @@ char *get_string(const char* data);
 
 struct server_data
 {
-	char *server_name;
-	char *port;
-	char *game_port;
-	char **names;	//address to use to connect to the server
-	int num_names;
+	char *server_name;	/**< The visible name of the server*/
+	char *port;		/**< The port to use for the update server */
+	char *game_port;	/**< The port to use for the game server */
+	char **names;	/**< The ip address or hostname to use to connect to the server */
+	int num_names;	/**< The number of names this server has*/
 };
 
 class config

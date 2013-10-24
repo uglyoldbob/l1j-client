@@ -12,6 +12,11 @@
 #include "sdl_master.h"
 #include <SDL/SDL_mixer.h>
 
+/**
+This function is an osx specific function that changes the current directory
+to the resources folder within the .app folder structure
+This minimizes the changes required for the osx version when accessing resources
+*/
 void change_working_directory()
 {
 #ifdef MAC

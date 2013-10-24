@@ -11,11 +11,17 @@
 #include "connection.h"
 #include "globals.h"
 
+/**
+Is the connection ok?
+*/
 int connection::connection_ok()
 {
 	return conn_ok;
 }
 
+/**
+Close the connection to the update server and connect to the game server
+*/
 int connection::change()
 {
 	printf("\nConnecting to game server\n");
@@ -29,8 +35,11 @@ int connection::change()
 	return conn_ok;
 }
 
-//TODO: implement a "waiting buffer" when sending fails ?
-//TODO: limit how often this function will send data
+/**
+Send some data to the server. 
+TODO: implement a "waiting buffer" when sending fails ?
+TODO: limit how often this function will send data
+*/
 int connection::snd(const void* msg, int len)
 {
 	char *buf;
@@ -50,6 +59,10 @@ int connection::snd(const void* msg, int len)
 	return len;
 }
 
+/**
+Convenience function for sending a variable to the server. 
+This function includes byte reordering that snd() does not do.
+*/
 int connection::snd_var(const void* msg, int len)
 {
 	if (len == 4)
@@ -78,6 +91,9 @@ int connection::snd_var(const void* msg, int len)
 	return len;
 }
 
+/**
+Just like snd_var, except it uses SWAP32 and SWAP16 macros
+*/
 int connection::snd_varg(const void* msg, int len)
 {
 	if (len == 4)
@@ -107,6 +123,9 @@ int connection::snd_varg(const void* msg, int len)
 	return len;
 }
 
+/**
+Recieve some data from the server
+*/
 int connection::rcv(void *buf, int len)
 {
 	int recvd = 0;
@@ -126,6 +145,9 @@ int connection::rcv(void *buf, int len)
 	return len;
 }
 
+/**
+Recieve data from the server and byte order it (ntohl/ntohs)
+*/
 int connection::rcv_var(void *buf, int len)
 {
 	int recvd = 0;
@@ -156,6 +178,9 @@ int connection::rcv_var(void *buf, int len)
 	return len;
 }
 
+/**
+Recieve data from the server and byte order it (SWAP32/16)
+*/
 int connection::rcv_varg(void *buf, int len)
 {
 	int recvd = 0;

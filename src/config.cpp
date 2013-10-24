@@ -11,6 +11,10 @@
 #include "config.h"
 #include "globals.h"
 
+/**
+This retrieves the port number the specified update server
+is configured to use
+*/
 const char* config::get_port(int srv)
 {
 	if (srv < num_servers)
@@ -21,6 +25,10 @@ const char* config::get_port(int srv)
 	return DEFAULT_PORT;
 }
 
+/** 
+This retrieves the port number the specifed game server
+is configured to use
+*/
 const char* config::get_game_port(int srv)
 {
 	if (srv < num_servers)
@@ -31,7 +39,12 @@ const char* config::get_game_port(int srv)
 	return DEFAULT_GAME_PORT;
 }
 
-
+/** 
+Get the address to connect to the specified server.
+There can be multiple address for a server. 
+This can be a hostname or an ip address. 
+It is WRONG to specify a port number in the name!
+*/
 const char* config::get_addr(int srv, int which)
 {
 	if (srv < num_servers)
@@ -44,6 +57,9 @@ const char* config::get_addr(int srv, int which)
 	return DEFAULT_IP;
 }
 
+/** 
+Get the name of the given server
+*/
 const char* config::get_name(int srv)
 {
 	if (srv < num_servers)
@@ -53,6 +69,9 @@ const char* config::get_name(int srv)
 	return "INTERNAL ERROR";
 }
 
+/**
+How many addresses(names) have been defined for the given server
+*/
 int config::get_num_names(int srv)
 {
 	if (srv < num_servers)
@@ -65,11 +84,17 @@ int config::get_num_names(int srv)
 	}
 }
 
+/**
+Return the number of servers that have been configured
+*/
 int config::get_num_servers()
 {
 	return num_servers;
 }
 
+/**
+Were there any errors in the configuration?
+*/
 int config::config_ok()
 {
 	if (num_errors == 0)
@@ -77,6 +102,11 @@ int config::config_ok()
 	return 0;
 }
 
+/**
+Load configuration from the given file. 
+A configuration file is distributed with the client and is eaxy to modify. 
+TODO: Make options to add, delete, and edit server information
+*/
 config::config(const char *cfile)
 {
 	printf("Loading configuration data\n");

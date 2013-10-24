@@ -149,7 +149,7 @@ dist_man_MANS = $(directory)/man_page_1.3 $(directory)/man_page_2.3
 $(directory)/man_page_1.3: doxyfile.stamp
 $(directory)/man_page_2.3: doxyfile.stamp
 
-doxyfile.stamp:
+doxyfile.stamp: Lineage Admin
 	$(DOXYGEN) Doxyfile
 	echo Timestamp > doxyfile.stamp
 
@@ -179,10 +179,10 @@ mac_test:
 		mkdir client.app/Contents/Resources;\
 	fi
 	@echo "Copying files to package folder"
-	cp -f $(OUTPUT)LineageMac.ini ./release_client.app/Contents/Resources/Lineage.ini
+	cp -f ${top_srcdir}/src/LineageMac.ini ./release_client.app/Contents/Resources/Lineage.ini
 	cp -f Lineage ./client.app/Contents/MacOS
-	cp -f $(OUTPUT)Info.PList ./client.app/Contents
-	cp -f $(OUTPUT)PkgInfo ./client.app/Contents
+	cp -f ${top_srcdir}/src/Info.PList ./client.app/Contents
+	cp -f ${top_srcdir}/src/PkgInfo ./client.app/Contents
 	cp -f Admin ./client.app/Contents/MacOS
 
 mac_installer:
@@ -204,11 +204,11 @@ mac_installer:
 		mkdir release_client.app/Contents/Resources;\
 	fi
 	@echo "Copying files to package folder"
-	cp -f $(OUTPUT)LineageMac.ini ./release_client.app/Contents/Resources/Lineage.ini
+	cp -f ${top_srcdir}/src/LineageMac.ini ./release_client.app/Contents/Resources/Lineage.ini
 	cp -f Lineage ./release_client.app/Contents/MacOS
 	$(STRIP) -s ./release_client.app/Contents/MacOS/Lineage${EXEEXT}
-	cp -f $(OUTPUT)Info.PList ./release_client.app/Contents
-	cp -f $(OUTPUT)PkgInfo ./release_client.app/Contents
+	cp -f ${top_srcdir}/src/Info.PList ./release_client.app/Contents
+	cp -f ${top_srcdir}/src/PkgInfo ./release_client.app/Contents
 	cp -f Admin ./release_client.app/Contents/MacOS
 	$(STRIP) -s ./release_client.app/Contents/MacOS/Lineage${EXEEXT}
 	tar -zcvf release.tar.gz release_client.app
