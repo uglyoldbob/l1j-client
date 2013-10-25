@@ -40,6 +40,7 @@ void sdl_master::create_client()
 	{
 		clients[0] = new sdl_user;
 		game_client[0] = SDL_CreateThread(run_client, (void*)clients[0]);
+		clients[0]->wait_ready();
 	}
 }
 

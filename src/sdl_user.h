@@ -42,7 +42,7 @@ class sdl_user
 		friend class sdl_master;
 		client *game;
 	private:
-		bool ready;
+		volatile bool ready;
 		volatile enum drawmode draw_mode;
 
 		SDL_Surface *display;

@@ -49,14 +49,15 @@ sprite::sprite(int x, int y, char *filename, client *who)
 	{
 		int pallete_enries = 0;
 		SDL_RWread(file, &pallete_enries, 1, 1);
+		pallete_enries = SWAP32(pallete_enries);
 		if (pallete_enries == 0)
 			pallete_enries = 0x100;
-		
 		tiles_loaded = true;
 		palette = new short[pallete_enries];
 		for (int i = 0; i < pallete_enries; i++)
 		{
 			SDL_RWread(file, &palette[i], 2, 1);
+			palette[i] = SWAP16(palette[i]);
 			printf("\tSkipping (%d) 0x%04x\n", i, palette[i]);
 		}
 		
@@ -70,11 +71,16 @@ sprite::sprite(int x, int y, char *filename, client *who)
 	for (int i = 0; i < num_frames; i++)
 	{
 		SDL_RWread(file, &frames[i].x1, 2, 1);
+		frames[i].x1 = SWAP16(frames[i].x1);
 		SDL_RWread(file, &frames[i].y1, 2, 1);
+		frames[i].y1 = SWAP16(frames[i].y1);
 		SDL_RWread(file, &frames[i].x2, 2, 1);
+		frames[i].x2 = SWAP16(frames[i].x2);
 		SDL_RWread(file, &frames[i].y2, 2, 1);
+		frames[i].y2 = SWAP16(frames[i].y2);
 		SDL_RWseek(file, 4, SEEK_CUR);
 		SDL_RWread(file, &frames[i].num_tiles, 2, 1);
+		frames[i].num_tiles = SWAP16(frames[i].num_tiles);
 		printf("(%d, %d) -> (%d, %d), %d tiles\n", 
 			frames[i].x1, frames[i].y1, 
 			frames[i].x2, frames[i].y2, 
@@ -86,6 +92,7 @@ sprite::sprite(int x, int y, char *filename, client *who)
 			SDL_RWread(file, &frames[i].tiles[j].y, 1, 1);
 			SDL_RWread(file, &frames[i].tiles[j].h, 1, 1);
 			SDL_RWread(file, &frames[i].tiles[j].tile, 2, 1);
+			frames[i].tiles[j].tile = SWAP16(frames[i].tiles[j].tile);
 			printf("\t[%d, %d] %d %d\n", 
 				frames[i].tiles[j].x, frames[i].tiles[j].y, 
 				frames[i].tiles[j].h, frames[i].tiles[j].tile);
@@ -95,6 +102,7 @@ sprite::sprite(int x, int y, char *filename, client *who)
 	int tiles_size;
 	int *tile_offsets;
 	SDL_RWread(file, &num_tiles, 4, 1);
+	num_tiles = SWAP32(num_tiles);
 	
 	tile_offsets = new int[num_tiles];
 	tiles = new sdl_graphic*[num_tiles];
@@ -102,9 +110,11 @@ sprite::sprite(int x, int y, char *filename, client *who)
 	for (int k = 0; k < num_tiles; k++)
 	{	//these values are offsets
 		SDL_RWread(file, &tile_offsets[k], 4, 1);
+		tile_offsets[k] = SWAP32(tile_offsets[k]);
 	}
 	
 	SDL_RWread(file, &tiles_size, 4, 1);
+	tiles_size = SWAP32(tiles_size);
 	
 	printf("There are %d tiles\n", num_tiles);
 	if (tiles_loaded)

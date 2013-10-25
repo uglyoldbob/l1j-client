@@ -31,9 +31,13 @@ sdl_graphic::sdl_graphic(int x, int y, SDL_RWops *source, short *palette, int ty
 			int width = 0, height = 0;
 			int read = 0;
 			SDL_RWread(source, &x, 1, 1);
+			x = SWAP32(x);
 			SDL_RWread(source, &y, 1, 1);
+			y = SWAP32(y);
 			SDL_RWread(source, &width, 1, 1);
+			width = SWAP32(width);
 			SDL_RWread(source, &height, 1, 1);
+			height = SWAP32(height);
 			printf("\t\tx: %d y:%d w:%d h:%d\n", x, y, width, height);
 			img = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 16,
 				0x7C00, 0x03E0, 0x001F, 0);
@@ -49,6 +53,7 @@ sdl_graphic::sdl_graphic(int x, int y, SDL_RWops *source, short *palette, int ty
 			{
 				int row_segs = 0;
 				SDL_RWread(source, &row_segs, 1, 1);
+				row_segs = SWAP32(row_segs);
 				read++;
 				short *row_temp = temp;
 				printf("\t\tThere are %d segments in this row\n", row_segs);
@@ -56,10 +61,12 @@ sdl_graphic::sdl_graphic(int x, int y, SDL_RWops *source, short *palette, int ty
 				{
 					int skip = 0;
 					SDL_RWread(source, &skip, 1, 1);
+					skip = SWAP32(skip);
 					read++;
 					skip /= 2;
 					int seg_width = 0;
 					SDL_RWread(source, &seg_width, 1, 1);
+					seg_width = SWAP32(seg_width);
 					read++;
 					row_temp = &row_temp[skip];
 					printf("\t\t\tSkip %d, print %d [", skip, seg_width);
