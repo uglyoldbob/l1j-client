@@ -1,26 +1,27 @@
-#ifndef __DRAW_ADMIN_MAIN_H_
-#define __DRAW_ADMIN_MAIN_H_
+#ifndef __DRAW_MAINT_SPRITES_H_
+#define __DRAW_MAINT_SPRITES_H_
 
-#include "funcptr.h"
 #include "sdl_drawmode.h"
 
-class draw_admin_main;
-class quit_ptr : public funcptr
+class draw_maint_sprites;
+class load_ptr : public funcptr
 {
 	public:
-		quit_ptr(draw_admin_main *bla);
+		load_ptr(draw_maint_sprites *bla, int val);
 		virtual void go();
 	private:
-		draw_admin_main *ref;
+		draw_maint_sprites *ref;
+		int which;
 };
 
-class draw_admin_main : public sdl_drawmode
+
+class draw_maint_sprites : public sdl_drawmode
 {
 	public:
-		draw_admin_main(sdl_user *self);
-		~draw_admin_main();
+		draw_maint_sprites(sdl_user *self);
+		~draw_maint_sprites();
 
-		void quit();
+		virtual void key_press(SDL_KeyboardEvent *button);
 
 		virtual void mouse_click(SDL_MouseButtonEvent *here);
 		virtual void mouse_to(SDL_MouseMotionEvent *to);
@@ -31,7 +32,9 @@ class draw_admin_main : public sdl_drawmode
 		virtual bool quit_request();
 		virtual void draw(SDL_Surface *display);
 	private:
-		bool quitting;
+		int x, y;
+		
+		void redo_sprite();
 };
 
 #endif

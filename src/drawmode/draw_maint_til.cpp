@@ -167,7 +167,8 @@ void draw_maint_til::draw(SDL_Surface *display)
 	{
 		cur_tile->draw(display);
 	}
-	char temp[27];
+	char temp[50];
+	memset(temp, 0 50);
 	if (tileset != 0)
 	{
 		sprintf(temp, "Using tileset %d.til, tile %d", background, tile_num);

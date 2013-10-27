@@ -108,6 +108,7 @@ src/drawmode/sdl_drawmode.cpp \
 src/drawmode/draw_admin_main.cpp \
 src/drawmode/draw_maint_img.cpp \
 src/drawmode/draw_maint_map.cpp \
+src/drawmode/draw_maint_sprites.cpp \
 src/drawmode/draw_maint_til.cpp \
 src/encryption/mains.c \
 src/encryption/sha256deep.c \
@@ -232,7 +233,7 @@ linux_installer:
 	cp -f $(PACKAGE_FILES) ./installer/
 	$(STRIP) -s ./installer/Lineage${EXEEXT}
 
-linux_test:
+linux_test: Admin$(EXEEXT)
 	@echo "making test folder for linux"
 	@if [ ! -d client ]; then\
 		echo mkdir client;\
@@ -240,6 +241,7 @@ linux_test:
 	fi
 	@echo "Copying files to test folder"
 	cp -f ${top_srcdir}/src/LineageLinux.ini ./client/Lineage.ini
+	cp Admin$(EXEEXT) ./client/Admin$(EXEEXT)
 	cp -f $(PACKAGE_FILES) ./client/
 
 installer: Lineage$(EXEEXT) $(INSTALLER_DEP)

@@ -4,10 +4,9 @@
 
 #include "client.h"
 #include "drawmode/draw_admin_main.h"
-#include "drawmode/draw_loading.h"
-#include "drawmode/draw_login.h"
 #include "drawmode/draw_maint_img.h"
 #include "drawmode/draw_maint_map.h"
+#include "drawmode/draw_maint_sprites.h"
 #include "drawmode/draw_maint_til.h"
 #include "globals.h"
 #include "resources/sdl_font.h"
@@ -122,6 +121,7 @@ void sdl_user::key_press(SDL_KeyboardEvent *button)
 		{
 			switch(button->keysym.sym)
 			{
+				case SDLK_F12:
 				case SDLK_PRINT:
 					char filename[256];
 					time_t rawtime;
@@ -160,7 +160,7 @@ void sdl_user::wait_ready()
 
 bool sdl_user::quit_request()
 {
-	return false;
+	return drawmode->quit_request();
 }
 
 void sdl_user::change_drawmode(enum drawmode chg)
@@ -191,6 +191,11 @@ void sdl_user::change_drawmode(enum drawmode chg)
 			break;
 		case DRAWMODE_MAINT_MAP:
 			drawmode = new draw_maint_map(this);
+			draw_mode = chg;
+			ready = true;
+			break;
+		case DRAWMODE_MAINT_SPRITES:
+			drawmode = new draw_maint_sprites(this);
 			draw_mode = chg;
 			ready = true;
 			break;

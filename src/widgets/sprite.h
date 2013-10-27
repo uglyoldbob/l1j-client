@@ -5,20 +5,20 @@ class client;
 
 struct sprite_tile
 {
-	char x;
-	char y;
-	char h;
-	short tile;
+	char x;	/**< offset in map coordinates*/
+	char y;	/**< offset in mapp coordinates*/
+	char h;	/**< unknown*/
+	short tile;	/**< reference to the array of tiles on sprite_frame*/
 };
 
 struct sprite_frame
 {
-	short x1;
-	short y1;
-	short x2;
-	short y2;
-	short num_tiles;
-	sprite_tile *tiles;
+	short x1;	/**< unknown */
+	short y1;	/**< unknown */
+	short x2;	/**< unknown */
+	short y2;	/**< unknown */
+	short num_tiles;	/**< Number of tiles to draw for this frame */
+	sprite_tile *tiles;	/**< The array of tiles for the frame */
 };
 
 class sprite : public sdl_widget
@@ -27,6 +27,7 @@ class sprite : public sdl_widget
 		sprite(int x, int y, char *filename, client *who);
 		virtual void draw(SDL_Surface *display);
 		~sprite();
+
 	private:
 		sdl_graphic **tiles;
 		int num_tiles;
@@ -39,8 +40,6 @@ class sprite : public sdl_widget
 		
 		int loc_x, loc_y;
 		Uint32 time_change;
-		int **x_mod;
-		int **y_mod;
 };
 
 

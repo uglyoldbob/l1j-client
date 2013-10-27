@@ -242,7 +242,8 @@ client::~client()
 		delete [] login_opts;
 	}
 
-	delete [] map_tiles;
+	if (map_tiles != 0)
+		delete [] map_tiles;
 }
 
 void client::init()

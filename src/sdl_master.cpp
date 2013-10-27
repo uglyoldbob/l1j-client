@@ -131,7 +131,12 @@ bool sdl_master::quit_request()
 	{
 		if (clients[0]->quit_request() == false)
 		{
+			printf("Client does not want to die\n");
 			ok_to_quit = false;
+		}
+		else
+		{
+			printf("Client is ready to die\n");
 		}
 	}
 	return ok_to_quit;

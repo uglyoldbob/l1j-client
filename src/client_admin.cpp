@@ -184,7 +184,9 @@ int run_client(void *moron)
 		game.init();
 		while (1)
 		{
-			SDL_Delay(1000);
+			SDL_Delay(10);
+			if (game.stop_thread)
+				throw "Stop client thread requested";
 		}
 	}
 	catch (const char *error)
@@ -192,6 +194,5 @@ int run_client(void *moron)
 		printf("FATAL ERROR: %s\n", error);
 		game.graphics->done = true;
 	}
-	while (1);
 	return 0;
 }

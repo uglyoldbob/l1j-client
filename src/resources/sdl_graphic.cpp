@@ -38,17 +38,17 @@ sdl_graphic::sdl_graphic(int x, int y, SDL_RWops *source, short *palette, int ty
 			width = SWAP32(width);
 			SDL_RWread(source, &height, 1, 1);
 			height = SWAP32(height);
-			printf("\t\tx: %d y:%d w:%d h:%d\n", x, y, width, height);
+			printf("\t\tx: 0x%02x y:0x%02x w:0x%02x h:0x%02x ?:0x%02x ?:0x%02x\n", x, y, width, height, x+width, y+height);
 			img = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 16,
 				0x7C00, 0x03E0, 0x001F, 0);
 			cleanup = false;
-			pos = make_sdl_rect(0, 0, width, height);
-			mask = make_sdl_rect(0, 0, width, height);
+			pos = make_sdl_rect(x, y, width, height);
+			mask = make_sdl_rect(x, y, width, height);
 			SDL_SetColorKey(img, SDL_SRCCOLORKEY, SDL_MapRGB(img->format, 255,255,0) );
 			transp_color = SDL_MapRGB(img->format, 255,255,0);
 			SDL_FillRect(img, NULL, SDL_MapRGB(img->format, 255,255,0));
 			short *temp = (short*)img->pixels;	//destination pointer
-			printf("\t\tThere are %d rows\n", height);
+//			printf("\t\tThere are %d rows\n", height);
 			for (int i = 0; i < height; i++)
 			{
 				int row_segs = 0;
@@ -56,12 +56,11 @@ sdl_graphic::sdl_graphic(int x, int y, SDL_RWops *source, short *palette, int ty
 				row_segs = SWAP32(row_segs);
 				read++;
 				short *row_temp = temp;
-				printf("\t\tThere are %d segments in this row\n", row_segs);
+//				printf("\t\tThere are %d segments in this row\n", row_segs);
 				for (int j = 0; j < row_segs; j++)
 				{
-					int skip = 0;
+					char skip = 0;
 					SDL_RWread(source, &skip, 1, 1);
-					skip = SWAP32(skip);
 					read++;
 					skip /= 2;
 					int seg_width = 0;
@@ -69,19 +68,21 @@ sdl_graphic::sdl_graphic(int x, int y, SDL_RWops *source, short *palette, int ty
 					seg_width = SWAP32(seg_width);
 					read++;
 					row_temp = &row_temp[skip];
-					printf("\t\t\tSkip %d, print %d [", skip, seg_width);
+//					printf("\t\t\tSkip %d, print %d [", skip, seg_width);
 					for (int k = 0; k < seg_width; k++)
 					{
 						char pal_color= 0;
 						SDL_RWread(source, &pal_color, 1, 1);
 						read++;
 						row_temp[k] = palette[pal_color&0xFF];
-						printf("%02x ", pal_color&0xFF);
+//						printf("%02x ", pal_color&0xFF);
 					}
-					printf("] %d\n", read);
+//					row_temp[0] = 0x0000;
+//					row_temp[seg_width-1] = 0xFFFF;
+//					printf("] %d\n", read);
 					row_temp = &row_temp[seg_width];
 				}
-				temp = &temp[width];
+				temp = &temp[img->pitch / 2];
 			}
 		}
 			break;
@@ -136,16 +137,15 @@ sdl_graphic::sdl_graphic(int x, int y, short *source, int type)
 					data_offset += (seg_width * 2);
 					row_temp = &row_temp[seg_width];
 				}
-				temp = &temp[width];
+				temp = &temp[img->pitch / 2];
 			}
 
 			break;
 		}
 		case GRAPH_LTIL:
 		{
-			img = 0;//SDL_CreateRGBSurface(SDL_SWSURFACE, 24, 24, 16,
-				//0x7C00, 0x03E0, 0x001F, 0);
-			break;
+			img = SDL_CreateRGBSurface(SDL_SWSURFACE, 24, 24, 16,
+				0x7C00, 0x03E0, 0x001F, 0);
 			cleanup = false;
 			pos = make_sdl_rect(0, 0, 24, 24);
 			mask = make_sdl_rect(0, 0, 24, 24);
