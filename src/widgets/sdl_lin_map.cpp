@@ -37,7 +37,18 @@ sdl_lin_map::~sdl_lin_map()
 		if (segs[i].graphic != 0)
 			delete segs[i].graphic;
 		if (segs[i].mapdata != 0)
+		{
+			if (segs[i].mapdata->objs != 0)
+			{	//there are objects in this section to delete
+				for (int j = 0; j < segs[i].mapdata->num_objects; j++)
+				{
+					if (segs[i].mapdata->objs[j].tiles != 0)
+						delete [] segs[i].mapdata->objs[j].tiles;
+				}
+				delete [] segs[i].mapdata->objs;
+			}
 			delete segs[i].mapdata;
+		}
 	}
 }
 
@@ -49,6 +60,34 @@ sdl_lin_map::~sdl_lin_map()
 //south		  0, -24
 //east		  0, +48
 //west		  0, -48
+
+void sdl_lin_map::draw_info(SDL_Surface *display, int x, int y)
+{
+	int startx, starty;
+	startx = 200;
+	starty = 250;
+	char buffer[512];
+	memset(buffer, 0, 512);
+	
+	int i;
+	for (i = 0; i < 4; i++)
+	{
+		if ( (x >= segs[i].x) && (x < (segs[i].x+64)) &&
+			(y >= segs[i].y) && (y < (segs[i].y+64)) )
+		{
+			break;
+		}
+	}
+	if (i != 4)
+	{
+		sprintf(buffer, "%4d %3d", segs[i].mapdata->floor[x-segs[i].x][2*(y-segs[i].y)]>>8, 
+				segs[i].mapdata->floor[x-segs[i].x][2*(y-segs[i].y)] & 0xFF);
+		lineage_font.draw(display, startx, starty, buffer, 0xFFFE);
+		sprintf(buffer, "%4d %3d", segs[i].mapdata->floor[x-segs[i].x][2*(y-segs[i].y)+1]>>8, 
+				segs[i].mapdata->floor[x-segs[i].x][2*(y-segs[i].y)+1] & 0xFF);
+		lineage_font.draw(display, startx, starty+10, buffer, 0xFFFE);
+	}
+}
 	
 lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y)
 {
@@ -99,8 +138,10 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y)
 	}
 	
 	//mystery data
+	//TODO figure out this section of data
 	SDL_RWread(sdl_buf, &ret.mapdata->num_unknown2, 2, 1);
 	ret.mapdata->num_unknown2 = SWAP16(ret.mapdata->num_unknown2);
+//	printf("Unknown 2 is %d\n", ret.mapdata->num_unknown2);
 	if (ret.mapdata->num_unknown2 > 0)
 	{	//7d068
 		unsigned char *waste = new unsigned char[ret.mapdata->num_unknown2 * 6];
@@ -122,44 +163,46 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y)
 			ret.mapdata->attr[ty][tx*2+1] = SWAP16(ret.mapdata->attr[ty][tx*2+1]);
 		}
 	}
-	
-	
-	
+
+
+
 	int bla;
 	SDL_RWread(sdl_buf, &bla, 4, 1);
 	bla = SWAP32(bla);
-//	printf("amount for HideObjs is %d\n", bla);
 	
+	ret.mapdata->num_objects = bla;
+	ret.mapdata->objs = new map_object[bla];
+		
 	for (int i = 0; i < bla; i++)
 	{
 		short a;
-		SDL_RWread(sdl_buf, &a, 2, 1);
+		SDL_RWread(sdl_buf, &a, 2, 1);	//this is an index number
 		SDL_RWread(sdl_buf, &a, 2, 1);
 		a = SWAP16(a);
-//		printf("\t%d\n", a);
+		ret.mapdata->objs[i].num_tiles = a;
+		ret.mapdata->objs[i].tiles = new map_tile_data[a];
 		for (int j = 0; j < a; j++)
 		{
 			unsigned char b, c;
 			SDL_RWread(sdl_buf, &b, 1, 1);
-			b = SWAP16(b);
 			SDL_RWread(sdl_buf, &c, 1, 1);
 			if ((b == 0xcd) && (c == 0xcd))
 			{
 				char dummy[5];
 				SDL_RWread(sdl_buf, dummy, 1, 5);
-				//skip 5 bytes
 				j--;
 				a--;
-				//decrement j and a
-				//destination increments by 4
 			}
 			else
 			{
-				char dummy[5];
-				SDL_RWread(sdl_buf, dummy, 1, 5);
-				//read a byte
-				//read an int
-				//destination increments by 12
+				int dummy;
+				char h;
+				SDL_RWread(sdl_buf, &h, 1, 1);
+				SDL_RWread(sdl_buf, &dummy, 1, 4);
+				ret.mapdata->objs[i].tiles[j].x = b;
+				ret.mapdata->objs[i].tiles[j].y = c;
+				ret.mapdata->objs[i].tiles[j].h = h;
+				ret.mapdata->objs[i].tiles[j].tiledata = dummy;
 			}
 		}
 	}
@@ -185,13 +228,13 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y)
 	
 	SDL_RWread(sdl_buf, &bla, 4, 1);
 	bla = SWAP32(bla);
-//	printf("amount for tilesets is %d\nset: ", bla);
+	printf("amount for tilesets is %d\nset: ", bla);
 	for (int i = 0; i < bla; i++)
 	{
 		int set;
 		SDL_RWread(sdl_buf, &set, 4, 1);
 		set = SWAP32(set);
-//		printf("%d, ", set);
+		printf("%d, ", set);
 	}
 //	printf("\n");
 	
@@ -221,6 +264,8 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y)
 //		printf("Data %d %d %d %d %d %d\n", a, b, c, d, e, f);
 	}
 
+//	if (SDL_RWtell(sdl_buf) < size)
+	//	printf("Need to read some more stuff for this map segment\n");
 	//if no at the end of file?
 	{	//7d24c
 		
@@ -255,6 +300,7 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y)
 		{
 			sdl_graphic *left, *right;
 			map_coord tempmap(x + tx, y + ty);
+
 			int dx, dy;
 			int selal, selbl, selar, selbr;
 			selal = ret.mapdata->floor[tx][ty*2]>>8;
@@ -262,11 +308,6 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y)
 			
 			selar = ret.mapdata->floor[tx][ty*2+1]>>8;
 			selbr = ret.mapdata->floor[tx][ty*2+1] & 0xFF;
-			
-			if (selal == 0)
-				selal++;
-			if (selar == 0)
-				selar++;
 			
 			tile_data[selal].load(selal, who);
 			tile_data[selar].load(selar, who);
@@ -276,11 +317,41 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y)
 			left = tile_data[selal].get_tile_left(selbl);
 			right = tile_data[selar].get_tile_right(selbr);
 			
-			left->drawat(dx, dy, ret.graphic->get_surf());
-			right->drawat(dx+24, dy, ret.graphic->get_surf());
+			if (left != 0)
+				left->drawat(dx, dy, ret.graphic->get_surf());
+			if (right != 0)
+				right->drawat(dx+24, dy, ret.graphic->get_surf());
 		}
 	}
+#if 1
+	for (int i = 0; i < ret.mapdata->num_objects; i++)
+	{
+		for (int j = 0; j < ret.mapdata->objs[i].num_tiles; j++)
+		{
+			sdl_graphic *left, *right;
+			int tx = ret.mapdata->objs[i].tiles[j].x / 2;
+			int ty = ret.mapdata->objs[i].tiles[j].y;
+			int floor = ret.mapdata->objs[i].tiles[j].tiledata;
+			map_coord tempmap(x + tx, y + ty);
+			int dx, dy;
+			int selal, selbl;
+			selal = floor>>8;
+			selbl = floor & 0xFF;
 
+			tile_data[selal].load(selal, who);
+
+			dx = tempmap.get_screen().get_x() + offsetx;
+			dy = tempmap.get_screen().get_y() + offsety;
+			if ((ret.mapdata->objs[i].tiles[j].x % 2) == 1)
+			{
+				dx += 24;
+			}
+			left = tile_data[selal].get_special(selbl);
+						
+			left->drawat(dx, dy, ret.graphic->get_surf());
+		}
+	}
+#endif
 	ret.map = mapnum;
 	ret.x = x & (~0x3F);
 	ret.y = y & (~0x3F);

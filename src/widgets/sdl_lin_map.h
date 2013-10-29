@@ -5,24 +5,18 @@ class pack;
 class tile;
 #include "widgets/sdl_widget.h"
 
-struct map_cache_data
+struct map_tile_data
 {
-	int unknown1;
-	short unknown3;
-	char blabla[14];	//the size is 0x14, or 20
+	char x;
+	char y;
+	char h;
+	unsigned int tiledata;
 };
 
-struct unknown_struct
+struct map_object
 {
-	char a;
-	char b;
-	
-};
-
-struct unknown4_struct
-{
-	short num_bla1;
-	unknown_struct * bla1;
+	short num_tiles;
+	map_tile_data *tiles;
 };
 
 struct lin_map_data
@@ -30,10 +24,9 @@ struct lin_map_data
 	unsigned int floor[64][128];	//the floor data for each tile of the map (each tile is a triangle)
 	short num_unknown2;
 	//comment placeholder for the unknown2 data
-	short attr[64][128];	//loaded into mapCache[mapNum?] (offset 4)
-	int num_unknown4;
-	unknown4_struct *unknown4;	//unknown4 stored into hideObjs[arg]
-	//7cc8c for loading of unknown4 (contains three more elements than num_unknown4?)
+	short attr[64][128];	//attributes for all tiles
+	int num_objects;
+	map_object *objs;
 };
 
 //TODO find highest number of existing tile data ?
@@ -64,8 +57,10 @@ class sdl_lin_map : public sdl_widget
 		~sdl_lin_map();
 		void draw(SDL_Surface *display);	//draws the full map onto display
 		void set_hotspot(int mapn, int x, int y);	//sets the coordinates for the hotspot (the middle of the screen)
-	private:
+		void draw_info(SDL_Surface *display, int x, int y);
 		tile *tile_data;	//used for reference only
+	private:
+		
 		lin_map_segment segs[4];
 		int map;
 		client *who;

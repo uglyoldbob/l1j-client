@@ -39,7 +39,7 @@ void draw_maint_til::key_press(SDL_KeyboardEvent *button)
 		switch(button->keysym.sym)
 		{
 			case SDLK_LEFT:
-				if (background > 1)
+				if (background > 0)
 				{
 					background--;
 					if (tileset != 0)
@@ -168,7 +168,7 @@ void draw_maint_til::draw(SDL_Surface *display)
 		cur_tile->draw(display);
 	}
 	char temp[50];
-	memset(temp, 0 50);
+	memset(temp, 0, 50);
 	if (tileset != 0)
 	{
 		sprintf(temp, "Using tileset %d.til, tile %d", background, tile_num);

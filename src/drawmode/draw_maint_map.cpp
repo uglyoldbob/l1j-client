@@ -1,7 +1,9 @@
 #include "client.h"
 #include "draw_maint_map.h"
 #include "globals.h"
+#include "resources/map_coord.h"
 #include "resources/prepared_graphics.h"
+#include "resources/screen_coord.h"
 #include "resources/tile.h"
 #include "sdl_user.h"
 #include "widgets/sdl_lin_map.h"
@@ -27,9 +29,13 @@ draw_maint_map::draw_maint_map(sdl_user *self)
 	themap = new sdl_lin_map(owner->game->get_tiles(), owner->game, 50, 50, 540, 380);
 	map_vis = 0;
 	
+//	mapnum = 69;
+//	x = 32674;
+//	y = 32860;
 	mapnum = 4;
-	x = 32549;
-	y = 32925;
+	x = 33068;
+	y = 32806;
+	
 	//translates to 7fff8000
 	//x = 32700;
 	//y = 32764;
@@ -37,10 +43,13 @@ draw_maint_map::draw_maint_map(sdl_user *self)
 	themap->set_hotspot(mapnum, x, y);
 }
 
+/** Handle key press events
+ * \bug Crashes when changing modes
+ * */
 void draw_maint_map::key_press(SDL_KeyboardEvent *button)
 {
-	while (SDL_mutexP(draw_mtx) == -1) {};
 	sdl_drawmode::key_press(button);
+	while (SDL_mutexP(draw_mtx) == -1) {};
 	if (button->type == SDL_KEYDOWN)
 	{
 		switch(button->keysym.sym)
@@ -146,17 +155,57 @@ bool draw_maint_map::quit_request()
 	return true;
 }
 
+void draw_maint_map::draw_cursor(int x, int y, SDL_Surface *display)
+{
+	sdl_graphic *left, *right;
+	map_coord tempmap(x, y);
+	int dx, dy;
+	int selal, selbl;
+	selal = 2;
+	selbl = 89;
+	
+	map_coord themapz(x, y);
+	screen_coord thescreen = themapz.get_screen();
+
+	int master_offsetx = (320) - thescreen.get_x();
+	int master_offsety = (240) - thescreen.get_y();	
+
+	themap->tile_data[selal].load(selal, owner->game);
+
+	dx = tempmap.get_screen().get_x() + master_offsetx;
+	dy = tempmap.get_screen().get_y() + master_offsety;
+
+	left = themap->tile_data[selal].get_tile_left(selbl);
+	right = themap->tile_data[selal].get_tile_right(selbl);
+	if (left != 0)
+		left->drawat(dx, dy, display);
+	if (right != 0)
+		right->drawat(dx+24, dy, display);
+}
+
 void draw_maint_map::draw(SDL_Surface *display)
 {
+	static Uint32 time_change = SDL_GetTicks();
+	static bool draw_the_cursor = false;
+	if ((SDL_GetTicks() + 1000) > time_change)
+	{
+		draw_the_cursor = !draw_the_cursor;
+		time_change += 300;
+	}
 	while (SDL_mutexP(draw_mtx) == -1) {};
-	SDL_FillRect(display, NULL, 0x1234);
+	SDL_FillRect(display, NULL, 0);
 	if (themap != 0)
 	{
 		themap->draw(display);
+		if (draw_the_cursor)
+		{	//2, 25
+			draw_cursor(x, y, display);
+		}
+		themap->draw_info(display, x, y);
 	}
 	char dispstr[255];
 	sprintf(dispstr, "Loading map %d, %d, %d", mapnum, x, y);
-	lineage_font.draw(display, 320, 240, dispstr, 0xFFFE);
+	lineage_font.draw(display, 320, 280, dispstr, 0xFFFE);
 	sdl_drawmode::draw(display);
 	SDL_mutexV(draw_mtx);
 }

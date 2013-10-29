@@ -175,7 +175,7 @@ sdl_graphic::sdl_graphic(int x, int y, short *source, int type)
 			img = SDL_CreateRGBSurface(SDL_SWSURFACE, 24, 24, 16,
 				0x7C00, 0x03E0, 0x001F, 0);
 			cleanup = false;
-			pos = make_sdl_rect(10, 10, 24, 24);
+			pos = make_sdl_rect(0, 0, 24, 24);
 			mask = make_sdl_rect(0, 0, 24, 24);
 			SDL_SetColorKey(img, SDL_SRCCOLORKEY, SDL_MapRGB(img->format, 1,1,1) );
 			SDL_MapRGB(img->format, 1, 1, 1);
@@ -316,7 +316,7 @@ void sdl_graphic::drawat(int x, int y, SDL_Surface *display)
 	if (img != 0)
 	{
 		SDL_Rect *newpos;
-		newpos = make_sdl_rect(x, y, mask->w, mask->h);
+		newpos = make_sdl_rect(x + pos->x, y + pos->y, mask->w, mask->h);
 		SDL_BlitSurface(img, mask, display, newpos);
 		delete newpos;
 	}

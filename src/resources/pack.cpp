@@ -342,9 +342,9 @@ unsigned char* pack::load_file(int which, int decrypting)
 {
 	unsigned char *buf;
 	open_data();
-	if ((which > 0) && (which < num_files))
+	if ((which >= 0) && (which < num_files))
 	{
-		if ((files[which].size > 0) && (files[which].offset > 0))
+		if ((files[which].size > 0) && (files[which].offset >= 0))
 		{
 			buf = new unsigned char[files[which].size+8];
 			fseek(data_buf, files[which].offset, SEEK_SET);

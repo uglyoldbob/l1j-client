@@ -170,7 +170,6 @@ sprite::sprite(int x, int y, char *filename, client *who)
 	delete [] data;
 
 	frame_num = 0;
-	tile_mod = 0;
 	printf("Reached end of sprite loading\n");
 }
 

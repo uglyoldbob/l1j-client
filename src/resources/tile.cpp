@@ -60,7 +60,7 @@ sdl_graphic *tile::get_tile_right(int which)
 	{
 		if ((tdata->data[tdata->offset[which]] & 2) != 0)
 		{
-			ret = get_special(which);
+			ret = 0;//get_special(which);
 		}
 		else
 		{
@@ -83,7 +83,7 @@ sdl_graphic *tile::get_tile_left(int which)
 	{
 		if ((tdata->data[tdata->offset[which]] & 2) != 0)
 		{
-			ret = get_special(which);
+			ret = 0;//get_special(which);
 		}
 		else
 		{
@@ -131,6 +131,7 @@ void tile::load(int which, client *who)
 
 		if (data == 0)
 		{
+			printf("Failed to load tileset %d\n", which);
 			return;
 		}
 		

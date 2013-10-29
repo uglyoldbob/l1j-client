@@ -23,12 +23,12 @@ class tile
 		void load(int which, client *who);
 		sdl_graphic *get_tile_right(int which);
 		sdl_graphic *get_tile_left(int which);
+		sdl_graphic *get_special(int which);
 		int get_amnt();
 	private:
 		tileset *tdata;	//holds all the information from the file
 		
 		char *filebuf;
-		sdl_graphic *get_special(int which);
 };
 
 #endif

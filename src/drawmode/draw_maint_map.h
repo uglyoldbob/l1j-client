@@ -27,6 +27,8 @@ class draw_maint_map : public sdl_drawmode
 		sdl_lin_map *themap;
 		sdl_graphic *map_vis;
 		int x, y, mapnum;
+		
+		void draw_cursor(int x, int y, SDL_Surface *display);
 };
 
 #endif

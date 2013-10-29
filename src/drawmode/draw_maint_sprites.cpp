@@ -167,7 +167,7 @@ void draw_maint_sprites::redo_sprite()
 		widgets[0] = 0;
 	}
 	char new_name[50];
-	memset(new_name, 50, 0);
+	memset(new_name, 0, 50);
 	sprintf(new_name, "%d-%d.spr", x, y);
 	widgets[0] = new sprite(320, 400, new_name, owner->game);
 }
