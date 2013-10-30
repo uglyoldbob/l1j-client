@@ -5,6 +5,7 @@ class pixel_coord;	//the pixel values when the map is rectangular
 class map_coord;	//the map coordinates seen by the user
 class screen_coord;
 
+/** This class is the base class and is used to convert from one coordinate system to another */
 class coord
 {
 	public:
@@ -12,12 +13,12 @@ class coord
 		~coord();
 		
 		void print();
-		virtual pixel_coord get_pixel() = 0;
-		virtual map_coord get_map() = 0;
-		virtual screen_coord get_screen() = 0;
+		virtual pixel_coord get_pixel() = 0;	/**< Returns pixel coordinates (pixel_coord)*/
+		virtual map_coord get_map() = 0;	/**< Returns map coordinates (map_coord)*/
+		virtual screen_coord get_screen() = 0; /**< returns screen coordinated (screen_coord)*/
 		
-		int get_x();
-		int get_y();
+		int get_x();	/**< Returns the x coordinate */
+		int get_y();	/**< Returns the x coordinate */
 	protected:
 		int x;
 		int y;

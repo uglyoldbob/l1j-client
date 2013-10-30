@@ -35,6 +35,8 @@ void change_working_directory()
 #endif
 }
 
+/** Entry point of the program. Initializes SDL and starts the sdl_master object.
+*/
 int main(int argc, char* argv[])
 {
 	change_working_directory();

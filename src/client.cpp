@@ -3,6 +3,7 @@
 #include "config.h"
 #include "connection.h"
 #include "drawmode/draw_char_sel.h"
+#include "drawmode/draw_game.h"
 #include "drawmode/draw_loading.h"
 #include "drawmode/sdl_drawmode.h"
 #include "globals.h"
@@ -363,6 +364,15 @@ void client::send_packet(const char *format, ...)
 	packet bob(this, server);
 	bob.send_packet(format, temp_args);			
 	va_end(temp_args);
+}
+
+void client::change_map(int map_num)
+{
+	if (graphics->is_in_mode(DRAWMODE_GAME))
+	{
+		draw_game *dg = (draw_game*)graphics->get_drawmode();
+		dg->change_map(map_num);
+	}
 }
 
 int client::check_login_chars()

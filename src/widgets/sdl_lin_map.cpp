@@ -228,13 +228,13 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y)
 	
 	SDL_RWread(sdl_buf, &bla, 4, 1);
 	bla = SWAP32(bla);
-	printf("amount for tilesets is %d\nset: ", bla);
+//	printf("amount for tilesets is %d\nset: ", bla);
 	for (int i = 0; i < bla; i++)
 	{
 		int set;
 		SDL_RWread(sdl_buf, &set, 4, 1);
 		set = SWAP32(set);
-		printf("%d, ", set);
+//		printf("%d, ", set);
 	}
 //	printf("\n");
 	

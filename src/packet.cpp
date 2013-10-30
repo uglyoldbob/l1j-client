@@ -580,7 +580,8 @@ void packet::ground_item()
  	char *name;
  	disassemble(&packet_data[1], "hhdhccccdccs", &x, &y, &id, &gnd_icon,
  		&d1, &d2, &emit_light, &d3, &count, &d4, &d5, &name);
- 	printf("There is %s [%d] at (%d, %d)\n", name, id, x, y); 
+ 	printf("There is %s [0x%x] at (%d, %d) icon %d : %d, %d, %d, %d, %d\n", name, id, x, y, gnd_icon,
+		d1, d2, d3, d4, d5); 
 }
 
 void packet::update_mp()
@@ -635,7 +636,7 @@ void packet::set_map()
 	short mapid;
 	char underwater;
 	disassemble(&packet_data[1], "hc", &mapid, &underwater);
-//	printf("The map is %d and underwater:%d\n", mapid, underwater);
+	printf("The map is %d and underwater:%d\n", mapid, underwater);
 }
 
 void packet::char_status()

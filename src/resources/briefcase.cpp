@@ -5,6 +5,7 @@
 #include "globals.h"
 #include "briefcase.h"
 
+/** This calculates the SHA256 hash of the briefcase. This is used to determine if the users briefcase matches the briefcase the server requires them to use. This simulataneously allows for updates to be sent to the client and prevents modification of the data. */
 const char * briefcase::get_hash()
 {
 	open_data();
@@ -20,6 +21,7 @@ const char * briefcase::get_hash()
 	return hash;
 }
 
+/** Sort the list of filenames. This is not very important until a proper search is done in check_file */
 void briefcase::sort()
 {
 	if (sorted == 0)
@@ -29,6 +31,7 @@ void briefcase::sort()
 	}
 }
 
+/** The helper function for the qsort function */
 int briefcase::compare(const void *a, const void *b)
 {
 	const briefcase_entry *aa = (const briefcase_entry*)a;
@@ -36,6 +39,7 @@ int briefcase::compare(const void *a, const void *b)
 	return strcmp(aa->name, ba->name);
 }
 
+/** Checks the briefcase for duplicate files. Duplicate files have the same filename and the same size */
 int briefcase::detect_dupes()	//detects duplicate files
 {
 //	printf("Checking for duplicate files\n");
@@ -78,6 +82,7 @@ int briefcase::detect_dupes()	//detects duplicate files
 	return dupes;
 }
 
+/** Loads all the data from a briefcase file or initializes to a blank briefcase if it is not found. */
 int briefcase::load()
 {
 	if (data_buf != 0)
@@ -114,6 +119,7 @@ int briefcase::load()
 	return 0;
 }
 
+/** Construct a briefcase with the given filename */
 briefcase::briefcase(const char *name)
 {
 	int size;
@@ -132,6 +138,9 @@ briefcase::briefcase(const char *name)
 	load();
 }
 
+/** Check to see if the filename is in the briefcase
+ * \todo Implement a binary search
+ */
 int briefcase::check_file(const char *name)
 {	//TODO change to a binary search
 	//because the list of files is sorted alphabetically
@@ -153,6 +162,9 @@ int briefcase::check_file(const char *name)
 	}
 }
 
+/** Write the file to the briefcase
+ * \todo Support replacing an existing file in the briefcase
+*/
 void briefcase::write_file(char *name, char *data, int size)
 {	
 	int exists = check_file(name); 
@@ -199,6 +211,7 @@ void briefcase::write_file(char *name, char *data, int size)
 	}
 }
 
+/** return the size of the briefcase */
 int briefcase::get_size()
 {
 	int save_spot = ftell(data_buf);
@@ -263,6 +276,7 @@ unsigned char* briefcase::load_file(int which)
 	return buf;
 }
 
+/** Write the number of files to the briefcase file and then close it */
 void briefcase::finish_briefcase()
 {
 	if ((data_buf != 0) && (change_num_files))
@@ -275,6 +289,7 @@ void briefcase::finish_briefcase()
 	data_buf = 0;
 }
 
+/** Create a new data file for the briefcase */
 void briefcase::new_data()
 {
 	if (data_buf == 0)

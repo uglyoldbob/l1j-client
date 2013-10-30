@@ -38,7 +38,7 @@ sdl_graphic::sdl_graphic(int x, int y, SDL_RWops *source, short *palette, int ty
 			width = SWAP32(width);
 			SDL_RWread(source, &height, 1, 1);
 			height = SWAP32(height);
-			printf("\t\tx: 0x%02x y:0x%02x w:0x%02x h:0x%02x ?:0x%02x ?:0x%02x\n", x, y, width, height, x+width, y+height);
+//			printf("\t\tx: 0x%02x y:0x%02x w:0x%02x h:0x%02x ?:0x%02x ?:0x%02x\n", x, y, width, height, x+width, y+height);
 			img = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 16,
 				0x7C00, 0x03E0, 0x001F, 0);
 			cleanup = false;

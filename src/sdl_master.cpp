@@ -5,6 +5,7 @@
 #include "client.h"
 #include "resources/pack.h"
 
+/** Initilization of the main gui object */
 sdl_master::sdl_master(Uint32 flags)
 {
 	game_client = new SDL_Thread*[4];
@@ -34,6 +35,7 @@ sdl_master::sdl_master(Uint32 flags)
 	}
 }
 
+/** Create a game instance, a thread for it, and wait for it to be ready */
 void sdl_master::create_client()
 {	
 	if (game_client[0] == 0)
@@ -44,7 +46,9 @@ void sdl_master::create_client()
 	}
 }
 
-
+/** Process gui events and deliver them as required. 
+ \todo This should probably limit how frequently it calls draw 
+ */
 void sdl_master::process_events()
 {
 	bool done = false;
@@ -90,6 +94,8 @@ void sdl_master::process_events()
 //		SDL_WaitThread(game_client[0], &status);
 }
 
+/** Check to see if any game instances are done and remove them 
+ \todo support more than one instance */
 bool sdl_master::check_users(bool last)
 {
 	if (clients[0] != 0)
@@ -108,6 +114,8 @@ bool sdl_master::check_users(bool last)
 	return last;
 }
 
+/** Draw all the game instances to the screen 
+* \todo Support more than one client here */
 void sdl_master::draw()
 {
 	SDL_Rect rect;
@@ -124,6 +132,8 @@ void sdl_master::draw()
 	
 }
 
+/** The program has been requested to exit for some reason. Ask for permission to close before closing. 
+ * \todo Support more than one client here */
 bool sdl_master::quit_request()
 {
 	bool ok_to_quit = true;
@@ -142,6 +152,9 @@ bool sdl_master::quit_request()
 	return ok_to_quit;
 }
 
+/** Deliver mouse move events to the proper client 
+ \todo Implement mouse dragging somewhere in the mouse_move chain 
+ \todo Support more than one client here */
 void sdl_master::mouse_move(SDL_MouseMotionEvent *old, SDL_MouseMotionEvent *fresh)
 {
 	if (clients[0] != 0)
@@ -169,6 +182,8 @@ void sdl_master::mouse_move(SDL_MouseMotionEvent *old, SDL_MouseMotionEvent *fre
 	}
 }
 
+/** Deliver mouse clicks to the proper client 
+ \todo Implement double click, triple click here */
 void sdl_master::mouse_click(SDL_MouseButtonEvent *here)
 {
 	if (clients[0] != 0)
@@ -179,6 +194,8 @@ void sdl_master::mouse_click(SDL_MouseButtonEvent *here)
 	}
 }
 
+/** Deliver key presses to the proper client 
+ * \todo Support more than one client here */
 void sdl_master::key_press(SDL_KeyboardEvent *button)
 {
 	if (clients[0] != 0)
@@ -188,6 +205,8 @@ void sdl_master::key_press(SDL_KeyboardEvent *button)
 	}
 }
 
+/** Determine which client owns the given screen coordinate
+ * \todo Support more than one client here */
 int sdl_master::get_client(int x, int y)
 {	//determine which client owns the x/y coordinate specified
 	return 0;

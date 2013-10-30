@@ -17,6 +17,7 @@ enum file_locations
 	FILE_NOTHING
 };
 
+/** This class handles whether a file should be loaded from the global game resources or the server specific files */
 class files
 {	//the files loaded depend on which client object wants files because of server specific files
 	public:

@@ -2,6 +2,7 @@
 #define __DRAW_GAME_H_
 
 #include "sdl_drawmode.h"
+#include "widgets/sdl_lin_map.h"
 
 class draw_game : public sdl_drawmode
 {
@@ -22,9 +23,15 @@ class draw_game : public sdl_drawmode
 		
 		void update_hpbar(int cur, int max);
 		void update_mpbar(int cur, int max);
-	private:
-		SDL_mutex *draw_mtx;
 		
+		void change_map(int map_num);
+		void change_location(int nx, int ny);
+	private:
+		SDL_mutex *draw_mtx;	/**< This is used to prevent the gui thread and the client thread from clashing objects */
+
+		sdl_lin_map *themap;
+		int mapnum, x, y;	//the players coordinates
+
 		char *exp_str;
 		char *hp_str;
 		float hp_width;

@@ -81,7 +81,7 @@ sprite::sprite(int x, int y, char *filename, client *who)
 	
 	num_frames = mystery1;
 	
-	printf("There are %d frames\n", num_frames);
+//	printf("There are %d frames\n", num_frames);
 	frames = new sprite_frame[num_frames];
 	for (int i = 0; i < num_frames; i++)
 	{
@@ -151,7 +151,7 @@ sprite::sprite(int x, int y, char *filename, client *who)
 	}
 	else
 	{
-		printf("Loading tile data\n");
+//		printf("Loading tile data\n");
 		int tiles_location = SDL_RWtell(file);
 		for (int i = 0; i < num_tiles; i++)
 		{

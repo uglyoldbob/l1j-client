@@ -32,10 +32,12 @@ draw_game::draw_game(sdl_user *self)
 	strcpy(food_str, "0%");
 	
 	num_widgets = 7;
-	
-	sdl_lin_map *themap;
+
 	themap = new sdl_lin_map(owner->game->get_tiles(), owner->game, 0, 0, 640, 380);
-	themap->set_hotspot(4, 32549, 32925);
+	mapnum = 4;
+	x = 32549;
+	y = 32925;
+	themap->set_hotspot(mapnum, x, y);
 	
 	widgets = new sdl_widget*[num_widgets];
 	widgets[0] = themap;
@@ -67,8 +69,25 @@ draw_game::draw_game(sdl_user *self)
 	hp_width = (float)widgets[4]->getw();
 	mp_width = (float)widgets[5]->getw();
 	
-	widgets[6] = new sprite(320, 200, "2786-0.spr", owner->game);   //0, 5, 8, 
+	widgets[6] = new sprite(320, 200, "2786-8.spr", owner->game);   //0, 5, 8, 
 	//widgets[6] = new sprite(50, 50, "3226-305.spr", owner->game);
+}
+
+void draw_game::change_map(int map_num)
+{
+	while (SDL_mutexP(draw_mtx) == -1) {};
+	mapnum = map_num;
+	themap->set_hotspot(mapnum, x, y);
+	SDL_mutexV(draw_mtx);
+}
+
+void draw_game::change_location(int nx, int ny)
+{
+	while (SDL_mutexP(draw_mtx) == -1) {};
+	x = nx;
+	y = ny;
+	themap->set_hotspot(mapnum, x, y);
+	SDL_mutexV(draw_mtx);
 }
 
 void draw_game::update_hpbar(int cur, int max)

@@ -247,7 +247,7 @@ static int hash(state *s, char *dest)
       }
       else
       {
-	      printf ("%s\n", s->hash_result);
+	      //printf ("%s\n", s->hash_result);
       }
     }
 
@@ -309,7 +309,7 @@ int hash_file(state *s, char *fn, char *dest)
     // try some ioctl calls now to get the full size.
     //if (UNKNOWN_FILE_SIZE == s->stat_bytes)
       s->stat_bytes = find_file_size(s->handle);
-	printf("The handle is %d, size %d\n", s->handle, s->stat_bytes);
+//	printf("The handle is %d, size %d\n", s->handle, s->stat_bytes);
     status = hash(s, dest);
 
     fclose(s->handle);

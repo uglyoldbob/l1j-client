@@ -12,18 +12,21 @@
 #include "resources/sdl_font.h"
 #include "sdl_user.h"
 
+/** signal the client thread through the client object that we are quitting */
 void sdl_user::quit_client()
 {
 	game->stop();
 	done = true;
 }
 
+/** Initiate the login into the game server 
+ \todo Move this function entirely to the client class */
 void sdl_user::login(const char *name, const char *pass)
 {
-	//TODO : use the entered usernames and passwords
 	game->send_packet("css", CLIENT_LOGIN, name, pass);
 }
 
+/** Initialize ourself, create our screen, etc.. */
 sdl_user::sdl_user(Uint32 flags)
 {
 	draw_mode = INVALID;
@@ -38,11 +41,13 @@ sdl_user::sdl_user(Uint32 flags)
 	drawmode = 0;
 }
 
+/** copy the reference to the client object */
 void sdl_user::init_client(client *clnt)
 {
 	game = clnt;
 }
 
+/** cleanup */
 sdl_user::~sdl_user()
 {
 	SDL_DestroyMutex(draw_mtx);
@@ -71,6 +76,7 @@ void sdl_user::mouse_from(SDL_MouseMotionEvent *from)
 	SDL_mutexV(draw_mtx);
 }
 
+/** Do I allow the mouse to leave my drawing area? */
 bool sdl_user::mouse_leave()
 {
 	bool ret_val;
@@ -97,12 +103,22 @@ void sdl_user::mouse_move(SDL_MouseMotionEvent *from, SDL_MouseMotionEvent *to)
 	SDL_mutexV(draw_mtx);
 }
 
+/** Block until the drawing mode is achieved. Call this from the client thread only. */
 void sdl_user::wait_for_mode(enum drawmode wait)
 {
 	while (draw_mode != wait)
 	{
 		SDL_Delay(100);
 	};
+}
+
+/** Am I in a specific drawmode? */
+bool sdl_user::is_in_mode(enum drawmode here)
+{
+	if (draw_mode == here)
+		return true;
+	else
+		return false;
 }
 
 void sdl_user::mouse_click(SDL_MouseButtonEvent *here)
@@ -115,6 +131,7 @@ void sdl_user::mouse_click(SDL_MouseButtonEvent *here)
 	SDL_mutexV(draw_mtx);
 }
 
+/** Handle keypresses that are common to all drawmodes, pass the rest to the drawmode for handling */
 void sdl_user::key_press(SDL_KeyboardEvent *button)
 {
 	while (SDL_mutexP(draw_mtx) == -1) {};
@@ -150,21 +167,25 @@ void sdl_user::key_press(SDL_KeyboardEvent *button)
 	SDL_mutexV(draw_mtx);
 }
 
+/** Return the drawmode object */
 sdl_drawmode *sdl_user::get_drawmode()
 {
 	return drawmode;
 }
 
+/** spin until we are ready. Called from the client thread after changing drawmode*/
 void sdl_user::wait_ready()
 {
 	while (!ready) {};
 }
 
+/** Pass the quit request on to the drawmode */
 bool sdl_user::quit_request()
 {
 	return drawmode->quit_request();
 }
 
+/** change the current drawmode */
 void sdl_user::change_drawmode(enum drawmode chg)
 {
 	while (SDL_mutexP(draw_mtx) == -1) {};
@@ -209,6 +230,7 @@ void sdl_user::change_drawmode(enum drawmode chg)
 	SDL_mutexV(draw_mtx);
 }
 
+/** Draw the game if the current drawmode is valid and if we are ready */
 void sdl_user::draw()
 {
 	while (SDL_mutexP(draw_mtx) == -1) {};

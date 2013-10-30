@@ -81,12 +81,14 @@ void draw_maint_sprites::key_press(SDL_KeyboardEvent *button)
 				redo_sprite();
 				break;
 			case SDLK_PAGEUP:
-//				mapnum++;
-//				themap->set_hotspot(mapnum, x, y);
+				x += 100;
+				redo_sprite();
 				break;
 			case SDLK_PAGEDOWN:
-//				mapnum--;
-//				themap->set_hotspot(mapnum, x, y);
+				x -= 100;
+				if (x < 0)
+					x = 0;
+				redo_sprite();
 				break;
 			default:
 				break;
