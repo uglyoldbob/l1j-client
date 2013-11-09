@@ -17,13 +17,15 @@ sdl_lin_map::sdl_lin_map(sdl_user *who, int x, int y, int w, int h)
 	: sdl_widget(x, y, who)
 {
 	tile_data = who->get_tiles();
+	edit_mtx = SDL_CreateMutex();
 	one = 0;
-	this->who = who;
 	
 	for (int i = 0; i < 4; i++)
 	{
 		segs[i].graphic = 0;
 		segs[i].mapdata = 0;
+		segs[i].x = 0;
+		segs[i].y = 0;
 	}
 	map = -1;
 	
@@ -34,22 +36,9 @@ sdl_lin_map::~sdl_lin_map()
 {
 	for (int i = 0; i < 4; i++)
 	{
-		if (segs[i].graphic != 0)
-			delete segs[i].graphic;
-		if (segs[i].mapdata != 0)
-		{
-			if (segs[i].mapdata->objs != 0)
-			{	//there are objects in this section to delete
-				for (int j = 0; j < segs[i].mapdata->num_objects; j++)
-				{
-					if (segs[i].mapdata->objs[j].tiles != 0)
-						delete [] segs[i].mapdata->objs[j].tiles;
-				}
-				delete [] segs[i].mapdata->objs;
-			}
-			delete segs[i].mapdata;
-		}
+		delete_segment(segs[i]);
 	}
+	SDL_DestroyMutex(edit_mtx);
 }
 
 //southeast	+24, +12
@@ -64,7 +53,7 @@ sdl_lin_map::~sdl_lin_map()
 void sdl_lin_map::draw_info(SDL_Surface *display, int x, int y)
 {
 	int startx, starty;
-	startx = 200;
+	startx = 100;
 	starty = 250;
 	char buffer[512];
 	memset(buffer, 0, 512);
@@ -80,19 +69,31 @@ void sdl_lin_map::draw_info(SDL_Surface *display, int x, int y)
 	}
 	if (i != 4)
 	{
-		sprintf(buffer, "%4d %3d", segs[i].mapdata->floor[x-segs[i].x][2*(y-segs[i].y)]>>8, 
+		sprintf(buffer, "%4d, %3d", segs[i].mapdata->floor[x-segs[i].x][2*(y-segs[i].y)]>>8, 
 				segs[i].mapdata->floor[x-segs[i].x][2*(y-segs[i].y)] & 0xFF);
 		lineage_font.draw(display, startx, starty, buffer, 0xFFFE);
-		sprintf(buffer, "%4d %3d", segs[i].mapdata->floor[x-segs[i].x][2*(y-segs[i].y)+1]>>8, 
+		sprintf(buffer, "%4d, %3d", segs[i].mapdata->floor[x-segs[i].x][2*(y-segs[i].y)+1]>>8, 
 				segs[i].mapdata->floor[x-segs[i].x][2*(y-segs[i].y)+1] & 0xFF);
 		lineage_font.draw(display, startx, starty+10, buffer, 0xFFFE);
 	}
+	else
+	{
+		sprintf(buffer, "%d, %d not found?", x, y);
+		lineage_font.draw(display, startx, starty, buffer, 0xFFFE);
+	}
 }
 	
-lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y)
+lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y, client *from)
 {
 //	Uint32 timecheck = SDL_GetTicks();
 	lin_map_segment ret;
+	ret.graphic = 0;
+	ret.mapdata = 0;
+	ret.map = 0;
+	ret.x = 0;
+	ret.y = 0;
+	ret.offsetx = 0;
+	ret.offsety = 0;
 	
 //begin loading map data
 	int modx, mody;
@@ -108,7 +109,7 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y)
 	sprintf(name, "map/%d/%04x%04x.s32", mapnum, modx, mody);
 	char *buffer;
 	SDL_RWops *sdl_buf;
-	buffer = 0;//(char*)who->getfiles->load_file(name, &size, FILE_REGULAR1, 0);
+	buffer = (char*)from->getfiles->load_file(name, &size, FILE_REGULAR1, 0);
 	if (buffer == 0)
 	{
 		ret.graphic = 0;
@@ -281,6 +282,8 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y)
 
 //	printf("Took %d millis to load a section\n", SDL_GetTicks() - timecheck);
 
+//dont draw the entire map section at once
+#if 1
 	int beg_x, beg_y;
 	beg_x = x & (int)~0x3F;
 	beg_y = y & (int)~0x3F;
@@ -309,8 +312,8 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y)
 			selar = ret.mapdata->floor[tx][ty*2+1]>>8;
 			selbr = ret.mapdata->floor[tx][ty*2+1] & 0xFF;
 			
-//			tile_data[selal].load(selal, who);
-//			tile_data[selar].load(selar, who);
+			tile_data[selal].load(selal, from);
+			tile_data[selar].load(selar, from);
 			
 			dx = tempmap.get_screen().get_x() + offsetx;
 			dy = tempmap.get_screen().get_y() + offsety;
@@ -338,7 +341,7 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y)
 			selal = floor>>8;
 			selbl = floor & 0xFF;
 
-//			tile_data[selal].load(selal, who);
+			tile_data[selal].load(selal, from);
 
 			dx = tempmap.get_screen().get_x() + offsetx;
 			dy = tempmap.get_screen().get_y() + offsety;
@@ -347,8 +350,9 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y)
 				dx += 24;
 			}
 			left = tile_data[selal].get_special(selbl);
-						
-			left->drawat(dx, dy, ret.graphic->get_surf());
+			
+			if (left != 0)
+				left->drawat(dx, dy, ret.graphic->get_surf());
 		}
 	}
 #endif
@@ -357,7 +361,7 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y)
 	ret.y = y & (~0x3F);
 	ret.offsetx = offsetx;
 	ret.offsety = offsety;
-	
+#endif
 //	printf("\t%s %d_%d_%d\n", name, mapnum, ret.x, ret.y);
 	
 //	sprintf(name, "%d_%d_%d.bmp", mapnum, ret.x, ret.y);
@@ -367,7 +371,37 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y)
 	return ret;
 }
 
-void sdl_lin_map::check_sections()
+void sdl_lin_map::delete_segment(lin_map_segment delme)
+{
+	if (delme.graphic != 0)
+	{
+		delete delme.graphic;
+		delme.graphic = 0;
+	}
+	if (delme.mapdata != 0)
+	{
+		for (int i = 0; i < delme.mapdata->num_objects; i++)
+		{
+			if (delme.mapdata->objs[i].tiles != 0)
+			{
+				delete [] delme.mapdata->objs[i].tiles;
+				delme.mapdata->objs[i].tiles = 0;
+			}
+		}
+		if (delme.mapdata->objs != 0)
+		{
+			delete [] delme.mapdata->objs;
+			delme.mapdata->objs = 0;
+		}
+		delete delme.mapdata;
+		delme.mapdata = 0;
+	}
+}
+
+/** Make sure the 4 sections that are loaded actually covers the screen. 
+ * Swap segments around as necessary to minimize data loading. 
+ * Load map segments if required. */
+void sdl_lin_map::check_sections(client *from)
 {
 	int width, height;
 	width = one->getw();
@@ -443,7 +477,10 @@ void sdl_lin_map::check_sections()
 			}
 			else
 			{	//load a section because it's not already loaded
-				segs[i] = get_map(map, goal_x[i], goal_y[i]);
+				while (SDL_mutexP(edit_mtx) == -1) {};
+				delete_segment(segs[i]);
+				segs[i] = get_map(map, goal_x[i], goal_y[i], from);
+				SDL_mutexV(edit_mtx);
 			}
 		}
 	}
@@ -451,9 +488,9 @@ void sdl_lin_map::check_sections()
 
 void sdl_lin_map::draw(SDL_Surface *display)
 {
+	while (SDL_mutexP(edit_mtx) == -1) {};
 	SDL_FillRect(one->get_surf(), NULL, 0x1234);
 
-	check_sections();
 	for (int i = 0; i < 4; i++)
 	{
 		int temp_offx, temp_offy;
@@ -466,10 +503,10 @@ void sdl_lin_map::draw(SDL_Surface *display)
 			segs[i].graphic->drawat(temp_offx, temp_offy, one->get_surf());
 		}
 	}
-	
-	//TODO!
+
 	//draws the full map onto display
 	one->draw(display);
+	SDL_mutexV(edit_mtx);
 }
 
 void sdl_lin_map::set_hotspot(int mapn, int x, int y)
@@ -484,5 +521,19 @@ void sdl_lin_map::set_hotspot(int mapn, int x, int y)
 	screen_coord thescreen = themap.get_screen();
 
 	master_offsetx = (width/2) - thescreen.get_x();
-	master_offsety = (height/2) - thescreen.get_y();	
+	master_offsety = (height/2) - thescreen.get_y();
+	client_request t_sdl;
+	t_sdl.request = CLIENT_REQUEST_CHECK_MAP;
+	t_sdl.data.mcheck.item = this;
+	myclient->add_request(t_sdl);
+}
+
+int sdl_lin_map::get_offset_x()
+{
+	return master_offsetx;
+}
+
+int sdl_lin_map::get_offset_y()
+{
+	return master_offsety;
 }

@@ -144,10 +144,11 @@ void sdl_graphic::do_load(int x, int y, short *source, int type)
 			img = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 16,
 				0x7C00, 0x03E0, 0x001F, 0);
 			short *manip = (short*) &data[data_offset];
-			for (int i = 0; i < width * height / 2; i++)
-			{
-				manip[i] = SWAP16(manip[i]);
-			}
+			/** \todo find the actual size of the data */
+			//for (int i = 0; i <= width * height / 2; i++)
+			//{
+			//	manip[i] = SWAP16(manip[i]);
+			//}
 			cleanup = false;
 			pos = make_sdl_rect(x, y, width, height);
 			mask = make_sdl_rect(0, 0, width, height);
@@ -358,6 +359,7 @@ sdl_graphic::~sdl_graphic()
 			img->pixels = 0;
 		}
 		SDL_FreeSurface(img);
+		img = 0;
 	}
 }
 
@@ -578,7 +580,7 @@ SDL_Surface *sdl_graphic::get_png_image(char *name, client *who)
 	char *buffer;
 	SDL_Surface *ret;
 	SDL_RWops *sdl_buf = 0;
-	int size;
+	int size = 0;
 	if (who != 0)
 	{
 		buffer = (char*)who->getfiles->load_file(name, &size, FILE_SPRITESPACK, 0);

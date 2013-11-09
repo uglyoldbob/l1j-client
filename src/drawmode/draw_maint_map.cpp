@@ -26,15 +26,15 @@ draw_maint_map::draw_maint_map(sdl_user *self)
 		(funcptr*)new dam_ptr(owner, DRAWMODE_ADMIN_MAIN));
 	widgets[0]->set_key_focus(true);
 	
-	themap = new sdl_lin_map(owner, 50, 50, 540, 380);
+	themap = new sdl_lin_map(owner, 0, 50, 640, 380);
 	map_vis = 0;
 	
-//	mapnum = 69;
-//	x = 32674;
-//	y = 32860;
-	mapnum = 4;
-	x = 33068;
-	y = 32806;
+	mapnum = 69;
+	x = 32674;
+	y = 32860;
+//	mapnum = 4;
+//	x = 33068;
+//	y = 32806;
 	
 	//translates to 7fff8000
 	//x = 32700;
@@ -147,6 +147,13 @@ void draw_maint_map::mouse_move(SDL_MouseMotionEvent *from, SDL_MouseMotionEvent
 
 draw_maint_map::~draw_maint_map()
 {
+	if (themap != 0)
+	{
+		delete themap;
+		themap = 0;
+	}
+	SDL_DestroyMutex(draw_mtx);
+	draw_mtx = 0;
 }
 
 bool draw_maint_map::quit_request()
@@ -155,6 +162,11 @@ bool draw_maint_map::quit_request()
 	return true;
 }
 
+/** This draws a tile at the focused tile on the drawn map
+The general method for drawing a tile on a given map coordinate is like this:
+The hotspot of the map coordinates map and screen coordinates together
+Create a map_coord using the desired map coordinate of the map.
+*/
 void draw_maint_map::draw_cursor(int x, int y, SDL_Surface *display)
 {
 	sdl_graphic *left, *right;
@@ -163,12 +175,11 @@ void draw_maint_map::draw_cursor(int x, int y, SDL_Surface *display)
 	int selal, selbl;
 	selal = 2;
 	selbl = 89;
-	
-	map_coord themapz(x, y);
-	screen_coord thescreen = themapz.get_screen();
 
-	int master_offsetx = (320) - thescreen.get_x();
-	int master_offsety = (240) - thescreen.get_y();	
+	screen_coord thescreen = tempmap.get_screen();
+
+	int master_offsetx = themap->get_offset_x();
+	int master_offsety = themap->get_offset_y();
 
 	client_request t_sdl;
 	t_sdl.request = CLIENT_REQUEST_LOAD_TILE;
@@ -176,8 +187,8 @@ void draw_maint_map::draw_cursor(int x, int y, SDL_Surface *display)
 	t_sdl.data.tload.item = &themap->tile_data[selal];
 	owner->add_request(t_sdl);
 
-	dx = tempmap.get_screen().get_x() + master_offsetx;
-	dy = tempmap.get_screen().get_y() + master_offsety;
+	dx = thescreen.get_x() + master_offsetx;
+	dy = thescreen.get_y() + master_offsety;
 
 	left = themap->tile_data[selal].get_tile_left(selbl);
 	right = themap->tile_data[selal].get_tile_right(selbl);
@@ -191,10 +202,13 @@ void draw_maint_map::draw(SDL_Surface *display)
 {
 	static Uint32 time_change = SDL_GetTicks();
 	static bool draw_the_cursor = false;
+	static int halo = 0;
 	if ((SDL_GetTicks() + 1000) > time_change)
 	{
-		draw_the_cursor = !draw_the_cursor;
-		time_change += 300;
+		draw_the_cursor = true;//!draw_the_cursor;
+		if (++halo > 7)
+			halo = 0;
+		time_change += 50;
 	}
 	while (SDL_mutexP(draw_mtx) == -1) {};
 	SDL_FillRect(display, NULL, 0);
@@ -203,7 +217,33 @@ void draw_maint_map::draw(SDL_Surface *display)
 		themap->draw(display);
 		if (draw_the_cursor)
 		{	//2, 25
-			draw_cursor(x, y, display);
+			switch(halo)
+			{
+				case 0:
+					draw_cursor(x-1, y, display);
+					break;
+				case 1:
+					draw_cursor(x-1, y-1, display);
+					break;
+				case 2:
+					draw_cursor(x, y-1, display);
+					break;
+				case 3:
+					draw_cursor(x+1, y-1, display);
+					break;
+				case 4:
+					draw_cursor(x+1, y, display);
+					break;
+				case 5:
+					draw_cursor(x+1, y+1, display);
+					break;
+				case 6:
+					draw_cursor(x, y+1, display);
+					break;
+				case 7:
+					draw_cursor(x-1, y+1, display);
+					break;
+			}
 		}
 		themap->draw_info(display, x, y);
 	}

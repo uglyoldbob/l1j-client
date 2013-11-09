@@ -25,7 +25,6 @@ void partial_table::load(const char *real_name, pack *from)
 	{
 		entries[i] = (char*)0;
 	}
-	
 	while (temp_entry != NULL)
 	{
 		i = atoi(temp_entry);
@@ -33,12 +32,27 @@ void partial_table::load(const char *real_name, pack *from)
 
 		if (i < num_entries)
 		{
-			entries[i] = new char[strlen(temp_entry) + 1];
-			strcpy(entries[i], temp_entry);
+			if (entries[i] == 0)
+			{
+				entries[i] = new char[strlen(temp_entry) + 1];
+				strcpy(entries[i], temp_entry);
+			}
+			else
+			{	/** \todo should the first item or the second item actually be used for the entry? */
+				printf("Entry %d already exists\n\told: %s\n\tdupe: %s\n", i, entries[i], temp_entry);
+			}
 		}
 		temp_entry = strtok(NULL, delimiters2);
 	}
-		
 	delete [] buffer;
 	buffer = 0;
+}
+
+partial_table::partial_table()
+{
+}
+
+partial_table::~partial_table()
+{
+	printf("Deleting partial table\n");
 }

@@ -75,10 +75,17 @@ int sdl_user::init_tiles()
 sdl_user::~sdl_user()
 {
 	SDL_DestroyMutex(draw_mtx);
+	draw_mtx = 0;
 	if (drawmode != 0)
+	{
 		delete drawmode;
+		drawmode = 0;
+	}
 	if (map_tiles != 0)
+	{
 		delete [] map_tiles;
+		map_tiles = 0;
+	}
 }
 
 tile *sdl_user::get_tiles()

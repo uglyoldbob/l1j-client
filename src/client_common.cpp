@@ -25,6 +25,7 @@ int client::pack_resources()
 
 int client::init_packs()
 {
+	num_sprite_pack = 17;
 	textpack = new pack("Text", 1);
 	tilepack = new pack("Tile", 0);
 	spritepack = new pack*[num_sprite_pack];
@@ -126,7 +127,7 @@ client::client(sdl_user *stuff)
 	graphics = stuff;
 	server = 0;
 	server_data = 0;
-	num_sprite_pack = 17;
+	num_sprite_pack = 0;
 	for (int i = 0; i < 256; i++)
 	{	//this loop sets up a no translation scheme for default
 		convert_client_packets[i] = i;
@@ -136,6 +137,7 @@ client::client(sdl_user *stuff)
 
 client::~client()
 {
+	delete_requests();
 	SDL_DestroyMutex(requests_mtx);
 	delete getfiles;
 	if (server != 0)
@@ -221,11 +223,17 @@ void client::check_requests()
 						break;
 				}
 				if (temp->data.rload.name != 0)
+				{
 					delete [] temp->data.rload.name;
+					temp->data.rload.name = 0;
+				}
 				break;
 			case CLIENT_REQUEST_LOAD_TILE:
 				temp->data.tload.item->load(
 					temp->data.tload.which, this);
+				break;
+			case CLIENT_REQUEST_CHECK_MAP:
+				temp->data.mcheck.item->check_sections(this);
 				break;
 			default:
 				break;
@@ -235,27 +243,57 @@ void client::check_requests()
 	SDL_mutexV(requests_mtx);
 }
 
-void client::add_request(client_request rqst)
+/** This is used to delete all requests */
+void client::delete_requests()
 {
 	while (SDL_mutexP(requests_mtx) == -1) {};
-	client_request *temp = new client_request;
-	temp->data.rload.name = 0;
-	memcpy(temp, &rqst, sizeof(rqst));
-	switch (rqst.request)
+	while (request_queue.size() > 0)
 	{
-		case CLIENT_REQUEST_LOAD_SDL_GRAPHIC:
-			if (rqst.data.rload.name != 0)
-			{
-				temp->data.rload.name = new char[strlen(rqst.data.rload.name)];
-				strcpy(temp->data.rload.name, rqst.data.rload.name);
-			}
-			break;
-		case CLIENT_REQUEST_LOAD_TILE:
-		default:
-			break;
+		client_request *temp = request_queue.front();
+		request_queue.pop();
+		switch (temp->request)
+		{
+			case CLIENT_REQUEST_LOAD_SDL_GRAPHIC:
+				if (temp->data.rload.name != 0)
+				{
+					delete [] temp->data.rload.name;
+					temp->data.rload.name = 0;
+				}
+				break;
+			default:
+				break;
+		}
+		delete temp;
+		temp = 0;
 	}
-	request_queue.push(temp);
 	SDL_mutexV(requests_mtx);
+}
+
+void client::add_request(client_request rqst)
+{
+	if (stop_thread == false)
+	{
+		while (SDL_mutexP(requests_mtx) == -1) {};
+		client_request *temp = new client_request;
+		temp->data.rload.name = 0;
+		memcpy(temp, &rqst, sizeof(rqst));
+		switch (rqst.request)
+		{
+			case CLIENT_REQUEST_LOAD_SDL_GRAPHIC:
+				if (rqst.data.rload.name != 0)
+				{
+					temp->data.rload.name = new char[strlen(rqst.data.rload.name)];
+					strcpy(temp->data.rload.name, rqst.data.rload.name);
+				}
+				break;
+			case CLIENT_REQUEST_CHECK_MAP:
+			case CLIENT_REQUEST_LOAD_TILE:
+			default:
+				break;
+		}
+		request_queue.push(temp);
+		SDL_mutexV(requests_mtx);
+	}
 }
 
 int client::check_login_chars()

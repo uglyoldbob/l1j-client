@@ -52,11 +52,15 @@ static void shorten_filename(char *dest, char *src)
     return;
 
   if (my_basename(basen))
+  {
+	free(basen);
     return;
+  }
 
   if (strlen(basen) < MAX_FILENAME_LENGTH)
   {
     strncpy(dest,basen,MAX_FILENAME_LENGTH);
+	free(basen);
     return;
   }
 
@@ -281,6 +285,7 @@ static int setup_barename(state *s, char *fn)
   }
 
   s->full_name = basen;
+  free(basen);
   return FALSE;
 }
 

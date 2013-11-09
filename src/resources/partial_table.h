@@ -7,6 +7,8 @@ class partial_table : public table
 {
 	public:
 		virtual void load(const char *real_name, pack* from);
+		partial_table();
+		~partial_table();
 };
 
 #endif

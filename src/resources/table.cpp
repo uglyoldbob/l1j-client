@@ -90,6 +90,8 @@ void table::load(const char *real_name, pack *from)
 	if (num_entries == 0)
 	{
 		entries = 0;
+		delete [] buffer;
+		buffer = 0;
 		return;
 	}
 	entries = new char*[num_entries];

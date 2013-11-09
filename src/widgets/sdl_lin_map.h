@@ -59,18 +59,20 @@ class sdl_lin_map : public sdl_widget
 		void set_hotspot(int mapn, int x, int y);	//sets the coordinates for the hotspot (the middle of the screen)
 		void draw_info(SDL_Surface *display, int x, int y);
 		tile *tile_data;	//used for reference only
+		int get_offset_x();	/**< Returns the calculated offset for this map */
+		int get_offset_y();	/**< Returns the calculated offset for this map */
+		void check_sections(client *from);	/**< Check the loaded sections whenever the map gets moved */
 	private:
-		
+		SDL_mutex *edit_mtx;
 		lin_map_segment segs[4];
 		int map;
-		sdl_user *who;
 		
 		//the master set of offsets for the x and y coordinates of translated coordinates
 		int master_offsetx;
 		int master_offsety;
 		
-		lin_map_segment get_map(int mapnum, int x, int y);	//returns a map section
-		void check_sections();	//check the loaded sections
+		lin_map_segment get_map(int mapnum, int x, int y, client *from);	//returns a map section
+		void delete_segment(lin_map_segment delme);
 };
 
 #endif

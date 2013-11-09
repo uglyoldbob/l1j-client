@@ -41,10 +41,16 @@ void sdl_user::init_client(client *clnt)
 sdl_user::~sdl_user()
 {
 //	delete game;
+	SDL_DestroyMutex(draw_mtx);
 	if (drawmode != 0)
 	{
 		delete drawmode;
 		drawmode = 0;
+	}
+	if (map_tiles != 0)
+	{
+		delete [] map_tiles;
+		map_tiles = 0;
 	}
 }
 

@@ -14,6 +14,7 @@
 #include "resources/table.h"
 #include "resources/small_font.h"
 #include "resources/pack.h"
+#include "widgets/sdl_lin_map.h"
 
 #define TRANSFER_AMOUNT 0x400
 
@@ -24,6 +25,7 @@ int run_client(void *moron);
 /** This enumeration defines what the request for the client is for. It defines which structure to use */
 enum CLIENT_REQUEST_TYPE
 {
+	CLIENT_REQUEST_CHECK_MAP,
 	CLIENT_REQUEST_LOAD_SDL_GRAPHIC,
 	CLIENT_REQUEST_LOAD_TILE,
 	CLIENT_REQUEST_QUIT
@@ -61,6 +63,11 @@ struct client_request_tile
 	int which;
 };
 
+struct client_request_map
+{
+	sdl_lin_map *item;
+};
+
 /** This is a structure that contains data used to make a request to the client */
 struct client_request
 {
@@ -69,6 +76,7 @@ struct client_request
 	{
 		client_request_sdl_graphic rload;
 		client_request_tile			tload;
+		client_request_map			mcheck;
 	} data;
 };
 
@@ -143,6 +151,7 @@ class client
 		
 		void check_requests();	/**< Check for any requests that have been made */
 		SDL_mutex *requests_mtx;	/**< The mutex that prevents checks and requests from happening at the same time */
+		void delete_requests();	/**< This function deletes all pending requests */
 		std::queue<client_request*> request_queue;
 };
 
