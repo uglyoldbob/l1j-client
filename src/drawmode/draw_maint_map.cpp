@@ -22,11 +22,11 @@ draw_maint_map::draw_maint_map(sdl_user *self)
 	num_widgets = 1;
 	
 	widgets = new sdl_widget*[num_widgets];
-	widgets[0] = new sdl_text_button("Return", 320, 255, owner->game, 
-		(funcptr*)new dam_ptr(this, DRAWMODE_ADMIN_MAIN));
+	widgets[0] = new sdl_text_button("Return", 320, 255, owner, 
+		(funcptr*)new dam_ptr(owner, DRAWMODE_ADMIN_MAIN));
 	widgets[0]->set_key_focus(true);
 	
-	themap = new sdl_lin_map(owner->game->get_tiles(), owner->game, 50, 50, 540, 380);
+	themap = new sdl_lin_map(owner, 50, 50, 540, 380);
 	map_vis = 0;
 	
 //	mapnum = 69;
@@ -151,7 +151,7 @@ draw_maint_map::~draw_maint_map()
 
 bool draw_maint_map::quit_request()
 {
-	owner->game->stop_thread = true;
+	//owner->stop_thread = true;
 	return true;
 }
 
@@ -170,7 +170,11 @@ void draw_maint_map::draw_cursor(int x, int y, SDL_Surface *display)
 	int master_offsetx = (320) - thescreen.get_x();
 	int master_offsety = (240) - thescreen.get_y();	
 
-	themap->tile_data[selal].load(selal, owner->game);
+	client_request t_sdl;
+	t_sdl.request = CLIENT_REQUEST_LOAD_TILE;
+	t_sdl.data.tload.which = selal;
+	t_sdl.data.tload.item = &themap->tile_data[selal];
+	owner->add_request(t_sdl);
 
 	dx = tempmap.get_screen().get_x() + master_offsetx;
 	dy = tempmap.get_screen().get_y() + master_offsety;

@@ -24,7 +24,7 @@ struct sprite_frame
 class sprite : public sdl_widget
 {
 	public:
-		sprite(int x, int y, char *filename, client *who);
+		sprite(int x, int y, const char *filename, sdl_user *who);
 		virtual void draw(SDL_Surface *display);
 		~sprite();
 

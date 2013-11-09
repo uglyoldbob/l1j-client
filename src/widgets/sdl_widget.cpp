@@ -4,7 +4,7 @@
 #include "globals.h"
 #include "sdl_widget.h"
 
-sdl_widget::sdl_widget(int x, int y, client *who)
+sdl_widget::sdl_widget(int x, int y, sdl_user *who)
 {
 	visible = false;
 	key_focus = false;
@@ -15,7 +15,7 @@ sdl_widget::sdl_widget(int x, int y, client *who)
 	myclient = who;
 }
 
-sdl_widget::sdl_widget(int num, int x, int y, client *who)
+sdl_widget::sdl_widget(int num, int x, int y, sdl_user *who)
 {
 	visible = false;
 	key_focus = false;
@@ -23,7 +23,17 @@ sdl_widget::sdl_widget(int num, int x, int y, client *who)
 	
 	if (num != -1)
 	{
-		one = new sdl_graphic(num, x, y, who, GRAPH_IMG);
+		client_request t_sdl;
+		t_sdl.request = CLIENT_REQUEST_LOAD_SDL_GRAPHIC;
+		t_sdl.data.rload.name = 0;
+		t_sdl.data.rload.num = num;
+		t_sdl.data.rload.x = x;
+		t_sdl.data.rload.y = y;
+		t_sdl.data.rload.type = GRAPH_IMG;
+		t_sdl.data.rload.load_type = CLIENT_REQUEST_LOAD_4;
+		one = new sdl_graphic();
+		t_sdl.data.rload.item = one;
+		who->add_request(t_sdl);
 	}
 	else
 	{

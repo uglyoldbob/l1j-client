@@ -85,8 +85,9 @@ void music::change_music(const char *name)
 			strcat(real_name, name);
 			printf("Loading music %s\n", real_name);
 			
-			cur_music = Mix_LoadMUS(real_name);
+			cur_music = Mix_LoadMUS(real_name);	
 			delete [] real_name;
+			real_name = 0;
 			Mix_PlayMusic(cur_music, -1);
 		}
 	}

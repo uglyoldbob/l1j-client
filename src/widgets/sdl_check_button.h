@@ -10,7 +10,7 @@ class client;
 class sdl_check_button : public sdl_plain_button
 {
 	public:
-		sdl_check_button(int num, int x, int y, client *who, funcptr *stuff);
+		sdl_check_button(int num, int x, int y, sdl_user *who, funcptr *stuff);
 		virtual ~sdl_check_button();
 		virtual void draw(SDL_Surface *display);
 		

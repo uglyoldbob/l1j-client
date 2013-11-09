@@ -1,5 +1,6 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
+#include <time.h>
 
 #include "sdl_master.h"
 #include "client.h"
@@ -10,10 +11,12 @@ sdl_master::sdl_master(Uint32 flags)
 {
 	game_client = new SDL_Thread*[4];
 	clients = new sdl_user*[4];
+	cdisplay = new SDL_Surface*[4];
 	for (int i = 0; i < 4; i++)
 	{
 		game_client[i] = (SDL_Thread*)0;
 		clients[i] = (sdl_user*)0;
+		cdisplay[i] = (SDL_Surface *)0;
 	}
 	if (SDL_Init(SDL_INIT_VIDEO) != 0)
 	{
@@ -40,9 +43,12 @@ void sdl_master::create_client()
 {	
 	if (game_client[0] == 0)
 	{
+		cdisplay[0] = SDL_CreateRGBSurface(SDL_SWSURFACE,
+							SCREEN_WIDTH, SCREEN_HEIGHT, 16,
+							0x7C00, 0x03E0, 0x001F, 0);
 		clients[0] = new sdl_user;
 		game_client[0] = SDL_CreateThread(run_client, (void*)clients[0]);
-		clients[0]->wait_ready();
+		while (!clients[0]->are_you_ready()) {};
 	}
 }
 
@@ -107,6 +113,9 @@ bool sdl_master::check_users(bool last)
 			SDL_WaitThread(game_client[0], &bla);
 			delete clients[0];
 			clients[0] = 0;
+			SDL_FreeSurface(cdisplay[0]);
+			cdisplay[0] = 0;
+			clients[0] = 0;
 			game_client[0] = (SDL_Thread*)0;
 			last = true;
 		}
@@ -121,12 +130,12 @@ void sdl_master::draw()
 	SDL_Rect rect;
 	if (clients[0] != 0)
 	{
-		clients[0]->draw();
+		clients[0]->draw(cdisplay[0]);
 		rect.x = 0;
 		rect.y = 0;
-		rect.w = clients[0]->display->w;
-		rect.h = clients[0]->display->h;
-		SDL_BlitSurface(clients[0]->display, &rect, display, &rect);
+		rect.w = cdisplay[0]->w;
+		rect.h = cdisplay[0]->h;
+		SDL_BlitSurface(cdisplay[0], &rect, display, &rect);
 		SDL_Flip(display);
 	}
 	
@@ -200,6 +209,31 @@ void sdl_master::key_press(SDL_KeyboardEvent *button)
 {
 	if (clients[0] != 0)
 	{
+		if (button->type == SDL_KEYDOWN)
+		{
+			switch(button->keysym.sym)
+			{
+				case SDLK_PRINT:
+					char filename[256];
+					time_t rawtime;
+					struct tm * timeinfo;
+					time ( &rawtime );
+					timeinfo = localtime ( &rawtime );
+					sprintf(filename, "%s", asctime(timeinfo));
+					filename[strlen(filename)-1] = 0;
+					strcat(filename, ".bmp");
+					for (unsigned int i = 0; i < strlen(filename); i++)
+					{
+						if ((filename[i] == ' ') || (filename[i] == ':'))
+							filename[i] = '_';
+					}
+					printf("Screenshot to %s\n", filename);
+					SDL_SaveBMP(display, filename);
+					break;
+				default:
+					break;
+			}
+		}
 		//TODO: determine which client gets keyboard input
 		clients[0]->key_press(button);
 	}
@@ -215,6 +249,9 @@ int sdl_master::get_client(int x, int y)
 sdl_master::~sdl_master()
 {
 	delete [] game_client;
+	game_client = 0;
 	delete [] clients;
-	SDL_Quit();
+	clients = 0;
+	delete [] cdisplay;
+	cdisplay = 0;
 }

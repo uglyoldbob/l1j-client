@@ -33,7 +33,7 @@ draw_game::draw_game(sdl_user *self)
 	
 	num_widgets = 7;
 
-	themap = new sdl_lin_map(owner->game->get_tiles(), owner->game, 0, 0, 640, 380);
+	themap = new sdl_lin_map(owner, 0, 0, 640, 380);
 	mapnum = 4;
 	x = 32549;
 	y = 32925;
@@ -41,19 +41,19 @@ draw_game::draw_game(sdl_user *self)
 	
 	widgets = new sdl_widget*[num_widgets];
 	widgets[0] = themap;
-	widgets[1] = new chat_window(124, 363, self->game);
+	widgets[1] = new chat_window(124, 363, self);
 	widgets[1]->set_key_focus(true);
 	widgets[1]->cursor_on();
 	widget_key_focus = 1;
 	
-	widgets[2] = new sdl_widget(1028, 0, 368, self->game);
-		//new sdl_widget(1019, 485, 366, self->game);
-		//new sdl_widget(1028, 0, 368, self->game);
-		//new sdl_widget(1042, 124, 363, self->game);
+	widgets[2] = new sdl_widget(1028, 0, 368, self);
+		//new sdl_widget(1019, 485, 366, self);
+		//new sdl_widget(1028, 0, 368, self);
+		//new sdl_widget(1042, 124, 363, self);
 		
-	widgets[3] = new sdl_widget(1029, 3, 386, self->game);
-	widgets[4] = new sdl_widget(1030, 3, 402, self->game);
-	widgets[5] = new sdl_widget(1031, 3, 423, self->game);
+	widgets[3] = new sdl_widget(1029, 3, 386, self);
+	widgets[4] = new sdl_widget(1030, 3, 402, self);
+	widgets[5] = new sdl_widget(1031, 3, 423, self);
 	//1029 is the exp bar
 	//1030 is the regular hp bar
 	//1031 is mp bar
@@ -69,8 +69,8 @@ draw_game::draw_game(sdl_user *self)
 	hp_width = (float)widgets[4]->getw();
 	mp_width = (float)widgets[5]->getw();
 	
-	widgets[6] = new sprite(320, 200, "2786-8.spr", owner->game);   //0, 5, 8, 
-	//widgets[6] = new sprite(50, 50, "3226-305.spr", owner->game);
+	widgets[6] = new sprite(320, 200, "2786-8.spr", owner);   //0, 5, 8, 
+	//widgets[6] = new sprite(50, 50, "3226-305.spr", owner);
 }
 
 void draw_game::change_map(int map_num)
@@ -141,7 +141,6 @@ draw_game::~draw_game()
 
 bool draw_game::quit_request()
 {
-	owner->game->stop_thread = true;
 	return true;
 }
 
@@ -152,7 +151,7 @@ void draw_game::draw(SDL_Surface *display)
 	while (SDL_mutexP(draw_mtx) == -1) {};
 	SDL_FillRect(display, NULL, 0);
 	sdl_drawmode::draw(display);
-	owner->game->smallfont.draw(display, 35, 390, exp_str, 0xFFFE);
+	//owner->game->smallfont.draw(display, 35, 390, exp_str, 0xFFFE);
 	lineage_font.draw(display, 35, 407, hp_str, 0xFFFE);
 	lineage_font.draw(display, 35, 426, mp_str, 0xFFFE);
 	

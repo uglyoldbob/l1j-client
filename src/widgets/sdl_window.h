@@ -7,7 +7,7 @@ class client;
 class sdl_window : public sdl_widget
 {
 	public:
-		sdl_window(int num, int x, int y, int w, int h, client *who);
+		sdl_window(int num, int x, int y, int w, int h, sdl_user *who);
 		~sdl_window();
 		
 		virtual void draw(SDL_Surface *display);

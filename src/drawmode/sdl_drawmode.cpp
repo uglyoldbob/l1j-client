@@ -3,15 +3,15 @@
 #include "sdl_user.h"
 #include "widgets/sdl_widget.h"
 
-dam_ptr::dam_ptr(sdl_drawmode *bla, enum drawmode val)
+dam_ptr::dam_ptr(sdl_user *bla, enum drawmode val)
 {
-	ref = bla;
+	owner = bla;
 	which = val;
 }
 
 void dam_ptr::go()
 {
-	ref->owner->change_drawmode(which);
+	owner->change_drawmode(which);
 }
 
 sdl_drawmode::sdl_drawmode(sdl_user *self)

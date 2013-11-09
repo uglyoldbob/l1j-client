@@ -19,9 +19,13 @@ table::~table()
 		for (int i = 0; i < num_entries; i++)
 		{
 			if (entries[i] != 0)
+			{
 				delete [] entries[i];
+				entries[i] = 0;
+			}
 		}
 		delete [] entries;
+		entries = 0;
 	}
 }
 
@@ -117,6 +121,7 @@ void table::load(const char *real_name, pack *from)
 	}
 
 	delete [] buffer;
+	buffer = 0;
 }
 
 void table::load_local(const char *name, pack* from)
@@ -126,6 +131,7 @@ void table::load_local(const char *name, pack* from)
 	sprintf(real_name, "%s-%c.tbl", name, get_lang_char());
 	load(real_name, from);
 	delete [] real_name;
+	real_name = 0;
 }
 
 char table::get_lang_char()

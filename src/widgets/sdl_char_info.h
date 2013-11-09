@@ -10,7 +10,7 @@ class client;
 class sdl_char_info : public sdl_widget
 {
 	public:
-		sdl_char_info(client *who);
+		sdl_char_info(sdl_user *who);
 		virtual ~sdl_char_info();
 		virtual void draw(SDL_Surface *display);
 		void hand_info(lin_char_info *bla);

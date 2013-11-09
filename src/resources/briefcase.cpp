@@ -72,7 +72,9 @@ int briefcase::detect_dupes()	//detects duplicate files
 						files[i].offset = -1;
 					}
 					delete [] filea;
+					filea = 0;
 					delete [] fileb;
+					fileb = 0;
 				}
 			}
 		}
@@ -201,9 +203,15 @@ void briefcase::write_file(char *name, char *data, int size)
 		fwrite(data, sizeof(char), size, data_buf);
 		
 		if (temp != 0)
+		{
 			delete [] temp;
+			temp = 0;
+		}
 		if (temp2 != 0)
+		{
 			delete [] temp2;
+			temp2 = 0;
+		}
 	}
 	else
 	{
@@ -319,10 +327,15 @@ briefcase::~briefcase()
 		for (int i = 0; i < num_files; i++)
 		{
 			if (file_data[i] != 0)
+			{
 				delete [] file_data[i];
+				file_data[i] = 0;
+			}
 		}
 		delete [] file_data;
+		file_data = 0;
 	}
 	
 	delete [] data_file;
+	data_file = 0;
 }

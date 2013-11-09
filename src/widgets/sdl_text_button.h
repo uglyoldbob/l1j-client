@@ -13,7 +13,7 @@ SDL_Rect *make_sdl_rect(int x, int y, int w, int h);
 class sdl_text_button : public sdl_plain_button
 {
 	public:
-		sdl_text_button(const char *bla, int x, int y, client *who, funcptr *stuff);
+		sdl_text_button(const char *bla, int x, int y, sdl_user *who, funcptr *stuff);
 		virtual ~sdl_text_button();
 		void set_display(const char* disp);
 		virtual void draw(SDL_Surface *display);

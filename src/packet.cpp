@@ -370,8 +370,6 @@ void packet::reset()
 
 int packet::process_packet()
 {
-	if (game->stop_thread)
-		throw "Stop client thread requested";
 	if (packet_data == 0)
 		return 0;
 	if (key_initialized == 0)
@@ -451,6 +449,7 @@ void packet::server_message()
 		offset += disassemble(&packet_data[offset], "s", &message);
 		printf("Message %d is %s\n", i, message);
 		delete [] message;
+		message = 0;
 	}
 }
 
@@ -465,9 +464,9 @@ void packet::handle_chat()
 		case SERVER_CHAT_NORM:
 		{
 			disassemble(&packet_data[1], "cds", &type, &player_id, &message);
-			chat_window *temp;
-			temp = (chat_window*)(game->graphics->get_drawmode()->get_widget(1));
-			temp->add_line(message);
+		//	chat_window *temp;
+		//	temp = (chat_window*)(game->graphics->get_drawmode()->get_widget(1));
+		//	temp->add_line(message);
 			delete [] message;
 		}
 			break;
@@ -475,10 +474,11 @@ void packet::handle_chat()
 		{	//605 - 612.img are the direction icons
 			short x, y;
 			disassemble(&packet_data[1], "cdshh", &type, &player_id, &message, &x, &y);
-			chat_window *temp;
-			temp = (chat_window*)(game->graphics->get_drawmode()->get_widget(1));
-			temp->add_line(message);
+		//	chat_window *temp;
+		//	temp = (chat_window*)(game->graphics->get_drawmode()->get_widget(1));
+		//	temp->add_line(message);
 			delete [] message;
+			message = 0;
 		}
 			break;
 		case SERVER_CHAT_GLOBAL:
@@ -490,19 +490,21 @@ void packet::handle_chat()
 				case 9:
 				{	//return from a command like .help
 					disassemble(&packet_data[offset], "s", &message);
-					chat_window *temp;
-					temp = (chat_window*)(game->graphics->get_drawmode()->get_widget(1));
-					temp->add_line(message);
+		//			chat_window *temp;
+		//			temp = (chat_window*)(game->graphics->get_drawmode()->get_widget(1));
+		//			temp->add_line(message);
 					delete [] message;
+					message = 0;
 				}	
 					break;
 				case 3:
 				{	//regular global chat
 					disassemble(&packet_data[offset], "s", &message);
-					chat_window *temp;
-					temp = (chat_window*)(game->graphics->get_drawmode()->get_widget(1));
-					temp->add_line(message);
+		//			chat_window *temp;
+		//			temp = (chat_window*)(game->graphics->get_drawmode()->get_widget(1));
+		//			temp->add_line(message);
 					delete [] message;
+					message = 0;
 				}
 					break;
 				default:
@@ -518,12 +520,15 @@ void packet::handle_chat()
 			disassemble(&packet_data[1], "ss", &message, &act_msg);
 			display = new char[strlen(message) + strlen(act_msg) + 4];
 			sprintf(display, "(%s) %s", message, act_msg);
-			chat_window *temp;
-			temp = (chat_window*)(game->graphics->get_drawmode()->get_widget(1));
-			temp->add_line(display);
+		//	chat_window *temp;
+		//	temp = (chat_window*)(game->graphics->get_drawmode()->get_widget(1));
+		//	temp->add_line(display);
 			delete [] message;
+			message = 0;
 			delete [] act_msg;
+			act_msg = 0;
 			delete [] display;
+			display = 0;
 		}
 			break;
 		default:
@@ -531,6 +536,7 @@ void packet::handle_chat()
 			disassemble(&packet_data[1], "cds", &type, &player_id, &message);
 			printf("Received chat message: %s\n", message);
 			delete [] message;
+			message = 0;
 		}
 			break;
 	}
@@ -588,18 +594,18 @@ void packet::update_mp()
 {
 	short max_mp, cur_mp;
 	disassemble(&packet_data[1], "hh", &cur_mp, &max_mp);
-	game->graphics->wait_for_mode(DRAWMODE_GAME);
-	draw_game *bla = (draw_game*)game->graphics->get_drawmode();
-	bla->update_mpbar(cur_mp, max_mp);
+//	game->graphics->wait_for_mode(DRAWMODE_GAME);
+//	draw_game *bla = (draw_game*)game->graphics->get_drawmode();
+//	bla->update_mpbar(cur_mp, max_mp);
 }
 
 void packet::update_hp()
 {
 	short max_hp, cur_hp;
 	disassemble(&packet_data[1], "hh", &cur_hp, &max_hp);
-	game->graphics->wait_for_mode(DRAWMODE_GAME);
-	draw_game *bla = (draw_game*)game->graphics->get_drawmode();
-	bla->update_hpbar(cur_hp, max_hp);
+//	game->graphics->wait_for_mode(DRAWMODE_GAME);
+//	draw_game *bla = (draw_game*)game->graphics->get_drawmode();
+//	bla->update_hpbar(cur_hp, max_hp);
 }
 
 void packet::game_time()
@@ -657,10 +663,10 @@ void packet::char_status()
 	printf("\tLevel : %d\tExp %d\n", level, exp);
 	printf("\tSTR %2d CON %2d DEX %2d WIS %2d INT %2d CHA %2d\n", str, con, dex,
 		wis, intl, cha);
-	game->graphics->wait_for_mode(DRAWMODE_GAME);
-	draw_game *bla = (draw_game*)game->graphics->get_drawmode();
-	bla->update_hpbar(cur_hp, max_hp);
-	bla->update_mpbar(cur_mp, max_mp);
+//	game->graphics->wait_for_mode(DRAWMODE_GAME);
+//	draw_game *bla = (draw_game*)game->graphics->get_drawmode();
+//	bla->update_hpbar(cur_hp, max_hp);
+//	bla->update_mpbar(cur_mp, max_mp);
 	printf("\tAC %d\tTIME %d\tFood %d\tWeight %d\tAlignment %d\n", ac, time, 
 		food, weight, alignment);
 }
@@ -674,10 +680,10 @@ void packet::char_create_result()
 	{
 		lin_char_info *temp;
 		draw_new_char* bob;
-		bob = (draw_new_char*)game->graphics->get_drawmode();
-		temp = bob->get_char();
-		game->register_char(temp);
-		game->graphics->change_drawmode(DRAWMODE_CHARSEL);
+//		bob = (draw_new_char*)game->graphics->get_drawmode();
+//		temp = bob->get_char();
+//		game->register_char(temp);
+//		game->graphics->change_drawmode(DRAWMODE_CHARSEL);
 	}
 }
 
@@ -747,13 +753,13 @@ void packet::login_check()
 			//send 9?
 			send_packet("cdd", CLIENT_ALIVE, 0, 0);
 			send_packet("ccdd", CLIENT_INITGAME, 0, 0, 0);
-			game->graphics->change_drawmode(DRAWMODE_GAME);
+//			game->graphics->change_drawmode(DRAWMODE_GAME);
 			break;
 		case 5:
 			{
-			draw_char_sel* bob;
-			bob = (draw_char_sel*)game->graphics->get_drawmode();
-			bob->do_delete();
+//			draw_char_sel* bob;
+//			bob = (draw_char_sel*)game->graphics->get_drawmode();
+//			bob->do_delete();
 			}
 			break;
 		case 0x51:
@@ -775,7 +781,7 @@ void packet::news_packet()
 	printf("STUB The news is %s\n", news);
 	reset();
 	send_packet("cdd", CLIENT_CLICK, 0, 0);	//TODO: there is a minimum packet length
-	game->graphics->change_drawmode(DRAWMODE_CHARSEL);
+//	game->graphics->change_drawmode(DRAWMODE_CHARSEL);
 }
 
 void packet::key_packet()

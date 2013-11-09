@@ -40,4 +40,5 @@ void partial_table::load(const char *real_name, pack *from)
 	}
 		
 	delete [] buffer;
+	buffer = 0;
 }

@@ -1,6 +1,6 @@
 #include "sdl_window.h"
 
-sdl_window::sdl_window(int num, int x, int y, int w, int h, client *who)
+sdl_window::sdl_window(int num, int x, int y, int w, int h, sdl_user *who)
 	: sdl_widget(num, 0, 0, who)
 {
 	num_widgets = 0;

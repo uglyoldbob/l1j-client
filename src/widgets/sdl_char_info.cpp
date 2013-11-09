@@ -4,7 +4,7 @@
 #include "globals.h"
 #include "sdl_char_info.h"
 
-sdl_char_info::sdl_char_info(client *who)
+sdl_char_info::sdl_char_info(sdl_user *who)
 	: sdl_widget(0, 0, 0, who)
 {
 	fonts = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCCOLORKEY, 640, 480, 16, 

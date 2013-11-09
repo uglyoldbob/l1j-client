@@ -35,14 +35,12 @@ class sdl_drawmode;
 class dam_ptr : public funcptr
 {
 	public:
-		dam_ptr(sdl_drawmode *bla, enum drawmode val);
+		dam_ptr(sdl_user *bla, enum drawmode val);
 		virtual void go();
 	private:
 		enum drawmode which;
-		sdl_drawmode *ref;
+		sdl_user *owner;
 };
-
-void change_mode(void *a, void* b);
 
 //this is a pure virtual (or abstract) class
 class sdl_drawmode
@@ -50,7 +48,6 @@ class sdl_drawmode
 	public:
 		sdl_drawmode(sdl_user *self);
 		virtual ~sdl_drawmode();
-		sdl_user *owner;
 	
 		virtual void draw(SDL_Surface *display);
 		
@@ -69,6 +66,7 @@ class sdl_drawmode
 		sdl_widget **widgets;
 		int num_widgets;
 		int widget_key_focus;
+		sdl_user *owner;
 
 		SDL_mutex *draw_mtx;
 		bool draw_scene;

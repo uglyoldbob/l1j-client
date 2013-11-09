@@ -12,14 +12,24 @@ prepared_graphics::~prepared_graphics()
 		for (int i = 0; i < num_pg; i++)
 		{
 			if (pg[i].cleanup)
+			{
 				delete [] (unsigned short*)pg[i].surf->pixels;
+				pg[i].surf->pixels = 0;
+			}
 			SDL_FreeSurface(pg[i].surf);
 			if (pg[i].position != 0)
+			{
 				delete pg[i].position;
+				pg[i].position = 0;
+			}
 			if (pg[i].mask != 0)
+			{
 				delete pg[i].mask;
+				pg[i].mask = 0;
+			}
 		}
 		delete [] pg;
+		pg = 0;
 	}
 }
 

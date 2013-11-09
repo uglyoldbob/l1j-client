@@ -53,7 +53,7 @@ struct lin_map_segment
 class sdl_lin_map : public sdl_widget
 {
 	public:
-		sdl_lin_map(tile *thetiles, client *who, int x, int y, int w, int h);
+		sdl_lin_map(sdl_user *who, int x, int y, int w, int h);
 		~sdl_lin_map();
 		void draw(SDL_Surface *display);	//draws the full map onto display
 		void set_hotspot(int mapn, int x, int y);	//sets the coordinates for the hotspot (the middle of the screen)
@@ -63,7 +63,7 @@ class sdl_lin_map : public sdl_widget
 		
 		lin_map_segment segs[4];
 		int map;
-		client *who;
+		sdl_user *who;
 		
 		//the master set of offsets for the x and y coordinates of translated coordinates
 		int master_offsetx;

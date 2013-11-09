@@ -4,6 +4,7 @@ Lineage_LDFLAGS = -lmingw32
 endif
 Lineage_SOURCES = \
 src/client.cpp \
+src/client_common.cpp \
 src/config.cpp \
 src/connection.cpp \
 src/funcptr.cpp \
@@ -65,6 +66,7 @@ endif
 
 Admin_SOURCES = \
 src/client_admin.cpp \
+src/client_common.cpp \
 src/config.cpp \
 src/connection.cpp \
 src/funcptr.cpp \

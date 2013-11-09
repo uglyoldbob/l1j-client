@@ -5,7 +5,7 @@
 #include "widgets/sdl_widget.h"
 #include "widgets/text_box.h"
 
-chat_window::chat_window(int x, int y, client *who)
+chat_window::chat_window(int x, int y, sdl_user *who)
 	: sdl_window(1042, x, y, 400, 400, who)
 {	//im placed at 124, 363
 	//1043.img graphic
@@ -14,7 +14,7 @@ chat_window::chat_window(int x, int y, client *who)
 	widgets = new sdl_widget*[num_widgets];
 	widgets[0] = new sdl_widget(1039, 13, 99, who);
 	widgets[1] = new sdl_widget(1041, 13, 101, who);
-	widgets[2] = new sdl_input_box(12, 30, 102, who);
+	widgets[2] = new sdl_input_box(12, 30, 102, 0, who);
 	widgets[3] = new text_box(20, 32, 6*57, 5*12, who);
 	
 	text_box *tb = (text_box*)widgets[3];
@@ -38,7 +38,7 @@ chat_window::~chat_window()
 {
 }
 
-void chat_window::add_line(char *data)
+void chat_window::add_line(const char *data)
 {
 	text_box *tb = (text_box*)widgets[3];
 	tb->add_line(data);
@@ -54,27 +54,27 @@ void chat_window::submit_chat(const char *blabla)
 			strcpy(temp, blabla);
 			char *temp2 = strchr(temp, ' ');
 			temp2[0] = 0;
-			myclient->send_packet("css", CLIENT_CHAT_WHISPER, &temp[1], &temp2[1]);
+//			myclient->send_packet("css", CLIENT_CHAT_WHISPER, &temp[1], &temp2[1]);
 			delete [] temp;
 		}
 			break;
 		case '@':
-			myclient->send_packet("ccs", CLIENT_CHAT, 104, &blabla[1]);
+//			myclient->send_packet("ccs", CLIENT_CHAT, 104, &blabla[1]);
 			break;
 		case '#':
-			myclient->send_packet("ccs", CLIENT_CHAT, 11, &blabla[1]);
+//			myclient->send_packet("ccs", CLIENT_CHAT, 11, &blabla[1]);
 			break;
 		case '$':
-			myclient->send_packet("ccs", CLIENT_CHAT_GLOBAL, 12, &blabla[1]);
+//			myclient->send_packet("ccs", CLIENT_CHAT_GLOBAL, 12, &blabla[1]);
 			break;
 		case '&':
-			myclient->send_packet("ccs", CLIENT_CHAT_GLOBAL, 3, &blabla[1]);
+//			myclient->send_packet("ccs", CLIENT_CHAT_GLOBAL, 3, &blabla[1]);
 			break;
 		case '%':
-			myclient->send_packet("ccs", CLIENT_CHAT, 13, &blabla[1]);
+//			myclient->send_packet("ccs", CLIENT_CHAT, 13, &blabla[1]);
 			break;
 		case '*':
-			myclient->send_packet("ccs", CLIENT_CHAT, 14, &blabla[1]);
+//			myclient->send_packet("ccs", CLIENT_CHAT, 14, &blabla[1]);
 			break;
 		case '/':
 		{
@@ -92,7 +92,7 @@ void chat_window::submit_chat(const char *blabla)
 		}
 			break;
 		default:
-			myclient->send_packet("ccs", CLIENT_CHAT, 0, blabla);
+//			myclient->send_packet("ccs", CLIENT_CHAT, 0, blabla);
 			break;
 	}
 	

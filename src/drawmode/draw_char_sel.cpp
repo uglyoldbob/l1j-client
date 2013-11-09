@@ -54,10 +54,21 @@ draw_char_sel::draw_char_sel(sdl_user *self)
 	//1c1
 	//0
 	
+	client_request t_sdl;
+	t_sdl.request = CLIENT_REQUEST_LOAD_SDL_GRAPHIC;
+	t_sdl.data.rload.name = 0;
+	t_sdl.data.rload.num = 815;
+	t_sdl.data.rload.x = 0;
+	t_sdl.data.rload.y = 0;
+	t_sdl.data.rload.type = GRAPH_PNG;
+	t_sdl.data.rload.load_type = CLIENT_REQUEST_LOAD_4;
+	
 	num_gfx = 1;
 	gfx = new sdl_graphic*[num_gfx];
-	gfx[0] = new sdl_graphic(815, 0, 0, owner->game, GRAPH_PNG);
-		//TODO Replace with 105.img
+	gfx[0] = new sdl_graphic();
+	t_sdl.data.rload.item = gfx[0];
+	self->add_request(t_sdl);
+		/** \TODO Replace with 105.img */
 		//or 1763.img
 		//1764.img locked
 		//1769-1772 - numeric indicators
@@ -67,10 +78,10 @@ draw_char_sel::draw_char_sel(sdl_user *self)
 	widgets = new sdl_widget*[num_widgets];
 	
 	//character select animating buttons
-	widgets[0] = new sdl_animate_button(0xf4, 0x013, 0, owner->game, 0);
-	widgets[1] = new sdl_animate_button(0xf4, 0x0b0, 0, owner->game, 0);
-	widgets[2] = new sdl_animate_button(0xf4, 0x14d, 0, owner->game, 0);
-	widgets[3] = new sdl_animate_button(0xf4, 0x1ea, 0, owner->game, 0);
+	widgets[0] = new sdl_animate_button(0xf4, 0x013, 0, owner, 0);
+	widgets[1] = new sdl_animate_button(0xf4, 0x0b0, 0, owner, 0);
+	widgets[2] = new sdl_animate_button(0xf4, 0x14d, 0, owner, 0);
+	widgets[3] = new sdl_animate_button(0xf4, 0x1ea, 0, owner, 0);
 	widgets[0]->set_key_focus(true);
 	widgets[1]->set_key_focus(true);
 	widgets[2]->set_key_focus(true);
@@ -78,14 +89,14 @@ draw_char_sel::draw_char_sel(sdl_user *self)
 	widgets[0]->cursor_on();
 	widget_key_focus = 0;
 	
-	widgets[4] = new sdl_plain_button(0x6e5, 0x0f7, 0x10b, owner->game, 
+	widgets[4] = new sdl_plain_button(0x6e5, 0x0f7, 0x10b, owner, 
 		(funcptr*)new dcs_ptr(this, DCS_FUNC_PREVPAGE));	//left arrow
-	widgets[5] = new sdl_plain_button(0x6e7, 0x16c, 0x10b, owner->game, 
+	widgets[5] = new sdl_plain_button(0x6e7, 0x16c, 0x10b, owner, 
 		(funcptr*)new dcs_ptr(this, DCS_FUNC_NEXTPAGE));	//left arrow
-	widgets[6] = new sdl_plain_button(0x334, 0x20d, 0x185, owner->game, 
+	widgets[6] = new sdl_plain_button(0x334, 0x20d, 0x185, owner, 
 		(funcptr*)new dcs_ptr(this, DCS_FUNC_SELCHAR));	//login
-	widgets[7] = new sdl_plain_button(0x336, 0x20d, 0x19a, owner->game, 0);	//cancel
-	widgets[8] = new sdl_plain_button(0x134, 0x20d, 0x1b5, owner->game, 
+	widgets[7] = new sdl_plain_button(0x336, 0x20d, 0x19a, owner, 0);	//cancel
+	widgets[8] = new sdl_plain_button(0x134, 0x20d, 0x1b5, owner, 
 		(funcptr*)new dcs_ptr(this, DCS_FUNC_DELCHAR, &cur_char_slot));	//delete
 	widgets[4]->set_key_focus(true);
 	widgets[5]->set_key_focus(true);
@@ -93,14 +104,14 @@ draw_char_sel::draw_char_sel(sdl_user *self)
 	widgets[7]->set_key_focus(true);
 	widgets[8]->set_key_focus(true);
 	
-	widgets[9] = new sdl_widget(0x6e9, 0x127, 0x10f, owner->game);
-	widgets[10] = new sdl_widget(0x6eb, 0x146, 0x10f, owner->game);
-	widgets[11] = new sdl_char_info(owner->game);
+	widgets[9] = new sdl_widget(0x6e9, 0x127, 0x10f, owner);
+	widgets[10] = new sdl_widget(0x6eb, 0x146, 0x10f, owner);
+	widgets[11] = new sdl_char_info(owner);
 
-	if (owner->game->check_login_chars() != 0)
-	{
-		get_login_chars();
-	}
+//	if (owner->check_login_chars() != 0)
+//	{
+//		get_login_chars();
+//	}
 }
 
 draw_char_sel::~draw_char_sel()
@@ -112,7 +123,6 @@ bool draw_char_sel::quit_request()
 	while (SDL_mutexP(draw_mtx) == -1) {};
 	draw_scene = false;
 	SDL_mutexV(draw_mtx);
-	owner->game->stop_thread = true;
 	return true;
 }
 
@@ -141,7 +151,7 @@ void draw_char_sel::prevpage()
 void draw_char_sel::delete_char(int which)
 {
 	while (SDL_mutexP(draw_mtx) == -1) {};
-	lin_char_info **data = owner->game->get_login_chars();
+//	lin_char_info **data = owner->get_login_chars();
 	switch(which)
 	{
 		case -1:
@@ -149,8 +159,8 @@ void draw_char_sel::delete_char(int which)
 		default:
 			char_deleting = which;
 			//TODO: implement timer for character deletion
-			owner->game->send_packet("csdd", CLIENT_DELETE_CHAR, 
-				data[which]->name, 0, 0);
+//			owner->send_packet("csdd", CLIENT_DELETE_CHAR, 
+//				data[which]->name, 0, 0);
 			break;
 	}
 	SDL_mutexV(draw_mtx);
@@ -158,17 +168,17 @@ void draw_char_sel::delete_char(int which)
 
 void draw_char_sel::do_delete()
 {
-	lin_char_info **data = owner->game->get_login_chars();
-	sdl_animate_button **chars;
-	chars = (sdl_animate_button**)&widgets[0];
-	delete data[char_deleting];
-	data[char_deleting] = 0;
-	chars[char_deleting]->set_info(0);
-	cur_char_slot = -1;
-	chars[0]->animate(false);
-	chars[1]->animate(false);
-	chars[2]->animate(false);
-	chars[3]->animate(false);
+//	lin_char_info **data = owner->get_login_chars();
+//	sdl_animate_button **chars;
+//	chars = (sdl_animate_button**)&widgets[0];
+//	delete data[char_deleting];
+//	data[char_deleting] = 0;
+//	chars[char_deleting]->set_info(0);
+//	cur_char_slot = -1;
+//	chars[0]->animate(false);
+//	chars[1]->animate(false);
+//	chars[2]->animate(false);
+//	chars[3]->animate(false);
 }
 
 void draw_char_sel::select_char()
@@ -185,7 +195,7 @@ void draw_char_sel::select_char()
 		else
 		{
 			bob = chars[cur_char_slot]->get_info();			
-			owner->game->send_packet("csdd", CLIENT_USE_CHAR, bob->name, 0, 0);
+//			owner->send_packet("csdd", CLIENT_USE_CHAR, bob->name, 0, 0);
 		}
 	}
 }
@@ -193,7 +203,7 @@ void draw_char_sel::select_char()
 void draw_char_sel::get_login_chars()
 {
 	while (SDL_mutexP(draw_mtx) == -1) {};
-	lin_char_info **data = owner->game->get_login_chars();
+/*	lin_char_info **data = owner->get_login_chars();
 	sdl_animate_button **chars;
 	chars = (sdl_animate_button**)&widgets[0];
 	for (int i = 0; i < 4; i++)
@@ -210,7 +220,7 @@ void draw_char_sel::get_login_chars()
 	chars[1]->animate(false);
 	chars[2]->animate(false);
 	chars[3]->animate(false);
-
+*/
 	SDL_mutexV(draw_mtx);
 }
 

@@ -41,11 +41,11 @@ draw_maint_sprites::draw_maint_sprites(sdl_user *self)
 	y = 8;
 
 	widgets[0] = 0;
-	widgets[1] = new sdl_text_button("Return", 320, 410, owner->game, 
-		(funcptr*)new dam_ptr(this, DRAWMODE_ADMIN_MAIN));
+	widgets[1] = new sdl_text_button("Return", 320, 410, owner, 
+		(funcptr*)new dam_ptr(owner, DRAWMODE_ADMIN_MAIN));
 	widgets[1]->set_key_focus(true);
 	redo_sprite();
-	//widgets[num_servers+1] = new sprite(50, 50, "6258-0.spr", owner->game);
+	//widgets[num_servers+1] = new sprite(50, 50, "6258-0.spr", owner);
 		//6256-173 nothing?
 		//6256-181 nothing?
 }
@@ -171,12 +171,12 @@ void draw_maint_sprites::redo_sprite()
 	char new_name[50];
 	memset(new_name, 0, 50);
 	sprintf(new_name, "%d-%d.spr", x, y);
-	widgets[0] = new sprite(320, 400, new_name, owner->game);
+	widgets[0] = new sprite(320, 400, new_name, owner);
 }
 
 bool draw_maint_sprites::quit_request()
 {
-	owner->game->stop_thread = true;
+	//owner->stop_thread = true;
 	return true;
 }
 

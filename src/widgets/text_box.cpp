@@ -2,7 +2,7 @@
 #include "widgets/sdl_input_box.h"
 #include "widgets/sdl_widget.h"
 
-text_box::text_box(int x, int y, int w, int h, client *who)
+text_box::text_box(int x, int y, int w, int h, sdl_user *who)
 	: sdl_widget(x, y, who)
 {
 	num_lines = 0;
@@ -53,7 +53,7 @@ void text_box::redraw()
 	}
 }
 
-void text_box::add_line(char *data)
+void text_box::add_line(const char *data)
 {
 	char **proper_width;
 	int number_lines;

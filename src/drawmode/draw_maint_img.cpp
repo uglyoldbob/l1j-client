@@ -18,9 +18,9 @@ draw_maint_img::draw_maint_img(sdl_user *self)
 	num_widgets = 2;
 
 	widgets = new sdl_widget*[num_widgets];
-	widgets[0] = new sdl_widget(background, 0, 0, owner->game);
-	widgets[1] = new sdl_text_button("Return", 320, 255, owner->game, 
-		(funcptr*)new dam_ptr(this, DRAWMODE_ADMIN_MAIN));
+	widgets[0] = new sdl_widget(background, 0, 0, owner);
+	widgets[1] = new sdl_text_button("Return", 320, 255, owner, 
+		(funcptr*)new dam_ptr(owner, DRAWMODE_ADMIN_MAIN));
 	widgets[1]->set_key_focus(true);
 }
 
@@ -39,9 +39,7 @@ void draw_maint_img::key_press(SDL_KeyboardEvent *button)
 					{
 						delete widgets[0];
 					}
-					widgets[0] = new sdl_widget(background, 0, 0, owner->game);
-					//SDL_FreeSurface(pg->pg[0].surf);
-					//pg->pg[0].surf = get_png_image(background, graphx->spritepack);
+					widgets[0] = new sdl_widget(background, 0, 0, owner);
 				}
 				break;
 			case SDLK_RIGHT:
@@ -50,9 +48,7 @@ void draw_maint_img::key_press(SDL_KeyboardEvent *button)
 				{
 					delete widgets[0];
 				}
-				widgets[0] = new sdl_widget(background, 0, 0, owner->game);
-				//SDL_FreeSurface(pg->pg[0].surf);
-				//pg->pg[0].surf = get_png_image(background, graphx->spritepack);
+				widgets[0] = new sdl_widget(background, 0, 0, owner);
 				break;
 			default:
 				break;
@@ -126,7 +122,7 @@ draw_maint_img::~draw_maint_img()
 
 bool draw_maint_img::quit_request()
 {
-	owner->game->stop_thread = true;
+	//owner->stop_thread = true;
 	return true;
 }
 

@@ -24,7 +24,6 @@ void load_ptr::go()
 draw_loading::draw_loading(sdl_user *self)
 	: sdl_drawmode(self)
 {
-	quitting = false;
 	owner->game_music.change_music("sound/music0.mp3");
 	load_progress = 0;
 	load_amount = 0x249f0;	//not sure how this number is generated
@@ -32,14 +31,30 @@ draw_loading::draw_loading(sdl_user *self)
 	int index;
 	SDL_Rect *rect;
 
+	client_request t_sdl;
+	t_sdl.request = CLIENT_REQUEST_LOAD_SDL_GRAPHIC;
+	t_sdl.data.rload.name = 0;
+	t_sdl.data.rload.num = 811;
+	t_sdl.data.rload.x = 0;
+	t_sdl.data.rload.y = 0;
+	t_sdl.data.rload.type = GRAPH_PNG;
+	t_sdl.data.rload.load_type = CLIENT_REQUEST_LOAD_4;
+	
 	num_gfx = 2;
 	gfx = new sdl_graphic*[num_gfx];
-	gfx[0] = new sdl_graphic(811, 0, 0, owner->game, GRAPH_PNG);
-	gfx[0]->disable_clear();
-	gfx[1] = new sdl_graphic(330, 241, 385, owner->game, GRAPH_IMG);
-	gfx[1]->disable_clear();
+	gfx[0] = new sdl_graphic();
+	t_sdl.data.rload.item = gfx[0];
+	self->add_request(t_sdl);
 	
-	num_servers = owner->game->get_config()->get_num_servers();
+	t_sdl.data.rload.num = 330;
+	t_sdl.data.rload.x = 241;
+	t_sdl.data.rload.y = 385;
+	t_sdl.data.rload.type = GRAPH_IMG;
+	gfx[1] = new sdl_graphic();
+	t_sdl.data.rload.item = gfx[1];
+	self->add_request(t_sdl);
+	
+	num_servers = owner->get_config()->get_num_servers();
 	
 	num_widgets = num_servers + 2;
 	widgets = new sdl_widget*[num_widgets];
@@ -50,14 +65,14 @@ draw_loading::draw_loading(sdl_user *self)
 	widget_key_focus = 0;
 	for (int i = 0; i < num_servers; i++)
 	{
-		widgets[i] = new sdl_text_button(owner->game->get_config()->get_name(i), 276, 254+(15*(i+1)), owner->game, 
+		widgets[i] = new sdl_text_button(owner->get_config()->get_name(i), 276, 254+(15*(i+1)), owner, 
 			(funcptr*)new load_ptr(this, i));
 		widgets[i]->set_key_focus(true);
 	}
-	widgets[num_servers] = new text_box(257, 254, 150, 10*12, owner->game);
+	widgets[num_servers] = new text_box(257, 254, 150, 10*12, owner);
 	
-	widgets[num_servers+1] = new sprite(320, 200, "2786-8.spr", owner->game);
-	//widgets[num_servers+1] = new sprite(50, 50, "6258-0.spr", owner->game);
+	widgets[num_servers+1] = new sprite(320, 200, "2786-8.spr", owner);
+	//widgets[num_servers+1] = new sprite(50, 50, "6258-0.spr", owner);
 		//6256-173 nothing?
 		//6256-181 nothing?
 		//		
@@ -67,36 +82,18 @@ draw_loading::draw_loading(sdl_user *self)
 	update_load();
 }
 
-int draw_loading::wait_server_pick()
+int draw_loading::get_server_pick()
 {
-	bool done = false;
-	
-	while (!done)
-	{
-		while (SDL_mutexP(spick_mtx) == -1) {};
-		if (server_pick != -1)
-			done = true;
-		SDL_mutexV(spick_mtx);
-		if (!done)
-		{
-			SDL_Delay(100);
-			if (quitting) 
-				throw "Quit client thread requested";
-		}
-	}
 	return server_pick;
 }
 
 bool draw_loading::quit_request()
 {
-	quitting = true;
 	return true;
 }
 
 void draw_loading::add_text(char *bla)
 {
-	if (quitting)
-		throw "Quit client thread requested..";
 	while (SDL_mutexP(draw_mtx) == -1) {};
 	((text_box*)widgets[num_servers])->add_line(bla);
 	SDL_mutexV(draw_mtx);
@@ -106,8 +103,8 @@ void draw_loading::server_picked(int i)
 {
 	while (SDL_mutexP(spick_mtx) == -1) {};
 	//hide buttons, add text to the textbox
-	for (int i = 0; i < num_servers; i++)
-		widgets[i]->hide(false);
+	for (int ij = 0; ij < num_servers; ij++)
+		widgets[ij]->hide(false);
 	((text_box*)widgets[num_servers])->add_line("Checking for updates");
 	server_pick = i;
 	SDL_mutexV(spick_mtx);
@@ -132,8 +129,6 @@ void draw_loading::add_loaded(int size)
 
 void draw_loading::load_done()
 {
-	if (quitting) 
-		throw "Quit client thread requested.";
 	load_progress = load_amount;
 	update_load();
 	SDL_Delay(250);

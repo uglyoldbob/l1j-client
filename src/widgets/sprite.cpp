@@ -1,7 +1,7 @@
 #include "client.h"
 #include "sprite.h"
 
-sprite::sprite(int x, int y, char *filename, client *who)
+sprite::sprite(int x, int y, const char *filename, sdl_user *who)
 	: sdl_widget(x, y, who)
 {
 	printf("Opening sprite %s\n", filename);
@@ -17,10 +17,10 @@ sprite::sprite(int x, int y, char *filename, client *who)
 	bool tiles_loaded = false;
 	short *palette = 0;
 	int size;
-	char *data = (char*)myclient->getfiles->load_file(filename, &size, FILE_SPRITESPACK, 0);
+	char *data = 0;//(char*)myclient->getfiles->load_file(filename, &size, FILE_SPRITESPACK, 0);
 	
 	if (data == 0)
-		data = (char*)myclient->getfiles->load_file(filename, &size, FILE_SPRITEPACK, 0);
+		data = 0;//(char*)myclient->getfiles->load_file(filename, &size, FILE_SPRITEPACK, 0);
 
 	if (data == 0)
 	{

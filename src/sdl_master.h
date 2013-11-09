@@ -26,12 +26,12 @@ class sdl_master
 	public:
 		sdl_master(Uint32 flags = SDL_DOUBLEBUF | SDL_HWSURFACE);
 		~sdl_master();
-				
+
 		void create_client();	/**< Create a client that will run a game instance*/
-		
 		void process_events();	/**< this is the function for the first thread - it handles all gui stuff*/
 	private:
 		SDL_Surface *display;	/**< This is the entire display, each client gets a part of it */
+		SDL_Surface **cdisplay;	/**< The displays that the clients draw on */
 		int ready;	/**< Indicates that the program is ready to start doing things */
 		sdl_user **clients;	/**< The list of clients (game instances) - multiple games can run at the same time - only one is supported at the moment */
 		SDL_Thread **game_client;	/**< array of all game client threads */

@@ -11,7 +11,7 @@ class client;
 class sdl_animate_button : public sdl_plain_button
 {
 	public:
-		sdl_animate_button(int num, int x, int y, client *who, funcptr *stuff);
+		sdl_animate_button(int num, int x, int y, sdl_user *who, funcptr *stuff);
 		virtual ~sdl_animate_button();
 		virtual void draw(SDL_Surface *display);
 		
@@ -30,7 +30,6 @@ class sdl_animate_button : public sdl_plain_button
 		int num_anim;
 		int first_anim;
 		int first_repeat;
-		client *blabla;
 		static int frame_time;
 		int cur_frame;
 		Uint32 change_time;

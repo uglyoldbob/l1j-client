@@ -3,7 +3,7 @@
 
 #include "globals.h"
 
-sdl_input_box::sdl_input_box(int num, int x, int y, client *who)
+sdl_input_box::sdl_input_box(int num, int x, int y, bool protect, sdl_user *who)
 	: sdl_widget(num, x, y, who)
 {
 	key_focus = false;
@@ -11,14 +11,18 @@ sdl_input_box::sdl_input_box(int num, int x, int y, client *who)
 	cursor_pos = 0;
 	cursor_idx = 0;
 	field_length = 1;
+	protecting = protect;
 	field = new char[field_length];
+	protectme = new char[field_length];
 	field[field_length - 1] = 0;
+	protectme[field_length - 1] = 0;
 	max_length = 0;
 }
 
 sdl_input_box::~sdl_input_box()
 {
 	delete [] field;
+	delete [] protectme;
 }
 
 void sdl_input_box::set_max(int m)
@@ -34,16 +38,26 @@ const char *sdl_input_box::get_str()
 void sdl_input_box::clear()
 {
 	delete [] field;
+	delete [] protectme;
 	cursor_pos = 0;
 	cursor_idx = 0;
 	field_length = 1;
 	field = new char[field_length];
-	field[field_length - 1] = 0;	
+	protectme = new char[field_length];
+	field[field_length - 1] = 0;
+	protectme[field_length - 1] = 0;
 }
 
 void sdl_input_box::draw(SDL_Surface *display)
-{	//TODO : implement password field masking (print '****' instead of 'asdf')
-	lineage_font.draw(display, one->getx(), one->gety(), field, 0xFFFE);
+{
+	if (protecting)
+	{
+		lineage_font.draw(display, one->getx(), one->gety(), protectme, 0xFFFE);
+	}
+	else
+	{
+		lineage_font.draw(display, one->getx(), one->gety(), field, 0xFFFE);
+	}
 	if (draw_cursor)
 	{
 		lineage_font.draw_cursor(display, one->getx() + cursor_pos, one->gety(), 0xFFFE);
@@ -53,7 +67,7 @@ void sdl_input_box::draw(SDL_Surface *display)
 
 void sdl_input_box::cursor_toggle()
 {
-	static Uint32 change = 0;
+	static Uint32 change = SDL_GetTicks();
 	if (key_focus)
 	{
 		if (SDL_GetTicks() >= change)
@@ -80,8 +94,15 @@ void sdl_input_box::add_char(char dat)
 	if ((max_length == 0) || (field_length < max_length))
 	{
 		char *temp;
+		delete [] protectme;
 		temp = new char[field_length + 1];
+		protectme = new char[field_length + 1];
 		int i;
+		for (i = 0; i < field_length; i++)
+		{
+			protectme[i] = '*';
+		}
+		protectme[i] = 0;
 		for (i = 0; i < cursor_idx; i++)
 		{
 			temp[i] = field[i];
@@ -121,6 +142,7 @@ void sdl_input_box::key_press(SDL_KeyboardEvent *button)
 				for (int i = cursor_idx; i < field_length; i++)
 				{
 					field[i-1] = field[i];
+					protectme[i-1] = protectme[i];
 				}
 				cursor_idx--;
 				cursor_pos -= 6;
@@ -133,6 +155,7 @@ void sdl_input_box::key_press(SDL_KeyboardEvent *button)
 				for (int i = cursor_idx+1; i < field_length; i++)
 				{
 					field[i-1] = field[i];
+					protectme[i-1] = protectme[i];
 				}
 				field_length--;
 			}

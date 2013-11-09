@@ -34,38 +34,49 @@ draw_login::draw_login(sdl_user *self)
 	//273 - 300 is the lantern animation (img)
 	owner->game_music.change_music("sound/music0.mp3");
 	
+	client_request t_sdl;
+	t_sdl.request = CLIENT_REQUEST_LOAD_SDL_GRAPHIC;
+	t_sdl.data.rload.name = 0;
+	t_sdl.data.rload.num = 814;
+	t_sdl.data.rload.x = 0;
+	t_sdl.data.rload.y = 0;
+	t_sdl.data.rload.type = GRAPH_PNG;
+	t_sdl.data.rload.load_type = CLIENT_REQUEST_LOAD_4;
+	
 	num_gfx = 1;
 	gfx = new sdl_graphic*[num_gfx];
-	gfx[0] = new sdl_graphic(814, 0, 0, owner->game, GRAPH_PNG);
+	gfx[0] = new sdl_graphic();
+	t_sdl.data.rload.item = gfx[0];
+	self->add_request(t_sdl);
 	gfx[0]->disable_clear();
 	
 	num_widgets = 8;
 	widgets = new sdl_widget*[num_widgets];
 	
-	widgets[0] = new sdl_widget(59, 0x1a9, 0x138, owner->game);
-	widgets[1] = new sdl_input_box(12, 0x1fb, 0x14a, owner->game);
+	widgets[0] = new sdl_widget(59, 0x1a9, 0x138, owner);
+	widgets[1] = new sdl_input_box(12, 0x1fb, 0x14a, false, owner);
 	
 	widgets[1]->set_key_focus(true);
 	widgets[1]->cursor_on();
 	widget_key_focus = 1;
-	widgets[2] = new sdl_input_box(13, 0x1fb, 0x160, owner->game);
+	widgets[2] = new sdl_input_box(13, 0x1fb, 0x160, true, owner);
 	widgets[2]->set_key_focus(true);
 	
 	//set max length for username and password
 	((sdl_input_box*)widgets[1])->set_max(20);
 	((sdl_input_box*)widgets[2])->set_max(20);
 	
-	widgets[3] = new sdl_plain_button(53, 0x213, 0x183, owner->game, (funcptr*)new login_ptr(this));
+	widgets[3] = new sdl_plain_button(53, 0x213, 0x183, owner, (funcptr*)new login_ptr(this));
 	widgets[3]->set_key_focus(true);
-	widgets[4] = new sdl_plain_button(65, 0x213, 0x195, owner->game, 0);
+	widgets[4] = new sdl_plain_button(65, 0x213, 0x195, owner, 0);
 	widgets[4]->set_key_focus(true);
-	widgets[5] = new sdl_plain_button(55, 0x213, 0x1a8, owner->game, 0);
+	widgets[5] = new sdl_plain_button(55, 0x213, 0x1a8, owner, 0);
 	widgets[5]->set_key_focus(true);
-	widgets[6] = new sdl_plain_button(57, 0x213, 0x1c2, owner->game, (funcptr*)new quit_ptr(this));
+	widgets[6] = new sdl_plain_button(57, 0x213, 0x1c2, owner, (funcptr*)new quit_ptr(this));
 	widgets[6]->set_key_focus(true);
 	
 	intro.load("intro-e.tbl", textpack);
-	widgets[7] = new text_box(34, 59, 6*57, intro.get_num_entries()*12, owner->game);
+	widgets[7] = new text_box(34, 59, 6*57, intro.get_num_entries()*12, owner);
 	text_box *temp;
 	temp = (text_box*)(widgets[7]);
 	for (int i = 0; i < intro.get_num_entries(); i++)
@@ -93,7 +104,7 @@ draw_login::~draw_login()
 
 bool draw_login::quit_request()
 {
-	owner->game->stop_thread = true;
+	//owner->stop_thread = true;
 	return true;
 }
 
@@ -132,7 +143,7 @@ void draw_login::login()
 
 void draw_login::quit()
 {
-	owner->game->stop_thread = true;
+	//owner->stop_thread = true;
 	//owner->quit_client();
 }
 

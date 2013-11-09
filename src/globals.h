@@ -12,6 +12,7 @@
 #include "resources/pack.h"
 #include "resources/reg_font.h"
 #include "resources/table.h"
+class sdl_user;
 
 extern char *lineage_dir;	//string to hold the absolute path to the lineage directory
 extern reg_font lineage_font;
@@ -159,12 +160,6 @@ struct graphics_data
 };
 
 lin_char_info *make_lin_char_info(int char_type, int gender);
-
-SDL_Surface *get_png_image(int num, client *who);
-SDL_Surface *get_png_image(char *name, client *who);
-void check_fix_png(char *buffer, int *size);
-SDL_Surface *get_img(int num, client *who);	//loads raw image data
-SDL_Surface *get_image(SDL_RWops *buf);
 
 SDL_Rect *make_sdl_rect(int x, int y, int w, int h);
 

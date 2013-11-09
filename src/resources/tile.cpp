@@ -18,26 +18,43 @@ tile::tile()
 tile::~tile()
 {
 	if (filebuf != 0)
+	{
 		delete [] filebuf;
+		filebuf = 0;
+	}
 	if (tdata != 0)
 	{
 		for (int i = 0; i < tdata->num_tiles; i++)
 		{
 			if (tdata->ltile[i] != 0)
+			{
 				delete tdata->ltile[i];
+				tdata->ltile[i] = 0;
+			}
 			if (tdata->rtile[i] != 0)
+			{
 				delete tdata->rtile[i];
+				tdata->rtile[i] = 0;
+			}
 			if (tdata->stile[i] != 0)
+			{
 				delete tdata->stile[i];
+				tdata->stile[i] = 0;
+			}
 		}
 		if (tdata->num_tiles > 0)
 		{
 			delete [] tdata->ltile;
+			tdata->ltile = 0;
 			delete [] tdata->rtile;
+			tdata->rtile = 0;
 			delete [] tdata->stile;
+			tdata->stile = 0;
 		}
 		delete [] tdata->offset;
+		tdata->offset = 0;
 		delete tdata;
+		tdata = 0;
 	}
 }
 
@@ -56,22 +73,29 @@ int tile::get_amnt()
 sdl_graphic *tile::get_tile_right(int which)
 {
 	sdl_graphic *ret;
-	if (tdata->rtile[which] == 0)
+	if (tdata != 0)
 	{
-		if ((tdata->data[tdata->offset[which]] & 2) != 0)
+		if (tdata->rtile[which] == 0)
 		{
-			ret = 0;//get_special(which);
+			if ((tdata->data[tdata->offset[which]] & 2) != 0)
+			{
+				ret = get_special(which);
+			}
+			else
+			{
+				short *source = (short*)&tdata->data[tdata->offset[which]+1];
+				tdata->rtile[which] = new sdl_graphic(1, 2, source, GRAPH_RTIL);
+				ret = tdata->rtile[which];
+			}
 		}
 		else
 		{
-			short *source = (short*)&tdata->data[tdata->offset[which]+1];
-			tdata->rtile[which] = new sdl_graphic(1, 2, source, GRAPH_RTIL);
 			ret = tdata->rtile[which];
 		}
 	}
 	else
 	{
-		ret = tdata->rtile[which];
+		ret = 0;
 	}
 	return ret;
 }
@@ -79,22 +103,29 @@ sdl_graphic *tile::get_tile_right(int which)
 sdl_graphic *tile::get_tile_left(int which)
 {
 	sdl_graphic *ret;
-	if (tdata->ltile[which] == 0)
+	if (tdata != 0)
 	{
-		if ((tdata->data[tdata->offset[which]] & 2) != 0)
+		if (tdata->ltile[which] == 0)
 		{
-			ret = 0;//get_special(which);
+			if ((tdata->data[tdata->offset[which]] & 2) != 0)
+			{
+				ret = get_special(which);
+			}
+			else
+			{
+				short *source = (short*)&tdata->data[tdata->offset[which]+1];
+				tdata->ltile[which] = new sdl_graphic(1, 2, source, GRAPH_LTIL);
+				ret = tdata->ltile[which];
+			}
 		}
 		else
 		{
-			short *source = (short*)&tdata->data[tdata->offset[which]+1];
-			tdata->ltile[which] = new sdl_graphic(1, 2, source, GRAPH_LTIL);
 			ret = tdata->ltile[which];
 		}
 	}
 	else
 	{
-		ret = tdata->ltile[which];
+		ret = 0;
 	}
 	return ret;
 }
@@ -102,15 +133,22 @@ sdl_graphic *tile::get_tile_left(int which)
 sdl_graphic *tile::get_special(int which)
 {
 	sdl_graphic *ret;
-	if (tdata->stile[which] == 0)
+	if (tdata != 0)
 	{
-		short *source = (short*)&tdata->data[tdata->offset[which]+1];
-		tdata->stile[which] = new sdl_graphic(1, 2, source, GRAPH_STIL);
-		ret = tdata->stile[which];
+		if (tdata->stile[which] == 0)
+		{
+			short *source = (short*)&tdata->data[tdata->offset[which]+1];
+			tdata->stile[which] = new sdl_graphic(1, 2, source, GRAPH_STIL);
+			ret = tdata->stile[which];
+		}
+		else
+		{
+			ret = tdata->stile[which];
+		}
 	}
 	else
 	{
-		ret = tdata->stile[which];
+		ret = 0;
 	}
 	return ret;
 }
@@ -134,7 +172,7 @@ void tile::load(int which, client *who)
 			printf("Failed to load tileset %d\n", which);
 			return;
 		}
-		
+
 //		printf("The size of %s is %d\n", name, size);
 
 		tdata = new tileset;

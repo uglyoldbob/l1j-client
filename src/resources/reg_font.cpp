@@ -9,6 +9,22 @@
 reg_font::reg_font()
 {
 	final = 0;
+	temp = SDL_CreateRGBSurface(SDL_SWSURFACE, 6, 12, 16,
+		0x7C00, 0x03E0, 0x001F, 0);
+}
+
+reg_font::~reg_font()
+{
+	if (final != 0)
+	{
+		SDL_FreeSurface(final);
+		final = 0;
+	}
+	if (temp != 0)
+	{
+		SDL_FreeSurface(temp);
+		temp = 0;
+	}
 }
 
 bool reg_font::init(const char *name, client *who)
@@ -55,7 +71,9 @@ bool reg_font::init(const char *name, client *who)
 		SDL_BlitSurface(loser, &src, final, &dest);
 	}
 	delete [] new_buf;
+	new_buf = 0;
 	delete [] buffer;
+	buffer = 0;
 	SDL_FreeSurface(loser);
 	return true;
 }
@@ -77,9 +95,6 @@ int reg_font::draw(SDL_Surface *surf, int x, int y, char val, Uint32 color)
 		return 0;
 	if (color == SDL_MapRGB(final->format, COLORKEY))
 		color++;
-	
-	static SDL_Surface *temp = SDL_CreateRGBSurface(SDL_SWSURFACE, 6, 12, 16,
-		0x7C00, 0x03E0, 0x001F, 0);
 	
 	SDL_Rect src;
 	SDL_Rect dest;

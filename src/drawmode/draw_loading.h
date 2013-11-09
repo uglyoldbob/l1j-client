@@ -26,7 +26,7 @@ class draw_loading : public sdl_drawmode
 		void add_loaded(int size);
 		void load_done();
 		void add_text(char *bla);
-		int wait_server_pick();
+		int get_server_pick();
 		void server_picked(int i);
 		
 		virtual void mouse_click(SDL_MouseButtonEvent *here);
@@ -43,7 +43,6 @@ class draw_loading : public sdl_drawmode
 		int num_servers;
 		int server_pick;
 		SDL_mutex *spick_mtx;
-		bool quitting;
 };
 
 #endif

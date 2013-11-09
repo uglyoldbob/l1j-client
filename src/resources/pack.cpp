@@ -192,7 +192,9 @@ int pack::detect_dupes()	//detects duplicate files
 						files[i].offset = -1;
 					}
 					delete [] filea;
+					filea = 0;
 					delete [] fileb;
+					fileb = 0;
 				}
 			}
 		}
@@ -389,12 +391,35 @@ pack::~pack()
 		for (int i = 0; i < num_files; i++)
 		{
 			if (file_data[i] != 0)
+			{
 				delete [] file_data[i];
+				file_data[i] = 0;
+			}
 		}
 		delete [] file_data;
+		file_data = 0;
+	}
+	if (num_files > 0)
+	{
+		delete [] files;
+		files = 0;
 	}
 	
 	delete [] data_file;
+	data_file = 0;
 	delete [] temp_file;
+	temp_file = 0;
 	delete [] index_file;
+	index_file = 0;
+	
+	if (data_buf != 0)
+	{
+		fclose(data_buf);
+		data_buf = 0;
+	}
+	if (index_buf != 0)
+	{
+		fclose(index_buf);
+		index_buf = 0;
+	}
 }

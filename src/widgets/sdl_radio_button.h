@@ -10,7 +10,7 @@ class client;
 class sdl_radio_button : public sdl_check_button
 {
 	public:
-		sdl_radio_button(int num, int x, int y, client *who, funcptr *stuff,
+		sdl_radio_button(int num, int x, int y, sdl_user *who, funcptr *stuff,
 			sdl_widget**, int amnt, int indx);
 		virtual ~sdl_radio_button();
 		

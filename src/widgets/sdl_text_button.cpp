@@ -1,7 +1,7 @@
 #include "client.h"
 #include "sdl_text_button.h"
 
-sdl_text_button::sdl_text_button(const char *bla, int x, int y, client *who, funcptr *stuff)
+sdl_text_button::sdl_text_button(const char *bla, int x, int y, sdl_user *who, funcptr *stuff)
 	: sdl_plain_button(-1, x, y, who, stuff)
 {
 	xpos = x;
@@ -12,10 +12,15 @@ sdl_text_button::sdl_text_button(const char *bla, int x, int y, client *who, fun
 void sdl_text_button::set_display(const char* disp)
 {
 	int size = strlen(disp);
-	one = new sdl_graphic(xpos, ypos, size * 6, 12);
+	if (one != 0)
+		delete one;
+	if (two != 0)
+		delete two;
+
+	one = new sdl_graphic(xpos, ypos, size * 6, 12, 0);
 	lineage_font.draw(one->get_surf(), 0, 0, disp, 0xFFFE);
 	
-	two = new sdl_graphic(xpos, ypos, size*6, 12);
+	two = new sdl_graphic(xpos, ypos, size*6, 12, 0);
 	lineage_font.draw(two->get_surf(), 0, 0, disp, two->color(255,255,0));
 	visible = true;
 }

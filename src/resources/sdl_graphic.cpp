@@ -4,7 +4,7 @@
 #include "globals.h"
 #include "sdl_graphic.h"
 
-sdl_graphic::sdl_graphic(int x, int y, int w, int h)
+sdl_graphic::sdl_graphic(int x, int y, int w, int h, int dummy)
 {
 	img = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 16,
 		0x7C00, 0x03E0, 0x001F, 0);
@@ -18,10 +18,44 @@ sdl_graphic::sdl_graphic(int x, int y, int w, int h)
 
 void sdl_graphic::erase()
 {
-	SDL_FillRect(img, NULL, transp_color);
+	if (img != 0)
+		SDL_FillRect(img, NULL, transp_color);
+}
+
+/** This constructor is used for delayed loading. This allows the gui thread to create the object and maintain its lifecycle and for the client thread to load the graphics */
+sdl_graphic::sdl_graphic()
+{
+	img = 0;
+	mask = 0;
+	pos = 0;
+	cleanup = false;
 }
 
 sdl_graphic::sdl_graphic(int x, int y, SDL_RWops *source, short *palette, int type)
+{
+	img = 0;
+	do_load(x, y, source, palette, type);
+}
+
+sdl_graphic::sdl_graphic(int x, int y, short *source, int type)
+{
+	img = 0;
+	do_load(x, y, source, type);
+}
+
+sdl_graphic::sdl_graphic(char *name, int x, int y, int type, client *who)
+{
+	img = 0;
+	do_load(name, x, y, type, who);
+}
+
+sdl_graphic::sdl_graphic(int num, int x, int y, int type, client *who)
+{
+	img = 0;
+	do_load(num, x, y, type, who);
+}
+
+void sdl_graphic::do_load(int x, int y, SDL_RWops *source, short *palette, int type)
 {
 	switch(type)
 	{
@@ -91,7 +125,7 @@ sdl_graphic::sdl_graphic(int x, int y, SDL_RWops *source, short *palette, int ty
 	}
 }
 
-sdl_graphic::sdl_graphic(int x, int y, short *source, int type)
+void sdl_graphic::do_load(int x, int y, short *source, int type)
 {
 	switch(type)
 	{
@@ -203,7 +237,7 @@ sdl_graphic::sdl_graphic(int x, int y, short *source, int type)
 	}
 }
 
-sdl_graphic::sdl_graphic(char *name, int x, int y, client *who, int type)
+void sdl_graphic::do_load(char *name, int x, int y, int type, client *who)
 {
 	if (name == 0)
 	{
@@ -228,6 +262,7 @@ sdl_graphic::sdl_graphic(char *name, int x, int y, client *who, int type)
 				}
 				break;
 			default:
+				img = 0;
 				break;
 		}
 		if (img == 0)
@@ -239,8 +274,10 @@ sdl_graphic::sdl_graphic(char *name, int x, int y, client *who, int type)
 	}
 }
 
-sdl_graphic::sdl_graphic(int num, int x, int y, client *who, int type)
+void sdl_graphic::do_load(int num, int x, int y, int type, client *who)
 {
+	char name[256];
+
 	if (num == -1)
 	{
 		pos = 0;
@@ -262,7 +299,8 @@ sdl_graphic::sdl_graphic(int num, int x, int y, client *who, int type)
 				}
 				break;
 			case GRAPH_PNG:
-				img = get_png_image(num, who);
+				sprintf(name, "%d.png", num);
+				img = get_png_image(name, who);
 				if (img != 0)
 				{
 					SDL_SetColorKey(img, SDL_SRCCOLORKEY, SDL_MapRGB(img->format, 0, 0, 0));
@@ -292,21 +330,33 @@ void sdl_graphic::make_bmp(char *name)
 	}
 }
 
+/** Sets the pixel color that is clear
+ * \todo Find a way to implement this with delay loading ? */
 void sdl_graphic::disable_clear()
 {
-	SDL_SetColorKey(img, 0, 0);
+	if (img != 0)
+		SDL_SetColorKey(img, 0, 0);
 }
 
 sdl_graphic::~sdl_graphic()
 {
 	if (pos != 0)
+	{
 		delete pos;
+		pos = 0;
+	}
 	if (mask != 0)
+	{
 		delete mask;
+		mask = 0;
+	}
 	if (img != 0)
 	{
 		if (cleanup)
+		{
 			delete [] (short*)img->pixels;
+			img->pixels = 0;
+		}
 		SDL_FreeSurface(img);
 	}
 }
@@ -319,6 +369,7 @@ void sdl_graphic::drawat(int x, int y, SDL_Surface *display)
 		newpos = make_sdl_rect(x + pos->x, y + pos->y, mask->w, mask->h);
 		SDL_BlitSurface(img, mask, display, newpos);
 		delete newpos;
+		newpos = 0;
 	}
 }
 
@@ -417,7 +468,10 @@ SDL_Surface *sdl_graphic::get_surf()
 
 Uint32 sdl_graphic::color(Uint8 r, Uint8 g, Uint8 b)
 {
-	return SDL_MapRGB(img->format, r, g, b);
+	if (img != 0)
+		return SDL_MapRGB(img->format, r, g, b);
+	else
+		return 0;
 }
 
 void sdl_graphic::mod_with(SDL_Surface *display)
@@ -426,4 +480,130 @@ void sdl_graphic::mod_with(SDL_Surface *display)
 	{
 		SDL_BlitSurface(display, mask, img, pos);
 	}	
+}
+
+SDL_Surface *sdl_graphic::get_img(int num, client *who)
+{
+	SDL_Surface *image;
+	image = (SDL_Surface *)0;
+	
+	char name[256];
+	sprintf(name, "%de.img", num);
+	
+	char *buffer;
+	SDL_RWops *sdl_buf;
+	int size;
+	if (who != 0)
+	{
+		buffer = (char*)who->getfiles->load_file(name, &size, FILE_SPRITESPACK, 0);
+		if (buffer == 0)
+		{
+			buffer = (char*)who->getfiles->load_file(name, &size, FILE_SPRITEPACK, 0);
+		}
+		if (buffer == 0)
+		{
+			sprintf(name, "%d.img", num);
+			buffer = (char*)who->getfiles->load_file(name, &size, FILE_SPRITESPACK, 0);
+		}
+		if (buffer == 0)
+		{
+			buffer = (char*)who->getfiles->load_file(name, &size, FILE_SPRITEPACK, 0);
+		}
+		if (buffer != 0)
+		{
+			sdl_buf = SDL_RWFromConstMem(buffer, size);
+			
+			unsigned short width, height;
+			unsigned short moron, moron2;
+			unsigned short *data;
+			SDL_RWread(sdl_buf, &width, 2, 1);
+			SDL_RWread(sdl_buf, &height, 2, 1);
+			SDL_RWread(sdl_buf, &moron, 2, 1);
+			SDL_RWread(sdl_buf, &moron2, 2, 1);
+			width = SWAP16(width);
+			height = SWAP16(height);
+			moron = SWAP16(moron);
+			moron2 = SWAP16(moron2);
+			data = new unsigned short[width * height];
+			SDL_RWread(sdl_buf, data, 2, width * height);
+			SDL_RWclose(sdl_buf);
+			delete [] buffer;
+			buffer = 0;
+			
+			for (int i = 0; i < (width * height); i++)
+			{
+				data[i] = SWAP16(data[i]);
+			}
+	
+			image = SDL_CreateRGBSurfaceFrom(data, width, height, 16, width*2, 
+				0x7C00, 0x03E0, 0x001F, 0);
+				
+			SDL_SetColorKey(image, SDL_SRCCOLORKEY, moron2);
+		}
+	}
+	return image;
+}
+
+SDL_Surface *sdl_graphic::get_image(SDL_RWops *buf)
+{
+	if (IMG_isPNG(buf) == 1)
+	{
+		return IMG_LoadPNG_RW(buf);
+	}
+	return (SDL_Surface *)0;
+}
+
+void sdl_graphic::check_fix_png(char *buffer, int *size)
+{
+	if (buffer != 0)
+	{
+		if (buffer[3] == 0x58)
+		{	//c963c
+//			printf("Normalizing mangled PNG file\n");
+			buffer[3] = 0x47;
+			if (*size > 5)
+			{	//c9654
+				for (int i = 1; i <= (*size-5); i++)
+				{	//c9660, i = ctr
+					buffer[*size-i] ^= buffer[*size-i-1];
+					buffer[*size-i] ^= 0x52;
+				}
+			}
+		}
+	}
+}
+
+SDL_Surface *sdl_graphic::get_png_image(char *name, client *who)
+{
+	char *buffer;
+	SDL_Surface *ret;
+	SDL_RWops *sdl_buf = 0;
+	int size;
+	if (who != 0)
+	{
+		buffer = (char*)who->getfiles->load_file(name, &size, FILE_SPRITESPACK, 0);
+		if (buffer == 0)
+		{
+			buffer = (char*)who->getfiles->load_file(name, &size, FILE_SPRITEPACK, 0);
+		}
+		if (buffer != 0)
+		{
+			check_fix_png(buffer, &size);
+			sdl_buf = SDL_RWFromConstMem(buffer, size);
+			ret = get_image(sdl_buf);
+			SDL_RWclose(sdl_buf);
+			delete [] buffer;
+			buffer = 0;
+		}
+		else
+		{
+			printf("Could not load %s\n", name);
+			ret = (SDL_Surface*) 0;
+		}
+	}
+	else
+	{
+		ret = (SDL_Surface*) 0;
+	}
+	return ret;
 }

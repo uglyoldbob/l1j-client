@@ -18,13 +18,6 @@ void quit_ptr::go()
 	ref->quit();
 }
 
-void change_mode(void *a, void* b)
-{
-	sdl_user *owner;
-	owner = (sdl_user*)a;
-	owner->change_drawmode(*(drawmode*)b);
-}
-
 draw_admin_main::draw_admin_main(sdl_user *self)
 	: sdl_drawmode(self)
 {
@@ -34,9 +27,20 @@ draw_admin_main::draw_admin_main(sdl_user *self)
 	int index;
 	SDL_Rect *rect;
 
+	client_request t_sdl;
+	t_sdl.request = CLIENT_REQUEST_LOAD_SDL_GRAPHIC;
+	t_sdl.data.rload.name = 0;
+	t_sdl.data.rload.num = 811;
+	t_sdl.data.rload.x = 0;
+	t_sdl.data.rload.y = 0;
+	t_sdl.data.rload.type = GRAPH_PNG;
+	t_sdl.data.rload.load_type = CLIENT_REQUEST_LOAD_4;
+
 	num_gfx = 1;
 	gfx = new sdl_graphic*[num_gfx];
-	gfx[0] = new sdl_graphic(811, 0, 0, owner->game, GRAPH_PNG);
+	gfx[0] = new sdl_graphic();
+	t_sdl.data.rload.item = gfx[0];
+	self->add_request(t_sdl);
 	gfx[0]->disable_clear();
 	
 	num_widgets = 6;
@@ -44,23 +48,23 @@ draw_admin_main::draw_admin_main(sdl_user *self)
 	
 	int x = 200;
 	int y = 200;
-	widgets[0] = new sdl_text_button("IMG Files", x, y, owner->game, 
-		(funcptr*)new dam_ptr(this, DRAWMODE_MAINT_IMG));
+	widgets[0] = new sdl_text_button("IMG Files", x, y, owner, 
+		(funcptr*)new dam_ptr(owner, DRAWMODE_MAINT_IMG));
 	widgets[0]->set_key_focus(true);
 	widgets[0]->cursor_on();
-	widgets[1] = new sdl_text_button("PNG Files", x, y+(15*1), owner->game, 
-		(funcptr*)new dam_ptr(this, DRAWMODE_MAINT_PNG));
+	widgets[1] = new sdl_text_button("PNG Files", x, y+(15*1), owner, 
+		(funcptr*)new dam_ptr(owner, DRAWMODE_MAINT_PNG));
 	widgets[1]->set_key_focus(true);
-	widgets[2] = new sdl_text_button("TIL Files", x, y+(15*2), owner->game, 
-		(funcptr*)new dam_ptr(this, DRAWMODE_MAINT_TIL));
+	widgets[2] = new sdl_text_button("TIL Files", x, y+(15*2), owner, 
+		(funcptr*)new dam_ptr(owner, DRAWMODE_MAINT_TIL));
 	widgets[2]->set_key_focus(true);
-	widgets[3] = new sdl_text_button("MAPS", x, y+(15*3), owner->game, 
-		(funcptr*)new dam_ptr(this, DRAWMODE_MAINT_MAP));
+	widgets[3] = new sdl_text_button("MAPS", x, y+(15*3), owner, 
+		(funcptr*)new dam_ptr(owner, DRAWMODE_MAINT_MAP));
 	widgets[3]->set_key_focus(true);
-	widgets[4] = new sdl_text_button("SPRITES", x, y+(15*4), owner->game, 
-		(funcptr*)new dam_ptr(this, DRAWMODE_MAINT_SPRITES));
+	widgets[4] = new sdl_text_button("SPRITES", x, y+(15*4), owner, 
+		(funcptr*)new dam_ptr(owner, DRAWMODE_MAINT_SPRITES));
 	widgets[4]->set_key_focus(true);
-	widgets[5] = new sdl_text_button("Exit", x, y+(15*5), owner->game, (funcptr*)new quit_ptr(this));
+	widgets[5] = new sdl_text_button("Exit", x, y+(15*5), owner, (funcptr*)new quit_ptr(this));
 	widgets[5]->set_key_focus(true);
 }
 
@@ -70,13 +74,12 @@ draw_admin_main::~draw_admin_main()
 
 void draw_admin_main::quit()
 {
-	owner->game->stop_thread = true;
+	//owner->stop_thread = true;
 	//owner->quit_client();
 }
 
 bool draw_admin_main::quit_request()
 {
-	owner->game->stop_thread = true;
 	return true;
 }
 

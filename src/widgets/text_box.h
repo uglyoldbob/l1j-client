@@ -8,13 +8,13 @@ class client;
 class text_box : public sdl_widget
 {
 	public:
-		text_box(int x, int y, int w, int h, client *who);
+		text_box(int x, int y, int w, int h, sdl_user *who);
 		~text_box();
 
 //		virtual void key_press(SDL_KeyboardEvent *button);
 
 		void set_visible(int top, int height);
-		void add_line(char *line);
+		void add_line(const char *line);
 	private:
 		char **lines;
 		int num_lines;

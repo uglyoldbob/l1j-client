@@ -30,8 +30,6 @@ sdl_user::sdl_user(Uint32 flags)
 
 	ready = false;
 	
-	display = SDL_CreateRGBSurface(flags, SCREEN_WIDTH, SCREEN_HEIGHT, 16,
-		0x7C00, 0x03E0, 0x001F, 0);
 	drawmode = 0;
 }
 
@@ -44,8 +42,41 @@ sdl_user::~sdl_user()
 {
 //	delete game;
 	if (drawmode != 0)
+	{
 		delete drawmode;
-	SDL_FreeSurface(display);
+		drawmode = 0;
+	}
+}
+
+int sdl_user::init_tiles()
+{
+	int last_good = 100;
+	for (int i = 0; i < (last_good * 2); i++)
+	{
+		char fname[100];
+		sprintf(fname, "%d.til", i);
+		if (tilepack->check_file(fname) != -1)
+		{	//the tileset is good
+			if (i > last_good)
+				last_good = i;
+		}
+	}
+	number_map_tiles = last_good;
+	if (number_map_tiles > 0)
+	{
+		map_tiles = new tile[number_map_tiles];
+	}
+	else
+	{
+		map_tiles = 0;
+	}
+	
+	return 0;
+}
+
+tile *sdl_user::get_tiles()
+{
+	return map_tiles;
 }
 
 void sdl_user::mouse_to(SDL_MouseMotionEvent *to)
@@ -56,6 +87,11 @@ void sdl_user::mouse_to(SDL_MouseMotionEvent *to)
 		drawmode->mouse_to(to);
 	}
 	SDL_mutexV(draw_mtx);
+}
+
+void sdl_user::add_request(client_request obj)
+{
+	game->add_request(obj);
 }
 
 void sdl_user::mouse_from(SDL_MouseMotionEvent *from)
@@ -121,24 +157,6 @@ void sdl_user::key_press(SDL_KeyboardEvent *button)
 		{
 			switch(button->keysym.sym)
 			{
-				case SDLK_F12:
-				case SDLK_PRINT:
-					char filename[256];
-					time_t rawtime;
-					struct tm * timeinfo;
-					time ( &rawtime );
-					timeinfo = localtime ( &rawtime );
-					sprintf(filename, "%s", asctime(timeinfo));
-					filename[strlen(filename)-1] = 0;
-					strcat(filename, ".bmp");
-					for (unsigned int i = 0; i < strlen(filename); i++)
-					{
-						if ((filename[i] == ' ') || (filename[i] == ':'))
-							filename[i] = '_';
-					}
-					printf("Screenshot to %s\n", filename);
-					SDL_SaveBMP(display, filename);
-					break;
 				default:
 					drawmode->key_press(button);
 					break;
@@ -153,14 +171,20 @@ sdl_drawmode *sdl_user::get_drawmode()
 	return drawmode;
 }
 
-void sdl_user::wait_ready()
+bool sdl_user::are_you_ready()
 {
-	while (!ready) {};
+	return ready;
 }
 
 bool sdl_user::quit_request()
 {
-	return drawmode->quit_request();
+	bool temp = drawmode->quit_request();
+	if (temp)
+	{
+		printf("Telling the client to stop\n");
+		game->stop();
+	}
+	return temp;
 }
 
 void sdl_user::change_drawmode(enum drawmode chg)
@@ -207,7 +231,7 @@ void sdl_user::change_drawmode(enum drawmode chg)
 	SDL_mutexV(draw_mtx);
 }
 
-void sdl_user::draw()
+void sdl_user::draw(SDL_Surface *display)
 {
 	while (SDL_mutexP(draw_mtx) == -1) {};
 	if (ready)

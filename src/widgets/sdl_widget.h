@@ -6,14 +6,15 @@ class client;
 
 #include "globals.h"
 #include "resources/sdl_graphic.h"
+#include "sdl_user.h"
 
 class client;
 
 class sdl_widget
 {
 	public:
-		sdl_widget(int x, int y, client *who);
-		sdl_widget(int num, int x, int y, client *who);
+		sdl_widget(int x, int y, sdl_user *who);
+		sdl_widget(int num, int x, int y, sdl_user *who);
 		virtual ~sdl_widget();
 		virtual void draw(SDL_Surface *display);
 		
@@ -45,7 +46,7 @@ class sdl_widget
 		sdl_graphic *one;
 		
 		bool have_mouse;
-		client *myclient;
+		sdl_user *myclient;
 };
 
 #endif

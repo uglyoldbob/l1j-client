@@ -308,10 +308,20 @@ config::~config()
 				delete [] sdata[j].names[i];
 			}
 			delete [] sdata[j].names;
+			sdata[j].names = 0;
 			delete [] sdata[j].server_name;
+			sdata[j].server_name = 0;
 			delete [] sdata[j].port;
+			sdata[j].port = 0;
 			delete [] sdata[j].game_port;
+			sdata[j].game_port = 0;
 		}
 		delete [] sdata;
+		sdata = 0;
+	}
+	if (lineage_dir != 0)
+	{
+		delete [] lineage_dir;
+		lineage_dir = 0;
 	}
 }

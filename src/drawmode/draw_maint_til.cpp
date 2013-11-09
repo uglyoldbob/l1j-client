@@ -19,15 +19,20 @@ draw_maint_til::draw_maint_til(sdl_user *self)
 	num_widgets = 1;
 	
 	widgets = new sdl_widget*[num_widgets];
-	widgets[0] = new sdl_text_button("Return", 320, 255, owner->game, 
-		(funcptr*)new dam_ptr(this, DRAWMODE_ADMIN_MAIN));
+	widgets[0] = new sdl_text_button("Return", 320, 255, owner, 
+		(funcptr*)new dam_ptr(owner, DRAWMODE_ADMIN_MAIN));
 	widgets[0]->set_key_focus(true);
 	
 	tileset = new tile;
 	background = 23;
 	tile_num = 0;
 	cur_tile = 0;
-	tileset->load(background, owner->game);
+
+	client_request t_sdl;
+	t_sdl.request = CLIENT_REQUEST_LOAD_TILE;
+	t_sdl.data.tload.which = background;
+	t_sdl.data.tload.item = tileset;
+	self->add_request(t_sdl);
 	update_tile();
 }
 
@@ -47,7 +52,11 @@ void draw_maint_til::key_press(SDL_KeyboardEvent *button)
 						delete tileset;
 					}
 					tileset = new tile;
-					tileset->load(background, owner->game);
+					client_request t_sdl;
+					t_sdl.request = CLIENT_REQUEST_LOAD_TILE;
+					t_sdl.data.tload.which = background;
+					t_sdl.data.tload.item = tileset;
+					owner->add_request(t_sdl);
 					update_tile();
 				}
 				break;
@@ -58,7 +67,11 @@ void draw_maint_til::key_press(SDL_KeyboardEvent *button)
 					delete tileset;
 				}
 				tileset = new tile;
-				tileset->load(background, owner->game);
+				client_request t_sdl;
+				t_sdl.request = CLIENT_REQUEST_LOAD_TILE;
+				t_sdl.data.tload.which = background;
+				t_sdl.data.tload.item = tileset;
+				owner->add_request(t_sdl);
 				update_tile();
 				break;
 			case SDLK_UP:
@@ -83,7 +96,7 @@ void draw_maint_til::key_press(SDL_KeyboardEvent *button)
 
 bool draw_maint_til::quit_request()
 {
-	owner->game->stop_thread = true;
+	//owner->stop_thread = true;
 	return true;
 }
 
@@ -163,16 +176,20 @@ void draw_maint_til::draw(SDL_Surface *display)
 	while (SDL_mutexP(draw_mtx) == -1) {};
 	SDL_FillRect(display, NULL, 0);
 	sdl_drawmode::draw(display);
-	if (cur_tile != 0)
-	{
-		cur_tile->draw(display);
-	}
 	char temp[50];
 	memset(temp, 0, 50);
 	if (tileset != 0)
 	{
-		sprintf(temp, "Using tileset %d.til, tile %d", background, tile_num);
-		//TODO : draw the tile
+		if (cur_tile != 0)
+		{
+			cur_tile->draw(display);
+			sprintf(temp, "Using tileset %d.til, tile %d", background, tile_num);
+		}
+		else
+		{
+			update_tile();
+			sprintf(temp, "Tileset %d.til, tile %d invalid?", background, tile_num);
+		}
 	}
 	else
 	{

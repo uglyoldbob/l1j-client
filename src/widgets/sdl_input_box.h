@@ -9,7 +9,7 @@ class client;
 class sdl_input_box : public sdl_widget
 {
 	public:
-		sdl_input_box(int num, int x, int y, client *who);
+		sdl_input_box(int num, int x, int y, bool protect, sdl_user *who);
 		virtual ~sdl_input_box();
 		
 		void set_max(int m);
@@ -26,6 +26,8 @@ class sdl_input_box : public sdl_widget
 		int cursor_pos;	//pixel offset
 		int cursor_idx;	//character number offset
 		char *field;
+		char *protectme;
+		int protecting;
 		int max_length;
 		int field_length;
 		void add_char(char dat);

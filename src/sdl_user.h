@@ -3,16 +3,17 @@
 
 #include <SDL/SDL.h>
 
-class client;
+#include "config.h"
 #include "globals.h"
 #include "drawmode/sdl_drawmode.h"
+#include "resources/files.h"
 #include "resources/music.h"
+#include "resources/tile.h"
 class pack;
 class prepared_graphics;
 class sdl_widget;
+struct client_request;
 
-#define SCREEN_WIDTH 640
-#define SCREEN_HEIGHT 480
 //#define true 1
 //#define false 0
 #define COLORKEY 255, 0, 255 //Your Transparent colour
@@ -26,33 +27,6 @@ class sdl_user
 	public:
 		sdl_user(Uint32 flags = SDL_SWSURFACE);
 		~sdl_user();
-		void quit_client();	/**< Quit the game instance by triggering the client thread through the client object */
-		void login(const char *name, const char *pass); /**< login to the game server */
-		
-		void init_client(client *clnt);	/**< setup the client object as a part of startup */
-
-		void set_login_char(int num, lin_char_info *data);
-		void wait_for_mode(enum drawmode wait);	/**< wait for the client to be in the given drawmode */
-		bool is_in_mode(enum drawmode here);	/**< is the client in the given drawmode */
-		sdl_drawmode *get_drawmode();	/**< Retrieve the drawmode object */
-		void wait_ready();	/**< wait until the ready flag is set */
-		void change_drawmode(enum drawmode chg);	/**< change to a different drawmode */
-		volatile bool done;	/**<used to terminate the client */
-		music game_music; /**< the game music object */
-		
-		friend class sdl_master;
-		client *game;	/**< the client object we are attached to */
-	private:
-		volatile bool ready;	/**< is it ok to draw me */
-		volatile enum drawmode draw_mode;	/**< what is the current drawing mode */
-
-		SDL_Surface *display;	/**< the drawing surface assigned to me */
-		
-		sdl_drawmode *drawmode;	/**< the object that draws everything for me */
-		
-		SDL_mutex *draw_mtx;	/**< the mutex the gui thread (sdl_master) uses to share data with the client thread */
-		
-		void draw();	/**< draw */
 		
 		//for tracking mouse movements 
 		void mouse_to(SDL_MouseMotionEvent *to);
@@ -63,6 +37,38 @@ class sdl_user
 				
 		void mouse_click(SDL_MouseButtonEvent *here);
 		void key_press(SDL_KeyboardEvent *button);
+		void init_client(client *clnt);	/**< setup the client object as a part of startup, because sdl_master does not know about this object */
+		
+		void draw(SDL_Surface *display);	/**< draw */
+
+		void quit_client();	/**< Quit the game instance by triggering the client thread through the client object */
+		void login(const char *name, const char *pass); /**< login to the game server */
+		
+		tile *get_tiles();	/**< Retrieve the list of tiles. */
+		config *get_config();	/**< Retrieve the config from the client */
+
+		void wait_for_mode(enum drawmode wait);	/**< wait for the client to be in the given drawmode */
+		bool is_in_mode(enum drawmode here);	/**< is the client in the given drawmode */
+		sdl_drawmode *get_drawmode();	/**< Retrieve the drawmode object */
+		bool are_you_ready();	/**< wait until the ready flag is set */
+		void change_drawmode(enum drawmode chg);	/**< change to a different drawmode */
+		volatile bool done;	/**<used to terminate the client */
+		music game_music; /**< the game music object */
+
+		void add_request(client_request obj);
+		int init_tiles();	/**< Initializes the map_tiles object */
+
+	private:
+		client *game;	/**< the client object we are attached to */
+		volatile bool ready;	/**< is it ok to draw me */
+		volatile enum drawmode draw_mode;	/**< what is the current drawing mode */
+
+		sdl_drawmode *drawmode;	/**< the object that draws everything for me */
+		tile *map_tiles;	/**< The array of all possible tiles a map can use, not all of them are loaded though */
+		int number_map_tiles;	/**< The number of map tiles covered by the map_tiles object */
+
+
+		SDL_mutex *draw_mtx;	/**< the mutex the gui thread (sdl_master) uses to share data with the client thread */
 };
 
 #endif

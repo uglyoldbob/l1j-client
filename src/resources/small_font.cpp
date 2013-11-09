@@ -11,6 +11,14 @@ small_font::small_font()
 	final = 0;
 }
 
+small_font::~small_font()
+{
+	if (final != 0)
+	{
+		SDL_FreeSurface(final);
+	}
+}
+
 bool small_font::init(const char *name, client *who)
 {	//SMALL.FNT has a strange assortment of fonts (23 of them) 
 	memset(convert, 0, 256);

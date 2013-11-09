@@ -13,10 +13,10 @@
 #include "sdl_lin_map.h"
 #include "sdl_widget.h"
 
-sdl_lin_map::sdl_lin_map(tile *thetiles, client *who, int x, int y, int w, int h)
+sdl_lin_map::sdl_lin_map(sdl_user *who, int x, int y, int w, int h)
 	: sdl_widget(x, y, who)
 {
-	tile_data = thetiles;
+	tile_data = who->get_tiles();
 	one = 0;
 	this->who = who;
 	
@@ -27,7 +27,7 @@ sdl_lin_map::sdl_lin_map(tile *thetiles, client *who, int x, int y, int w, int h
 	}
 	map = -1;
 	
-	one = new sdl_graphic(x, y, w, h);
+	one = new sdl_graphic(x, y, w, h, 0);
 }
 
 sdl_lin_map::~sdl_lin_map()
@@ -108,7 +108,7 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y)
 	sprintf(name, "map/%d/%04x%04x.s32", mapnum, modx, mody);
 	char *buffer;
 	SDL_RWops *sdl_buf;
-	buffer = (char*)who->getfiles->load_file(name, &size, FILE_REGULAR1, 0);
+	buffer = 0;//(char*)who->getfiles->load_file(name, &size, FILE_REGULAR1, 0);
 	if (buffer == 0)
 	{
 		ret.graphic = 0;
@@ -285,7 +285,7 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y)
 	beg_x = x & (int)~0x3F;
 	beg_y = y & (int)~0x3F;
 	
-	ret.graphic = new sdl_graphic(0, 0, 3072, 1535);
+	ret.graphic = new sdl_graphic(0, 0, 3072, 1535, 0);
 	
 	//draw all the tiles for the map section
 	int offsetx, offsety;
@@ -309,8 +309,8 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y)
 			selar = ret.mapdata->floor[tx][ty*2+1]>>8;
 			selbr = ret.mapdata->floor[tx][ty*2+1] & 0xFF;
 			
-			tile_data[selal].load(selal, who);
-			tile_data[selar].load(selar, who);
+//			tile_data[selal].load(selal, who);
+//			tile_data[selar].load(selar, who);
 			
 			dx = tempmap.get_screen().get_x() + offsetx;
 			dy = tempmap.get_screen().get_y() + offsety;
@@ -338,7 +338,7 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y)
 			selal = floor>>8;
 			selbl = floor & 0xFF;
 
-			tile_data[selal].load(selal, who);
+//			tile_data[selal].load(selal, who);
 
 			dx = tempmap.get_screen().get_x() + offsetx;
 			dy = tempmap.get_screen().get_y() + offsety;
