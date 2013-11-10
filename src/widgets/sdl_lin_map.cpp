@@ -82,71 +82,32 @@ void sdl_lin_map::draw_info(SDL_Surface *display, int x, int y)
 		lineage_font.draw(display, startx, starty, buffer, 0xFFFE);
 	}
 }
-	
-lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y, client *from)
+
+void sdl_lin_map::handle_s32(SDL_RWops *sdl_buf, lin_map_segment *ret, int mapnum, int x, int y, client *from)
 {
-//	Uint32 timecheck = SDL_GetTicks();
-	lin_map_segment ret;
-	ret.graphic = 0;
-	ret.mapdata = 0;
-	ret.map = 0;
-	ret.x = 0;
-	ret.y = 0;
-	ret.offsetx = 0;
-	ret.offsety = 0;
-	
-//begin loading map data
-	int modx, mody;
-	modx = (x>>6) + 0x7e00;
-	mody = (y>>6) + 0x7e00;
-	
-	int beg_x2, beg_y2;
-	beg_x2 = x & (int)~0x3F;
-	beg_y2 = y & (int)~0x3F;
-	
-	char name[256];
-	int size;
-	sprintf(name, "map/%d/%04x%04x.s32", mapnum, modx, mody);
-	char *buffer;
-	SDL_RWops *sdl_buf;
-	buffer = (char*)from->getfiles->load_file(name, &size, FILE_REGULAR1, 0);
-	if (buffer == 0)
-	{
-		ret.graphic = 0;
-		ret.mapdata = 0;
-		ret.map = 0;
-		ret.x = 0;
-		ret.y = 0;
-		ret.offsetx = 0;
-		ret.offsety = 0;
-//		printf("Took %d millis to load nothing\n", SDL_GetTicks() - timecheck);
-		return ret;
-	}
-	
-	sdl_buf = SDL_RWFromConstMem(buffer, size);
-	ret.mapdata = new lin_map_data;
+	ret->mapdata = new lin_map_data;
 	
 	//read tile data
 	for (int tx = 0; tx < 64; tx++)
 	{
 		for (int ty = 0; ty < 64; ty++)
 		{
-			SDL_RWread(sdl_buf, &(ret.mapdata->floor[ty][tx*2]), 4, 1);
-			ret.mapdata->floor[ty][tx*2] = SWAP32(ret.mapdata->floor[ty][tx*2]);
-			SDL_RWread(sdl_buf, &(ret.mapdata->floor[ty][tx*2+1]), 4, 1);
-			ret.mapdata->floor[ty][tx*2+1] = SWAP32(ret.mapdata->floor[ty][tx*2+1]);
+			SDL_RWread(sdl_buf, &(ret->mapdata->floor[ty][tx*2]), 4, 1);
+			ret->mapdata->floor[ty][tx*2] = SWAP32(ret->mapdata->floor[ty][tx*2]);
+			SDL_RWread(sdl_buf, &(ret->mapdata->floor[ty][tx*2+1]), 4, 1);
+			ret->mapdata->floor[ty][tx*2+1] = SWAP32(ret->mapdata->floor[ty][tx*2+1]);
 		}
 	}
 	
 	//mystery data
 	//TODO figure out this section of data
-	SDL_RWread(sdl_buf, &ret.mapdata->num_unknown2, 2, 1);
-	ret.mapdata->num_unknown2 = SWAP16(ret.mapdata->num_unknown2);
-//	printf("Unknown 2 is %d\n", ret.mapdata->num_unknown2);
-	if (ret.mapdata->num_unknown2 > 0)
+	SDL_RWread(sdl_buf, &ret->mapdata->num_unknown2, 2, 1);
+	ret->mapdata->num_unknown2 = SWAP16(ret->mapdata->num_unknown2);
+//	printf("Unknown 2 is %d\n", ret->mapdata->num_unknown2);
+	if (ret->mapdata->num_unknown2 > 0)
 	{	//7d068
-		unsigned char *waste = new unsigned char[ret.mapdata->num_unknown2 * 6];
-		SDL_RWread(sdl_buf, waste, 6, ret.mapdata->num_unknown2);
+		unsigned char *waste = new unsigned char[ret->mapdata->num_unknown2 * 6];
+		SDL_RWread(sdl_buf, waste, 6, ret->mapdata->num_unknown2);
 		//TODO : SWAP16 all the values in the array
 		delete [] waste;
 	}	
@@ -156,12 +117,12 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y, client *from)
 	{
 		for (int ty = 0; ty < 64; ty++)
 		{
-			ret.mapdata->attr[tx][ty*2] = 0;
-			ret.mapdata->attr[tx][ty*2+1] = 0;
-			SDL_RWread(sdl_buf, &ret.mapdata->attr[ty][tx*2], 2, 1);
-			ret.mapdata->attr[ty][tx*2] = SWAP16(ret.mapdata->attr[ty][tx*2]);
-			SDL_RWread(sdl_buf, &ret.mapdata->attr[ty][tx*2+1], 2, 1);
-			ret.mapdata->attr[ty][tx*2+1] = SWAP16(ret.mapdata->attr[ty][tx*2+1]);
+			ret->mapdata->attr[tx][ty*2] = 0;
+			ret->mapdata->attr[tx][ty*2+1] = 0;
+			SDL_RWread(sdl_buf, &ret->mapdata->attr[ty][tx*2], 2, 1);
+			ret->mapdata->attr[ty][tx*2] = SWAP16(ret->mapdata->attr[ty][tx*2]);
+			SDL_RWread(sdl_buf, &ret->mapdata->attr[ty][tx*2+1], 2, 1);
+			ret->mapdata->attr[ty][tx*2+1] = SWAP16(ret->mapdata->attr[ty][tx*2+1]);
 		}
 	}
 
@@ -171,8 +132,8 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y, client *from)
 	SDL_RWread(sdl_buf, &bla, 4, 1);
 	bla = SWAP32(bla);
 	
-	ret.mapdata->num_objects = bla;
-	ret.mapdata->objs = new map_object[bla];
+	ret->mapdata->num_objects = bla;
+	ret->mapdata->objs = new map_object[bla];
 		
 	for (int i = 0; i < bla; i++)
 	{
@@ -180,8 +141,8 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y, client *from)
 		SDL_RWread(sdl_buf, &a, 2, 1);	//this is an index number
 		SDL_RWread(sdl_buf, &a, 2, 1);
 		a = SWAP16(a);
-		ret.mapdata->objs[i].num_tiles = a;
-		ret.mapdata->objs[i].tiles = new map_tile_data[a];
+		ret->mapdata->objs[i].num_tiles = a;
+		ret->mapdata->objs[i].tiles = new map_tile_data[a];
 		for (int j = 0; j < a; j++)
 		{
 			unsigned char b, c;
@@ -200,10 +161,10 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y, client *from)
 				char h;
 				SDL_RWread(sdl_buf, &h, 1, 1);
 				SDL_RWread(sdl_buf, &dummy, 1, 4);
-				ret.mapdata->objs[i].tiles[j].x = b;
-				ret.mapdata->objs[i].tiles[j].y = c;
-				ret.mapdata->objs[i].tiles[j].h = h;
-				ret.mapdata->objs[i].tiles[j].tiledata = dummy;
+				ret->mapdata->objs[i].tiles[j].x = b;
+				ret->mapdata->objs[i].tiles[j].y = c;
+				ret->mapdata->objs[i].tiles[j].h = h;
+				ret->mapdata->objs[i].tiles[j].tiledata = dummy;
 			}
 		}
 	}
@@ -273,11 +234,7 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y, client *from)
 	}
 		
 //	printf("Finish loading\n");
-	
-	SDL_RWclose(sdl_buf);
 
-	delete [] buffer;
-	
 //end loading map data
 
 //	printf("Took %d millis to load a section\n", SDL_GetTicks() - timecheck);
@@ -288,7 +245,7 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y, client *from)
 	beg_x = x & (int)~0x3F;
 	beg_y = y & (int)~0x3F;
 	
-	ret.graphic = new sdl_graphic(0, 0, 3072, 1535, 0);
+	ret->graphic = new sdl_graphic(0, 0, 3072, 1535, 0);
 	
 	//draw all the tiles for the map section
 	int offsetx, offsety;
@@ -306,11 +263,11 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y, client *from)
 
 			int dx, dy;
 			int selal, selbl, selar, selbr;
-			selal = ret.mapdata->floor[tx][ty*2]>>8;
-			selbl = ret.mapdata->floor[tx][ty*2] & 0xFF;
+			selal = ret->mapdata->floor[tx][ty*2]>>8;
+			selbl = ret->mapdata->floor[tx][ty*2] & 0xFF;
 			
-			selar = ret.mapdata->floor[tx][ty*2+1]>>8;
-			selbr = ret.mapdata->floor[tx][ty*2+1] & 0xFF;
+			selar = ret->mapdata->floor[tx][ty*2+1]>>8;
+			selbr = ret->mapdata->floor[tx][ty*2+1] & 0xFF;
 			
 			tile_data[selal].load(selal, from);
 			tile_data[selar].load(selar, from);
@@ -321,20 +278,20 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y, client *from)
 			right = tile_data[selar].get_tile_right(selbr);
 			
 			if (left != 0)
-				left->drawat(dx, dy, ret.graphic->get_surf());
+				left->drawat(dx, dy, ret->graphic->get_surf());
 			if (right != 0)
-				right->drawat(dx+24, dy, ret.graphic->get_surf());
+				right->drawat(dx+24, dy, ret->graphic->get_surf());
 		}
 	}
 #if 1
-	for (int i = 0; i < ret.mapdata->num_objects; i++)
+	for (int i = 0; i < ret->mapdata->num_objects; i++)
 	{
-		for (int j = 0; j < ret.mapdata->objs[i].num_tiles; j++)
+		for (int j = 0; j < ret->mapdata->objs[i].num_tiles; j++)
 		{
 			sdl_graphic *left, *right;
-			int tx = ret.mapdata->objs[i].tiles[j].x / 2;
-			int ty = ret.mapdata->objs[i].tiles[j].y;
-			int floor = ret.mapdata->objs[i].tiles[j].tiledata;
+			int tx = ret->mapdata->objs[i].tiles[j].x / 2;
+			int ty = ret->mapdata->objs[i].tiles[j].y;
+			int floor = ret->mapdata->objs[i].tiles[j].tiledata;
 			map_coord tempmap(x + tx, y + ty);
 			int dx, dy;
 			int selal, selbl;
@@ -345,29 +302,100 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y, client *from)
 
 			dx = tempmap.get_screen().get_x() + offsetx;
 			dy = tempmap.get_screen().get_y() + offsety;
-			if ((ret.mapdata->objs[i].tiles[j].x % 2) == 1)
+			if ((ret->mapdata->objs[i].tiles[j].x % 2) == 1)
 			{
 				dx += 24;
 			}
 			left = tile_data[selal].get_special(selbl);
 			
 			if (left != 0)
-				left->drawat(dx, dy, ret.graphic->get_surf());
+				left->drawat(dx, dy, ret->graphic->get_surf());
 		}
 	}
 #endif
-	ret.map = mapnum;
-	ret.x = x & (~0x3F);
-	ret.y = y & (~0x3F);
-	ret.offsetx = offsetx;
-	ret.offsety = offsety;
+	ret->map = mapnum;
+	ret->x = x & (~0x3F);
+	ret->y = y & (~0x3F);
+	ret->offsetx = offsetx;
+	ret->offsety = offsety;
 #endif
-//	printf("\t%s %d_%d_%d\n", name, mapnum, ret.x, ret.y);
+//	printf("\t%s %d_%d_%d\n", name, mapnum, ret->x, ret->y);
 	
-//	sprintf(name, "%d_%d_%d.bmp", mapnum, ret.x, ret.y);
-//	SDL_SaveBMP(ret.graphic->get_surf(), name);
+//	sprintf(name, "%d_%d_%d.bmp", mapnum, ret->x, ret->y);
+//	SDL_SaveBMP(ret->graphic->get_surf(), name);
 	
 //	printf("Took %d millis to load/draw a section\n", SDL_GetTicks() - timecheck);
+}
+
+void sdl_lin_map::handle_seg(SDL_RWops *sdl_buf, lin_map_segment *ret, int mapnum, int x, int y, client *from)
+{
+	ret->graphic = 0;
+	ret->mapdata = 0;
+	ret->map = 0;
+	ret->x = 0;
+	ret->y = 0;
+	ret->offsetx = 0;
+	ret->offsety = 0;
+}
+
+lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y, client *from)
+{
+//	Uint32 timecheck = SDL_GetTicks();
+	lin_map_segment ret;
+	ret.graphic = 0;
+	ret.mapdata = 0;
+	ret.map = 0;
+	ret.x = 0;
+	ret.y = 0;
+	ret.offsetx = 0;
+	ret.offsety = 0;
+	
+//begin loading map data
+	int modx, mody;
+	modx = (x>>6) + 0x7e00;
+	mody = (y>>6) + 0x7e00;
+	
+	int beg_x2, beg_y2;
+	beg_x2 = x & (int)~0x3F;
+	beg_y2 = y & (int)~0x3F;
+	
+	char name[256];
+	int size;
+	sprintf(name, "map/%d/%04x%04x.s32", mapnum, modx, mody);
+	char *buffer;
+	SDL_RWops *sdl_buf;
+	buffer = (char*)from->getfiles->load_file(name, &size, FILE_REGULAR1, 0);
+	if (buffer == 0)
+	{
+		sprintf(name, "map/%d/%04x%04x.seg", mapnum, modx, mody);
+		buffer = (char*)from->getfiles->load_file(name, &size, FILE_REGULAR1, 0);
+		if (buffer != 0)
+		{
+			sdl_buf = SDL_RWFromConstMem(buffer, size);
+			handle_seg(sdl_buf, &ret, mapnum, x, y, from);
+			SDL_RWclose(sdl_buf);
+			delete [] buffer;
+		}
+		else
+		{
+			//printf("This map section %d, %d does not exist\n",
+			//	   beg_x2, beg_y2);
+			ret.graphic = 0;
+			ret.mapdata = 0;
+			ret.map = 0;
+			ret.x = 0;
+			ret.y = 0;
+			ret.offsetx = 0;
+			ret.offsety = 0;
+		}
+	}
+	else
+	{
+		sdl_buf = SDL_RWFromConstMem(buffer, size);
+		handle_s32(sdl_buf, &ret, mapnum, x, y, from);
+		SDL_RWclose(sdl_buf);	
+		delete [] buffer;
+	}
 	return ret;
 }
 

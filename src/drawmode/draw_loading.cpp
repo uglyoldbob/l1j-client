@@ -71,7 +71,7 @@ draw_loading::draw_loading(sdl_user *self)
 	}
 	widgets[num_servers] = new text_box(257, 254, 150, 10*12, owner);
 	
-	widgets[num_servers+1] = new sprite(320, 200, "2786-8.spr", owner);
+	widgets[num_servers+1] = new sprite(320, 200, owner);//"2786-8.spr", owner);
 	//widgets[num_servers+1] = new sprite(50, 50, "6258-0.spr", owner);
 		//6256-173 nothing?
 		//6256-181 nothing?

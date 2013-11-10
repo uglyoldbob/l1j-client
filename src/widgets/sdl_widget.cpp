@@ -105,6 +105,7 @@ sdl_widget::~sdl_widget()
 	if (one != 0)
 	{
 		delete one;
+		one = 0;
 	}
 }
 

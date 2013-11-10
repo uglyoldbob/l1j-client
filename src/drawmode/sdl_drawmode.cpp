@@ -51,17 +51,23 @@ sdl_drawmode::~sdl_drawmode()
 		for (int i = 0; i < num_gfx; i++)
 		{
 			if (gfx[i] != 0)
+			{
 				delete gfx[i];
+				gfx[i] = 0;
+			}
 		}
 		delete [] gfx;
+		gfx = 0;
 	}
 	if (widgets != 0)
 	{
 		for (int i = 0; i < num_widgets; i++)
 		{
 			delete widgets[i];
+			widgets[i] = 0;
 		}
 		delete [] widgets;
+		widgets = 0;
 	}
 }
 

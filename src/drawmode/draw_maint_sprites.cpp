@@ -24,7 +24,6 @@ void load_ptr::go()
 draw_maint_sprites::draw_maint_sprites(sdl_user *self)
 	: sdl_drawmode(self)
 {
-	draw_mtx = SDL_CreateMutex();
 	owner->game_music.change_music("sound/music0.mp3");
 
 	num_gfx = 0;
@@ -52,14 +51,12 @@ draw_maint_sprites::draw_maint_sprites(sdl_user *self)
 
 draw_maint_sprites::~draw_maint_sprites()
 {
-
 }
 
 void draw_maint_sprites::key_press(SDL_KeyboardEvent *button)
 {
 	while (SDL_mutexP(draw_mtx) == -1) {};
 	sdl_drawmode::key_press(button);
-	sprite *temp = (sprite*)widgets[0];
 	if (button->type == SDL_KEYDOWN)
 	{
 		switch(button->keysym.sym)
@@ -159,6 +156,7 @@ void draw_maint_sprites::mouse_move(SDL_MouseMotionEvent *from, SDL_MouseMotionE
 
 void draw_maint_sprites::redo_sprite()
 {
+	while (SDL_mutexP(draw_mtx) == -1) {};
 	if (x < 0)
 		x = 0;
 	if (y < 0)
@@ -171,7 +169,16 @@ void draw_maint_sprites::redo_sprite()
 	char new_name[50];
 	memset(new_name, 0, 50);
 	sprintf(new_name, "%d-%d.spr", x, y);
-	widgets[0] = new sprite(320, 400, new_name, owner);
+	widgets[0] = new sprite(320, 400, owner);//new_name, owner);
+	
+	client_request t_sdl;
+	t_sdl.request = CLIENT_REQUEST_LOAD_SPRITE;
+	t_sdl.data.sload.item = (sprite*)widgets[0];
+	t_sdl.data.sload.name = new_name;
+	t_sdl.data.sload.x = 320;
+	t_sdl.data.sload.y = 400;
+	owner->add_request(t_sdl);
+	SDL_mutexV(draw_mtx);
 }
 
 bool draw_maint_sprites::quit_request()

@@ -1,26 +1,32 @@
 #include "client.h"
 #include "sprite.h"
 
-sprite::sprite(int x, int y, const char *filename, sdl_user *who)
+sprite::sprite(int x, int y, sdl_user *who)
 	: sdl_widget(x, y, who)
 {
-	printf("Opening sprite %s\n", filename);
+	edit_mtx = SDL_CreateMutex();
 	tiles = 0;
 	frames = 0;
+	num_frames = 0;
 	
 	frame_num = 1;
 	time_change = SDL_GetTicks() + 200;
-	
+}
+
+void sprite::load(int x, int y, const char *filename, client *from)
+{
+//	while (SDL_mutexP(edit_mtx) == -1) {};
+	printf("Opening sprite %s\n", filename);
 	loc_x = x;
 	loc_y = y;
 	
 	bool tiles_loaded = false;
 	short *palette = 0;
 	int size;
-	char *data = 0;//(char*)myclient->getfiles->load_file(filename, &size, FILE_SPRITESPACK, 0);
+	char *data = (char*)from->getfiles->load_file(filename, &size, FILE_SPRITESPACK, 0);
 	
 	if (data == 0)
-		data = 0;//(char*)myclient->getfiles->load_file(filename, &size, FILE_SPRITEPACK, 0);
+		data = (char*)from->getfiles->load_file(filename, &size, FILE_SPRITEPACK, 0);
 
 	if (data == 0)
 	{
@@ -166,11 +172,16 @@ sprite::sprite(int x, int y, const char *filename, sdl_user *who)
 		}
 	}
 	
+	delete [] palette;
+	palette = 0;
+	delete [] tile_offsets;
+	tile_offsets = 0;
 	SDL_RWclose(file);
 	delete [] data;
 
 	frame_num = 0;
 	printf("Reached end of sprite loading\n");
+//	SDL_mutexV(edit_mtx);
 }
 
 //arg2 + frames[frame_num].tiles[i].x - mapX
@@ -180,6 +191,7 @@ sprite::sprite(int x, int y, const char *filename, sdl_user *who)
 
 void sprite::draw(SDL_Surface *display)
 {
+//	while (SDL_mutexP(edit_mtx) == -1) {};
 	if (num_frames == 0)
 		return;
 	//amount to shift all tiles by
@@ -227,6 +239,7 @@ void sprite::draw(SDL_Surface *display)
 	}
 	if (frame_num == num_frames)
 		frame_num = 0;
+//	SDL_mutexV(edit_mtx);
 }
 
 sprite::~sprite()
@@ -239,6 +252,7 @@ sprite::~sprite()
 				delete [] frames[i].tiles;
 		}
 		delete [] frames;
+		num_frames = 0;
 	}
 	if (tiles != 0)
 	{
@@ -248,5 +262,7 @@ sprite::~sprite()
 				delete tiles[i];
 		}
 		delete [] tiles;
+		num_tiles = 0;
 	}
+	SDL_DestroyMutex(edit_mtx);
 }

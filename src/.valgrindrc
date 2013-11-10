@@ -1,1 +1,4 @@
+--leak-check=full
+--track-origins=yes
+--num-callers=40
 --suppressions=./stuff.supp

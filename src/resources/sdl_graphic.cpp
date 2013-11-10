@@ -141,7 +141,7 @@ void sdl_graphic::do_load(int x, int y, short *source, int type)
 			width = data[data_offset++];
 			height = data[data_offset++];
 		//	printf("\tx: %d y:%d w:%d h:%d\n", x, y, width, height);
-			img = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 16,
+			img = SDL_CreateRGBSurface(SDL_SWSURFACE, width+1, height+1, 16,
 				0x7C00, 0x03E0, 0x001F, 0);
 			short *manip = (short*) &data[data_offset];
 			/** \todo find the actual size of the data */
@@ -161,7 +161,6 @@ void sdl_graphic::do_load(int x, int y, short *source, int type)
 			{
 				int row_segs = data[data_offset++];
 				short *row_temp = temp;
-		//		printf("\tThere are %d segments in this row\n", row_segs);
 				for (int j = 0; j < row_segs; j++)
 				{
 					int skip = data[data_offset++] / 2;

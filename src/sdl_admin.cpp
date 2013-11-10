@@ -188,57 +188,75 @@ bool sdl_user::quit_request()
 	if (temp)
 	{
 		printf("Telling the client to stop\n");
+		game->delete_requests();
 		game->stop();
 	}
 	return temp;
 }
 
+/** change the current drawmode */
 void sdl_user::change_drawmode(enum drawmode chg)
 {
 	while (SDL_mutexP(draw_mtx) == -1) {};
-	ready = false;
-	if (drawmode != 0)
+	change_draw = chg;
+	if (draw_mode == INVALID)
+		check_for_change_drawmode();
+	SDL_mutexV(draw_mtx);
+}
+
+void sdl_user::check_for_change_drawmode()
+{
+	while (SDL_mutexP(draw_mtx) == -1) {};
+	if (change_draw != INVALID)
 	{
-		delete drawmode;
-		drawmode = 0;
-	}
-	switch(chg)
-	{
-		case DRAWMODE_ADMIN_MAIN:
-			drawmode = new draw_admin_main(this);
-			draw_mode = chg;
-			ready = true;
-			break;
-		case DRAWMODE_MAINT_IMG:
-			drawmode = new draw_maint_img(this);
-			draw_mode = chg;
-			ready = true;
-			break;
-		case DRAWMODE_MAINT_TIL:
-			drawmode = new draw_maint_til(this);
-			draw_mode = chg;
-			ready = true;
-			break;
-		case DRAWMODE_MAINT_MAP:
-			drawmode = new draw_maint_map(this);
-			draw_mode = chg;
-			ready = true;
-			break;
-		case DRAWMODE_MAINT_SPRITES:
-			drawmode = new draw_maint_sprites(this);
-			draw_mode = chg;
-			ready = true;
-			break;
-		default:
+		enum drawmode chg = change_draw;
+		ready = false;
+		if (drawmode != 0)
+		{
+			game->delete_requests();
+			delete drawmode;
 			drawmode = 0;
-			draw_mode = INVALID;
-			break;
+		}
+		switch(chg)
+		{
+			case DRAWMODE_ADMIN_MAIN:
+				drawmode = new draw_admin_main(this);
+				draw_mode = chg;
+				ready = true;
+				break;
+			case DRAWMODE_MAINT_IMG:
+				drawmode = new draw_maint_img(this);
+				draw_mode = chg;
+				ready = true;
+				break;
+			case DRAWMODE_MAINT_TIL:
+				drawmode = new draw_maint_til(this);
+				draw_mode = chg;
+				ready = true;
+				break;
+			case DRAWMODE_MAINT_MAP:
+				drawmode = new draw_maint_map(this);
+				draw_mode = chg;
+				ready = true;
+				break;
+			case DRAWMODE_MAINT_SPRITES:
+				drawmode = new draw_maint_sprites(this);
+				draw_mode = chg;
+				ready = true;
+				break;
+			default:
+				drawmode = 0;
+				draw_mode = INVALID;
+				break;
+		}
 	}
+	change_draw = INVALID;
 	SDL_mutexV(draw_mtx);
 }
 
 void sdl_user::draw(SDL_Surface *display)
 {
+	check_for_change_drawmode();
 	while (SDL_mutexP(draw_mtx) == -1) {};
 	if (ready)
 	{

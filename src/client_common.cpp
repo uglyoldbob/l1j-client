@@ -112,6 +112,11 @@ int client::init_strings()
 	return 0;
 }
 
+void client::change_drawmode(enum drawmode chg)
+{
+	graphics->change_drawmode(chg);
+}
+
 client::client(sdl_user *stuff)
 {
 	requests_mtx = SDL_CreateMutex();
@@ -235,6 +240,15 @@ void client::check_requests()
 			case CLIENT_REQUEST_CHECK_MAP:
 				temp->data.mcheck.item->check_sections(this);
 				break;
+			case CLIENT_REQUEST_LOAD_SPRITE:
+				temp->data.sload.item->load(
+					temp->data.sload.x,
+					temp->data.sload.y,
+					temp->data.sload.name,
+					this);
+				delete [] temp->data.sload.name;
+				temp->data.sload.name = 0;
+				break;
 			default:
 				break;
 		}
@@ -260,6 +274,12 @@ void client::delete_requests()
 					temp->data.rload.name = 0;
 				}
 				break;
+			case CLIENT_REQUEST_LOAD_SPRITE:
+				if (temp->data.sload.name != 0)
+				{
+					delete [] temp->data.sload.name;
+					temp->data.sload.name = 0;
+				}
 			default:
 				break;
 		}
@@ -279,10 +299,17 @@ void client::add_request(client_request rqst)
 		memcpy(temp, &rqst, sizeof(rqst));
 		switch (rqst.request)
 		{
+			case CLIENT_REQUEST_LOAD_SPRITE:
+				if (rqst.data.sload.name != 0)
+				{
+					temp->data.sload.name = new char[strlen(rqst.data.sload.name)+1];
+					strcpy(temp->data.sload.name, rqst.data.sload.name);
+				}
+				break;
 			case CLIENT_REQUEST_LOAD_SDL_GRAPHIC:
 				if (rqst.data.rload.name != 0)
 				{
-					temp->data.rload.name = new char[strlen(rqst.data.rload.name)];
+					temp->data.rload.name = new char[strlen(rqst.data.rload.name)+1];
 					strcpy(temp->data.rload.name, rqst.data.rload.name);
 				}
 				break;

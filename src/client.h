@@ -15,6 +15,7 @@
 #include "resources/small_font.h"
 #include "resources/pack.h"
 #include "widgets/sdl_lin_map.h"
+#include "widgets/sprite.h"
 
 #define TRANSFER_AMOUNT 0x400
 
@@ -27,6 +28,7 @@ enum CLIENT_REQUEST_TYPE
 {
 	CLIENT_REQUEST_CHECK_MAP,
 	CLIENT_REQUEST_LOAD_SDL_GRAPHIC,
+	CLIENT_REQUEST_LOAD_SPRITE,
 	CLIENT_REQUEST_LOAD_TILE,
 	CLIENT_REQUEST_QUIT
 };
@@ -63,6 +65,14 @@ struct client_request_tile
 	int which;
 };
 
+struct client_request_sprite
+{
+	sprite *item;
+	char *name;
+	int x;
+	int y;
+};
+
 struct client_request_map
 {
 	sdl_lin_map *item;
@@ -77,6 +87,7 @@ struct client_request
 		client_request_sdl_graphic rload;
 		client_request_tile			tload;
 		client_request_map			mcheck;
+		client_request_sprite		sload;
 	} data;
 };
 
@@ -91,6 +102,7 @@ class client
 		void send_packet(const char *format, ...);	/**< Sends a packet to the server */
 		
 		void change_map(int map_num);	/**< Changes the current map */
+		void change_drawmode(enum drawmode chg);	/**< Change the current drawmode */
 		
 		//unsorted public functions
 		void LoadDurationTable(const char *file);
@@ -104,6 +116,7 @@ class client
 		files *getfiles;	/**< The object responsible for retrieving all file based game resources */
 		briefcase *server_data;	/**< used to hold all server specific data */
 		void add_request(client_request rqst);	/**< The function used by the sdl_user class */
+		void delete_requests();	/**< This function deletes all pending requests */
 		
 		//these two variables are used to translate packets
 			//for servers using different opcodes
@@ -151,7 +164,6 @@ class client
 		
 		void check_requests();	/**< Check for any requests that have been made */
 		SDL_mutex *requests_mtx;	/**< The mutex that prevents checks and requests from happening at the same time */
-		void delete_requests();	/**< This function deletes all pending requests */
 		std::queue<client_request*> request_queue;
 };
 

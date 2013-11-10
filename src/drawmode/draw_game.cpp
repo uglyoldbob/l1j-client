@@ -69,7 +69,18 @@ draw_game::draw_game(sdl_user *self)
 	hp_width = (float)widgets[4]->getw();
 	mp_width = (float)widgets[5]->getw();
 	
-	widgets[6] = new sprite(320, 200, "2786-8.spr", owner);   //0, 5, 8, 
+	widgets[6] = new sprite(320, 200, owner);//, "2786-8.spr", owner);   //0, 5, 8, 
+	
+	client_request t_sdl;
+	t_sdl.request = CLIENT_REQUEST_LOAD_SPRITE;
+	t_sdl.data.sload.item = (sprite*)widgets[6];
+	t_sdl.data.sload.name = new char[50];
+	t_sdl.data.sload.x = 320;
+	t_sdl.data.sload.y = 200;
+	strcpy(t_sdl.data.sload.name, "2786-8.spr");
+	owner->add_request(t_sdl);
+	
+	
 	//widgets[6] = new sprite(50, 50, "3226-305.spr", owner);
 }
 

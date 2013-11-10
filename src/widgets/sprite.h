@@ -24,11 +24,13 @@ struct sprite_frame
 class sprite : public sdl_widget
 {
 	public:
-		sprite(int x, int y, const char *filename, sdl_user *who);
+		sprite(int x, int y, sdl_user *who);
 		virtual void draw(SDL_Surface *display);
 		~sprite();
+		void load(int x, int y, const char *filename, client *from);
 
 	private:
+		SDL_mutex *edit_mtx;
 		sdl_graphic **tiles;
 		int num_tiles;
 		

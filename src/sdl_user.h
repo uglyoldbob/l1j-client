@@ -52,6 +52,7 @@ class sdl_user
 		sdl_drawmode *get_drawmode();	/**< Retrieve the drawmode object */
 		bool are_you_ready();	/**< wait until the ready flag is set */
 		void change_drawmode(enum drawmode chg);	/**< change to a different drawmode */
+		void check_for_change_drawmode();	/**< This actually performs the drawmode change */
 		volatile bool done;	/**<used to terminate the client */
 		music game_music; /**< the game music object */
 
@@ -62,6 +63,7 @@ class sdl_user
 		client *game;	/**< the client object we are attached to */
 		volatile bool ready;	/**< is it ok to draw me */
 		volatile enum drawmode draw_mode;	/**< what is the current drawing mode */
+		enum drawmode change_draw;
 
 		sdl_drawmode *drawmode;	/**< the object that draws everything for me */
 		tile *map_tiles;	/**< The array of all possible tiles a map can use, not all of them are loaded though */

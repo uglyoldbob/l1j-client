@@ -753,7 +753,7 @@ void packet::login_check()
 			//send 9?
 			send_packet("cdd", CLIENT_ALIVE, 0, 0);
 			send_packet("ccdd", CLIENT_INITGAME, 0, 0, 0);
-//			game->graphics->change_drawmode(DRAWMODE_GAME);
+			game->change_drawmode(DRAWMODE_GAME);
 			break;
 		case 5:
 			{

@@ -72,6 +72,8 @@ class sdl_lin_map : public sdl_widget
 		int master_offsety;
 		
 		lin_map_segment get_map(int mapnum, int x, int y, client *from);	//returns a map section
+		void handle_s32(SDL_RWops *sdl_buf, lin_map_segment *ret, int mapnum, int x, int y, client *from);
+		void handle_seg(SDL_RWops *sdl_buf, lin_map_segment *ret, int mapnum, int x, int y, client *from);
 		void delete_segment(lin_map_segment delme);
 };
 
