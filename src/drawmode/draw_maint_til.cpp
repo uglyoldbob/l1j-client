@@ -50,6 +50,7 @@ void draw_maint_til::key_press(SDL_KeyboardEvent *button)
 					if (tileset != 0)
 					{
 						delete tileset;
+						tileset = 0;
 					}
 					tileset = new tile;
 					client_request t_sdl;
@@ -65,6 +66,7 @@ void draw_maint_til::key_press(SDL_KeyboardEvent *button)
 				if (tileset != 0)
 				{
 					delete tileset;
+					tileset = 0;
 				}
 				tileset = new tile;
 				client_request t_sdl;
@@ -163,6 +165,7 @@ void draw_maint_til::mouse_move(SDL_MouseMotionEvent *from, SDL_MouseMotionEvent
 draw_maint_til::~draw_maint_til()
 {
 	delete tileset;
+	tileset = 0;
 }
 
 //updates the graphic to reflect the current tile

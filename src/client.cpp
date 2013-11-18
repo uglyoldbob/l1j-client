@@ -60,11 +60,11 @@ void client::init()
 	
 	server_name = new char[strlen(main_config->get_name(what_server)) + 1];
 	strcpy(server_name, main_config->get_name(what_server));
-	
+
 	server = new connection(main_config, what_server);
-	if (get_updates(server, load) > 0)
-	{
-	}
+//	if (get_updates(server, load) > 0)
+//	{
+//	}
 
 	//check for custom opcodes
 	unsigned char *copcodes;
@@ -93,12 +93,17 @@ void client::init()
 			sscanf(p, "%d", &temp);
 			convert_server_packets[i] = (unsigned char)temp;
 		}
+		delete [] copcodes;
+		copcodes = 0;
 	}
 
 	//begin game portion of client
-	if (server->change() != 1)
+	if (server->connection_ok() == 1)
 	{
-		throw "Failed to connect to game server\n";
+		if (server->change() != 1)
+		{
+			throw "Failed to connect to game server\n";
+		}
 	}
 
 	init_codepage(0);
@@ -138,6 +143,7 @@ int client::get_updates(connection* server, draw_loading *scrn)
 			if ((temp == 2) || 
 				(strcmp(hash, "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855") == 0) )
 			{
+				printf("Creating new briefcase\n");
 				server_data->new_data();
 				if (temp == 2)
 				{
@@ -148,6 +154,7 @@ int client::get_updates(connection* server, draw_loading *scrn)
 			}
 			else
 			{
+				printf("Adding to existing briefcase\n");
 				server_data->add_data();
 			}
 			for (unsigned int i = 0; i < num_files; i++)
@@ -182,6 +189,10 @@ int client::get_updates(connection* server, draw_loading *scrn)
 					}
 				}
 				server_data->write_file(filename, file, orig_filesize);
+				delete [] file;
+				file = 0;
+				delete [] filename;
+				filename = 0;
 			}
 			server_data->finish_briefcase();
 			delete server_data;
@@ -217,8 +228,8 @@ void client::register_char(lin_char_info *data)
 	if (login_opts_stored == login_opts_used)
 	{
 		draw_char_sel *bob;
-		bob = (draw_char_sel *)graphics->get_drawmode();
 		graphics->wait_for_mode(DRAWMODE_CHARSEL);
+		bob = (draw_char_sel *)graphics->get_drawmode();
 		bob->get_login_chars();
 	}
 }

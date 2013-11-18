@@ -31,29 +31,14 @@ draw_loading::draw_loading(sdl_user *self)
 	int index;
 	SDL_Rect *rect;
 
-	client_request t_sdl;
-	t_sdl.request = CLIENT_REQUEST_LOAD_SDL_GRAPHIC;
-	t_sdl.data.rload.name = 0;
-	t_sdl.data.rload.num = 811;
-	t_sdl.data.rload.x = 0;
-	t_sdl.data.rload.y = 0;
-	t_sdl.data.rload.type = GRAPH_PNG;
-	t_sdl.data.rload.load_type = CLIENT_REQUEST_LOAD_4;
-	
 	num_gfx = 2;
 	gfx = new sdl_graphic*[num_gfx];
 	gfx[0] = new sdl_graphic();
-	t_sdl.data.rload.item = gfx[0];
-	self->add_request(t_sdl);
+	gfx[0]->delay_load(811, 0, 0, GRAPH_PNG, owner);
 	
-	t_sdl.data.rload.num = 330;
-	t_sdl.data.rload.x = 241;
-	t_sdl.data.rload.y = 385;
-	t_sdl.data.rload.type = GRAPH_IMG;
 	gfx[1] = new sdl_graphic();
-	t_sdl.data.rload.item = gfx[1];
-	self->add_request(t_sdl);
-	
+	gfx[1]->delay_load(330, 241, 385, GRAPH_IMG, owner);
+
 	num_servers = owner->get_config()->get_num_servers();
 	
 	num_widgets = num_servers + 2;

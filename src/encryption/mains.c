@@ -70,5 +70,12 @@ int sha256_hash(char *filename, char *dest)
     s->return_value = hash_file(s, filename, dest);//process_win32(s,fn);
   }
 
-  return s->return_value;
+  int temp = s->return_value;
+  free(s->msg);
+  free(s->short_name);
+  free(s->hash_sum);
+  free(s->hash_result);
+  free(s->known_fn);
+  free(s);
+  return temp;
 }

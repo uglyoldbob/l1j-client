@@ -54,20 +54,10 @@ draw_char_sel::draw_char_sel(sdl_user *self)
 	//1c1
 	//0
 	
-	client_request t_sdl;
-	t_sdl.request = CLIENT_REQUEST_LOAD_SDL_GRAPHIC;
-	t_sdl.data.rload.name = 0;
-	t_sdl.data.rload.num = 815;
-	t_sdl.data.rload.x = 0;
-	t_sdl.data.rload.y = 0;
-	t_sdl.data.rload.type = GRAPH_PNG;
-	t_sdl.data.rload.load_type = CLIENT_REQUEST_LOAD_4;
-	
 	num_gfx = 1;
 	gfx = new sdl_graphic*[num_gfx];
 	gfx[0] = new sdl_graphic();
-	t_sdl.data.rload.item = gfx[0];
-	self->add_request(t_sdl);
+	gfx[0]->delay_load(815, 0, 0, GRAPH_PNG, owner);
 		/** \TODO Replace with 105.img */
 		//or 1763.img
 		//1764.img locked
@@ -108,14 +98,15 @@ draw_char_sel::draw_char_sel(sdl_user *self)
 	widgets[10] = new sdl_widget(0x6eb, 0x146, 0x10f, owner);
 	widgets[11] = new sdl_char_info(owner);
 
-//	if (owner->check_login_chars() != 0)
-//	{
-//		get_login_chars();
-//	}
+	if (owner->check_login_chars() != 0)
+	{
+		get_login_chars();
+	}
 }
 
 draw_char_sel::~draw_char_sel()
 {
+	SDL_DestroyMutex(draw_mtx);
 }
 
 bool draw_char_sel::quit_request()
@@ -203,7 +194,7 @@ void draw_char_sel::select_char()
 void draw_char_sel::get_login_chars()
 {
 	while (SDL_mutexP(draw_mtx) == -1) {};
-/*	lin_char_info **data = owner->get_login_chars();
+	lin_char_info **data = owner->get_login_chars();
 	sdl_animate_button **chars;
 	chars = (sdl_animate_button**)&widgets[0];
 	for (int i = 0; i < 4; i++)
@@ -220,7 +211,7 @@ void draw_char_sel::get_login_chars()
 	chars[1]->animate(false);
 	chars[2]->animate(false);
 	chars[3]->animate(false);
-*/
+
 	SDL_mutexV(draw_mtx);
 }
 

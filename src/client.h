@@ -1,7 +1,7 @@
 #ifndef _CLIENT_H_
 #define _CLIENT_H_
 
-#include <queue>
+#include <list>
 
 #include "sdl_user.h"
 #include "config.h"
@@ -41,11 +41,6 @@ enum CLIENT_REQUEST_LOAD_TYPE
 	CLIENT_REQUEST_LOAD_4,
 };
 
-void do_load(int x, int y, short *source, int type);
-void do_load(int x, int y, SDL_RWops *source, short *palette, int type);
-void do_load(char *name, int x, int y, int type, client * who = 0);
-void do_load(int num, int x, int y, int type, client * who = 0);
-
 struct client_request_sdl_graphic
 {
 	CLIENT_REQUEST_LOAD_TYPE load_type;	/**< This determines what type of load to perform */
@@ -81,6 +76,7 @@ struct client_request_map
 /** This is a structure that contains data used to make a request to the client */
 struct client_request
 {
+	unsigned int id;	/**< Identifier that identifies the load request */
 	CLIENT_REQUEST_TYPE request;	/**< Request identifier */
 	union
 	{
@@ -115,8 +111,11 @@ class client
 
 		files *getfiles;	/**< The object responsible for retrieving all file based game resources */
 		briefcase *server_data;	/**< used to hold all server specific data */
-		void add_request(client_request rqst);	/**< The function used by the sdl_user class */
+		unsigned int add_request(client_request rqst);	/**< The function used by the sdl_user class */
+		void cancel_request(unsigned int id);	/** Cancel a specific load request */
 		void delete_requests();	/**< This function deletes all pending requests */
+		void user_is_done();	/**< Indicates that the client thread can now delete the client object */
+		void wait_on_user_cleanup();	/**< The function that waits for the user to be deleted */
 		
 		//these two variables are used to translate packets
 			//for servers using different opcodes
@@ -139,6 +138,7 @@ class client
 		table solvent;
 		table todays_tip;
 		volatile bool stop_thread;	/**< A variable that indicates the client thread should stop */
+		volatile bool wait_for_user;	/** A variable that waits for the user to be fully deleted */
 
 		char *server_name;	/**< A string with the name of the server */
 		
@@ -163,8 +163,10 @@ class client
 		int getNumber(char **buf);	/**< I dont remember what this does */
 		
 		void check_requests();	/**< Check for any requests that have been made */
+		void free_request(client_request *temp);
 		SDL_mutex *requests_mtx;	/**< The mutex that prevents checks and requests from happening at the same time */
-		std::queue<client_request*> request_queue;
+		unsigned int request_id;
+		std::list<client_request*> request_list;
 };
 
 #endif

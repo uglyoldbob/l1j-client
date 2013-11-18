@@ -7,18 +7,8 @@ sdl_plain_button::sdl_plain_button(int num, int x, int y, sdl_user *who, funcptr
 {
 	if (num != -1)
 	{
-		client_request t_sdl;
-		t_sdl.request = CLIENT_REQUEST_LOAD_SDL_GRAPHIC;
-		t_sdl.data.rload.name = 0;
-		t_sdl.data.rload.num = num+1;
-		t_sdl.data.rload.x = x;
-		t_sdl.data.rload.y = y;
-		t_sdl.data.rload.type = GRAPH_IMG;
-		t_sdl.data.rload.load_type = CLIENT_REQUEST_LOAD_4;
-		
 		two = new sdl_graphic();
-		t_sdl.data.rload.item = two;
-		who->add_request(t_sdl);
+		two->delay_load(num+1, x, y, GRAPH_IMG, who);
 	}
 	else
 	{

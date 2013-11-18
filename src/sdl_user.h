@@ -56,9 +56,14 @@ class sdl_user
 		volatile bool done;	/**<used to terminate the client */
 		music game_music; /**< the game music object */
 
-		void add_request(client_request obj);
+		int add_request(client_request obj);
+		void cancel_request(int id);
 		int init_tiles();	/**< Initializes the map_tiles object */
+		
+		int check_login_chars();	/**< Returns the number of characters stored */
+		lin_char_info** get_login_chars();	/**< Returns the array of characters for character select */
 
+		client *get_client();	/**< This should only be called by the sdl_master class */
 	private:
 		client *game;	/**< the client object we are attached to */
 		volatile bool ready;	/**< is it ok to draw me */

@@ -285,7 +285,6 @@ static int setup_barename(state *s, char *fn)
   }
 
   s->full_name = basen;
-  free(basen);
   return FALSE;
 }
 

@@ -110,6 +110,7 @@ void sdl_lin_map::handle_s32(SDL_RWops *sdl_buf, lin_map_segment *ret, int mapnu
 		SDL_RWread(sdl_buf, waste, 6, ret->mapdata->num_unknown2);
 		//TODO : SWAP16 all the values in the array
 		delete [] waste;
+		waste = 0;
 	}	
 		
 	//read attributes for each half tile
@@ -375,6 +376,7 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y, client *from)
 			handle_seg(sdl_buf, &ret, mapnum, x, y, from);
 			SDL_RWclose(sdl_buf);
 			delete [] buffer;
+			buffer = 0;
 		}
 		else
 		{
@@ -395,6 +397,7 @@ lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y, client *from)
 		handle_s32(sdl_buf, &ret, mapnum, x, y, from);
 		SDL_RWclose(sdl_buf);	
 		delete [] buffer;
+		buffer = 0;
 	}
 	return ret;
 }

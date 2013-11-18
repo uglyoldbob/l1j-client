@@ -122,6 +122,8 @@ client::client(sdl_user *stuff)
 	requests_mtx = SDL_CreateMutex();
 	stop_thread = false;
 	server_name = 0;
+	request_id = 0;
+	wait_for_user = true;
 	
 	getfiles = new files(this);
 	login_opts = 0;
@@ -145,6 +147,7 @@ client::~client()
 	delete_requests();
 	SDL_DestroyMutex(requests_mtx);
 	delete getfiles;
+	getfiles = 0;
 	if (server != 0)
 	{
 		delete server;
@@ -160,13 +163,31 @@ client::~client()
 		delete main_config;
 		main_config = 0;
 	}
+	if (server_data != 0)
+	{
+		delete server_data;
+		server_data = 0;
+	}
 	
 	if (num_login_opts > 0)
 	{
 		for (int i = 0; i < num_login_opts; i++)
 		{
-			delete login_opts[i];
-			login_opts[i] = 0;
+			if (login_opts[i] != 0)
+			{
+				if (login_opts[i]->name != 0)
+				{
+					delete [] login_opts[i]->name;
+					login_opts[i]->name = 0;
+				}
+				if (login_opts[i]->pledge != 0)
+				{
+					delete [] login_opts[i]->pledge;
+					login_opts[i]->pledge = 0;
+				}
+				delete login_opts[i];
+				login_opts[i] = 0;
+			}
 		}
 		delete [] login_opts;
 		login_opts = 0;
@@ -182,12 +203,13 @@ void client::check_requests()
 	while (SDL_mutexP(requests_mtx) == -1) {};
 	if (stop_thread)
 	{
+		SDL_mutexV(requests_mtx);
 		throw "Client is stopping";
 	}
-	if (request_queue.size() > 0)
+	if (request_list.size() > 0)
 	{
-		client_request *temp = request_queue.front();
-		request_queue.pop();
+		client_request *temp = request_list.front();
+		request_list.pop_front();
 		switch (temp->request)
 		{
 			case CLIENT_REQUEST_LOAD_SDL_GRAPHIC:
@@ -253,50 +275,59 @@ void client::check_requests()
 				break;
 		}
 		delete temp;
+		temp = 0;
 	}
 	SDL_mutexV(requests_mtx);
+}
+
+void client::free_request(client_request *temp)
+{
+	switch (temp->request)
+	{
+		case CLIENT_REQUEST_LOAD_SDL_GRAPHIC:
+			if (temp->data.rload.name != 0)
+			{
+				delete [] temp->data.rload.name;
+				temp->data.rload.name = 0;
+			}
+			break;
+		case CLIENT_REQUEST_LOAD_SPRITE:
+			if (temp->data.sload.name != 0)
+			{
+				delete [] temp->data.sload.name;
+				temp->data.sload.name = 0;
+			}
+		default:
+			break;
+	}
+	delete temp;
+	temp = 0;
 }
 
 /** This is used to delete all requests */
 void client::delete_requests()
 {
 	while (SDL_mutexP(requests_mtx) == -1) {};
-	while (request_queue.size() > 0)
+	while (request_list.size() > 0)
 	{
-		client_request *temp = request_queue.front();
-		request_queue.pop();
-		switch (temp->request)
-		{
-			case CLIENT_REQUEST_LOAD_SDL_GRAPHIC:
-				if (temp->data.rload.name != 0)
-				{
-					delete [] temp->data.rload.name;
-					temp->data.rload.name = 0;
-				}
-				break;
-			case CLIENT_REQUEST_LOAD_SPRITE:
-				if (temp->data.sload.name != 0)
-				{
-					delete [] temp->data.sload.name;
-					temp->data.sload.name = 0;
-				}
-			default:
-				break;
-		}
-		delete temp;
-		temp = 0;
+		client_request *temp = request_list.front();
+		request_list.pop_front();
+		free_request(temp);
 	}
 	SDL_mutexV(requests_mtx);
 }
 
-void client::add_request(client_request rqst)
+unsigned int client::add_request(client_request rqst)
 {
+	unsigned int temp_val;
 	if (stop_thread == false)
 	{
 		while (SDL_mutexP(requests_mtx) == -1) {};
 		client_request *temp = new client_request;
 		temp->data.rload.name = 0;
 		memcpy(temp, &rqst, sizeof(rqst));
+		temp->id = ++request_id;
+		temp_val = request_id;
 		switch (rqst.request)
 		{
 			case CLIENT_REQUEST_LOAD_SPRITE:
@@ -318,9 +349,42 @@ void client::add_request(client_request rqst)
 			default:
 				break;
 		}
-		request_queue.push(temp);
+		request_list.push_back(temp);
 		SDL_mutexV(requests_mtx);
 	}
+	return temp_val;
+}
+
+void client::cancel_request(unsigned int id)
+{
+	while (SDL_mutexP(requests_mtx) == -1) {};
+	for (std::list<client_request*>::iterator it = request_list.begin();
+		it != request_list.end(); it++)
+	{
+		bool keep_going = true;
+		while (keep_going)
+		{
+			if (it == request_list.end())
+				keep_going = false;
+			if (*it != 0)
+			{
+				if ((*it)->id == id)
+				{
+					free_request(*it);
+					it = request_list.erase(it);
+				}
+				else
+				{
+					keep_going = false;
+				}
+			}
+			else
+			{
+				keep_going = false;
+			}
+		}
+	}
+	SDL_mutexV(requests_mtx);
 }
 
 int client::check_login_chars()
@@ -362,6 +426,18 @@ void client::stop()
 	stop_thread = true;
 }
 
+void client::user_is_done()
+{
+	wait_for_user = false;
+}
+
+void client::wait_on_user_cleanup()
+{
+	while (wait_for_user)
+	{
+	}
+}
+
 int run_client(void *moron)
 {	//the main thread for each client
 	client *game = new client((sdl_user*)moron);
@@ -369,6 +445,8 @@ int run_client(void *moron)
 	temp = (sdl_user*)moron;
 	temp->init_client(game);
 	game->run();
+	game->wait_on_user_cleanup();
 	delete game;
+	game = 0;
 	return 0;
 }

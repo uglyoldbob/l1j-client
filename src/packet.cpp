@@ -468,6 +468,7 @@ void packet::handle_chat()
 		//	temp = (chat_window*)(game->graphics->get_drawmode()->get_widget(1));
 		//	temp->add_line(message);
 			delete [] message;
+			message = 0;
 		}
 			break;
 		case SERVER_CHAT_SHOUT:
@@ -683,7 +684,7 @@ void packet::char_create_result()
 //		bob = (draw_new_char*)game->graphics->get_drawmode();
 //		temp = bob->get_char();
 //		game->register_char(temp);
-//		game->graphics->change_drawmode(DRAWMODE_CHARSEL);
+		game->change_drawmode(DRAWMODE_CHARSEL);
 	}
 }
 
@@ -740,6 +741,10 @@ void packet::login_char_packet()
 	temp->cha = cha;
 	temp->intl = intl;
 	game->register_char(temp);
+	delete [] name;
+	name = 0;
+	delete [] pledge;
+	pledge = 0;
 }
 
 void packet::login_check()
@@ -779,9 +784,11 @@ void packet::news_packet()
 	disassemble(&packet_data[1], "s", &news);
 	//TODO Create class for displaying messages
 	printf("STUB The news is %s\n", news);
+	delete [] news;
+	news = 0;
 	reset();
 	send_packet("cdd", CLIENT_CLICK, 0, 0);	//TODO: there is a minimum packet length
-//	game->graphics->change_drawmode(DRAWMODE_CHARSEL);
+	game->change_drawmode(DRAWMODE_CHARSEL);
 }
 
 void packet::key_packet()

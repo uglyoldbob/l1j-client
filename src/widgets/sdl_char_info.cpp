@@ -28,6 +28,16 @@ bool sdl_char_info::contains(int x, int y)
 
 sdl_char_info::~sdl_char_info()
 {
+	if (fonts != 0)
+	{
+		SDL_FreeSurface(fonts);
+		fonts = 0;
+	}
+	if (data != 0)
+	{
+		delete data;
+		data = 0;
+	}
 }
 
 void sdl_char_info::redraw()

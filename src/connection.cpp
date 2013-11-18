@@ -325,6 +325,9 @@ connection::~connection()
 		#endif
 	}
 	if (servinfo != 0)
+	{
 		freeaddrinfo(servinfo); // free the linked-list
+		servinfo = 0;
+	}
 	printf("\tDone\n");
 }

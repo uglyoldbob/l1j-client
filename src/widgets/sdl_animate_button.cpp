@@ -24,12 +24,29 @@ lin_char_info *sdl_animate_button::get_info()
 
 void sdl_animate_button::set_info(lin_char_info *data)
 {	//females get the odd numbers, type is multiplied by 2 and gender is added
+	if (char_info != 0)
+	{
+		if (char_info->name != 0)
+		{
+			delete [] char_info->name;
+			char_info->name = 0;
+		}
+		if (char_info->pledge != 0)
+		{
+			delete [] char_info->pledge;
+			char_info->pledge = 0;
+		}
+		delete char_info;
+	}
 	char_info = data;
 
 	delete one;
+	one = 0;
 	delete two;
+	two = 0;
 	delete_animation();
 	cur_frame = 0;
+	int one_id, two_id;
 	
 	int temp;
 	if (data != 0)
@@ -45,127 +62,120 @@ void sdl_animate_button::set_info(lin_char_info *data)
 	{
 		case 0:	//male royal
 			num_anim = 86;
-			animates = new sdl_graphic*[num_anim];
 			first_anim = 714;
 			first_repeat = 0;
-			one = new sdl_graphic();//(799, x, y, myclient, GRAPH_PNG);
-			two = new sdl_graphic();//(801, x, y, myclient, GRAPH_PNG);
+			one_id = 799;
+			two_id = 801;
 			break;
 		case 1:	//female royal
 			num_anim = 82;
-			animates = new sdl_graphic*[num_anim];
 			first_anim = 629;
 			first_repeat = 0;
-			one = new sdl_graphic();//(711, x, y, myclient, GRAPH_PNG);
-			two = new sdl_graphic();//(713, x, y, myclient, GRAPH_PNG);
+			one_id = 711;
+			two_id = 713;
 			break;
 		case 2:	//male knight
 			num_anim = 71;
-			animates = new sdl_graphic*[num_anim];
 			first_anim = 378;
 			first_repeat = 0;
-			one = new sdl_graphic();//(449, x, y, myclient, GRAPH_PNG);
-			two = new sdl_graphic();//(451, x, y, myclient, GRAPH_PNG);
+			one_id = 449;
+			two_id = 451;
 			break;
 		case 3:	//female knight
 			num_anim = 60;
-			animates = new sdl_graphic*[num_anim];
 			first_anim = 315;
 			first_repeat = 0;
-			one = new sdl_graphic();//(375, x, y, myclient, GRAPH_PNG);
-			two = new sdl_graphic();//(377, x, y, myclient, GRAPH_PNG);
+			one_id = 375;
+			two_id = 377;
 			break;
 		case 4:	//male elf
 			num_anim = 67;
-			animates = new sdl_graphic*[num_anim];
 			first_anim = 245;
 			first_repeat = 0;
-			one = new sdl_graphic();//(312, x, y, myclient, GRAPH_PNG);
-			two = new sdl_graphic();//(314, x, y, myclient, GRAPH_PNG);
+			one_id = 312;
+			two_id = 314;
 			break;
 		case 5:	//female elf
 			num_anim = 76;
-			animates = new sdl_graphic*[num_anim];
 			first_anim = 166;
 			first_repeat = 0;
-			one = new sdl_graphic();//(242, x, y, myclient, GRAPH_PNG);
-			two = new sdl_graphic();//(244, x, y, myclient, GRAPH_PNG);
+			one_id = 242;
+			two_id = 244;
 			break;
 		case 6:	//male wizard
 			num_anim = 95;
-			animates = new sdl_graphic*[num_anim];
 			first_anim = 531;
 			first_repeat = 0;
-			one = new sdl_graphic();//(626, x, y, myclient, GRAPH_PNG);
-			two = new sdl_graphic();//(628, x, y, myclient, GRAPH_PNG);
+			one_id = 626;
+			two_id = 628;
 			break;
 		case 7:	//female wizard
 			num_anim = 76;
-			animates = new sdl_graphic*[num_anim];
 			first_anim = 452;
 			first_repeat = 0;
-			one = new sdl_graphic();//(528, x, y, myclient, GRAPH_PNG);
-			two = new sdl_graphic();//(530, x, y, myclient, GRAPH_PNG);
+			one_id = 528;
+			two_id = 530;
 			break;
 		case 8:	//male dark elf
 			num_anim = 73;
-			animates = new sdl_graphic*[num_anim];
 			first_anim = 90;
 			first_repeat = 0;
-			one = new sdl_graphic();//(163, x, y, myclient, GRAPH_PNG);
-			two = new sdl_graphic();//(165, x, y, myclient, GRAPH_PNG);
+			one_id = 163;
+			two_id = 165;
 			break;
 		case 9: //female dark elf
 			num_anim = 62;
-			animates = new sdl_graphic*[num_anim];
 			first_anim = 25;
 			first_repeat = 0;
-			one = new sdl_graphic();//(87, x, y, myclient, GRAPH_PNG);
-			two = new sdl_graphic();//(89, x, y, myclient, GRAPH_PNG);
+			one_id = 87;
+			two_id = 89;
 			break;
 		case 10:	//male dragon knight
 			num_anim = 65;
-			animates = new sdl_graphic*[num_anim];
 			first_anim = 841;
 			first_repeat = 0;
-			one = new sdl_graphic();//(906, x, y, myclient, GRAPH_PNG);
-			two = new sdl_graphic();//(907, x, y, myclient, GRAPH_PNG);
+			one_id = 906;
+			two_id = 907;
 			break;
 		case 11:	//female dragon knight
 			num_anim = 58;
-			animates = new sdl_graphic*[num_anim];
 			first_anim = 908;
 			first_repeat = 0;
-			one = new sdl_graphic();//(966, x, y, myclient, GRAPH_PNG);
-			two = new sdl_graphic();//(967, x, y, myclient, GRAPH_PNG);
+			one_id = 966;
+			two_id = 967;
 			break;
 		case 12:	//male illusionist
 			num_anim = 68;
-			animates = new sdl_graphic*[num_anim];
 			first_anim = 969;
 			first_repeat = 0;
-			one = new sdl_graphic();//(1037, x, y, myclient, GRAPH_PNG);
-			two = new sdl_graphic();//(1038, x, y, myclient, GRAPH_PNG);
+			one_id = 1037;
+			two_id = 1038;
 			break;
 		case 13:	//female illusionist
 			num_anim = 87;
-			animates = new sdl_graphic*[num_anim];
 			first_anim = 1039;
 			first_repeat = 0;
-			one = new sdl_graphic();//(1126, x, y, myclient, GRAPH_PNG);
-			two = new sdl_graphic();//(1127, x, y, myclient, GRAPH_PNG);
+			one_id = 1126;
+			two_id = 1127;
 			break;
 		default:	//new character
 			num_anim = 24;
-			animates = new sdl_graphic*[num_anim];
 			first_anim = 1;
 			first_repeat = 0;
-			one = new sdl_graphic();//(0, x, y, myclient, GRAPH_PNG);
-			two = new sdl_graphic();//(0, x, y, myclient, GRAPH_PNG);
+			one_id = 0;
+			two_id = 0;
 			break;
 	}
+	animates = new sdl_graphic*[num_anim];
+	one = new sdl_graphic();
+	two = new sdl_graphic();
+	one->delay_load(one_id, x, y, GRAPH_PNG, myclient);
+	two->delay_load(two_id, x, y, GRAPH_PNG, myclient);
 	for (int i = 0; i < num_anim; i++)
-		animates[i] = (sdl_graphic*)-1;
+	{
+		animates[i] = new sdl_graphic();
+		animates[i]->delay_load(first_anim+i, x, y, GRAPH_PNG, myclient);
+	}
 }
 
 //0 is new char
@@ -211,13 +221,6 @@ void sdl_animate_button::draw(SDL_Surface *display)
 			if (cur_frame == num_anim)
 				cur_frame = first_repeat;
 		}
-		//TODO : account for "missing" images on male illusionist
-		//TODO : delay image loading time to when image is first displayed
-		if (animates[cur_frame] == (sdl_graphic*)-1)
-		{
-			animates[cur_frame] = new sdl_graphic();//(first_anim+cur_frame, x, y, myclient, GRAPH_PNG);
-			SDL_SetAlpha(animates[cur_frame]->get_surf(), SDL_SRCALPHA, 150);
-		}
 		if (animates[cur_frame] != 0)
 			animates[cur_frame]->draw(display);
 	}
@@ -240,9 +243,11 @@ void sdl_animate_button::delete_animation()
 			if ((animates[i] != 0) && (animates[i] != (sdl_graphic*)-1))
 			{
 				delete animates[i];
+				animates[i] = 0;
 			}
 		}
 		delete [] animates;
+		animates = 0;
 	}
 }
 

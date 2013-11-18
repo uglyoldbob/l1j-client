@@ -178,6 +178,7 @@ void sprite::load(int x, int y, const char *filename, client *from)
 	tile_offsets = 0;
 	SDL_RWclose(file);
 	delete [] data;
+	data = 0;
 
 	frame_num = 0;
 	printf("Reached end of sprite loading\n");
@@ -249,9 +250,13 @@ sprite::~sprite()
 		for (int i = 0; i < num_frames; i++)
 		{
 			if (frames[i].tiles != 0)
+			{
 				delete [] frames[i].tiles;
+				frames[i].tiles = 0;
+			}
 		}
 		delete [] frames;
+		frames = 0;
 		num_frames = 0;
 	}
 	if (tiles != 0)
@@ -259,9 +264,13 @@ sprite::~sprite()
 		for (int i = 0; i < num_tiles; i++)
 		{
 			if (tiles[i] != 0)
+			{
 				delete tiles[i];
+				tiles[i] = 0;
+			}
 		}
 		delete [] tiles;
+		tiles = 0;
 		num_tiles = 0;
 	}
 	SDL_DestroyMutex(edit_mtx);

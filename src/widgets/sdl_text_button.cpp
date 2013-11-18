@@ -13,9 +13,15 @@ void sdl_text_button::set_display(const char* disp)
 {
 	int size = strlen(disp);
 	if (one != 0)
+	{
 		delete one;
+		one = 0;
+	}
 	if (two != 0)
+	{
 		delete two;
+		two = 0;
+	}
 
 	one = new sdl_graphic(xpos, ypos, size * 6, 12, 0);
 	lineage_font.draw(one->get_surf(), 0, 0, disp, 0xFFFE);

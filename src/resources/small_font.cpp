@@ -88,7 +88,9 @@ bool small_font::init(const char *name, client *who)
 		SDL_BlitSurface(loser, &src, final, &dest);
 	}
 	delete [] new_buf;
+	new_buf = 0;
 	delete [] buffer;
+	buffer = 0;
 	
 	SDL_FreeSurface(loser);
 	return true;

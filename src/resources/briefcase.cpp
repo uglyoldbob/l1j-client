@@ -184,7 +184,6 @@ void briefcase::write_file(char *name, char *data, int size)
 			file_data[i] = temp2[i];
 			files[i] = temp[i];
 		}
-		num_files++;
 		file_data[i] = 0;
 		files[i].namelen = strlen(name)+1;
 		files[i].name = new char[files[i].namelen];
@@ -192,30 +191,32 @@ void briefcase::write_file(char *name, char *data, int size)
 		files[i].size = size; 
 				
 		int len = strlen(name);
-		if (data_buf == 0)
-			return;
-		fwrite(&len, sizeof(int), 1, data_buf);
-		fwrite(name, sizeof(char), len+1, data_buf);
-		fwrite(&size, sizeof(int), 1, data_buf);
-		long offset = ftell(data_buf) + sizeof(long);
-		files[i].offset = offset;
-		fwrite(&offset, sizeof(long), 1, data_buf);
-		fwrite(data, sizeof(char), size, data_buf);
-		
-		if (temp != 0)
+		if (data_buf != 0)
 		{
-			delete [] temp;
-			temp = 0;
-		}
-		if (temp2 != 0)
-		{
-			delete [] temp2;
-			temp2 = 0;
+			fwrite(&len, sizeof(int), 1, data_buf);
+			fwrite(name, sizeof(char), len+1, data_buf);
+			fwrite(&size, sizeof(int), 1, data_buf);
+			long offset = ftell(data_buf) + sizeof(long);
+			files[i].offset = offset;
+			fwrite(&offset, sizeof(long), 1, data_buf);
+			fwrite(data, sizeof(char), size, data_buf);
+			
+			if (temp != 0)
+			{
+				delete [] temp;
+				temp = 0;
+			}
+			if (temp2 != 0)
+			{
+				delete [] temp2;
+				temp2 = 0;
+			}
+			num_files++;
 		}
 	}
 	else
 	{
-		throw ("File replacement not supported");
+		printf("File replacement not supported\n");
 	}
 }
 
@@ -303,7 +304,6 @@ void briefcase::new_data()
 	if (data_buf == 0)
 		data_buf = fopen(data_file, "wb");
 	printf("Writing dummy value for num_files\n");
-	num_files = 0;
 	fwrite(&num_files, 1, 4, data_buf);
 }
 
@@ -322,20 +322,34 @@ void briefcase::open_data()
 
 briefcase::~briefcase()
 {
+	printf("Deleting briefcase\n");
 	if (file_data != 0)
 	{
 		for (int i = 0; i < num_files; i++)
 		{
+			printf("\tDeleting file %d\n", i);
 			if (file_data[i] != 0)
 			{
+				printf("\tDeleting file_data[%d]\n", i);
 				delete [] file_data[i];
 				file_data[i] = 0;
+			}
+			if (files[i].name != 0)
+			{
+				printf("\tDeleting files[%d].name\n", i);
+				delete [] files[i].name;
+				files[i].name = 0;
 			}
 		}
 		delete [] file_data;
 		file_data = 0;
+		if (files != 0)
+		{
+			printf("\tDeleting files\n");
+			delete [] files;
+			files = 0;
+		}
 	}
-	
 	delete [] data_file;
 	data_file = 0;
 }

@@ -33,26 +33,15 @@ draw_login::draw_login(sdl_user *self)
 {	
 	//273 - 300 is the lantern animation (img)
 	owner->game_music.change_music("sound/music0.mp3");
-	
-	client_request t_sdl;
-	t_sdl.request = CLIENT_REQUEST_LOAD_SDL_GRAPHIC;
-	t_sdl.data.rload.name = 0;
-	t_sdl.data.rload.num = 814;
-	t_sdl.data.rload.x = 0;
-	t_sdl.data.rload.y = 0;
-	t_sdl.data.rload.type = GRAPH_PNG;
-	t_sdl.data.rload.load_type = CLIENT_REQUEST_LOAD_4;
-	
+
 	num_gfx = 1;
 	gfx = new sdl_graphic*[num_gfx];
 	gfx[0] = new sdl_graphic();
-	t_sdl.data.rload.item = gfx[0];
-	self->add_request(t_sdl);
-	gfx[0]->disable_clear();
-	
+	gfx[0]->delay_load(814, 0, 0, GRAPH_PNG, owner);
+
 	num_widgets = 8;
 	widgets = new sdl_widget*[num_widgets];
-	
+
 	widgets[0] = new sdl_widget(59, 0x1a9, 0x138, owner);
 	widgets[1] = new sdl_input_box(12, 0x1fb, 0x14a, false, owner);
 	

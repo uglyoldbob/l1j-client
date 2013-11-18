@@ -38,6 +38,7 @@ void draw_maint_img::key_press(SDL_KeyboardEvent *button)
 					if (widgets[0] != 0)
 					{
 						delete widgets[0];
+						widgets[0] = 0;
 					}
 					widgets[0] = new sdl_widget(background, 0, 0, owner);
 				}
@@ -47,6 +48,7 @@ void draw_maint_img::key_press(SDL_KeyboardEvent *button)
 				if (widgets[0] != 0)
 				{
 					delete widgets[0];
+					widgets[0] = 0;
 				}
 				widgets[0] = new sdl_widget(background, 0, 0, owner);
 				break;

@@ -167,6 +167,7 @@ void draw_new_char::submit()
 	if (bob->name != 0)
 	{
 		delete [] bob->name;
+		bob->name = 0;
 	}
 
 	sdl_input_box *george;
@@ -379,7 +380,11 @@ void draw_new_char::reset_stats()
 void draw_new_char::update_char()
 {
 	sdl_animate_button *bob;
-	delete widgets[22];
+	if (widgets[22] != 0)
+	{
+		delete widgets[22];
+		widgets[22] = 0;
+	}
 	lin_char_info *temp;
 	temp = make_lin_char_info(char_type, gender);
 	widgets[22] = new sdl_animate_button(0xf4, 410, 0, owner, 0);

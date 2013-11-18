@@ -27,21 +27,11 @@ draw_admin_main::draw_admin_main(sdl_user *self)
 	int index;
 	SDL_Rect *rect;
 
-	client_request t_sdl;
-	t_sdl.request = CLIENT_REQUEST_LOAD_SDL_GRAPHIC;
-	t_sdl.data.rload.name = 0;
-	t_sdl.data.rload.num = 811;
-	t_sdl.data.rload.x = 0;
-	t_sdl.data.rload.y = 0;
-	t_sdl.data.rload.type = GRAPH_PNG;
-	t_sdl.data.rload.load_type = CLIENT_REQUEST_LOAD_4;
-
 	num_gfx = 1;
 	gfx = new sdl_graphic*[num_gfx];
 	gfx[0] = new sdl_graphic();
-	t_sdl.data.rload.item = gfx[0];
-	self->add_request(t_sdl);
-	gfx[0]->disable_clear();
+	gfx[0]->delay_load(811, 0, 0, GRAPH_PNG, owner);
+//	gfx[0]->disable_clear();
 	
 	num_widgets = 6;
 	widgets = new sdl_widget*[num_widgets];

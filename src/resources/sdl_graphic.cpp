@@ -6,6 +6,9 @@
 
 sdl_graphic::sdl_graphic(int x, int y, int w, int h, int dummy)
 {
+	delay_mtx = SDL_CreateMutex();
+	delay_loading = false;
+	loader = 0;
 	img = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 16,
 		0x7C00, 0x03E0, 0x001F, 0);
 	cleanup = false;
@@ -25,6 +28,9 @@ void sdl_graphic::erase()
 /** This constructor is used for delayed loading. This allows the gui thread to create the object and maintain its lifecycle and for the client thread to load the graphics */
 sdl_graphic::sdl_graphic()
 {
+	delay_mtx = SDL_CreateMutex();
+	delay_loading = false;
+	loader = 0;
 	img = 0;
 	mask = 0;
 	pos = 0;
@@ -33,30 +39,43 @@ sdl_graphic::sdl_graphic()
 
 sdl_graphic::sdl_graphic(int x, int y, SDL_RWops *source, short *palette, int type)
 {
+	delay_mtx = SDL_CreateMutex();
+	delay_loading = false;
+	loader = 0;
 	img = 0;
 	do_load(x, y, source, palette, type);
 }
 
 sdl_graphic::sdl_graphic(int x, int y, short *source, int type)
 {
+	delay_mtx = SDL_CreateMutex();
+	delay_loading = false;
+	loader = 0;
 	img = 0;
 	do_load(x, y, source, type);
 }
 
 sdl_graphic::sdl_graphic(char *name, int x, int y, int type, client *who)
 {
+	delay_mtx = SDL_CreateMutex();
+	delay_loading = false;
+	loader = 0;
 	img = 0;
 	do_load(name, x, y, type, who);
 }
 
 sdl_graphic::sdl_graphic(int num, int x, int y, int type, client *who)
 {
+	delay_mtx = SDL_CreateMutex();
+	delay_loading = false;
+	loader = 0;
 	img = 0;
 	do_load(num, x, y, type, who);
 }
 
 void sdl_graphic::do_load(int x, int y, SDL_RWops *source, short *palette, int type)
 {
+	while (SDL_mutexP(delay_mtx) == -1) {};
 	switch(type)
 	{
 		case GRAPH_STIL:
@@ -123,10 +142,12 @@ void sdl_graphic::do_load(int x, int y, SDL_RWops *source, short *palette, int t
 		default:
 			break;
 	}
+	SDL_mutexV(delay_mtx);
 }
 
 void sdl_graphic::do_load(int x, int y, short *source, int type)
 {
+	while (SDL_mutexP(delay_mtx) == -1) {};
 	switch(type)
 	{
 		case GRAPH_STIL:
@@ -235,10 +256,12 @@ void sdl_graphic::do_load(int x, int y, short *source, int type)
 		default:
 			break;
 	}
+	SDL_mutexV(delay_mtx);
 }
 
 void sdl_graphic::do_load(char *name, int x, int y, int type, client *who)
 {
+	while (SDL_mutexP(delay_mtx) == -1) {};
 	if (name == 0)
 	{
 		pos = 0;
@@ -272,10 +295,12 @@ void sdl_graphic::do_load(char *name, int x, int y, int type, client *who)
 			cleanup = false;
 		}
 	}
+	SDL_mutexV(delay_mtx);
 }
 
 void sdl_graphic::do_load(int num, int x, int y, int type, client *who)
 {
+	while (SDL_mutexP(delay_mtx) == -1) {};
 	char name[256];
 
 	if (num == -1)
@@ -320,7 +345,73 @@ void sdl_graphic::do_load(int num, int x, int y, int type, client *who)
 			cleanup = false;
 		}
 	}
+	SDL_mutexV(delay_mtx);
 }
+
+void sdl_graphic::delay_load(int x, int y, short *source, int type, sdl_user *orig)
+{
+	client_request tmp;
+	tmp.request = CLIENT_REQUEST_LOAD_SDL_GRAPHIC;
+	tmp.data.rload.load_type = CLIENT_REQUEST_LOAD_1;
+	tmp.data.rload.x = x;
+	tmp.data.rload.y = y;
+	tmp.data.rload.name = 0;
+	tmp.data.rload.buffer = source;
+	tmp.data.rload.type = type;
+	tmp.data.rload.item = this;
+	delay_load_id = orig->add_request(tmp);
+	delay_loading = true;
+	loader = orig;
+}
+
+void sdl_graphic::delay_load(int x, int y, SDL_RWops *source, short *palette, int type, sdl_user *orig)
+{
+	client_request tmp;
+	tmp.request = CLIENT_REQUEST_LOAD_SDL_GRAPHIC;
+	tmp.data.rload.load_type = CLIENT_REQUEST_LOAD_2;
+	tmp.data.rload.x = x;
+	tmp.data.rload.y = y;
+	tmp.data.rload.name = 0;
+	tmp.data.rload.source = source;
+	tmp.data.rload.palette = palette;
+	tmp.data.rload.type = type;
+	tmp.data.rload.item = this;
+	delay_load_id = orig->add_request(tmp);
+	delay_loading = true;
+	loader = orig;
+}
+
+void sdl_graphic::delay_load(char *name, int x, int y, int type, sdl_user *orig, client * who)
+{
+	client_request tmp;
+	tmp.request = CLIENT_REQUEST_LOAD_SDL_GRAPHIC;
+	tmp.data.rload.load_type = CLIENT_REQUEST_LOAD_3;
+	tmp.data.rload.x = x;
+	tmp.data.rload.y = y;
+	tmp.data.rload.name = name;
+	tmp.data.rload.type = type;
+	tmp.data.rload.item = this;
+	delay_load_id = orig->add_request(tmp);
+	delay_loading = true;
+	loader = orig;
+}
+
+void sdl_graphic::delay_load(int num, int x, int y, int type, sdl_user *orig, client * who)
+{
+	client_request tmp;
+	tmp.request = CLIENT_REQUEST_LOAD_SDL_GRAPHIC;
+	tmp.data.rload.load_type = CLIENT_REQUEST_LOAD_4;
+	tmp.data.rload.x = x;
+	tmp.data.rload.y = y;
+	tmp.data.rload.num = num;
+	tmp.data.rload.name = 0;
+	tmp.data.rload.type = type;
+	tmp.data.rload.item = this;
+	delay_load_id = orig->add_request(tmp);
+	delay_loading = true;
+	loader = orig;
+}
+
 
 void sdl_graphic::make_bmp(char *name)
 {
@@ -340,6 +431,13 @@ void sdl_graphic::disable_clear()
 
 sdl_graphic::~sdl_graphic()
 {
+	while (SDL_mutexP(delay_mtx) == -1) {};
+	if (delay_loading)
+	{
+		loader->cancel_request(delay_load_id);
+	}
+	SDL_mutexV(delay_mtx);
+	SDL_DestroyMutex(delay_mtx);
 	if (pos != 0)
 	{
 		delete pos;

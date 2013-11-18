@@ -22,7 +22,9 @@ sdl_input_box::sdl_input_box(int num, int x, int y, bool protect, sdl_user *who)
 sdl_input_box::~sdl_input_box()
 {
 	delete [] field;
+	field = 0;
 	delete [] protectme;
+	protectme = 0;
 }
 
 void sdl_input_box::set_max(int m)
@@ -38,7 +40,9 @@ const char *sdl_input_box::get_str()
 void sdl_input_box::clear()
 {
 	delete [] field;
+	field = 0;
 	delete [] protectme;
+	protectme = 0;
 	cursor_pos = 0;
 	cursor_idx = 0;
 	field_length = 1;
@@ -95,6 +99,7 @@ void sdl_input_box::add_char(char dat)
 	{
 		char *temp;
 		delete [] protectme;
+		protectme = 0;
 		temp = new char[field_length + 1];
 		protectme = new char[field_length + 1];
 		int i;
@@ -113,6 +118,7 @@ void sdl_input_box::add_char(char dat)
 			temp[i] = field[i-1];
 		}
 		delete [] field;
+		field = 0;
 		field_length++;
 		field = temp;
 	}

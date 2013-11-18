@@ -40,7 +40,7 @@ void sdl_user::init_client(client *clnt)
 
 sdl_user::~sdl_user()
 {
-//	delete game;
+	printf("Deleting the sdl_user\n");
 	SDL_DestroyMutex(draw_mtx);
 	if (drawmode != 0)
 	{
@@ -95,9 +95,14 @@ void sdl_user::mouse_to(SDL_MouseMotionEvent *to)
 	SDL_mutexV(draw_mtx);
 }
 
-void sdl_user::add_request(client_request obj)
+int sdl_user::add_request(client_request obj)
 {
-	game->add_request(obj);
+	return game->add_request(obj);
+}
+
+void sdl_user::cancel_request(int id)
+{
+	game->cancel_request(id);
 }
 
 void sdl_user::mouse_from(SDL_MouseMotionEvent *from)
@@ -192,6 +197,11 @@ bool sdl_user::quit_request()
 		game->stop();
 	}
 	return temp;
+}
+
+client *sdl_user::get_client()
+{
+	return game;
 }
 
 /** change the current drawmode */

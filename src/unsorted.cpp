@@ -69,5 +69,6 @@ void client::LoadDurationTable(const char *file)
 			}
 		}
 		delete [] table;
+		table = 0;
 	}
 }

@@ -33,12 +33,27 @@
    Memcheck:Leak
    fun:malloc
    fun:strdup
-   obj:/lib/i386-linux-gnu/ld-2.15.so
+   ...
 }
 {
    <insert_a_suppression_name_here>
    Memcheck:Leak
    ...
    fun:SDL_VideoInit
+   ...
+}
+{
+   still_reachable1
+   Memcheck:Leak
+   ...
+   fun:SDL_AudioInit
+   fun:SDL_InitSubSystem
+   ...
+}
+{
+   still_reachable2
+   Memcheck:Leak
+   ...
+   fun:pa_mainloop_iterate
    ...
 }

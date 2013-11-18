@@ -31,6 +31,7 @@ void client::init()
 		throw "Lineage Data not found";
 	}
 	delete [] test;
+	test = 0;
 	lineage_font.init("Font/eng.fnt", this);
 
 	DesKeyInit("~!@#%^$<");	//TODO : move this code to a class and use an object
@@ -66,5 +67,4 @@ int client::run()
 		printf("FATAL ERROR: %s\n", error);
 		graphics->done = true;
 	}
-
 }

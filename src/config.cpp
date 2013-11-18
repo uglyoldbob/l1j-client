@@ -294,7 +294,9 @@ config::config(const char *cfile)
 	}
 
 	delete [] all_names;
+	all_names = 0;
 	delete [] line_read;
+	line_read = 0;
 }
 
 config::~config()
@@ -306,6 +308,7 @@ config::~config()
 			for (int i = 0; i < sdata[j].num_names; i++)
 			{
 				delete [] sdata[j].names[i];
+				sdata[j].names[i] = 0;
 			}
 			delete [] sdata[j].names;
 			sdata[j].names = 0;

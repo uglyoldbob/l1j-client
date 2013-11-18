@@ -56,6 +56,7 @@ void chat_window::submit_chat(const char *blabla)
 			temp2[0] = 0;
 //			myclient->send_packet("css", CLIENT_CHAT_WHISPER, &temp[1], &temp2[1]);
 			delete [] temp;
+			temp = 0;
 		}
 			break;
 		case '@':

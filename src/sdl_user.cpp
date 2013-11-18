@@ -18,6 +18,16 @@ void sdl_user::quit_client()
 	done = true;
 }
 
+int sdl_user::check_login_chars()
+{
+	return game->check_login_chars();
+}
+
+lin_char_info** sdl_user::get_login_chars()
+{
+	return game->get_login_chars();
+}
+
 /** Initiate the login into the game server 
  \todo Move this function entirely to the client class */
 void sdl_user::login(const char *name, const char *pass)
@@ -75,11 +85,11 @@ int sdl_user::init_tiles()
 /** cleanup */
 sdl_user::~sdl_user()
 {
+	printf("Deleting the sdl_user\n");
 	SDL_DestroyMutex(draw_mtx);
 	draw_mtx = 0;
 	if (drawmode != 0)
 	{
-		game->delete_requests();
 		delete drawmode;
 		drawmode = 0;
 	}
@@ -208,6 +218,7 @@ bool sdl_user::quit_request()
 	if (temp)
 	{
 		printf("Telling the client to stop\n");
+		game->delete_requests();
 		game->stop();
 	}
 	return temp;
@@ -221,6 +232,16 @@ void sdl_user::change_drawmode(enum drawmode chg)
 	if (draw_mode == INVALID)
 		check_for_change_drawmode();
 	SDL_mutexV(draw_mtx);
+}
+
+void sdl_user::cancel_request(int id)
+{
+	game->cancel_request(id);
+}
+
+client *sdl_user::get_client()
+{
+	return game;
 }
 
 void sdl_user::check_for_change_drawmode()
@@ -273,9 +294,9 @@ void sdl_user::check_for_change_drawmode()
 	SDL_mutexV(draw_mtx);
 }
 
-void sdl_user::add_request(client_request obj)
+int sdl_user::add_request(client_request obj)
 {
-	game->add_request(obj);
+	return game->add_request(obj);
 }
 
 /** Draw the game if the current drawmode is valid and if we are ready */
