@@ -54,6 +54,7 @@ draw_loading::draw_loading(sdl_user *self)
 			(funcptr*)new load_ptr(this, i));
 		widgets[i]->set_key_focus(true);
 	}
+	widgets[0]->cursor_on();
 	widgets[num_servers] = new text_box(257, 254, 150, 10*12, owner);
 	
 	widgets[num_servers+1] = new sprite(320, 200, owner);//"2786-8.spr", owner);

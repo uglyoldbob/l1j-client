@@ -24,19 +24,22 @@ lin_char_info *sdl_animate_button::get_info()
 
 void sdl_animate_button::set_info(lin_char_info *data)
 {	//females get the odd numbers, type is multiplied by 2 and gender is added
-	if (char_info != 0)
+	if (char_info != data)
 	{
-		if (char_info->name != 0)
+		if (char_info != 0)
 		{
-			delete [] char_info->name;
-			char_info->name = 0;
+			if (char_info->name != 0)
+			{
+				delete [] char_info->name;
+				char_info->name = 0;
+			}
+			if (char_info->pledge != 0)
+			{
+				delete [] char_info->pledge;
+				char_info->pledge = 0;
+			}
+			delete char_info;
 		}
-		if (char_info->pledge != 0)
-		{
-			delete [] char_info->pledge;
-			char_info->pledge = 0;
-		}
-		delete char_info;
 	}
 	char_info = data;
 

@@ -57,3 +57,38 @@
    fun:pa_mainloop_iterate
    ...
 }
+{
+   a
+   Memcheck:Leak
+   ...
+   fun:_XlcCreateDefaultCharSet
+   ...
+}
+{
+   b
+   Memcheck:Leak
+   ...
+   fun:_dlerror_run
+   ...
+}
+{
+   c
+   Memcheck:Leak
+   ...
+   fun:_XlcCreateLocaleDataBase
+   ...
+}
+{
+   d
+   Memcheck:Leak
+   ...
+   fun:pa_xmalloc
+   ...
+}
+{
+   e
+   Memcheck:Leak
+   ...
+   fun:_dl_catch_error
+   ...
+}

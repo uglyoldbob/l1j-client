@@ -741,10 +741,6 @@ void packet::login_char_packet()
 	temp->cha = cha;
 	temp->intl = intl;
 	game->register_char(temp);
-	delete [] name;
-	name = 0;
-	delete [] pledge;
-	pledge = 0;
 }
 
 void packet::login_check()

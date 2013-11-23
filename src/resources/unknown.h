@@ -49,7 +49,6 @@ TILE PACK
 	*.xml
 	
 SPRITE PACK
-	*.spr
 	*.tbt
 	itemextra.tbl (a bunch of numbers) same as the one in TEXT PACK
 	crown.raw
@@ -64,6 +63,3 @@ SPRITE PACK
 	partially interpreted
 *.seg
 	not yet interpreted
-	
-*.fnt
-	fully interpreted

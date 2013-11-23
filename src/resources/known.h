@@ -80,4 +80,7 @@ TILE PACK
 SPRITE PACK
 	*.img
 	*.png
-	
+	*.spr
+
+*.fnt
+	fully interpreted

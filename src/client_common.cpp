@@ -365,22 +365,27 @@ void client::cancel_request(unsigned int id)
 		while (keep_going)
 		{
 			if (it == request_list.end())
-				keep_going = false;
-			if (*it != 0)
 			{
-				if ((*it)->id == id)
+				keep_going = false;
+			}
+			else
+			{
+				if (*it != 0)
 				{
-					free_request(*it);
-					it = request_list.erase(it);
+					if ((*it)->id == id)
+					{
+						free_request(*it);
+						it = request_list.erase(it);
+					}
+					else
+					{
+						keep_going = false;
+					}
 				}
 				else
 				{
 					keep_going = false;
 				}
-			}
-			else
-			{
-				keep_going = false;
 			}
 		}
 	}
