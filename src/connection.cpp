@@ -35,6 +35,18 @@ int connection::change()
 	return conn_ok;
 }
 
+int connection::snd(packet_data &sendme)
+{
+	char *buf = new char[sendme.size()];
+	for (int i = 0; i < sendme.size(); i++)
+	{
+		buf[i] = sendme[i];
+	}
+	snd(buf, sendme.size());
+	delete [] buf;
+	buf = 0;
+}
+
 /**
 Send some data to the server. 
 TODO: implement a "waiting buffer" when sending fails ?
@@ -300,6 +312,11 @@ void connection::try_names(const char *port)
 			the_config->get_num_names(srv_num), port);
 		get_addr(port, the_config->get_addr(srv_num, i));
 		make_connection();
+		if (servinfo != 0)
+		{
+			freeaddrinfo(servinfo); // free the linked-list
+			servinfo = 0;
+		}
 		if (connection_ok() == 1)
 		{
 			printf(" success\n");

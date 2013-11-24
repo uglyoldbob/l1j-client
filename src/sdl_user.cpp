@@ -32,7 +32,9 @@ lin_char_info** sdl_user::get_login_chars()
  \todo Move this function entirely to the client class */
 void sdl_user::login(const char *name, const char *pass)
 {
-	game->send_packet("css", CLIENT_LOGIN, name, pass);
+	packet_data sendme;
+	sendme << ((uint8_t)CLIENT_LOGIN) << name << pass;
+	game->send_packet(sendme);
 }
 
 /** Initialize ourself, create our screen, etc.. */

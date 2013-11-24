@@ -137,9 +137,9 @@ int client::get_updates(connection* server, draw_loading *scrn)
 			server->snd_var(&temp, 1);
 			printf("The hash is: %s\n", hash);
 			server->snd_var(hash, 65);
-			proc->reset();
-			proc->get_packet(false);
-			proc->disass("cd", &temp, &num_files);
+			//proc->reset();
+			packet_data temp_packet = proc->get_packet(false);
+			temp_packet >> temp >> num_files;
 			if ((temp == 2) || 
 				(strcmp(hash, "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855") == 0) )
 			{
@@ -147,9 +147,9 @@ int client::get_updates(connection* server, draw_loading *scrn)
 				server_data->new_data();
 				if (temp == 2)
 				{
-					proc->reset();
-					proc->get_packet(false);
-					proc->disass("cd", &temp, &num_files);
+					//proc->reset();
+					temp_packet = proc->get_packet(false);
+					temp_packet >> temp >> num_files;
 				}
 			}
 			else
@@ -164,9 +164,9 @@ int client::get_updates(connection* server, draw_loading *scrn)
 				unsigned int offset = 0;
 				unsigned int filesize, orig_filesize;
 				char *filename;
-				proc->reset();
-				proc->get_packet(false);
-				proc->disass("csd", &temp, &filename, &filesize);
+				//proc->reset();
+				packet_data temp_packet = proc->get_packet(false);
+				temp_packet >> temp >> filename >> filesize;
 				orig_filesize = filesize;
 				file = new char[filesize];
 				sprintf(display, "Receiving %s size %d (%d of %d)", filename, filesize, i+1, num_files);
@@ -251,14 +251,10 @@ int client::process_packet()
 	return bob.process_packet();
 }
 
-void client::send_packet(const char *format, ...)
+void client::send_packet(packet_data sendme)
 {
-	va_list temp_args;
-	va_start(temp_args, format);
-	
 	packet bob(this, server);
-	bob.send_packet(format, temp_args);			
-	va_end(temp_args);
+	bob.send_packet(sendme);
 }
 
 int client::run()

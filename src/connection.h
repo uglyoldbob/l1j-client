@@ -17,6 +17,7 @@
 #endif
 
 #include "config.h"
+#include "packet_data.h"
 
 class connection
 {
@@ -25,6 +26,7 @@ class connection
 		~connection();
 		int connection_ok();
 		int snd(const void* msg, int len);
+		int snd(packet_data &sendme);
 		int rcv(void *buf, int len);
 		int change();	//changes from update connection to game connection
 		

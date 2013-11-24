@@ -95,7 +95,7 @@ class client
 		void init();	/**< Performs the typical game startup that is server specific */
 		int run();	/**< This is the top level function of client that runs in a thread */
 		int process_packet();	/**< Performs processing on packets received from the server */
-		void send_packet(const char *format, ...);	/**< Sends a packet to the server */
+		void send_packet(packet_data sendme);	/**< Sends a packet to the server */
 		
 		void change_map(int map_num);	/**< Changes the current map */
 		void change_drawmode(enum drawmode chg);	/**< Change the current drawmode */

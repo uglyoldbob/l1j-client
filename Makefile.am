@@ -12,6 +12,7 @@ src/global.cpp \
 src/lindes.cpp \
 src/main.cpp \
 src/packet.cpp \
+src/packet_data.cpp \
 src/sdl_master.cpp \
 src/sdl_user.cpp \
 src/unsorted.cpp \
@@ -73,6 +74,7 @@ src/funcptr.cpp \
 src/global.cpp \
 src/lindes.cpp \
 src/main.cpp \
+src/packet_data.cpp \
 src/sdl_master.cpp \
 src/sdl_admin.cpp \
 src/unsorted.cpp \

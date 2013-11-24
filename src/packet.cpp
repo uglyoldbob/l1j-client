@@ -18,246 +18,60 @@ char packet::encryptionKey[8];		//TODO : move this variable to the connection cl
 int packet::mode = 0;
 volatile int packet::key_initialized = 0;	//TODO : move this variable to the connection class
 
-int packet::assemble(char *buf, int max_length, const char *format, ...)
-{
-	int length;
-	va_list temp_args;
-	va_start(temp_args, format);
-	length = assemble(buf, max_length, format, temp_args);
-	va_end(temp_args);
-	return length;
-}
-
-void packet::disass(const char *format, ...)
-{
-	va_list temp_args;
-	va_start(temp_args, format);
-	disassemble(packet_data, format, temp_args);
-	va_end(temp_args);
-}
-
-int packet::disassemble(unsigned char *buf, const char *format, ...)
-{
-	int ret_val;
-	va_list temp_args;
-	va_start(temp_args, format);
-	ret_val = disassemble(buf, format, temp_args);
-	va_end(temp_args);
-	return ret_val;
-}
-
-int packet::disassemble(unsigned char *buf, const char *format, va_list args)
-{
-	int i = 0;
-	int buf_offset = 0;
-	while (format[i] != 0)
-	{
-		switch(format[i])
-		{
-			case 's':
-			{
-				unsigned short length = 0;
-				while (buf[buf_offset+length] != 0)
-				{
-					length++;
-				}
-				length++;
-				char **temp = va_arg(args, char **);
-				*temp = new char[length];
-				strcpy(*temp, (char*)&buf[buf_offset]);
-				buf_offset += length;
-				break;
-			}
-			case 'h':
-			{
-				unsigned short *temp = (unsigned short*)&buf[buf_offset];
-				unsigned short *store = va_arg(args, unsigned short *);
-				*store = *temp;
-				*store = SWAP16(*store);
-				buf_offset += 2;
-				break;
-			}
-			case 'c':
-			{
-				unsigned char temp = buf[buf_offset++];
-				unsigned char *store = va_arg(args, unsigned char *);
-				*store = temp;
-				break;
-			}
-			case 'd':
-			{
-				unsigned int *from = (unsigned int*)(&buf[buf_offset]);
-				buf_offset += 4;
-				unsigned int *store = va_arg(args, unsigned int *);
-				*store = SWAP32(*from);
-				break;
-			}
-			default:
-				break;
-		}
-		i++;
-	}
-	return buf_offset;
-}
-
-int packet::assemble(char *send, int max_length, const char *format, va_list array)
-{
-	int format_offset = 0;
-	int send_offset = 0;
-	while (format[format_offset] != 0)
-	{
-		switch(format[format_offset])
-		{
-			case 'S':	//wide character string
-			{
-				wchar_t *temp = va_arg(array, wchar_t *);
-				int src_len = (wcslen(temp) + 1) * sizeof(wchar_t);	//r31
-				if ((send_offset + src_len) <= max_length)
-				{
-					for (int i = 0; i < src_len; i++)
-					{	//WARNING: these bytes might backwards
-						wchar_t *set_me = (wchar_t*)(&send[send_offset+i*2]);
-						*set_me = temp[i];
-					}
-					send_offset += src_len;
-				}
-				break;
-			}
-			case 'b':	//multiple bytes
-			{
-				int num_bytes = va_arg(array, int);
-				char *temp = va_arg(array, char *);
-				if ((send_offset + num_bytes) <= max_length)
-				{
-					memcpy(&send[send_offset], temp, num_bytes);
-					send_offset += num_bytes;
-				}
-				break;
-			}
-			case 'c':	//single byte (but passed as a 4 byte variable)
-			{
-				char temp = va_arg(array, int) & 0xFF;
-				if (send_offset < max_length)
-				{	//eafec
-					send[send_offset] = temp;
-					send_offset++;
-				}
-				break;
-			}
-			case 'd':	//a single 4-byte variable
-			{
-				int temp = va_arg(array, int);
-				if ((send_offset + 4) <= max_length)
-				{
-					send[send_offset+3] = temp>>24 & 0xFF;
-					send[send_offset+2] = temp>>16 & 0xFF;
-					send[send_offset+1] = temp>>8 & 0xFF;
-					send[send_offset] = temp & 0xFF;
-					send_offset += 4;
-				}
-				break;
-			}
-			case 'h':	//a single 2-byte variable
-			{
-				short temp = va_arg(array, int) & 0xFFFF;
-				if ((send_offset + 2) <= max_length)
-				{
-					send[send_offset+1] = temp>>8 & 0xFF;
-					send[send_offset] = temp & 0xFF;
-					send_offset +=2;
-				}
-				break;
-			}
-			case 's':	//a regular string
-			{
-				int src_len;
-				char *temp = va_arg(array, char *);
-				src_len = strlen(temp) + 1;
-				if ((send_offset + src_len) <= max_length)
-				{
-					strcpy(&send[send_offset], temp);
-					send_offset += src_len;
-				}
-				break;
-			}
-			default:
-				break;
-		}
-		if (send_offset >= max_length)
-			return send_offset;
-		format_offset++;
-	}
-	return send_offset;
-}
-
-void packet::send_packet(const char* args, va_list array)
+void packet::send_packet(packet_data &sendme)
 {
 	while (key_initialized == 0)
-	{
+	{	/** \todo Indicate to user that we are waiting on the server */
 		SDL_Delay(100);
 	}
-	if (packet_data == 0)
-	{
-		char sendbuf[MAX_LENGTH];
-		int length;
-		
-		length = assemble(&sendbuf[2], MAX_LENGTH, args, array);
-		if (length != 0)
-		{
-			char key_change[4];
-			length += 2;
-			sendbuf[0] = length & 0xff;
-			sendbuf[1] = (length>>8) & 0xff;
-			
-			//convert opcode before sending to the server
-			sendbuf[2] = game->convert_client_packets[sendbuf[2]];
-			
-			
-			packet_length = length;
-			packet_data = new unsigned char[packet_length];
-			memcpy(packet_data, sendbuf, packet_length);
 
-			memcpy(key_change, &sendbuf[2], 4);
-			
-			this->encrypt();
+	//convert opcode before sending to the server
+	sendme[0] = game->convert_client_packets[sendme[0]];
 
-			this->change_key(encryptionKey, key_change);
-			server->snd(packet_data, packet_length);
-		}
-		reset();
-	}
+	//key for changing encryption is retrieved and put back
+	unsigned char key_change[4];
+	key_change[0] = sendme[0];
+	key_change[1] = sendme[1];
+	key_change[2] = sendme[2];
+	key_change[3] = sendme[3];
+
+	//packet is prepended with packet length
+	sendme.insert((uint16_t)(sendme.size()+2));
+	this->encrypt(sendme);
+	this->change_key(encryptionKey, (char*)key_change);
+	server->snd(sendme);
 }
 
-void packet::send_packet(const char* args, ...)
-{
-	va_list temp_args;
-	va_start(temp_args, args);
-	send_packet(args, temp_args);
-	va_end(temp_args);
-}
-
-void packet::get_packet(bool translate)
+packet_data &packet::get_packet(bool translate)
 {
 	unsigned short length = 0;
 	do
 	{
-		reset();
+		data.clear();
 		server->rcv_varg(&length, 2);
 		if (length != 0)
 		{
-			if (packet_length == 0)
+ 			if (data.size() == 0)
 			{
-				packet_length = length - 2;
-				packet_data = new unsigned char[packet_length];
-				server->rcv(packet_data, packet_length);
+				unsigned int packet_length = length - 2;
+				unsigned char *packet_datas = new unsigned char[packet_length];
+				server->rcv(packet_datas, packet_length);
+				data = std::vector<unsigned char>(packet_datas, packet_datas+packet_length);
+				delete [] packet_datas;
+				packet_datas = 0;
 				if (key_initialized == 1)
 				{
-					this->decrypt();
-					this->change_key(decryptionKey, (char*)(packet_data));
+					this->decrypt(data);
+					char key_change[4];
+					key_change[0] = data[0];
+					key_change[1] = data[1];
+					key_change[2] = data[2];
+					key_change[3] = data[3];
+					this->change_key(decryptionKey, key_change);
 				}	
 				if (translate)
 				{
-					packet_data[0] = game->convert_server_packets[packet_data[0]];
+					data[0] = game->convert_server_packets[data[0]];
 				}
 			}
 			else
@@ -266,6 +80,7 @@ void packet::get_packet(bool translate)
 			}
 		}
 	} while ((!translate) && (length == 0));
+	return data;
 }
 
 void packet::create_key(const unsigned int seed)
@@ -306,44 +121,44 @@ void packet::change_key(char *key, const char* data)
 	*temp = SWAP32(*temp);
 }
 
-void packet::encrypt()
+void packet::encrypt(packet_data &eme)
 {
-	if (packet_data != 0)
+	if (eme.size() != 0)
 	{
-		packet_data[2] ^= encryptionKey[0];
+		eme[2] ^= encryptionKey[0];
 		
-		for (int i = 3; i < packet_length; i++)
+		for (int i = 3; i < eme.size(); i++)
 		{
-			packet_data[i] ^= encryptionKey[(i-2) & 7] ^ packet_data[i-1];
+			eme[i] ^= encryptionKey[(i-2) & 7] ^ eme[i-1];
 		}
 
-		packet_data[5] ^= encryptionKey[2];
-		packet_data[4] ^= encryptionKey[3] ^ packet_data[5];
-		packet_data[3] ^= encryptionKey[4] ^ packet_data[4];
-		packet_data[2] ^= encryptionKey[5] ^ packet_data[3];
+		eme[5] ^= encryptionKey[2];
+		eme[4] ^= encryptionKey[3] ^ eme[5];
+		eme[3] ^= encryptionKey[4] ^ eme[4];
+		eme[2] ^= encryptionKey[5] ^ eme[3];
 	}
 }
 
-void packet::decrypt()
+void packet::decrypt(packet_data &dme)
 {
-	if (packet_data != 0)
+	if (dme.size() != 0)
 	{
-		char b3 = packet_data[3];
-		packet_data[3] ^= decryptionKey[2];
+		char b3 = dme[3];
+		dme[3] ^= decryptionKey[2];
 
-		char b2 = packet_data[2];
-		packet_data[2] ^= (b3 ^ decryptionKey[3]);
+		char b2 = dme[2];
+		dme[2] ^= (b3 ^ decryptionKey[3]);
 
-		char b1 = packet_data[1];
-		packet_data[1] ^= (b2 ^ decryptionKey[4]);
+		char b1 = dme[1];
+		dme[1] ^= (b2 ^ decryptionKey[4]);
 
-		char k = packet_data[0] ^ b1 ^ decryptionKey[5];
-		packet_data[0] = k ^ decryptionKey[0];
+		char k = dme[0] ^ b1 ^ decryptionKey[5];
+		dme[0] = k ^ decryptionKey[0];
 
-		for (int i = 1; i < packet_length; i++) 
+		for (int i = 1; i < dme.size(); i++) 
 		{
-			char t = packet_data[i];
-			packet_data[i] ^= (decryptionKey[i & 7] ^ k);
+			char t = dme[i];
+			dme[i] ^= (decryptionKey[i & 7] ^ k);
 			k = t;
 		}
 	}
@@ -354,34 +169,24 @@ packet::packet(client *clnt, connection *serve)
 	//merely copy the existing connection so we can use it
 	game = clnt;
 	server = serve;
-	packet_length = 0;
-	packet_data = (unsigned char*)0;
-}
-
-void packet::reset()
-{
-	if (packet_data != 0)
-	{
-		delete [] packet_data;
-		packet_data = 0;
-		packet_length = 0;
-	}
 }
 
 int packet::process_packet()
 {
-	if (packet_data == 0)
+	if (data.size() == 0)
 		return 0;
 	if (key_initialized == 0)
 	{
-		if (packet_data[0] != SERVER_KEY)
+		if (data[0] != SERVER_KEY)
 		{
-			printf("This server (%d) is not compatible with this client\n", packet_data[0]);
+			printf("This server (%d) is not compatible with this client\n", data[0]);
 			return -1;
 		}
 	}
 
-	switch(packet_data[0])
+	unsigned char temp;
+	data >> temp;
+	switch(temp)
 	{	//the second list
 		case SERVER_VERSIONS: server_version_packet(); break;
 		case SERVER_DISCONNECT: return -1; break;
@@ -408,25 +213,24 @@ int packet::process_packet()
 		case SERVER_CHAT_WHISPER:
 		case SERVER_CHAT_GLOBAL:
 		case SERVER_CHAT_SHOUT:
-			handle_chat();
+			handle_chat(temp);
 			break;
-		default: print_packet(); break;
+		default: print_packet(temp, data, "unknown packet"); break;
 	}
-	reset();
+	data.clear();
 	return 0;
 }
 
 packet::~packet()
 {
-	reset();
 }
 
-void packet::print_packet()
+void packet::print_packet(uint8_t opcode, packet_data &printme, const char *msg)
 {
-	printf("Packet data of unknown packet\n\t");
-	for (int i = 0; i < packet_length; i++)
+	printf("Packet data of %s (0x%02x)\n\t", msg, opcode);
+	for (int i = 0; i < printme.size(); i++)
 	{
-		printf("%02x ", packet_data[i] & 0xff);
+		printf("%02x ", printme[i] & 0xff);
 		if ((i % 8) == 7)
 		{
 			printf("\n\t");
@@ -440,30 +244,29 @@ void packet::server_message()
 	unsigned char num_msgs;
 	unsigned short offset = 1;
 	unsigned short type;
-	disassemble(&packet_data[offset], "hc", &type, &num_msgs);
-	offset++;
+	data >> type >> num_msgs;
 	printf("There are %d messages of type %d\n", num_msgs, type);
 	for (int i = 0; i < num_msgs; i++)
 	{
 		char *message;
-		offset += disassemble(&packet_data[offset], "s", &message);
+		data >> message;
 		printf("Message %d is %s\n", i, message);
 		delete [] message;
 		message = 0;
 	}
 }
 
-void packet::handle_chat()
+void packet::handle_chat(unsigned char opcode)
 {
 	unsigned char type;
-	int player_id;
+	uint32_t player_id;
 	char *message;
 	
-	switch(packet_data[0])
+	switch(opcode)
 	{
 		case SERVER_CHAT_NORM:
 		{
-			disassemble(&packet_data[1], "cds", &type, &player_id, &message);
+			data >> type >> player_id >> message;
 		//	chat_window *temp;
 		//	temp = (chat_window*)(game->graphics->get_drawmode()->get_widget(1));
 		//	temp->add_line(message);
@@ -474,7 +277,7 @@ void packet::handle_chat()
 		case SERVER_CHAT_SHOUT:
 		{	//605 - 612.img are the direction icons
 			short x, y;
-			disassemble(&packet_data[1], "cdshh", &type, &player_id, &message, &x, &y);
+			data >> type >> player_id >> message >> x >> y;
 		//	chat_window *temp;
 		//	temp = (chat_window*)(game->graphics->get_drawmode()->get_widget(1));
 		//	temp->add_line(message);
@@ -484,13 +287,12 @@ void packet::handle_chat()
 			break;
 		case SERVER_CHAT_GLOBAL:
 		{	
-			int offset = 1;
-			offset += disassemble(&packet_data[offset], "c", &type);
+			data >> type;
 			switch(type)
 			{
 				case 9:
 				{	//return from a command like .help
-					disassemble(&packet_data[offset], "s", &message);
+					data >> message;
 		//			chat_window *temp;
 		//			temp = (chat_window*)(game->graphics->get_drawmode()->get_widget(1));
 		//			temp->add_line(message);
@@ -500,7 +302,7 @@ void packet::handle_chat()
 					break;
 				case 3:
 				{	//regular global chat
-					disassemble(&packet_data[offset], "s", &message);
+					data >> message;
 		//			chat_window *temp;
 		//			temp = (chat_window*)(game->graphics->get_drawmode()->get_widget(1));
 		//			temp->add_line(message);
@@ -518,7 +320,7 @@ void packet::handle_chat()
 		{
 			char *act_msg;
 			char *display;
-			disassemble(&packet_data[1], "ss", &message, &act_msg);
+			data >> message >> act_msg;
 			display = new char[strlen(message) + strlen(act_msg) + 4];
 			sprintf(display, "(%s) %s", message, act_msg);
 		//	chat_window *temp;
@@ -534,7 +336,7 @@ void packet::handle_chat()
 			break;
 		default:
 		{
-			disassemble(&packet_data[1], "cds", &type, &player_id, &message);
+			data >> type >> player_id >> message;
 			printf("Received chat message: %s\n", message);
 			delete [] message;
 			message = 0;
@@ -545,11 +347,8 @@ void packet::handle_chat()
 
 void packet::add_inv_items()
 {
-	unsigned short offset = 1;
-	
 	unsigned char num_items;
-	disassemble(&packet_data[offset], "c", &num_items);
-	offset += 1;
+	data >> num_items;
 	printf("Adding %d items to your inventory\n", num_items);
 	for (int i = 0; i < num_items; i++)
 	{
@@ -558,10 +357,8 @@ void packet::add_inv_items()
 		short icon;
 		char *name;
 		unsigned char status_length;
-		
-		offset += disassemble(&packet_data[offset], "dcchcdcsc", &item_id,
-			&use_type, &dummy, &icon, &blessed_status, &count,
-			&identified, &name, &status_length);
+		data >> item_id >> use_type >> dummy >> icon >> blessed_status
+			 >> count >> identified >> name >> status_length;
 		printf("%d of Item %d usage %d (bless %d) icon %d. ", count,
 			name, use_type, blessed_status, icon);
 		
@@ -572,7 +369,7 @@ void packet::add_inv_items()
 		for (int j = 0; j < status_length; j++)
 		{
 			unsigned char mys;
-			offset += disassemble(&packet_data[offset], "c", &mys);
+			data >> mys;
 			printf("%02x", mys);
 		}
 		printf("\n");
@@ -585,8 +382,8 @@ void packet::ground_item()
 	int id, count;
 	unsigned char emit_light, d1, d2, d3, d4, d5;
  	char *name;
- 	disassemble(&packet_data[1], "hhdhccccdccs", &x, &y, &id, &gnd_icon,
- 		&d1, &d2, &emit_light, &d3, &count, &d4, &d5, &name);
+	data >> x >> y >> id >> gnd_icon >> d1 >> d2 >> emit_light >> d3
+		 >> count >> d4 >> d5 >> name;
  	printf("There is %s [0x%x] at (%d, %d) icon %d : %d, %d, %d, %d, %d\n", name, id, x, y, gnd_icon,
 		d1, d2, d3, d4, d5); 
 }
@@ -594,7 +391,7 @@ void packet::ground_item()
 void packet::update_mp()
 {
 	short max_mp, cur_mp;
-	disassemble(&packet_data[1], "hh", &cur_mp, &max_mp);
+	data >> cur_mp >> max_mp;
 //	game->graphics->wait_for_mode(DRAWMODE_GAME);
 //	draw_game *bla = (draw_game*)game->graphics->get_drawmode();
 //	bla->update_mpbar(cur_mp, max_mp);
@@ -603,7 +400,7 @@ void packet::update_mp()
 void packet::update_hp()
 {
 	short max_hp, cur_hp;
-	disassemble(&packet_data[1], "hh", &cur_hp, &max_hp);
+	data >> cur_hp, max_hp;
 //	game->graphics->wait_for_mode(DRAWMODE_GAME);
 //	draw_game *bla = (draw_game*)game->graphics->get_drawmode();
 //	bla->update_hpbar(cur_hp, max_hp);
@@ -612,7 +409,7 @@ void packet::update_hp()
 void packet::game_time()
 {
 	int time;
-	disassemble(&packet_data[1], "d", &time);
+	data >> time;
 //	printf("The time is %d\n", time);
 }
 
@@ -620,46 +417,47 @@ void packet::place_light()
 {
 	int id;
 	unsigned char type;
-	disassemble(&packet_data[1], "dc", &id, &type);
+	data >> id >> type;
 	printf("Light id %d is type %d\n", id, type); 
 }
 
 void packet::change_spmr()
 {
 	unsigned char delta_sp, delta_mr;
-	disassemble(&packet_data[1], "cc", &delta_sp, &delta_mr);
+	data >> delta_sp >> delta_mr;
 	printf("Your SP changed by %d and MR changed by %d\n", delta_sp, delta_mr);
 }
 
 void packet::weather()
 {
 	unsigned char theweather;
-	disassemble(&packet_data[1], "c", &theweather);
+	data >> theweather;
 	printf("The weather is %d\n", theweather);
 }
 
 void packet::set_map()
 {
 	short mapid;
-	char underwater;
-	disassemble(&packet_data[1], "hc", &mapid, &underwater);
+	uint8_t underwater;
+	data >> mapid >> underwater;
 	printf("The map is %d and underwater:%d\n", mapid, underwater);
 }
 
 void packet::char_status()
 {
 	int id;
-	char level;
+	uint8_t level;
 	unsigned int exp;
-	char str, intl, wis, dex, con, cha;
+	uint8_t str, intl, wis, dex, con, cha;
 	short cur_hp, max_hp, cur_mp, max_mp;
-	char ac;
+	int8_t ac;
 	int time;
-	char food, weight, alignment, fire_res, water_res, wind_res, earth_res;
-	disassemble(&packet_data[1], "dcdcccccchhhhcdcchcccc", &id, &level, &exp, 
-		&str, &intl, &wis, &dex, &con, &cha, &cur_hp, &max_hp, &cur_mp, &max_mp,
-		&ac, &time, &food, &weight, &alignment, &fire_res, &water_res, &wind_res,
-		&earth_res);
+	int8_t food, weight, alignment, fire_res, water_res, wind_res, earth_res;
+	data >> id >> level >> exp 
+		 >> str >> intl >> wis >> dex >> con >> cha
+		 >> cur_hp >> max_hp >> cur_mp >> max_mp
+		 >> ac >> time >> food >> weight >> alignment
+		 >> fire_res >> water_res >> wind_res >> earth_res;
 	printf("Character data: ID %d\n", id);
 	printf("\tLevel : %d\tExp %d\n", level, exp);
 	printf("\tSTR %2d CON %2d DEX %2d WIS %2d INT %2d CHA %2d\n", str, con, dex,
@@ -675,7 +473,7 @@ void packet::char_status()
 void packet::char_create_result()
 {
 	unsigned char result;
-	disassemble(&packet_data[1], "c", &result);
+	data >> result;
 	printf("The result from character creation is %d\n", result);
 	if (result == 2)
 	{
@@ -692,7 +490,7 @@ void packet::num_char_packet()
 {
 	unsigned char num_characters;
 	unsigned char max_characters;
-	disassemble(&packet_data[1], "cc", &num_characters, &max_characters);
+	data >> num_characters >> max_characters;
 	
 	if (max_characters == 0)
 	{
@@ -713,15 +511,12 @@ void packet::login_char_packet()
 	short alignment;
 	short hp;
 	short mp;
-	char ac;
-	char level;
-	char str, wis, cha, con, dex, intl;
-	disassemble(&packet_data[1], "sscchhhcccccccc", 
-		&name, &pledge, 
-		&type, &gender,
-		&alignment,
-		&hp, &mp, &ac, &level,
-		&str, &dex, &con, &wis, &cha, &intl);
+	int8_t ac;
+	int8_t level;
+	int8_t str, wis, cha, con, dex, intl;
+	data >> name >> pledge >> type >> gender >> alignment
+		 >> hp >> mp >> ac >> level
+		 >> str >> dex >> con >> wis >> cha >> intl;
 	
 	lin_char_info *temp;
 	temp = new lin_char_info;
@@ -746,15 +541,21 @@ void packet::login_char_packet()
 void packet::login_check()
 {
 	unsigned char result;
-	disassemble(&packet_data[1], "c", &result);
+	data >> result;
 	
 	switch (result)
 	{
 		case 3:
 			//send 9?
-			send_packet("cdd", CLIENT_ALIVE, 0, 0);
-			send_packet("ccdd", CLIENT_INITGAME, 0, 0, 0);
+			{
+			packet_data sendme;
+			sendme << (uint8_t)CLIENT_ALIVE << (uint32_t)0 << (uint32_t)0;
+			send_packet(sendme);
+			sendme.clear();
+			sendme << (uint8_t)CLIENT_INITGAME << (uint8_t)0 << (uint32_t)0 << (uint32_t)0;
+			send_packet(sendme);
 			game->change_drawmode(DRAWMODE_GAME);
+			}
 			break;
 		case 5:
 			{
@@ -770,31 +571,37 @@ void packet::login_check()
 			printf("Unhandled Login check packet (%d)\n", result);
 			break;
 	}
-	
-	print_packet();
 }
 
 void packet::news_packet()
 {
 	char *news;
-	disassemble(&packet_data[1], "s", &news);
+	data >> news;
 	//TODO Create class for displaying messages
 	printf("STUB The news is %s\n", news);
 	delete [] news;
 	news = 0;
-	reset();
-	send_packet("cdd", CLIENT_CLICK, 0, 0);	//TODO: there is a minimum packet length
+	data.clear();
+	packet_data sendme;
+	sendme << (uint8_t) CLIENT_CLICK << (uint32_t)0 << (uint32_t)0;
+	send_packet(sendme);	/** \TODO: there is a minimum packet length */
 	game->change_drawmode(DRAWMODE_CHARSEL);
 }
 
 void packet::key_packet()
 {
 	unsigned int seed;
-	disassemble(&packet_data[1], "d", &seed);
+	data >> seed;
 	create_key(seed);
-	reset();
+	data.clear();
 	//loadFile("VersionInfo", &r1_40);
-	send_packet("chdcd", CLIENT_VERSION, 0x33, -1, 32, 101101);
+	packet_data sendme;
+	sendme << (uint8_t)CLIENT_VERSION
+		<< (uint16_t)0x33
+		<< (uint32_t)-1
+		<< (uint8_t)32
+		<< (uint32_t)101101;
+	send_packet(sendme);
 	//TODO : put actual defined values here
 		//acp, VersionInfo, buildNumber
 		//-1, 32, 101101
@@ -812,18 +619,17 @@ void packet::server_version_packet()
 	unsigned char englishOnly;
 	unsigned char countryCode;
 	unsigned char serverCode;
-	disassemble(&packet_data[1], "c", &version_check);
+	data >> version_check;
 	if (version_check == 1)
 	{
 		printf("ERROR: Load version data from somewhere else\n");
 	}
 	else
 	{
-		disassemble(&packet_data[2], "cdddddcc", &serverCode, &serverVersion, 
-			&cacheVersion, &authVersion, &npcVersion, &serverStartTime,
-			&canMakeNewAccount, &englishOnly);
+		data >> serverCode >> serverVersion >> cacheVersion >> authVersion
+			 >> npcVersion >> serverStartTime >> canMakeNewAccount >> englishOnly;
 	}
-	disassemble(&packet_data[25], "c", &countryCode);
+	data >> countryCode;
 	
 	unsigned short serverId = (countryCode<<8) + serverCode;
 	//TODO : move these to an actual loading function
