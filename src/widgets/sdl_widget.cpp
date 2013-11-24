@@ -23,17 +23,8 @@ sdl_widget::sdl_widget(int num, int x, int y, sdl_user *who)
 	
 	if (num != -1)
 	{
-		client_request t_sdl;
-		t_sdl.request = CLIENT_REQUEST_LOAD_SDL_GRAPHIC;
-		t_sdl.data.rload.name = 0;
-		t_sdl.data.rload.num = num;
-		t_sdl.data.rload.x = x;
-		t_sdl.data.rload.y = y;
-		t_sdl.data.rload.type = GRAPH_IMG;
-		t_sdl.data.rload.load_type = CLIENT_REQUEST_LOAD_4;
 		one = new sdl_graphic();
-		t_sdl.data.rload.item = one;
-		who->add_request(t_sdl);
+		one->delay_load(num, x, y, GRAPH_IMG, who);
 	}
 	else
 	{

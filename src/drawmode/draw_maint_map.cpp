@@ -181,11 +181,7 @@ void draw_maint_map::draw_cursor(int x, int y, SDL_Surface *display)
 	int master_offsetx = themap->get_offset_x();
 	int master_offsety = themap->get_offset_y();
 
-	client_request t_sdl;
-	t_sdl.request = CLIENT_REQUEST_LOAD_TILE;
-	t_sdl.data.tload.which = selal;
-	t_sdl.data.tload.item = &themap->tile_data[selal];
-	owner->add_request(t_sdl);
+	themap->tile_data[selal].delay_load(selal, owner);
 
 	dx = thescreen.get_x() + master_offsetx;
 	dy = thescreen.get_y() + master_offsety;

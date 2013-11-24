@@ -13,10 +13,20 @@ tile::tile()
 {
 	tdata = 0;
 	filebuf = 0;
+	delay_mtx = SDL_CreateMutex();
+	delay_loading = false;
+	loader = 0;
 }
 
 tile::~tile()
 {
+	while (SDL_mutexP(delay_mtx) == -1) {};
+	if (delay_loading)
+	{
+		loader->cancel_request(delay_load_id);
+	}
+	SDL_mutexV(delay_mtx);
+	SDL_DestroyMutex(delay_mtx);
 	if (filebuf != 0)
 	{
 		delete [] filebuf;
@@ -60,18 +70,22 @@ tile::~tile()
 
 int tile::get_amnt()
 {
+	while (SDL_mutexP(delay_mtx) == -1) {};
 	if (tdata != 0)
 	{
+		SDL_mutexV(delay_mtx);
 		return tdata->num_tiles;
 	}
 	else
 	{
+		SDL_mutexV(delay_mtx);
 		return 0;
 	}
 }
 
 sdl_graphic *tile::get_tile_right(int which)
 {
+	while (SDL_mutexP(delay_mtx) == -1) {};
 	sdl_graphic *ret;
 	if (tdata != 0)
 	{
@@ -97,11 +111,13 @@ sdl_graphic *tile::get_tile_right(int which)
 	{
 		ret = 0;
 	}
+	SDL_mutexV(delay_mtx);
 	return ret;
 }
 
 sdl_graphic *tile::get_tile_left(int which)
 {
+	while (SDL_mutexP(delay_mtx) == -1) {};
 	sdl_graphic *ret;
 	if (tdata != 0)
 	{
@@ -127,11 +143,13 @@ sdl_graphic *tile::get_tile_left(int which)
 	{
 		ret = 0;
 	}
+	SDL_mutexV(delay_mtx);
 	return ret;
 }
 
 sdl_graphic *tile::get_special(int which)
 {
+	while (SDL_mutexP(delay_mtx) == -1) {};
 	sdl_graphic *ret;
 	if (tdata != 0)
 	{
@@ -150,11 +168,24 @@ sdl_graphic *tile::get_special(int which)
 	{
 		ret = 0;
 	}
+	SDL_mutexV(delay_mtx);
 	return ret;
+}
+
+void tile::delay_load(int which, sdl_user *orig, client *who)
+{
+	client_request t_sdl;
+	t_sdl.request = CLIENT_REQUEST_LOAD_TILE;
+	t_sdl.data.tload.which = which;
+	t_sdl.data.tload.item = this;
+	delay_load_id = orig->add_request(t_sdl);
+	delay_loading = true;
+	loader = orig;
 }
 
 void tile::load(int which, client *who)
 {
+	while (SDL_mutexP(delay_mtx) == -1) {};
 	if (tdata == 0)
 	{
 		char name[256];
@@ -170,6 +201,7 @@ void tile::load(int which, client *who)
 		if (data == 0)
 		{
 			printf("Failed to load tileset %d\n", which);
+			SDL_mutexV(delay_mtx);
 			return;
 		}
 
@@ -222,4 +254,5 @@ void tile::load(int which, client *who)
 		
 //		printf("\n");
 	}
+	SDL_mutexV(delay_mtx);
 }

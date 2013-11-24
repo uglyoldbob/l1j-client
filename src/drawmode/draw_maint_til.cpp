@@ -28,11 +28,7 @@ draw_maint_til::draw_maint_til(sdl_user *self)
 	tile_num = 0;
 	cur_tile = 0;
 
-	client_request t_sdl;
-	t_sdl.request = CLIENT_REQUEST_LOAD_TILE;
-	t_sdl.data.tload.which = background;
-	t_sdl.data.tload.item = tileset;
-	self->add_request(t_sdl);
+	tileset->delay_load(background, self);
 	update_tile();
 }
 
@@ -53,11 +49,7 @@ void draw_maint_til::key_press(SDL_KeyboardEvent *button)
 						tileset = 0;
 					}
 					tileset = new tile;
-					client_request t_sdl;
-					t_sdl.request = CLIENT_REQUEST_LOAD_TILE;
-					t_sdl.data.tload.which = background;
-					t_sdl.data.tload.item = tileset;
-					owner->add_request(t_sdl);
+					tileset->delay_load(background, owner);
 					update_tile();
 				}
 				break;
@@ -69,11 +61,7 @@ void draw_maint_til::key_press(SDL_KeyboardEvent *button)
 					tileset = 0;
 				}
 				tileset = new tile;
-				client_request t_sdl;
-				t_sdl.request = CLIENT_REQUEST_LOAD_TILE;
-				t_sdl.data.tload.which = background;
-				t_sdl.data.tload.item = tileset;
-				owner->add_request(t_sdl);
+				tileset->delay_load(background, owner);
 				update_tile();
 				break;
 			case SDLK_UP:
