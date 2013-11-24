@@ -27,10 +27,10 @@ class sprite : public sdl_widget
 		sprite(int x, int y, sdl_user *who);
 		virtual void draw(SDL_Surface *display);
 		~sprite();
-		void load(int x, int y, const char *filename, client *from);
+		void load(int x, int y, char *filename, client *from);
+		void delay_load(int x, int y, char *filename, client *from);
 
 	private:
-		SDL_mutex *edit_mtx;
 		sdl_graphic **tiles;
 		int num_tiles;
 		
@@ -42,6 +42,11 @@ class sprite : public sdl_widget
 		
 		int loc_x, loc_y;
 		Uint32 time_change;
+
+		SDL_mutex *delay_mtx;
+		bool delay_loading;
+		int delay_load_id;
+		sdl_user *loader;
 };
 
 

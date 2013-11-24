@@ -170,14 +170,7 @@ void draw_maint_sprites::redo_sprite()
 	memset(new_name, 0, 50);
 	sprintf(new_name, "%d-%d.spr", x, y);
 	widgets[0] = new sprite(320, 400, owner);//new_name, owner);
-	
-	client_request t_sdl;
-	t_sdl.request = CLIENT_REQUEST_LOAD_SPRITE;
-	t_sdl.data.sload.item = (sprite*)widgets[0];
-	t_sdl.data.sload.name = new_name;
-	t_sdl.data.sload.x = 320;
-	t_sdl.data.sload.y = 400;
-	owner->add_request(t_sdl);
+	((sprite*)(widgets[0]))->delay_load(320, 400, new_name, owner->get_client());
 	SDL_mutexV(draw_mtx);
 }
 

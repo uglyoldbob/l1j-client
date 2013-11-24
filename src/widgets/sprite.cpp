@@ -4,7 +4,9 @@
 sprite::sprite(int x, int y, sdl_user *who)
 	: sdl_widget(x, y, who)
 {
-	edit_mtx = SDL_CreateMutex();
+	delay_mtx = SDL_CreateMutex();
+	delay_loading = false;
+	loader = 0;
 	tiles = 0;
 	frames = 0;
 	num_frames = 0;
@@ -13,9 +15,22 @@ sprite::sprite(int x, int y, sdl_user *who)
 	time_change = SDL_GetTicks() + 200;
 }
 
-void sprite::load(int x, int y, const char *filename, client *from)
+void sprite::delay_load(int x, int y, char *filename, client *from)
 {
-//	while (SDL_mutexP(edit_mtx) == -1) {};
+	client_request t_sdl;
+	t_sdl.request = CLIENT_REQUEST_LOAD_SPRITE;
+	t_sdl.data.sload.item = this;
+	t_sdl.data.sload.name = filename;
+	t_sdl.data.sload.x = x;
+	t_sdl.data.sload.y = y;
+	delay_load_id = myclient->add_request(t_sdl);
+	delay_loading = true;
+	loader = myclient;
+}
+
+void sprite::load(int x, int y, char *filename, client *from)
+{
+	while (SDL_mutexP(delay_mtx) == -1) {};
 	printf("Opening sprite %s\n", filename);
 	loc_x = x;
 	loc_y = y;
@@ -32,6 +47,7 @@ void sprite::load(int x, int y, const char *filename, client *from)
 	{
 		printf("Invalid sprite\n");
 		num_frames = 0;
+		SDL_mutexV(delay_mtx);
 		return;
 	}
 
@@ -53,6 +69,7 @@ void sprite::load(int x, int y, const char *filename, client *from)
 	{
 		printf("Convert frame (SPR_1)\n");
 		SDL_RWseek(file, 5, SEEK_CUR);
+		SDL_mutexV(delay_mtx);
 		throw "Unsupported sprite";
 	}
 	else if (strncmp(data, "SPR_0", 5) == 0)
@@ -182,7 +199,7 @@ void sprite::load(int x, int y, const char *filename, client *from)
 
 	frame_num = 0;
 	printf("Reached end of sprite loading\n");
-//	SDL_mutexV(edit_mtx);
+	SDL_mutexV(delay_mtx);
 }
 
 //arg2 + frames[frame_num].tiles[i].x - mapX
@@ -192,9 +209,12 @@ void sprite::load(int x, int y, const char *filename, client *from)
 
 void sprite::draw(SDL_Surface *display)
 {
-//	while (SDL_mutexP(edit_mtx) == -1) {};
+	while (SDL_mutexP(delay_mtx) == -1) {};
 	if (num_frames == 0)
+	{
+		SDL_mutexV(delay_mtx);
 		return;
+	}
 	//amount to shift all tiles by
 	int master_x, master_y;
 	master_x = frames[frame_num].x1;
@@ -240,11 +260,18 @@ void sprite::draw(SDL_Surface *display)
 	}
 	if (frame_num == num_frames)
 		frame_num = 0;
-//	SDL_mutexV(edit_mtx);
+	SDL_mutexV(delay_mtx);
 }
 
 sprite::~sprite()
 {
+	while (SDL_mutexP(delay_mtx) == -1) {};
+	if (delay_loading)
+	{
+		loader->cancel_request(delay_load_id);
+	}
+	SDL_mutexV(delay_mtx);
+	SDL_DestroyMutex(delay_mtx);
 	if (frames != 0)
 	{
 		for (int i = 0; i < num_frames; i++)
@@ -273,5 +300,4 @@ sprite::~sprite()
 		tiles = 0;
 		num_tiles = 0;
 	}
-	SDL_DestroyMutex(edit_mtx);
 }
