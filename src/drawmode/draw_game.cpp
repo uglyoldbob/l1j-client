@@ -35,6 +35,7 @@ draw_game::draw_game(sdl_user *self)
 
 	themap = new sdl_lin_map(owner, 0, 0, 640, 380);
 	mapnum = 4;
+
 	x = 32549;
 	y = 32925;
 	themap->set_hotspot(mapnum, x, y);
@@ -70,17 +71,8 @@ draw_game::draw_game(sdl_user *self)
 	mp_width = (float)widgets[5]->getw();
 	
 	widgets[6] = new sprite(320, 200, owner);//, "2786-8.spr", owner);   //0, 5, 8, 
-	
-	client_request t_sdl;
-	t_sdl.request = CLIENT_REQUEST_LOAD_SPRITE;
-	t_sdl.data.sload.item = (sprite*)widgets[6];
-	t_sdl.data.sload.name = new char[50];
-	t_sdl.data.sload.x = 320;
-	t_sdl.data.sload.y = 200;
-	strcpy(t_sdl.data.sload.name, "2786-8.spr");
-	owner->add_request(t_sdl);
-	
-	
+	((sprite*)widgets[6])->delay_load(320, 200, "2786-8.spr", owner->get_client());
+
 	//widgets[6] = new sprite(50, 50, "3226-305.spr", owner);
 }
 
@@ -148,6 +140,22 @@ bool draw_game::mouse_leave()	//is it ok for the mouse to leave?
 
 draw_game::~draw_game()
 {
+	delete [] exp_str;
+	exp_str = 0;
+	delete [] hp_str;
+	hp_str = 0;
+	delete [] mp_str;
+	mp_str = 0;
+	delete [] ac_str;
+	ac_str = 0;
+	delete [] evil_str;
+	evil_str = 0;
+	delete [] weight_str;
+	weight_str = 0;
+	delete [] food_str;
+	food_str = 0;
+	SDL_DestroyMutex(draw_mtx);
+	draw_mtx = 0;
 }
 
 bool draw_game::quit_request()

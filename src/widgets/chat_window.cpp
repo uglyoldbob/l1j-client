@@ -28,7 +28,7 @@ chat_window::chat_window(int x, int y, sdl_user *who)
 	widgets[2]->set_key_focus(true);
 	widgets[2]->cursor_on();
 	widget_key_focus = 1;
-	
+
 	//the scroll bar (1047 - 1050 for body, 1051 for up button, 1053 for down button)
 	//the sizing button (1045 for up arrow) (1056 for down arrow)
 	//the time of day indicator	
@@ -46,6 +46,7 @@ void chat_window::add_line(const char *data)
 
 void chat_window::submit_chat(const char *blabla)
 {
+	packet_data sendme;
 	switch (blabla[0])
 	{
 		case '"':
@@ -54,28 +55,35 @@ void chat_window::submit_chat(const char *blabla)
 			strcpy(temp, blabla);
 			char *temp2 = strchr(temp, ' ');
 			temp2[0] = 0;
-//			myclient->send_packet("css", CLIENT_CHAT_WHISPER, &temp[1], &temp2[1]);
+			sendme << (uint8_t)CLIENT_CHAT_WHISPER << &temp[1] << &temp2[1];
+			myclient->send_packet(sendme);
 			delete [] temp;
 			temp = 0;
 		}
 			break;
 		case '@':
-//			myclient->send_packet("ccs", CLIENT_CHAT, 104, &blabla[1]);
+			sendme << (uint8_t)CLIENT_CHAT << (uint8_t)104 << &blabla[1];
+			myclient->send_packet(sendme);
 			break;
 		case '#':
-//			myclient->send_packet("ccs", CLIENT_CHAT, 11, &blabla[1]);
+			sendme << (uint8_t)CLIENT_CHAT << (uint8_t)11 << &blabla[1];
+			myclient->send_packet(sendme);
 			break;
 		case '$':
-//			myclient->send_packet("ccs", CLIENT_CHAT_GLOBAL, 12, &blabla[1]);
+			sendme << (uint8_t)CLIENT_CHAT_GLOBAL << (uint8_t)12 << &blabla[1];
+			myclient->send_packet(sendme);
 			break;
 		case '&':
-//			myclient->send_packet("ccs", CLIENT_CHAT_GLOBAL, 3, &blabla[1]);
+			sendme << (uint8_t)CLIENT_CHAT_GLOBAL << (uint8_t)3 << &blabla[1];
+			myclient->send_packet(sendme);
 			break;
 		case '%':
-//			myclient->send_packet("ccs", CLIENT_CHAT, 13, &blabla[1]);
+			sendme << (uint8_t)CLIENT_CHAT << (uint8_t)13 << &blabla[1];
+			myclient->send_packet(sendme);
 			break;
 		case '*':
-//			myclient->send_packet("ccs", CLIENT_CHAT, 14, &blabla[1]);
+			sendme << (uint8_t)CLIENT_CHAT << (uint8_t)14 << &blabla[1];
+			myclient->send_packet(sendme);
 			break;
 		case '/':
 		{
@@ -83,6 +91,11 @@ void chat_window::submit_chat(const char *blabla)
 			if (strcmp(&blabla[1], "version") == 0)
 			{
 				sprintf(version, "VERSION: UNSTABLE BETA compiled on %s", __DATE__);
+				add_line(version);
+			}
+			else if ((strcmp(&blabla[1], "meme") == 0) && ((SDL_GetTicks()%100) == 42))
+			{	//Dont tell anybody this is here!
+				sprintf(version, "You win the internet");
 				add_line(version);
 			}
 			else
@@ -93,7 +106,8 @@ void chat_window::submit_chat(const char *blabla)
 		}
 			break;
 		default:
-//			myclient->send_packet("ccs", CLIENT_CHAT, 0, blabla);
+			sendme << (uint8_t)CLIENT_CHAT << (uint8_t)0 << blabla;
+			myclient->send_packet(sendme);
 			break;
 	}
 	

@@ -12,7 +12,7 @@ class client;
 class packet
 {
 	public:
-		packet(client *clnt, connection *serve);
+		packet(client *clnt, connection *serve, sdl_user *blabla);
 		~packet();
 		
 		void send_packet(packet_data &sendme);
@@ -23,12 +23,13 @@ class packet
 
 		int process_packet();
 	private:
-		static char decryptionKey[8];
-		static char encryptionKey[8];
-		static int mode;	//what mode is packet decoding in?
-		static volatile int key_initialized;
+		char decryptionKey[8];
+		char encryptionKey[8];
+		int mode;	//what mode is packet decoding in?
+		volatile int key_initialized;
 		connection *server;
 		client *game;
+		sdl_user *theuser;
 		packet_data data;
 
 		void encrypt(packet_data &eme);

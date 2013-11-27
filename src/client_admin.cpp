@@ -51,6 +51,10 @@ void client::init()
 	init_strings();
 }
 
+void client::register_char(lin_char_info *data)
+{
+}
+
 int client::run()
 {
 	try

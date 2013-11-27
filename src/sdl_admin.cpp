@@ -21,12 +21,23 @@ void sdl_user::login(const char *name, const char *pass)
 {
 }
 
+int sdl_user::check_login_chars()
+{
+	return 0;
+}
+
+lin_char_info** sdl_user::get_login_chars()
+{
+	return 0;
+}
+
 sdl_user::sdl_user(Uint32 flags)
 {
 	draw_mode = INVALID;
 	done = false;
 	
 	draw_mtx = SDL_CreateMutex();
+	mode_mtx = SDL_CreateMutex();
 
 	ready = false;
 	
@@ -38,10 +49,16 @@ void sdl_user::init_client(client *clnt)
 	game = clnt;
 }
 
+void sdl_user::send_packet(packet_data &sendme)
+{
+	printf("STUB Send a packet\n");
+}
+
 sdl_user::~sdl_user()
 {
 	printf("Deleting the sdl_user\n");
 	SDL_DestroyMutex(draw_mtx);
+	SDL_DestroyMutex(mode_mtx);
 	if (drawmode != 0)
 	{
 		delete drawmode;
@@ -141,12 +158,22 @@ void sdl_user::mouse_move(SDL_MouseMotionEvent *from, SDL_MouseMotionEvent *to)
 	SDL_mutexV(draw_mtx);
 }
 
-void sdl_user::wait_for_mode(enum drawmode wait)
+void sdl_user::wait_for_mode(enum drawmode wait, bool mutex)
 {
 	while (draw_mode != wait)
 	{
 		SDL_Delay(100);
 	};
+	if (mutex)
+	{
+		while (SDL_mutexP(mode_mtx) == -1) {};
+	}
+}
+
+/** unlocks the mode mutex */
+void sdl_user::done_with_drawmode()
+{
+	SDL_mutexV(mode_mtx);
 }
 
 void sdl_user::mouse_click(SDL_MouseButtonEvent *here)
@@ -177,8 +204,12 @@ void sdl_user::key_press(SDL_KeyboardEvent *button)
 	SDL_mutexV(draw_mtx);
 }
 
-sdl_drawmode *sdl_user::get_drawmode()
+sdl_drawmode *sdl_user::get_drawmode(bool mutex)
 {
+	if (mutex)
+	{
+		while (SDL_mutexP(mode_mtx) == -1) {};
+	}
 	return drawmode;
 }
 
@@ -204,6 +235,23 @@ client *sdl_user::get_client()
 	return game;
 }
 
+/** Am I in a specific drawmode? */
+bool sdl_user::is_in_mode(enum drawmode here, bool mutex)
+{
+	if (draw_mode == here)
+	{
+		if (mutex)
+		{
+			while (SDL_mutexP(mode_mtx) == -1) {};
+		}
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 /** change the current drawmode */
 void sdl_user::change_drawmode(enum drawmode chg)
 {
@@ -217,6 +265,7 @@ void sdl_user::change_drawmode(enum drawmode chg)
 void sdl_user::check_for_change_drawmode()
 {
 	while (SDL_mutexP(draw_mtx) == -1) {};
+	while (SDL_mutexP(mode_mtx) == -1) {};
 	if (change_draw != INVALID)
 	{
 		enum drawmode chg = change_draw;
@@ -261,6 +310,7 @@ void sdl_user::check_for_change_drawmode()
 		}
 	}
 	change_draw = INVALID;
+	SDL_mutexV(mode_mtx);
 	SDL_mutexV(draw_mtx);
 }
 

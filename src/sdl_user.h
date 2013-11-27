@@ -10,6 +10,7 @@
 #include "resources/music.h"
 #include "resources/tile.h"
 class pack;
+class packet_data;
 class prepared_graphics;
 class sdl_widget;
 struct client_request;
@@ -43,13 +44,15 @@ class sdl_user
 
 		void quit_client();	/**< Quit the game instance by triggering the client thread through the client object */
 		void login(const char *name, const char *pass); /**< login to the game server */
+		void send_packet(packet_data &sendme);	/**< Sends a packet to the server */
 		
 		tile *get_tiles();	/**< Retrieve the list of tiles. */
 		config *get_config();	/**< Retrieve the config from the client */
 
-		void wait_for_mode(enum drawmode wait);	/**< wait for the client to be in the given drawmode */
-		bool is_in_mode(enum drawmode here);	/**< is the client in the given drawmode */
-		sdl_drawmode *get_drawmode();	/**< Retrieve the drawmode object */
+		void wait_for_mode(enum drawmode wait, bool mutex);	/**< wait for the client to be in the given drawmode */
+		bool is_in_mode(enum drawmode here, bool mutex);	/**< is the client in the given drawmode */
+		sdl_drawmode *get_drawmode(bool mutex);	/**< Retrieve the drawmode object */
+		void done_with_drawmode();	/**< Unlocks the drawmode mutex */
 		bool are_you_ready();	/**< wait until the ready flag is set */
 		void change_drawmode(enum drawmode chg);	/**< change to a different drawmode */
 		void check_for_change_drawmode();	/**< This actually performs the drawmode change */
@@ -76,6 +79,7 @@ class sdl_user
 
 
 		SDL_mutex *draw_mtx;	/**< the mutex the gui thread (sdl_master) uses to share data with the client thread */
+		SDL_mutex *mode_mtx;	/**< this mutex is used to protect access to the drawmode */
 };
 
 #endif

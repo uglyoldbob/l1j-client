@@ -7,6 +7,7 @@
 #include "config.h"
 #include "connection.h"
 #include "globals.h"
+#include "packet.h"
 #include "resources/briefcase.h"
 #include "resources/files.h"
 #include "resources/sdl_font.h"
@@ -95,7 +96,7 @@ class client
 		void init();	/**< Performs the typical game startup that is server specific */
 		int run();	/**< This is the top level function of client that runs in a thread */
 		int process_packet();	/**< Performs processing on packets received from the server */
-		void send_packet(packet_data sendme);	/**< Sends a packet to the server */
+		void send_packet(packet_data &sendme);	/**< Sends a packet to the server */
 		
 		void change_map(int map_num);	/**< Changes the current map */
 		void change_drawmode(enum drawmode chg);	/**< Change the current drawmode */
@@ -128,6 +129,7 @@ class client
 	private:
 		config *main_config;	/**< The configuration used by the server */
 		connection *server;	/**< The connection to the server */
+		packet *proc; /**< The object used to communicate with the server */
 		sdl_user *graphics;	/**< The sdl_user object that handles our gui stuff */
 		table bad_words;
 		table strings;

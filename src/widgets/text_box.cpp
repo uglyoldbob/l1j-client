@@ -20,7 +20,7 @@ text_box::text_box(int x, int y, int w, int h, sdl_user *who)
 	//first pixel row to display
 	//number of lines to display
 	
-	one = new sdl_graphic(x, y, w, h);
+	one = new sdl_graphic(x, y, w, h, 0);
 	visible = true;
 }
 

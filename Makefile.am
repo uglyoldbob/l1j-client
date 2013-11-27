@@ -74,6 +74,7 @@ src/funcptr.cpp \
 src/global.cpp \
 src/lindes.cpp \
 src/main.cpp \
+src/packet.cpp \
 src/packet_data.cpp \
 src/sdl_master.cpp \
 src/sdl_admin.cpp \
@@ -110,6 +111,9 @@ src/resources/table.cpp \
 src/resources/tile.cpp \
 src/drawmode/sdl_drawmode.cpp \
 src/drawmode/draw_admin_main.cpp \
+src/drawmode/draw_char_sel.cpp \
+src/drawmode/draw_game.cpp \
+src/drawmode/draw_new_char.cpp \
 src/drawmode/draw_maint_img.cpp \
 src/drawmode/draw_maint_map.cpp \
 src/drawmode/draw_maint_sprites.cpp \

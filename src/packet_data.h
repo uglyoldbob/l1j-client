@@ -9,10 +9,11 @@ class packet_data
 	public:
 		packet_data();
 		packet_data &operator = (std::vector<unsigned char> a);
+		packet_data &operator << (const char *a);
+		packet_data &operator << (char *a);
 		packet_data &operator << (uint8_t a);
 		packet_data &operator << (uint16_t a);
 		packet_data &operator << (uint32_t a);
-		packet_data &operator << (const char *&a);
 		packet_data &operator >> (uint8_t &a);
 		packet_data &operator >> (int8_t &a);
 		packet_data &operator >> (uint16_t &a);

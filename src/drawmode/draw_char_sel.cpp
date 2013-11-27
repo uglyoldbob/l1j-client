@@ -185,7 +185,11 @@ void draw_char_sel::select_char()
 		}
 		else
 		{
-			bob = chars[cur_char_slot]->get_info();			
+			bob = chars[cur_char_slot]->get_info();
+			packet_data sendme;
+			sendme << (uint8_t)CLIENT_USE_CHAR << bob->name
+					<< (uint32_t)0 << (uint32_t)0;
+			owner->send_packet(sendme);
 //			owner->send_packet("csdd", CLIENT_USE_CHAR, bob->name, 0, 0);
 		}
 	}

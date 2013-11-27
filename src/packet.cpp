@@ -13,11 +13,6 @@
 
 static const int MAX_LENGTH = 0x13fe;
 
-char packet::decryptionKey[8];		//TODO : move this variable to the connection class
-char packet::encryptionKey[8];		//TODO : move this variable to the connection class
-int packet::mode = 0;
-volatile int packet::key_initialized = 0;	//TODO : move this variable to the connection class
-
 void packet::send_packet(packet_data &sendme)
 {
 	while (key_initialized == 0)
@@ -164,11 +159,14 @@ void packet::decrypt(packet_data &dme)
 	}
 }
 
-packet::packet(client *clnt, connection *serve)
+packet::packet(client *clnt, connection *serve, sdl_user *blabla)
 {
 	//merely copy the existing connection so we can use it
 	game = clnt;
 	server = serve;
+	mode = 0;
+	key_initialized = 0;
+	theuser = blabla;
 }
 
 int packet::process_packet()
@@ -267,9 +265,14 @@ void packet::handle_chat(unsigned char opcode)
 		case SERVER_CHAT_NORM:
 		{
 			data >> type >> player_id >> message;
-		//	chat_window *temp;
-		//	temp = (chat_window*)(game->graphics->get_drawmode()->get_widget(1));
-		//	temp->add_line(message);
+			if (theuser->is_in_mode(DRAWMODE_GAME, true))
+			{
+				chat_window *temp;
+				temp = (chat_window*)(theuser->get_drawmode(false)->get_widget(1));
+				temp->add_line(message);
+				temp = 0;
+				theuser->done_with_drawmode();
+			}
 			delete [] message;
 			message = 0;
 		}
@@ -278,9 +281,14 @@ void packet::handle_chat(unsigned char opcode)
 		{	//605 - 612.img are the direction icons
 			short x, y;
 			data >> type >> player_id >> message >> x >> y;
-		//	chat_window *temp;
-		//	temp = (chat_window*)(game->graphics->get_drawmode()->get_widget(1));
-		//	temp->add_line(message);
+			if (theuser->is_in_mode(DRAWMODE_GAME, true))
+			{
+				chat_window *temp;
+				temp = (chat_window*)(theuser->get_drawmode(false)->get_widget(1));
+				temp->add_line(message);
+				temp = 0;
+				theuser->done_with_drawmode();
+			}
 			delete [] message;
 			message = 0;
 		}
@@ -293,9 +301,14 @@ void packet::handle_chat(unsigned char opcode)
 				case 9:
 				{	//return from a command like .help
 					data >> message;
-		//			chat_window *temp;
-		//			temp = (chat_window*)(game->graphics->get_drawmode()->get_widget(1));
-		//			temp->add_line(message);
+					if (theuser->is_in_mode(DRAWMODE_GAME, true))
+					{
+						chat_window *temp;
+						temp = (chat_window*)(theuser->get_drawmode(false)->get_widget(1));
+						temp->add_line(message);
+						temp = 0;
+						theuser->done_with_drawmode();
+					}
 					delete [] message;
 					message = 0;
 				}	
@@ -303,9 +316,14 @@ void packet::handle_chat(unsigned char opcode)
 				case 3:
 				{	//regular global chat
 					data >> message;
-		//			chat_window *temp;
-		//			temp = (chat_window*)(game->graphics->get_drawmode()->get_widget(1));
-		//			temp->add_line(message);
+					if (theuser->is_in_mode(DRAWMODE_GAME, true))
+					{
+						chat_window *temp;
+						temp = (chat_window*)(theuser->get_drawmode(false)->get_widget(1));
+						temp->add_line(message);
+						temp = 0;
+						theuser->done_with_drawmode();
+					}
 					delete [] message;
 					message = 0;
 				}
@@ -323,9 +341,14 @@ void packet::handle_chat(unsigned char opcode)
 			data >> message >> act_msg;
 			display = new char[strlen(message) + strlen(act_msg) + 4];
 			sprintf(display, "(%s) %s", message, act_msg);
-		//	chat_window *temp;
-		//	temp = (chat_window*)(game->graphics->get_drawmode()->get_widget(1));
-		//	temp->add_line(display);
+			if (theuser->is_in_mode(DRAWMODE_GAME, true))
+			{
+				chat_window *temp;
+				temp = (chat_window*)(theuser->get_drawmode(false)->get_widget(1));
+				temp->add_line(message);
+				temp = 0;
+				theuser->done_with_drawmode();
+			}
 			delete [] message;
 			message = 0;
 			delete [] act_msg;
@@ -372,6 +395,8 @@ void packet::add_inv_items()
 			data >> mys;
 			printf("%02x", mys);
 		}
+		delete [] name;
+		name = 0;
 		printf("\n");
 	}
 }
@@ -386,24 +411,36 @@ void packet::ground_item()
 		 >> count >> d4 >> d5 >> name;
  	printf("There is %s [0x%x] at (%d, %d) icon %d : %d, %d, %d, %d, %d\n", name, id, x, y, gnd_icon,
 		d1, d2, d3, d4, d5); 
+	delete [] name;
+	name = 0;
 }
 
 void packet::update_mp()
 {
 	short max_mp, cur_mp;
 	data >> cur_mp >> max_mp;
-//	game->graphics->wait_for_mode(DRAWMODE_GAME);
-//	draw_game *bla = (draw_game*)game->graphics->get_drawmode();
-//	bla->update_mpbar(cur_mp, max_mp);
+	if (theuser->is_in_mode(DRAWMODE_GAME, true))
+	{
+		draw_game *temp;
+		temp = (draw_game*)(theuser->get_drawmode(false));
+		temp->update_mpbar(cur_mp, max_mp);
+		temp = 0;
+		theuser->done_with_drawmode();
+	}
 }
 
 void packet::update_hp()
 {
 	short max_hp, cur_hp;
 	data >> cur_hp, max_hp;
-//	game->graphics->wait_for_mode(DRAWMODE_GAME);
-//	draw_game *bla = (draw_game*)game->graphics->get_drawmode();
-//	bla->update_hpbar(cur_hp, max_hp);
+	if (theuser->is_in_mode(DRAWMODE_GAME, true))
+	{
+		draw_game *temp;
+		temp = (draw_game*)(theuser->get_drawmode(false));
+		temp->update_hpbar(cur_hp, max_hp);
+		temp = 0;
+		theuser->done_with_drawmode();
+	}
 }
 
 void packet::game_time()
@@ -462,10 +499,16 @@ void packet::char_status()
 	printf("\tLevel : %d\tExp %d\n", level, exp);
 	printf("\tSTR %2d CON %2d DEX %2d WIS %2d INT %2d CHA %2d\n", str, con, dex,
 		wis, intl, cha);
-//	game->graphics->wait_for_mode(DRAWMODE_GAME);
-//	draw_game *bla = (draw_game*)game->graphics->get_drawmode();
-//	bla->update_hpbar(cur_hp, max_hp);
-//	bla->update_mpbar(cur_mp, max_mp);
+
+	if (theuser->is_in_mode(DRAWMODE_GAME, true))
+	{
+		draw_game *temp;
+		temp = (draw_game*)(theuser->get_drawmode(false));
+		temp->update_hpbar(cur_hp, max_hp);
+		temp->update_mpbar(cur_mp, max_mp);
+		temp = 0;
+		theuser->done_with_drawmode();
+	}
 	printf("\tAC %d\tTIME %d\tFood %d\tWeight %d\tAlignment %d\n", ac, time, 
 		food, weight, alignment);
 }
@@ -477,11 +520,17 @@ void packet::char_create_result()
 	printf("The result from character creation is %d\n", result);
 	if (result == 2)
 	{
-		lin_char_info *temp;
-		draw_new_char* bob;
-//		bob = (draw_new_char*)game->graphics->get_drawmode();
-//		temp = bob->get_char();
-//		game->register_char(temp);
+		if (theuser->is_in_mode(DRAWMODE_NEWCHAR, true))
+		{
+			lin_char_info *tempchar;
+			draw_new_char* temp;
+			temp = (draw_new_char*)(theuser->get_drawmode(false));
+			tempchar = temp->get_char();
+			game->register_char(tempchar);
+			tempchar = 0;
+			temp = 0;
+			theuser->done_with_drawmode();
+		}
 		game->change_drawmode(DRAWMODE_CHARSEL);
 	}
 }
@@ -559,16 +608,20 @@ void packet::login_check()
 			break;
 		case 5:
 			{
-//			draw_char_sel* bob;
-//			bob = (draw_char_sel*)game->graphics->get_drawmode();
-//			bob->do_delete();
+			if (theuser->is_in_mode(DRAWMODE_CHARSEL, true))
+			{
+				draw_char_sel* temp;
+				temp = (draw_char_sel*)theuser->get_drawmode(false);
+				temp->do_delete();
+				theuser->done_with_drawmode();
+			}
 			}
 			break;
 		case 0x51:
 			printf("Char will be deleted in the future\n");
 			break;
 		default:
-			printf("Unhandled Login check packet (%d)\n", result);
+			print_packet(result, data, "unknown login check packet");
 			break;
 	}
 }

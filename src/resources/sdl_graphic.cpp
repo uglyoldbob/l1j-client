@@ -162,7 +162,7 @@ void sdl_graphic::do_load(int x, int y, short *source, int type)
 			width = data[data_offset++];
 			height = data[data_offset++];
 		//	printf("\tx: %d y:%d w:%d h:%d\n", x, y, width, height);
-			img = SDL_CreateRGBSurface(SDL_SWSURFACE, width+1, height+1, 16,
+			img = SDL_CreateRGBSurface(SDL_SWSURFACE, 24, 24, 16,
 				0x7C00, 0x03E0, 0x001F, 0);
 			short *manip = (short*) &data[data_offset];
 			/** \todo find the actual size of the data */

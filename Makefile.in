@@ -58,13 +58,13 @@ am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man3dir)"
 PROGRAMS = $(bin_PROGRAMS)
 am__Admin_SOURCES_DIST = src/client_admin.cpp src/client_common.cpp \
 	src/config.cpp src/connection.cpp src/funcptr.cpp \
-	src/global.cpp src/lindes.cpp src/main.cpp src/packet_data.cpp \
-	src/sdl_master.cpp src/sdl_admin.cpp src/unsorted.cpp \
-	src/widgets/chat_window.cpp src/widgets/sdl_animate_button.cpp \
-	src/widgets/sdl_button.cpp src/widgets/sdl_char_info.cpp \
-	src/widgets/sdl_check_button.cpp src/widgets/sdl_lin_map.cpp \
-	src/widgets/sdl_radio_button.cpp src/widgets/sdl_input_box.cpp \
-	src/widgets/sdl_plain_button.cpp \
+	src/global.cpp src/lindes.cpp src/main.cpp src/packet.cpp \
+	src/packet_data.cpp src/sdl_master.cpp src/sdl_admin.cpp \
+	src/unsorted.cpp src/widgets/chat_window.cpp \
+	src/widgets/sdl_animate_button.cpp src/widgets/sdl_button.cpp \
+	src/widgets/sdl_char_info.cpp src/widgets/sdl_check_button.cpp \
+	src/widgets/sdl_lin_map.cpp src/widgets/sdl_radio_button.cpp \
+	src/widgets/sdl_input_box.cpp src/widgets/sdl_plain_button.cpp \
 	src/widgets/sdl_text_button.cpp src/widgets/sdl_widget.cpp \
 	src/widgets/sdl_window.cpp src/widgets/sprite.cpp \
 	src/widgets/text_box.cpp src/resources/briefcase.cpp \
@@ -77,7 +77,8 @@ am__Admin_SOURCES_DIST = src/client_admin.cpp src/client_common.cpp \
 	src/resources/sdl_graphic.cpp src/resources/table.cpp \
 	src/resources/tile.cpp src/drawmode/sdl_drawmode.cpp \
 	src/drawmode/draw_admin_main.cpp \
-	src/drawmode/draw_maint_img.cpp \
+	src/drawmode/draw_char_sel.cpp src/drawmode/draw_game.cpp \
+	src/drawmode/draw_new_char.cpp src/drawmode/draw_maint_img.cpp \
 	src/drawmode/draw_maint_map.cpp \
 	src/drawmode/draw_maint_sprites.cpp \
 	src/drawmode/draw_maint_til.cpp src/encryption/mains.c \
@@ -87,8 +88,8 @@ am__Admin_SOURCES_DIST = src/client_admin.cpp src/client_common.cpp \
 am_Admin_OBJECTS = client_admin.$(OBJEXT) client_common.$(OBJEXT) \
 	config.$(OBJEXT) connection.$(OBJEXT) funcptr.$(OBJEXT) \
 	global.$(OBJEXT) lindes.$(OBJEXT) main.$(OBJEXT) \
-	packet_data.$(OBJEXT) sdl_master.$(OBJEXT) sdl_admin.$(OBJEXT) \
-	unsorted.$(OBJEXT) chat_window.$(OBJEXT) \
+	packet.$(OBJEXT) packet_data.$(OBJEXT) sdl_master.$(OBJEXT) \
+	sdl_admin.$(OBJEXT) unsorted.$(OBJEXT) chat_window.$(OBJEXT) \
 	sdl_animate_button.$(OBJEXT) sdl_button.$(OBJEXT) \
 	sdl_char_info.$(OBJEXT) sdl_check_button.$(OBJEXT) \
 	sdl_lin_map.$(OBJEXT) sdl_radio_button.$(OBJEXT) \
@@ -102,10 +103,12 @@ am_Admin_OBJECTS = client_admin.$(OBJEXT) client_common.$(OBJEXT) \
 	pixel_coord.$(OBJEXT) coord.$(OBJEXT) screen_coord.$(OBJEXT) \
 	sdl_graphic.$(OBJEXT) table.$(OBJEXT) tile.$(OBJEXT) \
 	sdl_drawmode.$(OBJEXT) draw_admin_main.$(OBJEXT) \
-	draw_maint_img.$(OBJEXT) draw_maint_map.$(OBJEXT) \
-	draw_maint_sprites.$(OBJEXT) draw_maint_til.$(OBJEXT) \
-	mains.$(OBJEXT) sha256deep.$(OBJEXT) hash.$(OBJEXT) \
-	helpers.$(OBJEXT) sha256.$(OBJEXT) $(am__objects_1)
+	draw_char_sel.$(OBJEXT) draw_game.$(OBJEXT) \
+	draw_new_char.$(OBJEXT) draw_maint_img.$(OBJEXT) \
+	draw_maint_map.$(OBJEXT) draw_maint_sprites.$(OBJEXT) \
+	draw_maint_til.$(OBJEXT) mains.$(OBJEXT) sha256deep.$(OBJEXT) \
+	hash.$(OBJEXT) helpers.$(OBJEXT) sha256.$(OBJEXT) \
+	$(am__objects_1)
 Admin_OBJECTS = $(am_Admin_OBJECTS)
 Admin_LDADD = $(LDADD)
 Admin_LINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(Admin_LDFLAGS) \
@@ -361,13 +364,13 @@ Lineage_SOURCES = src/client.cpp src/client_common.cpp src/config.cpp \
 @WINDOWS_TRUE@Admin_LDFLAGS = -lmingw32
 Admin_SOURCES = src/client_admin.cpp src/client_common.cpp \
 	src/config.cpp src/connection.cpp src/funcptr.cpp \
-	src/global.cpp src/lindes.cpp src/main.cpp src/packet_data.cpp \
-	src/sdl_master.cpp src/sdl_admin.cpp src/unsorted.cpp \
-	src/widgets/chat_window.cpp src/widgets/sdl_animate_button.cpp \
-	src/widgets/sdl_button.cpp src/widgets/sdl_char_info.cpp \
-	src/widgets/sdl_check_button.cpp src/widgets/sdl_lin_map.cpp \
-	src/widgets/sdl_radio_button.cpp src/widgets/sdl_input_box.cpp \
-	src/widgets/sdl_plain_button.cpp \
+	src/global.cpp src/lindes.cpp src/main.cpp src/packet.cpp \
+	src/packet_data.cpp src/sdl_master.cpp src/sdl_admin.cpp \
+	src/unsorted.cpp src/widgets/chat_window.cpp \
+	src/widgets/sdl_animate_button.cpp src/widgets/sdl_button.cpp \
+	src/widgets/sdl_char_info.cpp src/widgets/sdl_check_button.cpp \
+	src/widgets/sdl_lin_map.cpp src/widgets/sdl_radio_button.cpp \
+	src/widgets/sdl_input_box.cpp src/widgets/sdl_plain_button.cpp \
 	src/widgets/sdl_text_button.cpp src/widgets/sdl_widget.cpp \
 	src/widgets/sdl_window.cpp src/widgets/sprite.cpp \
 	src/widgets/text_box.cpp src/resources/briefcase.cpp \
@@ -380,7 +383,8 @@ Admin_SOURCES = src/client_admin.cpp src/client_common.cpp \
 	src/resources/sdl_graphic.cpp src/resources/table.cpp \
 	src/resources/tile.cpp src/drawmode/sdl_drawmode.cpp \
 	src/drawmode/draw_admin_main.cpp \
-	src/drawmode/draw_maint_img.cpp \
+	src/drawmode/draw_char_sel.cpp src/drawmode/draw_game.cpp \
+	src/drawmode/draw_new_char.cpp src/drawmode/draw_maint_img.cpp \
 	src/drawmode/draw_maint_map.cpp \
 	src/drawmode/draw_maint_sprites.cpp \
 	src/drawmode/draw_maint_til.cpp src/encryption/mains.c \
@@ -778,6 +782,20 @@ main.obj: src/main.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/main.cpp' object='main.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o main.obj `if test -f 'src/main.cpp'; then $(CYGPATH_W) 'src/main.cpp'; else $(CYGPATH_W) '$(srcdir)/src/main.cpp'; fi`
+
+packet.o: src/packet.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT packet.o -MD -MP -MF $(DEPDIR)/packet.Tpo -c -o packet.o `test -f 'src/packet.cpp' || echo '$(srcdir)/'`src/packet.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/packet.Tpo $(DEPDIR)/packet.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/packet.cpp' object='packet.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o packet.o `test -f 'src/packet.cpp' || echo '$(srcdir)/'`src/packet.cpp
+
+packet.obj: src/packet.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT packet.obj -MD -MP -MF $(DEPDIR)/packet.Tpo -c -o packet.obj `if test -f 'src/packet.cpp'; then $(CYGPATH_W) 'src/packet.cpp'; else $(CYGPATH_W) '$(srcdir)/src/packet.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/packet.Tpo $(DEPDIR)/packet.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/packet.cpp' object='packet.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o packet.obj `if test -f 'src/packet.cpp'; then $(CYGPATH_W) 'src/packet.cpp'; else $(CYGPATH_W) '$(srcdir)/src/packet.cpp'; fi`
 
 packet_data.o: src/packet_data.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT packet_data.o -MD -MP -MF $(DEPDIR)/packet_data.Tpo -c -o packet_data.o `test -f 'src/packet_data.cpp' || echo '$(srcdir)/'`src/packet_data.cpp
@@ -1283,6 +1301,48 @@ draw_admin_main.obj: src/drawmode/draw_admin_main.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o draw_admin_main.obj `if test -f 'src/drawmode/draw_admin_main.cpp'; then $(CYGPATH_W) 'src/drawmode/draw_admin_main.cpp'; else $(CYGPATH_W) '$(srcdir)/src/drawmode/draw_admin_main.cpp'; fi`
 
+draw_char_sel.o: src/drawmode/draw_char_sel.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT draw_char_sel.o -MD -MP -MF $(DEPDIR)/draw_char_sel.Tpo -c -o draw_char_sel.o `test -f 'src/drawmode/draw_char_sel.cpp' || echo '$(srcdir)/'`src/drawmode/draw_char_sel.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/draw_char_sel.Tpo $(DEPDIR)/draw_char_sel.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/drawmode/draw_char_sel.cpp' object='draw_char_sel.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o draw_char_sel.o `test -f 'src/drawmode/draw_char_sel.cpp' || echo '$(srcdir)/'`src/drawmode/draw_char_sel.cpp
+
+draw_char_sel.obj: src/drawmode/draw_char_sel.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT draw_char_sel.obj -MD -MP -MF $(DEPDIR)/draw_char_sel.Tpo -c -o draw_char_sel.obj `if test -f 'src/drawmode/draw_char_sel.cpp'; then $(CYGPATH_W) 'src/drawmode/draw_char_sel.cpp'; else $(CYGPATH_W) '$(srcdir)/src/drawmode/draw_char_sel.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/draw_char_sel.Tpo $(DEPDIR)/draw_char_sel.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/drawmode/draw_char_sel.cpp' object='draw_char_sel.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o draw_char_sel.obj `if test -f 'src/drawmode/draw_char_sel.cpp'; then $(CYGPATH_W) 'src/drawmode/draw_char_sel.cpp'; else $(CYGPATH_W) '$(srcdir)/src/drawmode/draw_char_sel.cpp'; fi`
+
+draw_game.o: src/drawmode/draw_game.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT draw_game.o -MD -MP -MF $(DEPDIR)/draw_game.Tpo -c -o draw_game.o `test -f 'src/drawmode/draw_game.cpp' || echo '$(srcdir)/'`src/drawmode/draw_game.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/draw_game.Tpo $(DEPDIR)/draw_game.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/drawmode/draw_game.cpp' object='draw_game.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o draw_game.o `test -f 'src/drawmode/draw_game.cpp' || echo '$(srcdir)/'`src/drawmode/draw_game.cpp
+
+draw_game.obj: src/drawmode/draw_game.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT draw_game.obj -MD -MP -MF $(DEPDIR)/draw_game.Tpo -c -o draw_game.obj `if test -f 'src/drawmode/draw_game.cpp'; then $(CYGPATH_W) 'src/drawmode/draw_game.cpp'; else $(CYGPATH_W) '$(srcdir)/src/drawmode/draw_game.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/draw_game.Tpo $(DEPDIR)/draw_game.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/drawmode/draw_game.cpp' object='draw_game.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o draw_game.obj `if test -f 'src/drawmode/draw_game.cpp'; then $(CYGPATH_W) 'src/drawmode/draw_game.cpp'; else $(CYGPATH_W) '$(srcdir)/src/drawmode/draw_game.cpp'; fi`
+
+draw_new_char.o: src/drawmode/draw_new_char.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT draw_new_char.o -MD -MP -MF $(DEPDIR)/draw_new_char.Tpo -c -o draw_new_char.o `test -f 'src/drawmode/draw_new_char.cpp' || echo '$(srcdir)/'`src/drawmode/draw_new_char.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/draw_new_char.Tpo $(DEPDIR)/draw_new_char.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/drawmode/draw_new_char.cpp' object='draw_new_char.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o draw_new_char.o `test -f 'src/drawmode/draw_new_char.cpp' || echo '$(srcdir)/'`src/drawmode/draw_new_char.cpp
+
+draw_new_char.obj: src/drawmode/draw_new_char.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT draw_new_char.obj -MD -MP -MF $(DEPDIR)/draw_new_char.Tpo -c -o draw_new_char.obj `if test -f 'src/drawmode/draw_new_char.cpp'; then $(CYGPATH_W) 'src/drawmode/draw_new_char.cpp'; else $(CYGPATH_W) '$(srcdir)/src/drawmode/draw_new_char.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/draw_new_char.Tpo $(DEPDIR)/draw_new_char.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/drawmode/draw_new_char.cpp' object='draw_new_char.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o draw_new_char.obj `if test -f 'src/drawmode/draw_new_char.cpp'; then $(CYGPATH_W) 'src/drawmode/draw_new_char.cpp'; else $(CYGPATH_W) '$(srcdir)/src/drawmode/draw_new_char.cpp'; fi`
+
 draw_maint_img.o: src/drawmode/draw_maint_img.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT draw_maint_img.o -MD -MP -MF $(DEPDIR)/draw_maint_img.Tpo -c -o draw_maint_img.o `test -f 'src/drawmode/draw_maint_img.cpp' || echo '$(srcdir)/'`src/drawmode/draw_maint_img.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/draw_maint_img.Tpo $(DEPDIR)/draw_maint_img.Po
@@ -1353,20 +1413,6 @@ client.obj: src/client.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o client.obj `if test -f 'src/client.cpp'; then $(CYGPATH_W) 'src/client.cpp'; else $(CYGPATH_W) '$(srcdir)/src/client.cpp'; fi`
 
-packet.o: src/packet.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT packet.o -MD -MP -MF $(DEPDIR)/packet.Tpo -c -o packet.o `test -f 'src/packet.cpp' || echo '$(srcdir)/'`src/packet.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/packet.Tpo $(DEPDIR)/packet.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/packet.cpp' object='packet.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o packet.o `test -f 'src/packet.cpp' || echo '$(srcdir)/'`src/packet.cpp
-
-packet.obj: src/packet.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT packet.obj -MD -MP -MF $(DEPDIR)/packet.Tpo -c -o packet.obj `if test -f 'src/packet.cpp'; then $(CYGPATH_W) 'src/packet.cpp'; else $(CYGPATH_W) '$(srcdir)/src/packet.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/packet.Tpo $(DEPDIR)/packet.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/packet.cpp' object='packet.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o packet.obj `if test -f 'src/packet.cpp'; then $(CYGPATH_W) 'src/packet.cpp'; else $(CYGPATH_W) '$(srcdir)/src/packet.cpp'; fi`
-
 sdl_user.o: src/sdl_user.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT sdl_user.o -MD -MP -MF $(DEPDIR)/sdl_user.Tpo -c -o sdl_user.o `test -f 'src/sdl_user.cpp' || echo '$(srcdir)/'`src/sdl_user.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/sdl_user.Tpo $(DEPDIR)/sdl_user.Po
@@ -1380,20 +1426,6 @@ sdl_user.obj: src/sdl_user.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/sdl_user.cpp' object='sdl_user.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o sdl_user.obj `if test -f 'src/sdl_user.cpp'; then $(CYGPATH_W) 'src/sdl_user.cpp'; else $(CYGPATH_W) '$(srcdir)/src/sdl_user.cpp'; fi`
-
-draw_game.o: src/drawmode/draw_game.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT draw_game.o -MD -MP -MF $(DEPDIR)/draw_game.Tpo -c -o draw_game.o `test -f 'src/drawmode/draw_game.cpp' || echo '$(srcdir)/'`src/drawmode/draw_game.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/draw_game.Tpo $(DEPDIR)/draw_game.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/drawmode/draw_game.cpp' object='draw_game.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o draw_game.o `test -f 'src/drawmode/draw_game.cpp' || echo '$(srcdir)/'`src/drawmode/draw_game.cpp
-
-draw_game.obj: src/drawmode/draw_game.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT draw_game.obj -MD -MP -MF $(DEPDIR)/draw_game.Tpo -c -o draw_game.obj `if test -f 'src/drawmode/draw_game.cpp'; then $(CYGPATH_W) 'src/drawmode/draw_game.cpp'; else $(CYGPATH_W) '$(srcdir)/src/drawmode/draw_game.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/draw_game.Tpo $(DEPDIR)/draw_game.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/drawmode/draw_game.cpp' object='draw_game.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o draw_game.obj `if test -f 'src/drawmode/draw_game.cpp'; then $(CYGPATH_W) 'src/drawmode/draw_game.cpp'; else $(CYGPATH_W) '$(srcdir)/src/drawmode/draw_game.cpp'; fi`
 
 draw_login.o: src/drawmode/draw_login.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT draw_login.o -MD -MP -MF $(DEPDIR)/draw_login.Tpo -c -o draw_login.o `test -f 'src/drawmode/draw_login.cpp' || echo '$(srcdir)/'`src/drawmode/draw_login.cpp
@@ -1422,34 +1454,6 @@ draw_loading.obj: src/drawmode/draw_loading.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/drawmode/draw_loading.cpp' object='draw_loading.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o draw_loading.obj `if test -f 'src/drawmode/draw_loading.cpp'; then $(CYGPATH_W) 'src/drawmode/draw_loading.cpp'; else $(CYGPATH_W) '$(srcdir)/src/drawmode/draw_loading.cpp'; fi`
-
-draw_char_sel.o: src/drawmode/draw_char_sel.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT draw_char_sel.o -MD -MP -MF $(DEPDIR)/draw_char_sel.Tpo -c -o draw_char_sel.o `test -f 'src/drawmode/draw_char_sel.cpp' || echo '$(srcdir)/'`src/drawmode/draw_char_sel.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/draw_char_sel.Tpo $(DEPDIR)/draw_char_sel.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/drawmode/draw_char_sel.cpp' object='draw_char_sel.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o draw_char_sel.o `test -f 'src/drawmode/draw_char_sel.cpp' || echo '$(srcdir)/'`src/drawmode/draw_char_sel.cpp
-
-draw_char_sel.obj: src/drawmode/draw_char_sel.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT draw_char_sel.obj -MD -MP -MF $(DEPDIR)/draw_char_sel.Tpo -c -o draw_char_sel.obj `if test -f 'src/drawmode/draw_char_sel.cpp'; then $(CYGPATH_W) 'src/drawmode/draw_char_sel.cpp'; else $(CYGPATH_W) '$(srcdir)/src/drawmode/draw_char_sel.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/draw_char_sel.Tpo $(DEPDIR)/draw_char_sel.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/drawmode/draw_char_sel.cpp' object='draw_char_sel.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o draw_char_sel.obj `if test -f 'src/drawmode/draw_char_sel.cpp'; then $(CYGPATH_W) 'src/drawmode/draw_char_sel.cpp'; else $(CYGPATH_W) '$(srcdir)/src/drawmode/draw_char_sel.cpp'; fi`
-
-draw_new_char.o: src/drawmode/draw_new_char.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT draw_new_char.o -MD -MP -MF $(DEPDIR)/draw_new_char.Tpo -c -o draw_new_char.o `test -f 'src/drawmode/draw_new_char.cpp' || echo '$(srcdir)/'`src/drawmode/draw_new_char.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/draw_new_char.Tpo $(DEPDIR)/draw_new_char.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/drawmode/draw_new_char.cpp' object='draw_new_char.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o draw_new_char.o `test -f 'src/drawmode/draw_new_char.cpp' || echo '$(srcdir)/'`src/drawmode/draw_new_char.cpp
-
-draw_new_char.obj: src/drawmode/draw_new_char.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT draw_new_char.obj -MD -MP -MF $(DEPDIR)/draw_new_char.Tpo -c -o draw_new_char.obj `if test -f 'src/drawmode/draw_new_char.cpp'; then $(CYGPATH_W) 'src/drawmode/draw_new_char.cpp'; else $(CYGPATH_W) '$(srcdir)/src/drawmode/draw_new_char.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/draw_new_char.Tpo $(DEPDIR)/draw_new_char.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/drawmode/draw_new_char.cpp' object='draw_new_char.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o draw_new_char.obj `if test -f 'src/drawmode/draw_new_char.cpp'; then $(CYGPATH_W) 'src/drawmode/draw_new_char.cpp'; else $(CYGPATH_W) '$(srcdir)/src/drawmode/draw_new_char.cpp'; fi`
 
 .m.o:
 @am__fastdepOBJC_TRUE@	$(OBJCCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<

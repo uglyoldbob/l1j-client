@@ -8,7 +8,6 @@
 #include "drawmode/sdl_drawmode.h"
 #include "globals.h"
 #include "lindes.h"
-#include "packet.h"
 #include "resources/briefcase.h"
 #include "resources/music.h"
 #include "resources/pack.h"
@@ -49,7 +48,7 @@ void client::init()
 	}
 	draw_loading *load;
 	int what_server;
-	load = (draw_loading*)graphics->get_drawmode();
+	load = (draw_loading*)graphics->get_drawmode(false);
 
 	//wait for the user to pick a server
 	do
@@ -62,6 +61,7 @@ void client::init()
 	strcpy(server_name, main_config->get_name(what_server));
 
 	server = new connection(main_config, what_server);
+	proc = new packet(this, server, graphics);
 //	if (get_updates(server, load) > 0)
 //	{
 //	}
@@ -71,6 +71,7 @@ void client::init()
 	copcodes = (unsigned char*)getfiles->load_file("opcodes.txt", 0, FILE_REGULAR3, 0);
 	if (copcodes != 0)
 	{	//there are custom opcodes for this server
+		printf("This server has custom opcodes\n");
 		int offset;
 		char *data = (char*)copcodes;
 		for (int i = 0; i < 256; i++)
@@ -116,7 +117,6 @@ void client::init()
 
 int client::get_updates(connection* server, draw_loading *scrn)
 {
-	packet *proc;
 	unsigned char temp;
 	unsigned short temp2;
 	unsigned int num_files;
@@ -128,7 +128,7 @@ int client::get_updates(connection* server, draw_loading *scrn)
 	{
 		if (server->connection_ok() == 1)
 		{
-			proc = new packet(this, server);	//init the packet class instance
+			proc = new packet(this, server, graphics);	//init the packet class instance
 			server_data = new briefcase(server_name);
 			strcpy(hash, server_data->get_hash());
 			temp2 = 0x4400;	//68 bytes of packet data
@@ -228,33 +228,32 @@ void client::register_char(lin_char_info *data)
 	if (login_opts_stored == login_opts_used)
 	{
 		draw_char_sel *bob;
-		graphics->wait_for_mode(DRAWMODE_CHARSEL);
-		bob = (draw_char_sel *)graphics->get_drawmode();
+		graphics->wait_for_mode(DRAWMODE_CHARSEL, true);
+		bob = (draw_char_sel *)graphics->get_drawmode(false);
 		bob->get_login_chars();
+		graphics->done_with_drawmode();
 	}
 }
 
 void client::change_map(int map_num)
 {
-	if (graphics->is_in_mode(DRAWMODE_GAME))
+	if (graphics->is_in_mode(DRAWMODE_GAME, true))
 	{
-		draw_game *dg = (draw_game*)graphics->get_drawmode();
+		draw_game *dg = (draw_game*)graphics->get_drawmode(false);
 		dg->change_map(map_num);
+		graphics->done_with_drawmode();
 	}
 }
 
 int client::process_packet()
 {
-	packet bob(this, server);
-	
-	bob.get_packet(true);
-	return bob.process_packet();
+	proc->get_packet(true);
+	return proc->process_packet();
 }
 
-void client::send_packet(packet_data sendme)
+void client::send_packet(packet_data &sendme)
 {
-	packet bob(this, server);
-	bob.send_packet(sendme);
+	proc->send_packet(sendme);
 }
 
 int client::run()

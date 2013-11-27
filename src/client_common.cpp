@@ -124,7 +124,7 @@ client::client(sdl_user *stuff)
 	server_name = 0;
 	request_id = 0;
 	wait_for_user = true;
-	
+	proc = 0;
 	getfiles = new files(this);
 	login_opts = 0;
 	num_login_opts = 0;
@@ -148,6 +148,11 @@ client::~client()
 	SDL_DestroyMutex(requests_mtx);
 	delete getfiles;
 	getfiles = 0;
+	if (proc != 0)
+	{
+		delete proc;
+		proc = 0;
+	}
 	if (server != 0)
 	{
 		delete server;
@@ -168,7 +173,6 @@ client::~client()
 		delete server_data;
 		server_data = 0;
 	}
-	
 	if (num_login_opts > 0)
 	{
 		for (int i = 0; i < num_login_opts; i++)

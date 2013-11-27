@@ -22,7 +22,7 @@ class sdl_graphic
 {
 	public:
 		sdl_graphic();
-		sdl_graphic(int num, int x, int y, int type, client *who = 0);
+		sdl_graphic(int num, int x, int y, int type, client *who);
 		sdl_graphic(char *name, int x, int y, int type, client *who = 0);
 		sdl_graphic(int x, int y, SDL_RWops *source, short *palette, int type);
 		sdl_graphic(int x, int y, short *source, int type);

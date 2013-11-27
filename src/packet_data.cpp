@@ -99,7 +99,16 @@ packet_data &packet_data::operator << (std::vector<unsigned char> a)
 	return *this;
 }
 
-packet_data &packet_data::operator << (const char *&a)
+packet_data &packet_data::operator << (const char *a)
+{
+	for (int i = 0; i <= strlen(a); i++)
+	{
+		data.push_back(a[i]);
+	}
+	return *this;
+}
+
+packet_data &packet_data::operator << (char *a)
 {
 	for (int i = 0; i <= strlen(a); i++)
 	{
