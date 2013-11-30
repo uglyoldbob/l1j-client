@@ -28,8 +28,12 @@ sdl_lin_map::sdl_lin_map(sdl_user *who, int x, int y, int w, int h)
 		segs[i].y = 0;
 	}
 	map = -1;
-	
+	cursor_x = 0;
+	cursor_y = 0;
+	cursor_valid = false;
 	one = new sdl_graphic(x, y, w, h, 0);
+	tile_data[2].delay_load(2, myclient);
+	visible = true;
 }
 
 sdl_lin_map::~sdl_lin_map()
@@ -517,11 +521,45 @@ void sdl_lin_map::check_sections(client *from)
 	}
 }
 
+void sdl_lin_map::draw_cursor(int x, int y, SDL_Surface *display)
+{
+	static Uint32 time_change = SDL_GetTicks();
+	static bool draw_the_cursor = false;
+	if ((SDL_GetTicks()) > time_change)
+	{
+		draw_the_cursor = !draw_the_cursor;
+		time_change = SDL_GetTicks() + 100;
+	}
+
+	if (draw_the_cursor)
+	{
+		sdl_graphic *left, *right;
+		map_coord tempmap(x, y);
+		int dx, dy;
+		int selal, selbl;
+		selal = 2;
+		selbl = 89;
+
+		screen_coord thescreen = tempmap.get_screen();
+
+		dx = thescreen.get_x() + master_offsetx;
+		dy = thescreen.get_y() + master_offsety;
+
+		left = tile_data[selal].get_tile_left(selbl);
+		right = tile_data[selal].get_tile_right(selbl);
+		if (left != 0)
+			left->drawat(dx, dy, display);
+		if (right != 0)
+			right->drawat(dx+24, dy, display);
+	}
+	draw_info(display, x, y);
+}
+
+
 void sdl_lin_map::draw(SDL_Surface *display)
 {
 	while (SDL_mutexP(edit_mtx) == -1) {};
-	SDL_FillRect(one->get_surf(), NULL, 0x1234);
-
+	SDL_FillRect(one->get_surf(), NULL, 0);
 	for (int i = 0; i < 4; i++)
 	{
 		int temp_offx, temp_offy;
@@ -534,9 +572,11 @@ void sdl_lin_map::draw(SDL_Surface *display)
 			segs[i].graphic->drawat(temp_offx, temp_offy, one->get_surf());
 		}
 	}
+	if (cursor_valid)
+		draw_cursor(cursor_x, cursor_y, one->get_surf());
 
 	//draws the full map onto display
-	one->draw(display);
+	sdl_widget::draw(display);
 	SDL_mutexV(edit_mtx);
 }
 
@@ -551,12 +591,52 @@ void sdl_lin_map::set_hotspot(int mapn, int x, int y)
 	map_coord themap(x, y);
 	screen_coord thescreen = themap.get_screen();
 
-	master_offsetx = (width/2) - thescreen.get_x();
-	master_offsety = (height/2) - thescreen.get_y();
+	master_offsetx = (width/2) - thescreen.get_x() + one->getx();
+	master_offsety = (height/2) - thescreen.get_y() + one->gety();
 	client_request t_sdl;
 	t_sdl.request = CLIENT_REQUEST_CHECK_MAP;
 	t_sdl.data.mcheck.item = this;
 	myclient->add_request(t_sdl);
+}
+
+void sdl_lin_map::mouse_click(SDL_MouseButtonEvent *here)
+{
+	int mx, my;
+	mx = here->x - one->getx();
+	my = here->y - one->gety() - 12;
+
+	screen_coord onscreen(mx - master_offsetx, my - master_offsety);
+	map_coord onmap = onscreen.get_map();
+	
+	if (here->state == SDL_RELEASED)
+	{
+		//printf("Release Click at (%d, %d)\n", onmap.get_x(), onmap.get_y());
+	}
+	else if (here->state == SDL_PRESSED)
+	{
+		//printf("Press Click at (%d, %d)\n", onmap.get_x(), onmap.get_y());
+	}
+}
+
+void sdl_lin_map::mouse_to(SDL_MouseMotionEvent *to)
+{
+	sdl_widget::mouse_to(to);
+	int mx, my;
+	mx = to->x - one->getx();
+	my = to->y - one->gety() - 12;
+
+	screen_coord onscreen(mx - master_offsetx, my - master_offsety);
+	map_coord onmap = onscreen.get_map();
+	
+	cursor_x = onmap.get_x();
+	cursor_y = onmap.get_y();
+	cursor_valid = true;
+}
+
+void sdl_lin_map::mouse_from(SDL_MouseMotionEvent *to)
+{
+	sdl_widget::mouse_from(to);
+	cursor_valid = false;
 }
 
 int sdl_lin_map::get_offset_x()

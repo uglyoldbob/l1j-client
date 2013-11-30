@@ -36,6 +36,8 @@ class sdl_master
 		sdl_user **clients;	/**< The list of clients (game instances) - multiple games can run at the same time - only one is supported at the moment */
 		SDL_Thread **game_client;	/**< array of all game client threads */
 		
+		void add_draw_timer(int ms);	/**< Adds a timer to draw the screen */
+		SDL_TimerID draw_id;	/**< The timer that causes draw events */
 		void draw();	/**< Draw the screen */
 		
 		bool check_users(bool last);	/**< Check to see if any game instances are done */
@@ -44,6 +46,8 @@ class sdl_master
 		void mouse_click(SDL_MouseButtonEvent *here);	/**< a mouse click event handler */
 		void key_press(SDL_KeyboardEvent *button);	/**< A keyboard press event handler */
 		bool quit_request();	/**< This handles the request to close the whole program */
+		
+		bool dragging;
 };
 
 #endif

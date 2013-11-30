@@ -62,6 +62,10 @@ class sdl_lin_map : public sdl_widget
 		int get_offset_x();	/**< Returns the calculated offset for this map */
 		int get_offset_y();	/**< Returns the calculated offset for this map */
 		void check_sections(client *from);	/**< Check the loaded sections whenever the map gets moved */
+		void draw_cursor(int x, int y, SDL_Surface *display);
+		void mouse_to(SDL_MouseMotionEvent *to);
+		void mouse_from(SDL_MouseMotionEvent *to);
+		void mouse_click(SDL_MouseButtonEvent *here);
 	private:
 		SDL_mutex *edit_mtx;
 		lin_map_segment segs[4];
@@ -70,6 +74,9 @@ class sdl_lin_map : public sdl_widget
 		//the master set of offsets for the x and y coordinates of translated coordinates
 		int master_offsetx;
 		int master_offsety;
+		
+		int cursor_x, cursor_y;
+		bool cursor_valid;
 		
 		lin_map_segment get_map(int mapnum, int x, int y, client *from);	//returns a map section
 		void handle_s32(SDL_RWops *sdl_buf, lin_map_segment *ret, int mapnum, int x, int y, client *from);

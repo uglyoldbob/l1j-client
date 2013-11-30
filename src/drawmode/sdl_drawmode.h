@@ -52,10 +52,10 @@ class sdl_drawmode
 		virtual void draw(SDL_Surface *display);
 		
 		virtual void key_press(SDL_KeyboardEvent *button);
-		virtual void mouse_click(SDL_MouseButtonEvent *here) = 0;
-		virtual void mouse_to(SDL_MouseMotionEvent *to) = 0;
-		virtual void mouse_from(SDL_MouseMotionEvent *from) = 0;
-		virtual void mouse_move(SDL_MouseMotionEvent *from, SDL_MouseMotionEvent *to) = 0;
+		virtual void mouse_click(SDL_MouseButtonEvent *here);
+		virtual void mouse_to(SDL_MouseMotionEvent *to);
+		virtual void mouse_from(SDL_MouseMotionEvent *from);
+		virtual void mouse_move(SDL_MouseMotionEvent *from, SDL_MouseMotionEvent *to);
 		virtual bool mouse_leave() = 0;	//is it ok for the mouse to leave?
 		
 		sdl_widget *get_widget(int i);

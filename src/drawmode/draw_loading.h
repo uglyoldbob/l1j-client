@@ -29,6 +29,7 @@ class draw_loading : public sdl_drawmode
 		int get_server_pick();
 		void server_picked(int i);
 		
+		void draw(SDL_Surface *display);
 		virtual void mouse_click(SDL_MouseButtonEvent *here);
 		virtual void mouse_to(SDL_MouseMotionEvent *to);
 		virtual void mouse_from(SDL_MouseMotionEvent *from);

@@ -12,12 +12,14 @@ sdl_master::sdl_master(Uint32 flags)
 	game_client = new SDL_Thread*[4];
 	clients = new sdl_user*[4];
 	cdisplay = new SDL_Surface*[4];
+	dragging = false;
 	for (int i = 0; i < 4; i++)
 	{
 		game_client[i] = (SDL_Thread*)0;
 		clients[i] = (sdl_user*)0;
 		cdisplay[i] = (SDL_Surface *)0;
 	}
+	draw_id = 0;
 	if (SDL_Init(SDL_INIT_VIDEO) != 0)
 	{
 		fprintf(stderr, "Unable to initialize SDL: %s\n", SDL_GetError());
@@ -64,14 +66,25 @@ void sdl_master::process_events()
 	mouse_position.x = 0;
 	mouse_position.y = 0;
 	
+	add_draw_timer(50);	//20 fps
+	
 	SDL_Event event;
 	while(!done)
 	{
-		draw();
-		while(SDL_PollEvent(&event))
-		{ //Poll events
+		if (SDL_WaitEvent(&event))
+		{ //wait on an event
 			switch(event.type)
 			{ //Check event type
+				case SDL_USEREVENT:
+					switch (event.user.code)
+					{
+						case 0:
+							draw();
+							break;
+						default:
+							break;
+					}
+					break;
 				case SDL_MOUSEMOTION:
 					mouse_move(&mouse_position, &event.motion);
 					mouse_position = event.motion;
@@ -126,6 +139,29 @@ bool sdl_master::check_users(bool last)
 	return last;
 }
 
+Uint32 sdl_master_draw(Uint32 interval, void *parm)
+{
+	SDL_Event event;
+	SDL_UserEvent usrevent;
+	usrevent.type = SDL_USEREVENT;
+	usrevent.code = 0;
+	usrevent.data1 = NULL;
+	usrevent.data2 = NULL;
+	event.type = SDL_USEREVENT;
+	event.user = usrevent;
+	SDL_PushEvent(&event);
+	return interval;
+}
+
+void sdl_master::add_draw_timer(int ms)
+{
+	do
+	{
+		draw_id = SDL_AddTimer(ms, sdl_master_draw, 0);
+	}
+	while (draw_id == 0);
+}
+
 /** Draw all the game instances to the screen 
 * \todo Support more than one client here */
 void sdl_master::draw()
@@ -171,25 +207,33 @@ void sdl_master::mouse_move(SDL_MouseMotionEvent *old, SDL_MouseMotionEvent *fre
 {
 	if (clients[0] != 0)
 	{
-		int old_num = get_client(old->x, old->y);
-		if (old_num != get_client(fresh->x, fresh->y))
-		{	//pointer tried to move from one client to another
-			if (clients[old_num]->mouse_leave())
-			{
-				printf("Prevent client %d from losing the mouse\n", old_num);
-				*fresh = *old;
-			}
-		}
-		int new_num = get_client(fresh->x, fresh->y);
-		//don't do an else here, the fresh mouse position may have changed
-		if (old_num == get_client(fresh->x, fresh->y))
-		{	//mouse moved within a single client
-			clients[old_num]->mouse_move(old, fresh);
+		if ((old->state == SDL_PRESSED) && (fresh->state == SDL_PRESSED))
+		{
+			//drag event generated here
+			dragging = true;
 		}
 		else
-		{	//mouse was allowed to leave the old client
-			clients[old_num]->mouse_from(old);
-			clients[new_num]->mouse_to(fresh);
+		{
+			int old_num = get_client(old->x, old->y);
+			if (old_num != get_client(fresh->x, fresh->y))
+			{	//pointer tried to move from one client to another
+				if (clients[old_num]->mouse_leave())
+				{
+					printf("Prevent client %d from losing the mouse\n", old_num);
+					*fresh = *old;
+				}
+			}
+			int new_num = get_client(fresh->x, fresh->y);
+			//don't do an else here, the fresh mouse position may have changed
+			if (old_num == get_client(fresh->x, fresh->y))
+			{	//mouse moved within a single client
+				clients[old_num]->mouse_move(old, fresh);
+			}
+			else
+			{	//mouse was allowed to leave the old client
+				clients[old_num]->mouse_from(old);
+				clients[new_num]->mouse_to(fresh);
+			}
 		}
 	}
 }
@@ -198,6 +242,12 @@ void sdl_master::mouse_move(SDL_MouseMotionEvent *old, SDL_MouseMotionEvent *fre
  \todo Implement double click, triple click here */
 void sdl_master::mouse_click(SDL_MouseButtonEvent *here)
 {
+	if ((here->state == SDL_RELEASED) && dragging)
+	{
+		//drag end event generated here
+		dragging = false;
+		//fabricate a mouse move event?
+	}
 	if (clients[0] != 0)
 	{
 		//TODO: check for double-click by measuring the time since the last click
@@ -251,6 +301,7 @@ int sdl_master::get_client(int x, int y)
 
 sdl_master::~sdl_master()
 {
+	SDL_RemoveTimer(draw_id);
 	delete [] game_client;
 	game_client = 0;
 	delete [] clients;

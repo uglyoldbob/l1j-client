@@ -21,10 +21,6 @@ class sdl_char_info : public sdl_widget
 		virtual bool contains(int x, int y);	//does this widget contain the given point?
 		
 		void redraw();
-		
-		void mouse_to(SDL_MouseMotionEvent *to);
-		void mouse_from(SDL_MouseMotionEvent *from);
-		void mouse_move(SDL_MouseMotionEvent *from, SDL_MouseMotionEvent *to);
 };
 
 #endif

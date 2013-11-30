@@ -215,6 +215,7 @@ void draw_new_char::set_gender(int bla)
 
 void draw_new_char::draw(SDL_Surface *display)
 {
+	SDL_FillRect(display, NULL, 0);
 	sdl_drawmode::draw(display);
 	
 	sdl_animate_button *jim;

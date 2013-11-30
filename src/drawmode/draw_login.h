@@ -32,6 +32,7 @@ class draw_login : public sdl_drawmode
 		~draw_login();
 		void login();
 		void quit();
+		void draw(SDL_Surface *display);
 		
 		virtual void key_press(SDL_KeyboardEvent *button);
 		virtual void mouse_click(SDL_MouseButtonEvent *here);

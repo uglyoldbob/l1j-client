@@ -36,9 +36,9 @@ class sdl_widget
 		virtual void mouse_click(SDL_MouseButtonEvent *here);
 		virtual bool contains(int x, int y);	//does this widget contain the given point?
 		virtual void key_press(SDL_KeyboardEvent *button);
-		void mouse_to(SDL_MouseMotionEvent *to);
-		void mouse_from(SDL_MouseMotionEvent *from);
-		void mouse_move(SDL_MouseMotionEvent *from, SDL_MouseMotionEvent *to);
+		virtual void mouse_to(SDL_MouseMotionEvent *to);
+		virtual void mouse_from(SDL_MouseMotionEvent *from);
+		virtual void mouse_move(SDL_MouseMotionEvent *from, SDL_MouseMotionEvent *to);
 	protected:
 		bool visible;	//determines if the widget should be drawn
 		bool key_focus;	//does the widget have keyboard focus?

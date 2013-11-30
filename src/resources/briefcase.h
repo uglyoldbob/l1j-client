@@ -55,6 +55,7 @@ class briefcase
 		void open_data();	/**< Open the briefcase data file for reading */
 		
 		int get_size();	/**< Returns the size of the briefcase */
+		void delete_files();	/**< Deletes all the files */
 };
 
 #endif

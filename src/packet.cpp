@@ -30,6 +30,7 @@ void packet::send_packet(packet_data &sendme)
 	key_change[2] = sendme[2];
 	key_change[3] = sendme[3];
 
+//	print_packet(0, sendme, "Sending packet");
 	//packet is prepended with packet length
 	sendme.insert((uint16_t)(sendme.size()+2));
 	this->encrypt(sendme);
@@ -183,6 +184,7 @@ int packet::process_packet()
 	}
 
 	unsigned char temp;
+//	print_packet(0, data, "Received packet");
 	data >> temp;
 	switch(temp)
 	{	//the second list
@@ -382,7 +384,7 @@ void packet::add_inv_items()
 		unsigned char status_length;
 		data >> item_id >> use_type >> dummy >> icon >> blessed_status
 			 >> count >> identified >> name >> status_length;
-		printf("%d of Item %d usage %d (bless %d) icon %d. ", count,
+		printf("%d of Item %s usage %d (bless %d) icon %d. ", count,
 			name, use_type, blessed_status, icon);
 		
 		if (status_length > 0)
@@ -403,14 +405,30 @@ void packet::add_inv_items()
 
 void packet::ground_item()
 {
-	unsigned short x, y, gnd_icon;
-	int id, count;
-	unsigned char emit_light, d1, d2, d3, d4, d5;
+	uint16_t x, y, gnd_icon;
+	uint32_t id, count;
+	uint8_t emit_light, d1, d2, d3, d4, d5;
  	char *name;
 	data >> x >> y >> id >> gnd_icon >> d1 >> d2 >> emit_light >> d3
 		 >> count >> d4 >> d5 >> name;
  	printf("There is %s [0x%x] at (%d, %d) icon %d : %d, %d, %d, %d, %d\n", name, id, x, y, gnd_icon,
-		d1, d2, d3, d4, d5); 
+		d1, d2, d3, d4, d5);
+	if (theuser->is_in_mode(DRAWMODE_GAME, true))
+	{
+		draw_game *temp;
+		struct ground_item placeme;
+		temp = (draw_game*)(theuser->get_drawmode(false));
+		placeme.name = name;
+		placeme.x = x;
+		placeme.y = y;
+		placeme.emit_light = emit_light;
+		placeme.gnd_icon = gnd_icon;
+		placeme.count = count;
+		placeme.id = id;
+		temp->place_character(&placeme);
+		temp = 0;
+		theuser->done_with_drawmode();
+	}
 	delete [] name;
 	name = 0;
 }
@@ -478,11 +496,20 @@ void packet::set_map()
 	uint8_t underwater;
 	data >> mapid >> underwater;
 	printf("The map is %d and underwater:%d\n", mapid, underwater);
+	if (theuser->is_in_mode(DRAWMODE_GAME, true))
+	{
+		draw_game *temp;
+		temp = (draw_game*)(theuser->get_drawmode(false));
+		temp->set_underwater(underwater);
+		temp->change_map(mapid);
+		temp = 0;
+		theuser->done_with_drawmode();
+	}
 }
 
 void packet::char_status()
 {
-	int id;
+	uint32_t id;
 	uint8_t level;
 	unsigned int exp;
 	uint8_t str, intl, wis, dex, con, cha;
@@ -495,7 +522,7 @@ void packet::char_status()
 		 >> cur_hp >> max_hp >> cur_mp >> max_mp
 		 >> ac >> time >> food >> weight >> alignment
 		 >> fire_res >> water_res >> wind_res >> earth_res;
-	printf("Character data: ID %d\n", id);
+	printf("Character data: ID %x\n", id);
 	printf("\tLevel : %d\tExp %d\n", level, exp);
 	printf("\tSTR %2d CON %2d DEX %2d WIS %2d INT %2d CHA %2d\n", str, con, dex,
 		wis, intl, cha);
@@ -506,6 +533,7 @@ void packet::char_status()
 		temp = (draw_game*)(theuser->get_drawmode(false));
 		temp->update_hpbar(cur_hp, max_hp);
 		temp->update_mpbar(cur_mp, max_mp);
+		temp->set_player_id(id);
 		temp = 0;
 		theuser->done_with_drawmode();
 	}
@@ -531,7 +559,7 @@ void packet::char_create_result()
 			temp = 0;
 			theuser->done_with_drawmode();
 		}
-		game->change_drawmode(DRAWMODE_CHARSEL);
+		theuser->change_drawmode(DRAWMODE_CHARSEL);
 	}
 }
 
@@ -597,13 +625,25 @@ void packet::login_check()
 		case 3:
 			//send 9?
 			{
+			lin_char_info *picked_char;
+			if (theuser->is_in_mode(DRAWMODE_CHARSEL, true))
+			{
+				draw_char_sel* temp;
+				temp = (draw_char_sel*)theuser->get_drawmode(false);
+				picked_char = temp->get_selected_char();
+				theuser->done_with_drawmode();
+			}
 			packet_data sendme;
 			sendme << (uint8_t)CLIENT_ALIVE << (uint32_t)0 << (uint32_t)0;
 			send_packet(sendme);
 			sendme.clear();
 			sendme << (uint8_t)CLIENT_INITGAME << (uint8_t)0 << (uint32_t)0 << (uint32_t)0;
 			send_packet(sendme);
-			game->change_drawmode(DRAWMODE_GAME);
+			theuser->change_drawmode(DRAWMODE_GAME);
+			theuser->wait_for_mode(DRAWMODE_GAME, true);
+			draw_game *tempest = (draw_game*)theuser->get_drawmode(false);
+			tempest->set_selected_char(picked_char);
+			theuser->done_with_drawmode();
 			}
 			break;
 		case 5:
@@ -638,7 +678,7 @@ void packet::news_packet()
 	packet_data sendme;
 	sendme << (uint8_t) CLIENT_CLICK << (uint32_t)0 << (uint32_t)0;
 	send_packet(sendme);	/** \TODO: there is a minimum packet length */
-	game->change_drawmode(DRAWMODE_CHARSEL);
+	theuser->change_drawmode(DRAWMODE_CHARSEL);
 }
 
 void packet::key_packet()

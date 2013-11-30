@@ -76,6 +76,7 @@ int sha256_hash(char *filename, char *dest)
   free(s->hash_sum);
   free(s->hash_result);
   free(s->known_fn);
+  free(s->hash_context);
   free(s);
   return temp;
 }

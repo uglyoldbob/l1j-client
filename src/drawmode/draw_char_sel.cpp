@@ -190,9 +190,31 @@ void draw_char_sel::select_char()
 			sendme << (uint8_t)CLIENT_USE_CHAR << bob->name
 					<< (uint32_t)0 << (uint32_t)0;
 			owner->send_packet(sendme);
-//			owner->send_packet("csdd", CLIENT_USE_CHAR, bob->name, 0, 0);
 		}
 	}
+}
+
+lin_char_info *draw_char_sel::get_selected_char()
+{
+	sdl_animate_button **chars;
+	chars = (sdl_animate_button**)&widgets[0];
+	lin_char_info *bob;
+	if (cur_char_slot != -1)
+	{
+		if (chars[cur_char_slot]->char_info != 0)
+		{
+			bob = chars[cur_char_slot]->get_info();
+		}
+		else
+		{
+			bob = 0;
+		}
+	}
+	else
+	{
+		bob = 0;
+	}
+	return bob;
 }
 
 void draw_char_sel::get_login_chars()
@@ -327,6 +349,9 @@ void draw_char_sel::draw(SDL_Surface *display)
 {
 	while (SDL_mutexP(draw_mtx) == -1) {};
 	if (ready)
+	{
+		SDL_FillRect(display, NULL, 0);
 		sdl_drawmode::draw(display);
+	}
 	SDL_mutexV(draw_mtx);	
 }

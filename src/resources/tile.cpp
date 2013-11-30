@@ -174,13 +174,16 @@ sdl_graphic *tile::get_special(int which)
 
 void tile::delay_load(int which, sdl_user *orig, client *who)
 {
-	client_request t_sdl;
-	t_sdl.request = CLIENT_REQUEST_LOAD_TILE;
-	t_sdl.data.tload.which = which;
-	t_sdl.data.tload.item = this;
-	delay_load_id = orig->add_request(t_sdl);
-	delay_loading = true;
-	loader = orig;
+	if (delay_loading == false)
+	{
+		client_request t_sdl;
+		t_sdl.request = CLIENT_REQUEST_LOAD_TILE;
+		t_sdl.data.tload.which = which;
+		t_sdl.data.tload.item = this;
+		delay_load_id = orig->add_request(t_sdl);
+		delay_loading = true;
+		loader = orig;
+	}
 }
 
 void tile::load(int which, client *who)

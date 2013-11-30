@@ -77,7 +77,7 @@ void sdl_input_box::cursor_toggle()
 		if (SDL_GetTicks() >= change)
 		{
 			draw_cursor = !draw_cursor;
-			change += 333;
+			change = SDL_GetTicks() + 333;
 		}
 	}
 }

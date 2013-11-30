@@ -185,3 +185,9 @@ void draw_loading::mouse_move(SDL_MouseMotionEvent *from, SDL_MouseMotionEvent *
 		}
 	}
 }
+
+void draw_loading::draw(SDL_Surface *display)
+{
+	SDL_FillRect(display, NULL, 0);
+	sdl_drawmode::draw(display);
+}

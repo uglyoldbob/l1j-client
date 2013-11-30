@@ -220,7 +220,7 @@ void sdl_animate_button::draw(SDL_Surface *display)
 		if (change_time <= SDL_GetTicks())
 		{
 			cur_frame++;
-			change_time += frame_time;
+			change_time = SDL_GetTicks() + frame_time;
 			if (cur_frame == num_anim)
 				cur_frame = first_repeat;
 		}

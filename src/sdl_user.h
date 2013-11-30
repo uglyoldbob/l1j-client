@@ -8,6 +8,7 @@
 #include "drawmode/sdl_drawmode.h"
 #include "resources/files.h"
 #include "resources/music.h"
+#include "resources/small_font.h"
 #include "resources/tile.h"
 class pack;
 class packet_data;
@@ -67,6 +68,7 @@ class sdl_user
 		lin_char_info** get_login_chars();	/**< Returns the array of characters for character select */
 
 		client *get_client();	/**< This should only be called by the sdl_master class */
+		small_font smallfont;	/**< A font object */
 	private:
 		client *game;	/**< the client object we are attached to */
 		volatile bool ready;	/**< is it ok to draw me */
@@ -76,7 +78,6 @@ class sdl_user
 		sdl_drawmode *drawmode;	/**< the object that draws everything for me */
 		tile *map_tiles;	/**< The array of all possible tiles a map can use, not all of them are loaded though */
 		int number_map_tiles;	/**< The number of map tiles covered by the map_tiles object */
-
 
 		SDL_mutex *draw_mtx;	/**< the mutex the gui thread (sdl_master) uses to share data with the client thread */
 		SDL_mutex *mode_mtx;	/**< this mutex is used to protect access to the drawmode */

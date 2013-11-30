@@ -103,13 +103,32 @@ int briefcase::load()
 			files = new briefcase_entry[num_files];
 			for (int i = 0; i < num_files; i++)
 			{
+				files[i].namelen = 0;
 				fread(&files[i].namelen, 1, 4, data_buf);
-				files[i].name = new char[files[i].namelen+1];
-				fread(files[i].name, files[i].namelen+1, 1, data_buf);
+				if ((files[i].namelen+1) <= 0)
+				{
+					printf("ERROR: Briefcase file %d has a negative or zero filename length\n", i);
+					files[i].name = 0;
+				}
+				else
+				{
+					files[i].name = new char[files[i].namelen+1];
+					memset(files[i].name, 0, files[i].namelen+1);
+					fread(files[i].name, files[i].namelen+1, 1, data_buf);
+				}
+				files[i].size = 0;
 				fread(&files[i].size, 1, 4, data_buf);
 				fread(&files[i].offset, 1, 4, data_buf); 
-				file_data[i] = new char[files[i].size];
-				fread(file_data[i], 1, files[i].size, data_buf);
+				if (files[i].size <= 0)
+				{
+					printf("ERROR: Filesize for file %d is negative or zero\n", i);
+					file_data[i] = 0;
+				}
+				else
+				{
+					file_data[i] = new char[files[i].size];
+					fread(file_data[i], 1, files[i].size, data_buf);
+				}
 			}
 		}
 		else
@@ -169,8 +188,7 @@ int briefcase::check_file(const char *name)
 */
 void briefcase::write_file(char *name, char *data, int size)
 {	
-	int exists = check_file(name); 
-	if (exists == -1)
+	if (check_file(name) == -1)
 	{
 		briefcase_entry *temp = files;
 		char **temp2 = file_data;
@@ -305,6 +323,7 @@ void briefcase::new_data()
 		data_buf = fopen(data_file, "wb");
 	printf("Writing dummy value for num_files\n");
 	fwrite(&num_files, 1, 4, data_buf);
+	delete_files();
 }
 
 void briefcase::add_data()
@@ -320,23 +339,19 @@ void briefcase::open_data()
 		data_buf = fopen(data_file, "rb");
 }
 
-briefcase::~briefcase()
+void briefcase::delete_files()
 {
-	printf("Deleting briefcase\n");
 	if (file_data != 0)
 	{
 		for (int i = 0; i < num_files; i++)
 		{
-			printf("\tDeleting file %d\n", i);
 			if (file_data[i] != 0)
 			{
-				printf("\tDeleting file_data[%d]\n", i);
 				delete [] file_data[i];
 				file_data[i] = 0;
 			}
 			if (files[i].name != 0)
 			{
-				printf("\tDeleting files[%d].name\n", i);
 				delete [] files[i].name;
 				files[i].name = 0;
 			}
@@ -345,11 +360,16 @@ briefcase::~briefcase()
 		file_data = 0;
 		if (files != 0)
 		{
-			printf("\tDeleting files\n");
 			delete [] files;
 			files = 0;
 		}
 	}
+	num_files = 0;
+}
+
+briefcase::~briefcase()
+{
+	delete_files();
 	delete [] data_file;
 	data_file = 0;
 }

@@ -34,7 +34,6 @@ void client::init()
 	}
 	delete [] test;
 	lineage_font.init("Font/eng.fnt", this);	//TODO : make a client specific version of the font
-	smallfont.init("Font/SMALL.FNT", this);
 	
 	DesKeyInit("~!@#%^$<");	//TODO : move this code to a class and use an object
 	init_packs();
@@ -63,8 +62,8 @@ void client::init()
 	server = new connection(main_config, what_server);
 	proc = new packet(this, server, graphics);
 //	if (get_updates(server, load) > 0)
-//	{
-//	}
+	{
+	}
 
 	//check for custom opcodes
 	unsigned char *copcodes;
@@ -99,7 +98,7 @@ void client::init()
 	}
 
 	//begin game portion of client
-	if (server->connection_ok() == 1)
+//	if (server->connection_ok() == 1)
 	{
 		if (server->change() != 1)
 		{
@@ -128,7 +127,6 @@ int client::get_updates(connection* server, draw_loading *scrn)
 	{
 		if (server->connection_ok() == 1)
 		{
-			proc = new packet(this, server, graphics);	//init the packet class instance
 			server_data = new briefcase(server_name);
 			strcpy(hash, server_data->get_hash());
 			temp2 = 0x4400;	//68 bytes of packet data
@@ -171,6 +169,7 @@ int client::get_updates(connection* server, draw_loading *scrn)
 				file = new char[filesize];
 				sprintf(display, "Receiving %s size %d (%d of %d)", filename, filesize, i+1, num_files);
 				scrn->add_text(display);
+				printf("%s\n", display);
 				while (filesize > 0)
 				{
 					if (filesize > TRANSFER_AMOUNT)
@@ -198,8 +197,7 @@ int client::get_updates(connection* server, draw_loading *scrn)
 			delete server_data;
 			server_data = new briefcase(server_name);
 			status = num_files;
-			delete proc;
-		}			
+		}
 	}
 	catch(int e)
 	{

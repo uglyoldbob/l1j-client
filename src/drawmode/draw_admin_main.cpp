@@ -75,6 +75,7 @@ bool draw_admin_main::quit_request()
 
 void draw_admin_main::draw(SDL_Surface *display)
 {
+	SDL_FillRect(display, NULL, 0);
 	sdl_drawmode::draw(display);
 }
 

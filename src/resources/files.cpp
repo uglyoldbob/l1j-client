@@ -72,9 +72,13 @@ unsigned char* files::load_file(const char *name, int *size, file_locations loca
 				{
 				FILE *thefile = fopen(name, "rb");
 				unsigned int result;
-				fseek(thefile, 0, SEEK_END);
-				filesize = ftell(thefile);
-				fseek(thefile, 0, SEEK_SET);
+				filesize = 0;
+				if (thefile != 0)
+				{
+					fseek(thefile, 0, SEEK_END);
+					filesize = ftell(thefile);
+					fseek(thefile, 0, SEEK_SET);
+				}
 				if (filesize == 0)
 					return 0;
 				buffer = new unsigned char[filesize];

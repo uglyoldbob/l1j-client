@@ -22,10 +22,7 @@ class sdl_button : public sdl_widget
 		virtual void key_press(SDL_KeyboardEvent *button);
 	protected:
 		funcptr *method;
-		
-		void mouse_to(SDL_MouseMotionEvent *to);
-		void mouse_from(SDL_MouseMotionEvent *from);
-		void mouse_move(SDL_MouseMotionEvent *from, SDL_MouseMotionEvent *to);
+
 		virtual void mouse_click(SDL_MouseButtonEvent *here);
 };
 

@@ -2,7 +2,17 @@
 #define __DRAW_GAME_H_
 
 #include "sdl_drawmode.h"
+#include "widgets/chat_window.h"
 #include "widgets/sdl_lin_map.h"
+
+struct ground_item
+{
+	char *name;
+	uint16_t x, y;
+	uint16_t gnd_icon;
+	uint8_t emit_light;
+	uint32_t count, id;
+};
 
 class draw_game : public sdl_drawmode
 {
@@ -13,13 +23,14 @@ class draw_game : public sdl_drawmode
 		virtual void key_press(SDL_KeyboardEvent *button);
 
 		virtual void draw(SDL_Surface *display);
-		virtual void mouse_click(SDL_MouseButtonEvent *here);
-		virtual void mouse_to(SDL_MouseMotionEvent *to);
-		virtual void mouse_from(SDL_MouseMotionEvent *from);
-		virtual void mouse_move(SDL_MouseMotionEvent *from, SDL_MouseMotionEvent *to);
 		virtual bool mouse_leave();	//is it ok for the mouse to leave?
 		
 		virtual bool quit_request();
+		void set_selected_char(lin_char_info *me);
+		void set_player_id(uint32_t newid);
+		void place_character(ground_item *info);
+		void set_underwater(int underwater);
+		void show_position(chat_window *temp);
 		
 		void update_hpbar(int cur, int max);
 		void update_mpbar(int cur, int max);
@@ -32,6 +43,8 @@ class draw_game : public sdl_drawmode
 		sdl_lin_map *themap;
 		int mapnum, x, y;	//the players coordinates
 
+		lin_char_info *character;
+		uint32_t charid;
 		char *exp_str;
 		char *hp_str;
 		float hp_width;

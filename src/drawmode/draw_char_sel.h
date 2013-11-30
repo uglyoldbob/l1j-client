@@ -48,6 +48,7 @@ class draw_char_sel : public sdl_drawmode
 		void do_delete();
 		void nextpage();
 		void prevpage();
+		lin_char_info *get_selected_char();
 	private:
 		SDL_mutex *draw_mtx;
 		int cur_char_slot;

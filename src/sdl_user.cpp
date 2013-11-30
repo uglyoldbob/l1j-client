@@ -81,7 +81,7 @@ int sdl_user::init_tiles()
 	{
 		map_tiles = 0;
 	}
-	
+	smallfont.init("Font/SMALL.FNT", game);
 	return 0;
 }
 

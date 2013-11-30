@@ -13,7 +13,6 @@
 #include "resources/sdl_font.h"
 #include "resources/sdl_graphic.h"
 #include "resources/table.h"
-#include "resources/small_font.h"
 #include "resources/pack.h"
 #include "widgets/sdl_lin_map.h"
 #include "widgets/sprite.h"
@@ -125,7 +124,6 @@ class client
 		char convert_server_packets[256];	/**< Used to translate packet opcodes */
 		config *get_config();	/**< Used to retrieve the configuration object used by this server */
 		void stop();	/**< */
-		small_font smallfont;	/**< A font object */
 	private:
 		config *main_config;	/**< The configuration used by the server */
 		connection *server;	/**< The connection to the server */

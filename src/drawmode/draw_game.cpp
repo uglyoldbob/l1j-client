@@ -15,7 +15,7 @@ draw_game::draw_game(sdl_user *self)
 	
 	num_gfx = 0;
 	gfx = 0;
-	
+	character = 0;
 	exp_str = new char[20];
 	sprintf(exp_str, "%02d      %02.2f", 1, 32.47);
 	hp_str = new char[20];
@@ -31,7 +31,7 @@ draw_game::draw_game(sdl_user *self)
 	food_str = new char[20];
 	strcpy(food_str, "0%");
 	
-	num_widgets = 7;
+	num_widgets = 6;
 
 	themap = new sdl_lin_map(owner, 0, 0, 640, 380);
 	mapnum = 4;
@@ -70,8 +70,8 @@ draw_game::draw_game(sdl_user *self)
 	hp_width = (float)widgets[4]->getw();
 	mp_width = (float)widgets[5]->getw();
 	
-	widgets[6] = new sprite(320, 200, owner);//, "2786-8.spr", owner);   //0, 5, 8, 
-	((sprite*)widgets[6])->delay_load(320, 200, "2786-8.spr", owner->get_client());
+//	widgets[6] = new sprite(320, 200, owner);//, "2786-8.spr", owner);   //0, 5, 8, 
+//	((sprite*)widgets[6])->delay_load(320, 200, "2786-8.spr", owner->get_client());
 
 	//widgets[6] = new sprite(50, 50, "3226-305.spr", owner);
 }
@@ -97,7 +97,7 @@ void draw_game::update_hpbar(int cur, int max)
 {
 	sprintf(hp_str, "%d/%d", cur, max);
 	
-	float temp = hp_width;
+	float temp = (float)widgets[4]->getw();;
 	temp *= (float)cur;
 	temp /= (float)max;
 	widgets[4]->setmw((int)temp);
@@ -107,7 +107,7 @@ void draw_game::update_mpbar(int cur, int max)
 {
 	sprintf(mp_str, "%d/%d", cur, max); 
 	
-	float temp = mp_width * ((float)cur / (float)max);
+	float temp = (float)widgets[5]->getw() * ((float)cur / (float)max);
 	widgets[5]->setmw(temp);
 }
 
@@ -115,22 +115,6 @@ void draw_game::update_mpbar(int cur, int max)
 void draw_game::key_press(SDL_KeyboardEvent *button)
 {
 	sdl_drawmode::key_press(button);
-}
-
-void draw_game::mouse_click(SDL_MouseButtonEvent *here)
-{
-}
-
-void draw_game::mouse_to(SDL_MouseMotionEvent *to)
-{
-}
-
-void draw_game::mouse_from(SDL_MouseMotionEvent *from)
-{
-}
-
-void draw_game::mouse_move(SDL_MouseMotionEvent *from, SDL_MouseMotionEvent *to)
-{
 }
 
 bool draw_game::mouse_leave()	//is it ok for the mouse to leave?
@@ -154,6 +138,21 @@ draw_game::~draw_game()
 	weight_str = 0;
 	delete [] food_str;
 	food_str = 0;
+	if (character != 0)
+	{
+		if (character->name != 0)
+		{
+			delete [] character->name;
+			character->name = 0;
+		}
+		if (character->pledge != 0)
+		{
+			delete [] character->pledge;
+			character->pledge = 0;
+		}
+		delete character;
+		character = 0;
+	}
 	SDL_DestroyMutex(draw_mtx);
 	draw_mtx = 0;
 }
@@ -165,12 +164,52 @@ bool draw_game::quit_request()
 
 //1042.img for chat window?
 
+void draw_game::set_selected_char(lin_char_info *me)
+{
+	character = new lin_char_info(*me);
+	character->name = new char[strlen(me->name)+1];
+	strcpy(character->name, me->name);
+	character->pledge = new char[strlen(me->pledge)+1];
+	strcpy(character->pledge, me->pledge);
+	printf("Receiving character %s\n", character->name);
+}
+
+void draw_game::set_player_id(uint32_t newid)
+{
+	charid = newid;
+}
+
+void draw_game::set_underwater(int underwater)
+{
+	printf("STUB Set underwater attribute\n");
+}
+
+void draw_game::place_character(ground_item *info)
+{
+	if (info->id == charid)
+	{
+		printf("Placing the player at some place\n");
+		change_location(info->x, info->y);
+	}
+	else
+	{
+		printf("Placing a character at some place\n");
+	}
+}
+
+void draw_game::show_position(chat_window *temp)
+{
+	char message[50];
+	sprintf(message, "location (%d, %d)", x, y);
+	temp->add_line(message);
+}
+
 void draw_game::draw(SDL_Surface *display)
 {
 	while (SDL_mutexP(draw_mtx) == -1) {};
 	SDL_FillRect(display, NULL, 0);
 	sdl_drawmode::draw(display);
-	//owner->game->smallfont.draw(display, 35, 390, exp_str, 0xFFFE);
+	owner->smallfont.draw(display, 35, 390, exp_str, 0xFFFE);
 	lineage_font.draw(display, 35, 407, hp_str, 0xFFFE);
 	lineage_font.draw(display, 35, 426, mp_str, 0xFFFE);
 	

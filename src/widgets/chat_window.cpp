@@ -1,5 +1,6 @@
 #include "chat_window.h"
 #include "client.h"
+#include "drawmode/draw_game.h"
 #include "globals.h"
 #include "widgets/sdl_input_box.h"
 #include "widgets/sdl_widget.h"
@@ -92,6 +93,17 @@ void chat_window::submit_chat(const char *blabla)
 			{
 				sprintf(version, "VERSION: UNSTABLE BETA compiled on %s", __DATE__);
 				add_line(version);
+			}
+			else if (strcmp(&blabla[1], "loc") == 0)
+			{
+				if (myclient->is_in_mode(DRAWMODE_GAME, true))
+				{
+					draw_game *temp;
+					temp = (draw_game*)(myclient->get_drawmode(false));
+					temp->show_position(this);
+					temp = 0;
+					myclient->done_with_drawmode();
+				}
 			}
 			else if ((strcmp(&blabla[1], "meme") == 0) && ((SDL_GetTicks()%100) == 42))
 			{	//Dont tell anybody this is here!
