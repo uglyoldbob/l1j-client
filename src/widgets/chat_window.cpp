@@ -33,6 +33,7 @@ chat_window::chat_window(int x, int y, sdl_user *who)
 	//the scroll bar (1047 - 1050 for body, 1051 for up button, 1053 for down button)
 	//the sizing button (1045 for up arrow) (1056 for down arrow)
 	//the time of day indicator	
+	visible = true;
 }
 
 chat_window::~chat_window()

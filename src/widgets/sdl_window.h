@@ -11,11 +11,9 @@ class sdl_window : public sdl_widget
 		~sdl_window();
 		
 		virtual void draw(SDL_Surface *display);
-		
 	protected:
-		sdl_graphic *window;
-	
 		sdl_widget **widgets;
+		int x, y;
 		int num_widgets;
 		int widget_key_focus;		
 };

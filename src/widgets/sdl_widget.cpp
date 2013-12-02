@@ -149,3 +149,13 @@ void sdl_widget::draw(SDL_Surface *display)
 	}
 }
 
+void sdl_widget::drawat(int x, int y, SDL_Surface *display)
+{
+	if (visible)
+	{
+		if (one != 0)
+		{
+			one->drawat(x, y, display);
+		}
+	}
+}

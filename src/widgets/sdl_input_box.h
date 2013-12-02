@@ -14,6 +14,7 @@ class sdl_input_box : public sdl_widget
 		
 		void set_max(int m);
 		virtual void draw(SDL_Surface *display);
+		virtual void drawat(int x, int y, SDL_Surface *display);
 		
 		virtual void cursor_on();
 		virtual void cursor_off();

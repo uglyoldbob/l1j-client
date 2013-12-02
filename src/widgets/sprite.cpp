@@ -26,6 +26,7 @@ void sprite::delay_load(int x, int y, char *filename, client *from)
 	delay_load_id = myclient->add_request(t_sdl);
 	delay_loading = true;
 	loader = myclient;
+	visible = true;
 }
 
 void sprite::load(int x, int y, char *filename, client *from)
@@ -199,6 +200,7 @@ void sprite::load(int x, int y, char *filename, client *from)
 
 	frame_num = 0;
 	printf("Reached end of sprite loading\n");
+	visible = true;
 	SDL_mutexV(delay_mtx);
 }
 
@@ -207,7 +209,24 @@ void sprite::load(int x, int y, char *filename, client *from)
 //tile
 //h
 
+screen_coord sprite::get_screen()
+{
+	map_coord temp(loc_x, loc_y);
+	return temp.get_screen();
+}
+
 void sprite::draw(SDL_Surface *display)
+{
+	drawat(400, 300, display);
+}
+
+void sprite::move(int x, int y)
+{
+	loc_x = x;
+	loc_y = y;
+}
+
+void sprite::drawat(int x, int y, SDL_Surface *display)
 {
 	while (SDL_mutexP(delay_mtx) == -1) {};
 	if (num_frames == 0)
@@ -227,11 +246,13 @@ void sprite::draw(SDL_Surface *display)
 	for (int i = 0; i < num_tiles; i++)
 	{
 		int tempx, tempy;
-		tile_location.x = loc_x;
-		tile_location.y = loc_y;
+		map_coord temp_map(loc_x, loc_y);
+		screen_coord temp_screen = temp_map.get_screen();
+		tile_location.x = 0;//temp_screen.get_x();
+		tile_location.y = 0;//temp_screen.get_y();
 
-		tempx = frames[frame_num].tiles[i].x;
-		tempy = frames[frame_num].tiles[i].y;
+		tempx = frames[frame_num].tiles[i].x - 4;
+		tempy = frames[frame_num].tiles[i].y + 1;
 
 		tile_location.x += (24 * (tempx/2 + tempy));
 		tile_location.y += (12 * (tempy - tempx/2));
@@ -244,8 +265,8 @@ void sprite::draw(SDL_Surface *display)
 			tile_location.y += 12;
 		}
 
-		tile_location.x += master_x + tiles[frames[frame_num].tiles[i].tile]->getx();
-		tile_location.y += master_y + tiles[frames[frame_num].tiles[i].tile]->gety();
+		tile_location.x += master_x + tiles[frames[frame_num].tiles[i].tile]->getx() + x;
+		tile_location.y += master_y + tiles[frames[frame_num].tiles[i].tile]->gety() + y;
 
 		tile_location.w = 0;
 		tile_location.h = 0;

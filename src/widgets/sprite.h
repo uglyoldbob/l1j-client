@@ -26,10 +26,12 @@ class sprite : public sdl_widget
 	public:
 		sprite(int x, int y, sdl_user *who);
 		virtual void draw(SDL_Surface *display);
+		virtual void drawat(int x, int y, SDL_Surface *display);
 		~sprite();
 		void load(int x, int y, char *filename, client *from);
 		void delay_load(int x, int y, char *filename, client *from);
-
+		void move(int x, int y);
+		screen_coord get_screen();
 	private:
 		sdl_graphic **tiles;
 		int num_tiles;

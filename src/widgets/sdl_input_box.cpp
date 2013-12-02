@@ -69,6 +69,23 @@ void sdl_input_box::draw(SDL_Surface *display)
 	cursor_toggle();
 }
 
+void sdl_input_box::drawat(int x, int y, SDL_Surface *display)
+{
+	if (protecting)
+	{
+		lineage_font.draw(display, x + one->getx(), y + one->gety(), protectme, 0xFFFE);
+	}
+	else
+	{
+		lineage_font.draw(display, x + one->getx(), y + one->gety(), field, 0xFFFE);
+	}
+	if (draw_cursor)
+	{
+		lineage_font.draw_cursor(display, x + one->getx() + cursor_pos, y + one->gety(), 0xFFFE);
+	}
+	cursor_toggle();
+}
+
 void sdl_input_box::cursor_toggle()
 {
 	static Uint32 change = SDL_GetTicks();

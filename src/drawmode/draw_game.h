@@ -29,6 +29,7 @@ class draw_game : public sdl_drawmode
 		void set_selected_char(lin_char_info *me);
 		void set_player_id(uint32_t newid);
 		void place_character(ground_item *info);
+		void remove_character(uint32_t id);
 		void set_underwater(int underwater);
 		void show_position(chat_window *temp);
 		

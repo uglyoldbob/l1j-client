@@ -1,12 +1,12 @@
 #include "sdl_window.h"
 
 sdl_window::sdl_window(int num, int x, int y, int w, int h, sdl_user *who)
-	: sdl_widget(num, 0, 0, who)
+	: sdl_widget(num, x, y, who)
 {
 	num_widgets = 0;
 	widgets = 0;
-	
-	window = new sdl_graphic(x, y, w, h, 0);
+	this->x = x;
+	this->y = y;
 }
 
 sdl_window::~sdl_window()
@@ -19,23 +19,17 @@ sdl_window::~sdl_window()
 		}
 		delete [] widgets;
 	}
-	delete window;
-	window = 0;
 }
 
 void sdl_window::draw(SDL_Surface *display)
 {
 	if (visible)
 	{
-		if (window->get_surf() != 0)
+		sdl_widget::draw(display);
+		for (int i = 0; i < num_widgets; i++)
 		{
-			sdl_widget::draw(window->get_surf());
-			for (int i = 0; i < num_widgets; i++)
-			{
-				if (widgets[i] != 0)
-					widgets[i]->draw(window->get_surf());
-			}
-			window->draw(display);
+			if (widgets[i] != 0)
+				widgets[i]->drawat(x, y, display);
 		}
 	}
 }

@@ -184,16 +184,20 @@ void draw_game::set_underwater(int underwater)
 	printf("STUB Set underwater attribute\n");
 }
 
+void draw_game::remove_character(uint32_t id)
+{
+	themap->remove_character(id);
+}
+
 void draw_game::place_character(ground_item *info)
 {
+	themap->move_sprite(info->id, info->x, info->y, info->gnd_icon);
 	if (info->id == charid)
 	{
-		printf("Placing the player at some place\n");
 		change_location(info->x, info->y);
 	}
 	else
 	{
-		printf("Placing a character at some place\n");
 	}
 }
 

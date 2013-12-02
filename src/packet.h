@@ -39,7 +39,13 @@ class packet
 		
 		//packet handlers
 		void key_packet();
+		void ac_and_elemental_update();
 		void char_status();
+		void char_title();
+		void dex_update();
+		void move_object();
+		void remove_object();
+		void str_update();
 		void set_map();
 		void server_version_packet();
 		void news_packet();

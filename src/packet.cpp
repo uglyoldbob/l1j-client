@@ -200,6 +200,8 @@ int packet::process_packet()
 		case SERVER_INV_ITEMS: add_inv_items(); break;
 		case SERVER_MESSAGE: server_message(); break;
 		case SERVER_CHANGE_SPMR: change_spmr(); break;
+		case SERVER_MOVE_OBJECT: move_object(); break;
+		case SERVER_REMOVE_OBJECT: remove_object(); break;
 		case SERVER_ENTERGAME:
 		case SERVER_CHAR_DELETE:
 		case SERVER_LOGIN: login_check(); break;
@@ -208,7 +210,11 @@ int packet::process_packet()
 		case SERVER_NEWS: news_packet(); break;
 		case SERVER_LOGIN_CHAR: login_char_packet(); break;
 		case SERVER_CREATE_STAT: char_create_result();	break;
+		case SERVER_DEX_UPDATE: dex_update(); break;
+		case SERVER_STR_UPDATE: str_update(); break;
 		case SERVER_NUM_CHARS: num_char_packet(); break;
+		case SERVER_TITLE: char_title(); break;
+		case SERVER_AC_ELEMENTAL_UPDATE: ac_and_elemental_update(); break;
 		case SERVER_CHAT_NORM:
 		case SERVER_CHAT_WHISPER:
 		case SERVER_CHAT_GLOBAL:
@@ -227,7 +233,7 @@ packet::~packet()
 
 void packet::print_packet(uint8_t opcode, packet_data &printme, const char *msg)
 {
-	printf("Packet data of %s (0x%02x)\n\t", msg, opcode);
+	printf("********\nPacket data of %s (0x%02x %d)\n\t", msg, opcode, opcode);
 	for (int i = 0; i < printme.size(); i++)
 	{
 		printf("%02x ", printme[i] & 0xff);
@@ -236,7 +242,40 @@ void packet::print_packet(uint8_t opcode, packet_data &printme, const char *msg)
 			printf("\n\t");
 		}
 	}
-	printf("\n");
+	printf("\n********\n");
+}
+
+void packet::ac_and_elemental_update()
+{
+	int8_t ac, fire, water, earth, wind;
+	data >> ac >> fire >> water >> wind >> earth;
+	printf("Update AC:%d, fire:%d, water:%d, wind:%d, earth:%d\n", ac, fire, water, wind, earth);
+}
+
+void packet::dex_update()
+{
+	uint16_t time = 0;
+	uint8_t dex = 0, type = 0;
+	data >> time >> dex >> type;
+	printf("Dexterity was updated to %d at %d, code 0x%02x\n", dex, time, type);
+}
+
+void packet::str_update()
+{
+	uint16_t time;
+	uint8_t str, capacity, type;
+	data >> time >> str >> capacity >> type;
+	printf("Strength updated to %d (%d) at %d, code 0x%02x\n", str, capacity, time, type);
+}
+
+void packet::char_title()
+{
+	uint32_t id;
+	char *name;
+	data >> id >> name;
+	printf("%d has a title of \"%s\"\n", id, name);
+	delete [] name;
+	name = 0;
 }
 
 void packet::server_message()
@@ -389,7 +428,7 @@ void packet::add_inv_items()
 		
 		if (status_length > 0)
 		{
-			printf("\nStatus: ");
+			printf("\n\tStatus: ");
 		}
 		for (int j = 0; j < status_length; j++)
 		{
@@ -400,6 +439,44 @@ void packet::add_inv_items()
 		delete [] name;
 		name = 0;
 		printf("\n");
+	}
+}
+
+void packet::remove_object()
+{
+	uint32_t id;
+	data >> id;
+	if (theuser->is_in_mode(DRAWMODE_GAME, true))
+	{
+		draw_game *temp;
+		temp = (draw_game*)(theuser->get_drawmode(false));
+		temp->remove_character(id);
+		temp = 0;
+		theuser->done_with_drawmode();
+	}
+}
+
+void packet::move_object()
+{
+	uint32_t id;
+	uint16_t x, y;
+	uint8_t heading;
+	data >> id >> x >> y >> heading;
+	if (theuser->is_in_mode(DRAWMODE_GAME, true))
+	{
+		draw_game *temp;
+		struct ground_item placeme;
+		temp = (draw_game*)(theuser->get_drawmode(false));
+		placeme.name = 0;
+		placeme.x = x;
+		placeme.y = y;
+		placeme.emit_light = 0;
+		placeme.gnd_icon = 0;
+		placeme.count = 0;
+		placeme.id = id;
+		temp->place_character(&placeme);
+		temp = 0;
+		theuser->done_with_drawmode();
 	}
 }
 

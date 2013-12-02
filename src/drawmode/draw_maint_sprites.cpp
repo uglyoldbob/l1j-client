@@ -40,7 +40,7 @@ draw_maint_sprites::draw_maint_sprites(sdl_user *self)
 	y = 8;
 
 	widgets[0] = 0;
-	widgets[1] = new sdl_text_button("Return", 320, 410, owner, 
+	widgets[1] = new sdl_text_button("Return", 310, 420, owner, 
 		(funcptr*)new dam_ptr(owner, DRAWMODE_ADMIN_MAIN));
 	widgets[1]->set_key_focus(true);
 	redo_sprite();

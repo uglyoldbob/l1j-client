@@ -17,6 +17,7 @@ class sdl_widget
 		sdl_widget(int num, int x, int y, sdl_user *who);
 		virtual ~sdl_widget();
 		virtual void draw(SDL_Surface *display);
+		virtual void drawat(int x, int y, SDL_Surface *display);
 		
 		//for tracking what the mouse is over
 		void mouseOn();

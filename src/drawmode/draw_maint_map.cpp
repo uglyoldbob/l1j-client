@@ -47,7 +47,7 @@ draw_maint_map::draw_maint_map(sdl_user *self)
 }
 
 /** Handle key press events
- * \bug Crashes when changing modes
+ *
  * */
 void draw_maint_map::key_press(SDL_KeyboardEvent *button)
 {

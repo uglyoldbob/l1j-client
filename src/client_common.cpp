@@ -214,6 +214,7 @@ void client::check_requests()
 	{
 		client_request *temp = request_list.front();
 		request_list.pop_front();
+		SDL_mutexV(requests_mtx);
 		switch (temp->request)
 		{
 			case CLIENT_REQUEST_LOAD_SDL_GRAPHIC:
@@ -281,7 +282,10 @@ void client::check_requests()
 		delete temp;
 		temp = 0;
 	}
-	SDL_mutexV(requests_mtx);
+	else
+	{
+		SDL_mutexV(requests_mtx);
+	}
 }
 
 void client::free_request(client_request *temp)

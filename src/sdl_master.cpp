@@ -158,8 +158,7 @@ void sdl_master::add_draw_timer(int ms)
 	do
 	{
 		draw_id = SDL_AddTimer(ms, sdl_master_draw, 0);
-	}
-	while (draw_id == 0);
+	} while (draw_id == 0);
 }
 
 /** Draw all the game instances to the screen 

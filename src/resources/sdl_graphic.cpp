@@ -75,7 +75,7 @@ sdl_graphic::sdl_graphic(int num, int x, int y, int type, client *who)
 
 void sdl_graphic::do_load(int x, int y, SDL_RWops *source, short *palette, int type)
 {
-	while (SDL_mutexP(delay_mtx) == -1) {};
+//	while (SDL_mutexP(delay_mtx) == -1) {};
 	switch(type)
 	{
 		case GRAPH_STIL:
@@ -142,12 +142,12 @@ void sdl_graphic::do_load(int x, int y, SDL_RWops *source, short *palette, int t
 		default:
 			break;
 	}
-	SDL_mutexV(delay_mtx);
+//	SDL_mutexV(delay_mtx);
 }
 
 void sdl_graphic::do_load(int x, int y, short *source, int type)
 {
-	while (SDL_mutexP(delay_mtx) == -1) {};
+//	while (SDL_mutexP(delay_mtx) == -1) {};
 	switch(type)
 	{
 		case GRAPH_STIL:
@@ -256,7 +256,7 @@ void sdl_graphic::do_load(int x, int y, short *source, int type)
 		default:
 			break;
 	}
-	SDL_mutexV(delay_mtx);
+//	SDL_mutexV(delay_mtx);
 }
 
 void sdl_graphic::do_load(char *name, int x, int y, int type, client *who)
@@ -295,12 +295,12 @@ void sdl_graphic::do_load(char *name, int x, int y, int type, client *who)
 			cleanup = false;
 		}
 	}
-	SDL_mutexV(delay_mtx);
+//	SDL_mutexV(delay_mtx);
 }
 
 void sdl_graphic::do_load(int num, int x, int y, int type, client *who)
 {
-	while (SDL_mutexP(delay_mtx) == -1) {};
+//	while (SDL_mutexP(delay_mtx) == -1) {};
 	char name[256];
 
 	if (num == -1)
@@ -431,12 +431,12 @@ void sdl_graphic::disable_clear()
 
 sdl_graphic::~sdl_graphic()
 {
-	while (SDL_mutexP(delay_mtx) == -1) {};
+//	while (SDL_mutexP(delay_mtx) == -1) {};
 	if (delay_loading)
 	{
 		loader->cancel_request(delay_load_id);
 	}
-	SDL_mutexV(delay_mtx);
+//	SDL_mutexV(delay_mtx);
 	SDL_DestroyMutex(delay_mtx);
 	if (pos != 0)
 	{
