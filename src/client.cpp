@@ -16,6 +16,7 @@
 #include "unsorted.h"
 
 #include <math.h>
+#include <SDL/SDL.h>
 
 void client::init()
 {
@@ -61,7 +62,7 @@ void client::init()
 
 	server = new connection(main_config, what_server);
 	proc = new packet(this, server, graphics);
-//	if (get_updates(server, load) > 0)
+	if (get_updates(server, load) > 0)
 	{
 	}
 

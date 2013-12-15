@@ -99,61 +99,6 @@ bool draw_maint_sprites::mouse_leave()
 	return false;
 }
 
-void draw_maint_sprites::mouse_click(SDL_MouseButtonEvent *here)
-{
-	if (num_widgets > 0)
-	{
-		int index = get_widget(here->x, here->y);
-		if (index != -1)
-		{
-			widgets[index]->mouse_click(here);
-		}
-	}
-}
-
-void draw_maint_sprites::mouse_to(SDL_MouseMotionEvent *to)
-{
-	int which = get_widget(to->x, to->y);
-	if (which >= 0)
-	{
-		widgets[which]->mouse_to(to);
-	}
-}
-
-void draw_maint_sprites::mouse_from(SDL_MouseMotionEvent *from)
-{
-	int which = get_widget(from->x, from->y);
-	if (which >= 0)
-	{
-		widgets[which]->mouse_from(from);
-	}
-}
-
-void draw_maint_sprites::mouse_move(SDL_MouseMotionEvent *from, SDL_MouseMotionEvent *to)
-{	//TODO: handle click and drag movable widgets
-	if (num_widgets > 0)
-	{
-		int from_w = get_widget(from->x, from->y);
-		int to_w = get_widget(to->x, to->y);
-		if ((from_w != -1) && (to_w != -1))
-		{
-			if (from_w != to_w)
-			{	//only send events if the widgets are different
-				mouse_from(from);
-				mouse_to(to);
-			}
-		}
-		if ((from_w == -1) && (to_w != -1))
-		{
-			mouse_to(to);
-		}
-		if ((from_w != -1) && (to_w == -1))
-		{
-			mouse_from(from);
-		}
-	}
-}
-
 void draw_maint_sprites::redo_sprite()
 {
 	while (SDL_mutexP(draw_mtx) == -1) {};
