@@ -41,29 +41,29 @@ draw_loading::draw_loading(sdl_user *self)
 
 	num_servers = owner->get_config()->get_num_servers();
 	
-	num_widgets = num_servers + 2;
+	num_widgets = num_servers + 1;
 	widgets = new sdl_widget*[num_widgets];
 	
 	server_pick = -1;
 	spick_mtx = SDL_CreateMutex();
 	
-	widget_key_focus = 0;
+	widget_key_focus = 1;
 	for (int i = 0; i < num_servers; i++)
 	{
-		widgets[i] = new sdl_text_button(owner->get_config()->get_name(i), 276, 254+(15*(i+1)), owner, 
+		widgets[i+1] = new sdl_text_button(owner->get_config()->get_name(i), 276, 254+(15*(i+1)), owner, 
 			(funcptr*)new load_ptr(this, i));
-		widgets[i]->set_key_focus(true);
+		widgets[i+1]->set_key_focus(true);
 	}
-	widgets[0]->cursor_on();
-	widgets[num_servers] = new text_box(257, 254, 150, 10*12, owner);
+	widgets[1]->cursor_on();
+	widgets[0] = new text_box(257, 254, 150, 10*12, owner);
 	
-	widgets[num_servers+1] = new sprite(320, 200, owner);//"2786-8.spr", owner);
+	//widgets[num_servers+1] = new sprite(320, 200, owner);//"2786-8.spr", owner);
 	//widgets[num_servers+1] = new sprite(50, 50, "6258-0.spr", owner);
 		//6256-173 nothing?
 		//6256-181 nothing?
 		//		
 	
-	((text_box*)widgets[num_servers])->add_line("Please select a server:");
+	((text_box*)widgets[0])->add_line("Please select a server:");
 		
 	update_load();
 }
@@ -81,7 +81,7 @@ bool draw_loading::quit_request()
 void draw_loading::add_text(char *bla)
 {
 	while (SDL_mutexP(draw_mtx) == -1) {};
-	((text_box*)widgets[num_servers])->add_line(bla);
+	((text_box*)widgets[0])->add_line(bla);
 	SDL_mutexV(draw_mtx);
 }
 
@@ -91,7 +91,7 @@ void draw_loading::server_picked(int i)
 	//hide buttons, add text to the textbox
 	for (int ij = 0; ij < num_servers; ij++)
 		widgets[ij]->hide(false);
-	((text_box*)widgets[num_servers])->add_line("Checking for updates");
+	((text_box*)widgets[0])->add_line("Checking for updates");
 	server_pick = i;
 	SDL_mutexV(spick_mtx);
 }
@@ -129,61 +129,6 @@ draw_loading::~draw_loading()
 bool draw_loading::mouse_leave()
 {
 	return false;
-}
-
-void draw_loading::mouse_click(SDL_MouseButtonEvent *here)
-{
-	if (num_widgets > 0)
-	{
-		int index = get_widget(here->x, here->y);
-		if (index != -1)
-		{
-			widgets[index]->mouse_click(here);
-		}
-	}
-}
-
-void draw_loading::mouse_to(SDL_MouseMotionEvent *to)
-{
-	int which = get_widget(to->x, to->y);
-	if (which >= 0)
-	{
-		widgets[which]->mouse_to(to);
-	}
-}
-
-void draw_loading::mouse_from(SDL_MouseMotionEvent *from)
-{
-	int which = get_widget(from->x, from->y);
-	if (which >= 0)
-	{
-		widgets[which]->mouse_from(from);
-	}
-}
-
-void draw_loading::mouse_move(SDL_MouseMotionEvent *from, SDL_MouseMotionEvent *to)
-{	//TODO: handle click and drag movable widgets
-	if (num_widgets > 0)
-	{
-		int from_w = get_widget(from->x, from->y);
-		int to_w = get_widget(to->x, to->y);
-		if ((from_w != -1) && (to_w != -1))
-		{
-			if (from_w != to_w)
-			{	//only send events if the widgets are different
-				mouse_from(from);
-				mouse_to(to);
-			}
-		}
-		if ((from_w == -1) && (to_w != -1))
-		{
-			mouse_to(to);
-		}
-		if ((from_w != -1) && (to_w == -1))
-		{
-			mouse_from(from);
-		}
-	}
 }
 
 void draw_loading::draw(SDL_Surface *display)
