@@ -80,6 +80,7 @@ void sprite::load(int x, int y, char *filename, client *from)
 	}
 	
 	char mystery1 = 0;
+	uint32_t blank_val;
 	
 	SDL_RWread(file, &mystery1, 1, 1);
 	
@@ -117,8 +118,8 @@ void sprite::load(int x, int y, char *filename, client *from)
 		frames[i].x2 = SWAP16(frames[i].x2);
 		SDL_RWread(file, &frames[i].y2, 2, 1);
 		frames[i].y2 = SWAP16(frames[i].y2);
-		SDL_RWread(file, &mystery1, 4, 1);
-		mystery1 = SWAP32(mystery1);
+		SDL_RWread(file, &blank_val, 4, 1);
+		mystery1 = SWAP32(blank_val);
 //		printf("Skipped 0x%x (what is this?)\n", mystery1);
 		//SDL_RWseek(file, 4, SEEK_CUR);
 		SDL_RWread(file, &frames[i].num_tiles, 2, 1);

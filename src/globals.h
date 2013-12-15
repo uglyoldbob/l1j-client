@@ -24,28 +24,27 @@ extern pack **spritepack;
 extern int num_sprite_pack;
 
 #ifdef MAC
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-#undef DO_SWAP
-#define SWAP16(X)    (X) 
-#define SWAP32(X)    (X)
-#warning Swap is not being used
-#else
-#define DO_SWAP 1
-#define SWAP16(X)    SDL_SwapBE16(X)
-#define SWAP32(X)    SDL_SwapBE32(X)
-#warning YAY SWAP
-#endif
-
+	#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+	#undef DO_SWAP
+	#define SWAP16(X)    (X) 
+	#define SWAP32(X)    (X)
+	#warning Swap is not being used
+	#else
+	#define DO_SWAP 1
+	#define SWAP16(X)    (X)
+	#define SWAP32(X)    (X)
+	#warning YAY SWAP
+	#endif
 #else
 //these are used so that the correct byte order is used
-#if SDL_BYTEORDER == SDL_LIL_ENDIAN
-#undef DO_SWAP
-#define SWAP16(X)    (X)
-#define SWAP32(X)    (X)
-#else
-#define DO_SWAP 1
-#define SWAP16(X)    SDL_Swap16(X)
-#define SWAP32(X)    SDL_Swap32(X)
+	#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+	#undef DO_SWAP
+	#define SWAP16(X)    (X)
+	#define SWAP32(X)    (X)
+	#else
+	#define DO_SWAP 1
+	#define SWAP16(X)    SDL_Swap16(X)
+	#define SWAP32(X)    SDL_Swap32(X)
 #endif
 
 #endif
