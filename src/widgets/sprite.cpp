@@ -278,7 +278,7 @@ void sprite::drawat(int x, int y, SDL_Surface *display)
 	if ((SDL_GetTicks() + 1000) > time_change)
 	{
 		frame_num++;
-		time_change += 200;
+		time_change = SDL_GetTicks() + 200;
 	}
 	if (frame_num == num_frames)
 		frame_num = 0;

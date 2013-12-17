@@ -307,10 +307,12 @@ void connection::try_names(const char *port)
 {
 	for (int i = 0; i < the_config->get_num_names(srv_num); i++)
 	{
-		printf("\tAttempting %s [%d of %d] port %s...", 
+		printf("\tAttempting %s [%d of %d] port %s...\n", 
 			the_config->get_addr(srv_num, i), i+1, 
 			the_config->get_num_names(srv_num), port);
+		printf("\tResolving server ip address...\n");		
 		get_addr(port, the_config->get_addr(srv_num, i));
+		printf("\tConnecting to ip address\n");
 		make_connection();
 		if (servinfo != 0)
 		{
@@ -319,12 +321,12 @@ void connection::try_names(const char *port)
 		}
 		if (connection_ok() == 1)
 		{
-			printf(" success\n");
+			printf("\tsuccess\n");
 			break;
 		}
 		else
 		{
-			printf(" failed\n");
+			printf("\tfailed\n");
 		}
 	}
 

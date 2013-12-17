@@ -169,7 +169,7 @@ clean-local:
 	rm -rf $(top_srcdir)/docs/man
 endif
 
-mac_test:
+mac_test: Admin$(EXEEXT)
 	echo "Making test folder for mac"
 	@if [ ! -d client.app ]; then\
 		echo mkdir client.app;\
@@ -215,14 +215,14 @@ mac_installer:
 	@echo "Copying files to package folder"
 	cp -f ${top_srcdir}/src/LineageMac.ini ./release_client.app/Contents/Resources/Lineage.ini
 	cp -f Lineage ./release_client.app/Contents/MacOS
-	$(STRIP) -s ./release_client.app/Contents/MacOS/Lineage${EXEEXT}
+	$(STRIP) -S ./release_client.app/Contents/MacOS/Lineage${EXEEXT}
 	cp -f ${top_srcdir}/src/Info.PList ./release_client.app/Contents
 	cp -f ${top_srcdir}/src/PkgInfo ./release_client.app/Contents
 	cp -f Admin ./release_client.app/Contents/MacOS
-	$(STRIP) -s ./release_client.app/Contents/MacOS/Lineage${EXEEXT}
+	$(STRIP) -S ./release_client.app/Contents/MacOS/Lineage${EXEEXT}
 	tar -zcvf release.tar.gz release_client.app
 
-win_test:
+win_test: Admin$(EXEEXT)
 	echo "Making test folder for windows"
 	false
 
@@ -240,6 +240,7 @@ linux_installer:
 	cp -f ${top_srcdir}/src/LineageLinux.ini ./installer/Lineage.ini
 	cp -f $(PACKAGE_FILES) ./installer/
 	$(STRIP) -s ./installer/Lineage${EXEEXT}
+	tar -zcvf release.tar.gz ./installer
 
 linux_test: Admin$(EXEEXT)
 	@echo "making test folder for linux"
