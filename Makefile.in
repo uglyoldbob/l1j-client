@@ -400,6 +400,11 @@ AM_CPPFLAGS = -I${top_srcdir}/src -I${top_srcdir}/include
 @LINUX_FALSE@@WINDOWS_TRUE@INSTALLER_DEP = win_installer
 @LINUX_TRUE@INSTALLER_DEP = linux_installer
 @LINUX_FALSE@@MAC_TRUE@@WINDOWS_FALSE@PACKAGE_FILES = Lineage$(EXEECT) ${top_srcdir}/src/README.txt
+@LINUX_FALSE@@WINDOWS_TRUE@PACKAGE_FILES = Lineage${EXEEXT} ${top_srcdir}/src/README.txt \
+@LINUX_FALSE@@WINDOWS_TRUE@${top_srcdir}/libs/SDL.dll \
+@LINUX_FALSE@@WINDOWS_TRUE@${top_srcdir}/libs/SDL_image.dll \
+@LINUX_FALSE@@WINDOWS_TRUE@${top_srcdir}/libs/SDL_mixer.dll
+
 @LINUX_TRUE@PACKAGE_FILES = Lineage${EXEEXT} ${top_srcdir}/src/README.txt
 @HAVE_DOXYGEN_TRUE@directory = $(top_srcdir)/docs/man/man3/
 @HAVE_DOXYGEN_TRUE@dist_man_MANS = $(directory)/man_page_1.3 $(directory)/man_page_2.3
@@ -1889,6 +1894,7 @@ uninstall-man: uninstall-man3
 @HAVE_DOXYGEN_TRUE@all-local: doxyfile.stamp
 @HAVE_DOXYGEN_TRUE@clean-local:
 @HAVE_DOXYGEN_TRUE@	rm -rf $(top_srcdir)/docs/man
+@HAVE_DOXYGEN_TRUE@	rm -rf installer
 
 mac_test: Admin$(EXEEXT)
 	echo "Making test folder for mac"
@@ -1948,8 +1954,17 @@ win_test: Admin$(EXEEXT)
 	false
 
 win_installer:
-	echo "Cannot make installer for windows"
-	false
+	echo "Making installer for windows"
+	@if [ ! -d installer ]; then\
+		echo mkdir installer;\
+		mkdir installer;\
+	fi
+	@echo "Copying files to installer folder"
+	cp -f ${top_srcdir}/src/LineageWindows.ini ./installer/Lineage.ini
+	cp -f $(PACKAGE_FILES) ./installer/
+	$(STRIP) -s ./installer/Lineage${EXEEXT}
+
+	tar -zcvf release.tar.gz ./installer
 
 linux_installer:
 	echo "making installer for linux"

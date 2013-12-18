@@ -138,6 +138,10 @@ else
 if WINDOWS
 TEST_DEP = win_test
 INSTALLER_DEP = win_installer
+PACKAGE_FILES = Lineage${EXEEXT} ${top_srcdir}/src/README.txt \
+${top_srcdir}/libs/SDL.dll \
+${top_srcdir}/libs/SDL_image.dll \
+${top_srcdir}/libs/SDL_mixer.dll
 else
 
 if MAC
@@ -167,6 +171,7 @@ CLEANFILES = doxyfile.stamp
 all-local: doxyfile.stamp
 clean-local:
 	rm -rf $(top_srcdir)/docs/man
+	rm -rf installer
 endif
 
 mac_test: Admin$(EXEEXT)
@@ -227,8 +232,17 @@ win_test: Admin$(EXEEXT)
 	false
 
 win_installer:
-	echo "Cannot make installer for windows"
-	false
+	echo "Making installer for windows"
+	@if [ ! -d installer ]; then\
+		echo mkdir installer;\
+		mkdir installer;\
+	fi
+	@echo "Copying files to installer folder"
+	cp -f ${top_srcdir}/src/LineageWindows.ini ./installer/Lineage.ini
+	cp -f $(PACKAGE_FILES) ./installer/
+	$(STRIP) -s ./installer/Lineage${EXEEXT}
+	
+	tar -zcvf release.tar.gz ./installer
 
 linux_installer:
 	echo "making installer for linux"
