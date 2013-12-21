@@ -78,6 +78,13 @@ case $host_os in
 	;;
 esac
 
+AC_C_BIGENDIAN(
+  AC_DEFINE(ENDIAN_BIG, 1, [machine is bigendian]),
+  AC_DEFINE(ENDIAN_LITTLE, 1, [machine is littleendian]),
+  AC_MSG_ERROR(unknown endianess),
+  AC_MSG_ERROR(universial endianess not supported)
+)
+
 AC_SUBST(BUILD_FOR)
 AC_SUBST(BUILD_FROM)
 

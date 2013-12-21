@@ -24,16 +24,18 @@ extern pack **spritepack;
 extern int num_sprite_pack;
 
 #ifdef MAC
-	#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-	#undef DO_SWAP
-	#define SWAP16(X)    (X) 
-	#define SWAP32(X)    (X)
-	#warning Swap is not being used
-	#else
+	#if ENDIAN_BIG == 1
 	#define DO_SWAP 1
+	#define SWAP16(X)    SDL_Swap16(X)
+	#define SWAP32(X)    SDL_Swap32(X)
+	#warning Swap is being used!!!!
+	#elif ENDIAN_LITTLE == 1
+	#undef DO_SWAP 1
 	#define SWAP16(X)    (X)
 	#define SWAP32(X)    (X)
-	#warning YAY SWAP
+	#warning There is no SWAP
+	#else
+	#error WHAT IS HAPPENING I AM BROKEN?
 	#endif
 #else
 //these are used so that the correct byte order is used
