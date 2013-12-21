@@ -2,7 +2,6 @@
 #define __SDL_BUTTON_H_
 
 #include <SDL/SDL.h>
-class client;
 
 #include "funcptr.h"
 #include "globals.h"

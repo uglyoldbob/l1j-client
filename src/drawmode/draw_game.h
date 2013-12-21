@@ -10,6 +10,7 @@ struct ground_item
 	char *name;
 	uint16_t x, y;
 	uint16_t gnd_icon;
+	int8_t heading;
 	uint8_t emit_light;
 	uint32_t count, id;
 };

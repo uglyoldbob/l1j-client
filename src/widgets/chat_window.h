@@ -4,8 +4,6 @@
 #include "sdl_user.h"
 #include "sdl_window.h"
 
-class client;
-
 class chat_window : public sdl_window
 {
 	public:

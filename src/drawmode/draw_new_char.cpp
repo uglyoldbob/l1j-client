@@ -1,7 +1,7 @@
 #include "draw_new_char.h"
 
-#include "client.h"
 #include "globals.h"
+#include "packet.h"
 #include "resources/prepared_graphics.h"
 #include "sdl_user.h"
 #include "widgets/sdl_animate_button.h"
@@ -180,13 +180,13 @@ void draw_new_char::submit()
 		if (points_remaining == 0)
 		{
 			printf("Creating character \"%s\"\n", bob->name);
-//			owner->send_packet("cscccccccc", CLIENT_CREATE_CHAR,
-//				bob->name, bob->char_type, bob->gender,
-//				bob->str + add_str, bob->dex + add_dex, bob->con + add_con, 
-//				bob->wis + add_wis, bob->cha + add_cha, bob->intl + add_int);
-			//"scccccccc"
-			//name, type, gender,
-			//str, dex, con, wis, cha, int
+			packet_data sendme;
+			sendme << (uint8_t)CLIENT_CREATE_CHAR
+				   << bob->name << (uint8_t)bob->char_type << (uint8_t)bob->gender
+				   << uint8_t(bob->str + add_str) << uint8_t(bob->dex + add_dex)
+				   << uint8_t(bob->con + add_con) << uint8_t(bob->wis + add_wis)
+				   << uint8_t(bob->cha + add_cha) << uint8_t(bob->intl + add_int);
+			owner->send_packet(sendme);
 		}
 		else
 		{

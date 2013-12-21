@@ -1,4 +1,3 @@
-#include "client.h"
 #include "draw_maint_til.h"
 #include "globals.h"
 #include "resources/prepared_graphics.h"

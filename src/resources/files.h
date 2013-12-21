@@ -1,7 +1,7 @@
 #ifndef __FILES_H_
 #define __FILES_H_
 
-class client;
+class sdl_user;
 
 enum file_locations
 {
@@ -21,12 +21,12 @@ enum file_locations
 class files
 {	//the files loaded depend on which client object wants files because of server specific files
 	public:
-		files(client *who);
+		files(sdl_user *who);
 		~files();
 		
 		unsigned char* load_file(const char *name, int *size, file_locations location, int decrypting);
 	private:
-		client *theclient;
+		sdl_user *theclient;
 };
 
 #endif

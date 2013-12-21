@@ -1,9 +1,9 @@
 #include <SDL/SDL.h>
 #include <string.h>
 
-#include "client.h"
 #include "files.h"
 #include "globals.h"
+#include "sdl_user.h"
 #include "small_font.h"
 
 small_font::small_font()
@@ -19,7 +19,7 @@ small_font::~small_font()
 	}
 }
 
-bool small_font::init(const char *name, client *who)
+bool small_font::init(const char *name, sdl_user *who)
 {	//SMALL.FNT has a strange assortment of fonts (23 of them) 
 	memset(convert, 0, 256);
 	convert[' '] = 1;

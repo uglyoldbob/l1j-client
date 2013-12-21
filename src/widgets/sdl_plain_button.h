@@ -2,7 +2,6 @@
 #define __SDL_PLAIN_BUTTON_H_
 
 #include <SDL/SDL.h>
-class client;
 
 #include "globals.h"
 #include "sdl_button.h"

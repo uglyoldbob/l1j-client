@@ -2,7 +2,6 @@
 #define __SDL_CLASS_INFO_H_
 
 #include <SDL/SDL.h>
-class client;
 
 #include "globals.h"
 #include "sdl_widget.h"

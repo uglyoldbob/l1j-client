@@ -56,20 +56,21 @@ CONFIG_CLEAN_FILES = Doxyfile
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man3dir)"
 PROGRAMS = $(bin_PROGRAMS)
-am__Admin_SOURCES_DIST = src/client_admin.cpp src/client_common.cpp \
-	src/config.cpp src/connection.cpp src/funcptr.cpp \
-	src/global.cpp src/lindes.cpp src/main.cpp src/packet.cpp \
-	src/packet_data.cpp src/sdl_master.cpp src/sdl_admin.cpp \
-	src/unsorted.cpp src/widgets/chat_window.cpp \
-	src/widgets/sdl_animate_button.cpp src/widgets/sdl_button.cpp \
-	src/widgets/sdl_char_info.cpp src/widgets/sdl_check_button.cpp \
-	src/widgets/sdl_lin_map.cpp src/widgets/sdl_radio_button.cpp \
-	src/widgets/sdl_input_box.cpp src/widgets/sdl_plain_button.cpp \
+am__Admin_SOURCES_DIST = src/config.cpp src/connection.cpp \
+	src/funcptr.cpp src/global.cpp src/lindes.cpp src/main.cpp \
+	src/packet.cpp src/packet_data.cpp src/sdl_master.cpp \
+	src/sdl_admin.cpp src/sdl_user_common.cpp \
+	src/widgets/chat_window.cpp src/widgets/sdl_animate_button.cpp \
+	src/widgets/sdl_button.cpp src/widgets/sdl_char_info.cpp \
+	src/widgets/sdl_check_button.cpp src/widgets/sdl_lin_map.cpp \
+	src/widgets/sdl_radio_button.cpp src/widgets/sdl_input_box.cpp \
+	src/widgets/sdl_plain_button.cpp \
 	src/widgets/sdl_text_button.cpp src/widgets/sdl_widget.cpp \
 	src/widgets/sdl_window.cpp src/widgets/sprite.cpp \
-	src/widgets/text_box.cpp src/resources/briefcase.cpp \
-	src/resources/files.cpp src/resources/music.cpp \
-	src/resources/pack.cpp src/resources/partial_table.cpp \
+	src/widgets/sprite_motion.cpp src/widgets/text_box.cpp \
+	src/resources/briefcase.cpp src/resources/files.cpp \
+	src/resources/music.cpp src/resources/pack.cpp \
+	src/resources/partial_table.cpp \
 	src/resources/prepared_graphics.cpp src/resources/sdl_font.cpp \
 	src/resources/reg_font.cpp src/resources/small_font.cpp \
 	src/resources/map_coord.cpp src/resources/pixel_coord.cpp \
@@ -85,19 +86,19 @@ am__Admin_SOURCES_DIST = src/client_admin.cpp src/client_common.cpp \
 	src/encryption/sha256deep.c src/encryption/hash.c \
 	src/encryption/helpers.c src/encryption/sha256.c src/SDLMain.m
 @MAC_TRUE@am__objects_1 = SDLMain.$(OBJEXT)
-am_Admin_OBJECTS = client_admin.$(OBJEXT) client_common.$(OBJEXT) \
-	config.$(OBJEXT) connection.$(OBJEXT) funcptr.$(OBJEXT) \
-	global.$(OBJEXT) lindes.$(OBJEXT) main.$(OBJEXT) \
-	packet.$(OBJEXT) packet_data.$(OBJEXT) sdl_master.$(OBJEXT) \
-	sdl_admin.$(OBJEXT) unsorted.$(OBJEXT) chat_window.$(OBJEXT) \
+am_Admin_OBJECTS = config.$(OBJEXT) connection.$(OBJEXT) \
+	funcptr.$(OBJEXT) global.$(OBJEXT) lindes.$(OBJEXT) \
+	main.$(OBJEXT) packet.$(OBJEXT) packet_data.$(OBJEXT) \
+	sdl_master.$(OBJEXT) sdl_admin.$(OBJEXT) \
+	sdl_user_common.$(OBJEXT) chat_window.$(OBJEXT) \
 	sdl_animate_button.$(OBJEXT) sdl_button.$(OBJEXT) \
 	sdl_char_info.$(OBJEXT) sdl_check_button.$(OBJEXT) \
 	sdl_lin_map.$(OBJEXT) sdl_radio_button.$(OBJEXT) \
 	sdl_input_box.$(OBJEXT) sdl_plain_button.$(OBJEXT) \
 	sdl_text_button.$(OBJEXT) sdl_widget.$(OBJEXT) \
-	sdl_window.$(OBJEXT) sprite.$(OBJEXT) text_box.$(OBJEXT) \
-	briefcase.$(OBJEXT) files.$(OBJEXT) music.$(OBJEXT) \
-	pack.$(OBJEXT) partial_table.$(OBJEXT) \
+	sdl_window.$(OBJEXT) sprite.$(OBJEXT) sprite_motion.$(OBJEXT) \
+	text_box.$(OBJEXT) briefcase.$(OBJEXT) files.$(OBJEXT) \
+	music.$(OBJEXT) pack.$(OBJEXT) partial_table.$(OBJEXT) \
 	prepared_graphics.$(OBJEXT) sdl_font.$(OBJEXT) \
 	reg_font.$(OBJEXT) small_font.$(OBJEXT) map_coord.$(OBJEXT) \
 	pixel_coord.$(OBJEXT) coord.$(OBJEXT) screen_coord.$(OBJEXT) \
@@ -113,20 +114,21 @@ Admin_OBJECTS = $(am_Admin_OBJECTS)
 Admin_LDADD = $(LDADD)
 Admin_LINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(Admin_LDFLAGS) \
 	$(LDFLAGS) -o $@
-am__Lineage_SOURCES_DIST = src/client.cpp src/client_common.cpp \
-	src/config.cpp src/connection.cpp src/funcptr.cpp \
-	src/global.cpp src/lindes.cpp src/main.cpp src/packet.cpp \
-	src/packet_data.cpp src/sdl_master.cpp src/sdl_user.cpp \
-	src/unsorted.cpp src/widgets/chat_window.cpp \
-	src/widgets/sdl_animate_button.cpp src/widgets/sdl_button.cpp \
-	src/widgets/sdl_char_info.cpp src/widgets/sdl_check_button.cpp \
-	src/widgets/sdl_lin_map.cpp src/widgets/sdl_radio_button.cpp \
-	src/widgets/sdl_input_box.cpp src/widgets/sdl_plain_button.cpp \
+am__Lineage_SOURCES_DIST = src/config.cpp src/connection.cpp \
+	src/funcptr.cpp src/global.cpp src/lindes.cpp src/main.cpp \
+	src/packet.cpp src/packet_data.cpp src/sdl_master.cpp \
+	src/sdl_user.cpp src/sdl_user_common.cpp \
+	src/widgets/chat_window.cpp src/widgets/sdl_animate_button.cpp \
+	src/widgets/sdl_button.cpp src/widgets/sdl_char_info.cpp \
+	src/widgets/sdl_check_button.cpp src/widgets/sdl_lin_map.cpp \
+	src/widgets/sdl_radio_button.cpp src/widgets/sdl_input_box.cpp \
+	src/widgets/sdl_plain_button.cpp \
 	src/widgets/sdl_text_button.cpp src/widgets/sdl_widget.cpp \
 	src/widgets/sdl_window.cpp src/widgets/sprite.cpp \
-	src/widgets/text_box.cpp src/resources/briefcase.cpp \
-	src/resources/files.cpp src/resources/music.cpp \
-	src/resources/pack.cpp src/resources/partial_table.cpp \
+	src/widgets/sprite_motion.cpp src/widgets/text_box.cpp \
+	src/resources/briefcase.cpp src/resources/files.cpp \
+	src/resources/music.cpp src/resources/pack.cpp \
+	src/resources/partial_table.cpp \
 	src/resources/prepared_graphics.cpp src/resources/sdl_font.cpp \
 	src/resources/reg_font.cpp src/resources/small_font.cpp \
 	src/resources/map_coord.cpp src/resources/pixel_coord.cpp \
@@ -138,19 +140,19 @@ am__Lineage_SOURCES_DIST = src/client.cpp src/client_common.cpp \
 	src/drawmode/draw_new_char.cpp src/encryption/mains.c \
 	src/encryption/sha256deep.c src/encryption/hash.c \
 	src/encryption/helpers.c src/encryption/sha256.c src/SDLMain.m
-am_Lineage_OBJECTS = client.$(OBJEXT) client_common.$(OBJEXT) \
-	config.$(OBJEXT) connection.$(OBJEXT) funcptr.$(OBJEXT) \
-	global.$(OBJEXT) lindes.$(OBJEXT) main.$(OBJEXT) \
-	packet.$(OBJEXT) packet_data.$(OBJEXT) sdl_master.$(OBJEXT) \
-	sdl_user.$(OBJEXT) unsorted.$(OBJEXT) chat_window.$(OBJEXT) \
+am_Lineage_OBJECTS = config.$(OBJEXT) connection.$(OBJEXT) \
+	funcptr.$(OBJEXT) global.$(OBJEXT) lindes.$(OBJEXT) \
+	main.$(OBJEXT) packet.$(OBJEXT) packet_data.$(OBJEXT) \
+	sdl_master.$(OBJEXT) sdl_user.$(OBJEXT) \
+	sdl_user_common.$(OBJEXT) chat_window.$(OBJEXT) \
 	sdl_animate_button.$(OBJEXT) sdl_button.$(OBJEXT) \
 	sdl_char_info.$(OBJEXT) sdl_check_button.$(OBJEXT) \
 	sdl_lin_map.$(OBJEXT) sdl_radio_button.$(OBJEXT) \
 	sdl_input_box.$(OBJEXT) sdl_plain_button.$(OBJEXT) \
 	sdl_text_button.$(OBJEXT) sdl_widget.$(OBJEXT) \
-	sdl_window.$(OBJEXT) sprite.$(OBJEXT) text_box.$(OBJEXT) \
-	briefcase.$(OBJEXT) files.$(OBJEXT) music.$(OBJEXT) \
-	pack.$(OBJEXT) partial_table.$(OBJEXT) \
+	sdl_window.$(OBJEXT) sprite.$(OBJEXT) sprite_motion.$(OBJEXT) \
+	text_box.$(OBJEXT) briefcase.$(OBJEXT) files.$(OBJEXT) \
+	music.$(OBJEXT) pack.$(OBJEXT) partial_table.$(OBJEXT) \
 	prepared_graphics.$(OBJEXT) sdl_font.$(OBJEXT) \
 	reg_font.$(OBJEXT) small_font.$(OBJEXT) map_coord.$(OBJEXT) \
 	pixel_coord.$(OBJEXT) coord.$(OBJEXT) screen_coord.$(OBJEXT) \
@@ -335,20 +337,20 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 @WINDOWS_TRUE@Lineage_LDFLAGS = -lmingw32
-Lineage_SOURCES = src/client.cpp src/client_common.cpp src/config.cpp \
-	src/connection.cpp src/funcptr.cpp src/global.cpp \
-	src/lindes.cpp src/main.cpp src/packet.cpp src/packet_data.cpp \
-	src/sdl_master.cpp src/sdl_user.cpp src/unsorted.cpp \
-	src/widgets/chat_window.cpp src/widgets/sdl_animate_button.cpp \
-	src/widgets/sdl_button.cpp src/widgets/sdl_char_info.cpp \
-	src/widgets/sdl_check_button.cpp src/widgets/sdl_lin_map.cpp \
-	src/widgets/sdl_radio_button.cpp src/widgets/sdl_input_box.cpp \
-	src/widgets/sdl_plain_button.cpp \
+Lineage_SOURCES = src/config.cpp src/connection.cpp src/funcptr.cpp \
+	src/global.cpp src/lindes.cpp src/main.cpp src/packet.cpp \
+	src/packet_data.cpp src/sdl_master.cpp src/sdl_user.cpp \
+	src/sdl_user_common.cpp src/widgets/chat_window.cpp \
+	src/widgets/sdl_animate_button.cpp src/widgets/sdl_button.cpp \
+	src/widgets/sdl_char_info.cpp src/widgets/sdl_check_button.cpp \
+	src/widgets/sdl_lin_map.cpp src/widgets/sdl_radio_button.cpp \
+	src/widgets/sdl_input_box.cpp src/widgets/sdl_plain_button.cpp \
 	src/widgets/sdl_text_button.cpp src/widgets/sdl_widget.cpp \
 	src/widgets/sdl_window.cpp src/widgets/sprite.cpp \
-	src/widgets/text_box.cpp src/resources/briefcase.cpp \
-	src/resources/files.cpp src/resources/music.cpp \
-	src/resources/pack.cpp src/resources/partial_table.cpp \
+	src/widgets/sprite_motion.cpp src/widgets/text_box.cpp \
+	src/resources/briefcase.cpp src/resources/files.cpp \
+	src/resources/music.cpp src/resources/pack.cpp \
+	src/resources/partial_table.cpp \
 	src/resources/prepared_graphics.cpp src/resources/sdl_font.cpp \
 	src/resources/reg_font.cpp src/resources/small_font.cpp \
 	src/resources/map_coord.cpp src/resources/pixel_coord.cpp \
@@ -362,20 +364,20 @@ Lineage_SOURCES = src/client.cpp src/client_common.cpp src/config.cpp \
 	src/encryption/helpers.c src/encryption/sha256.c \
 	$(am__append_1)
 @WINDOWS_TRUE@Admin_LDFLAGS = -lmingw32
-Admin_SOURCES = src/client_admin.cpp src/client_common.cpp \
-	src/config.cpp src/connection.cpp src/funcptr.cpp \
+Admin_SOURCES = src/config.cpp src/connection.cpp src/funcptr.cpp \
 	src/global.cpp src/lindes.cpp src/main.cpp src/packet.cpp \
 	src/packet_data.cpp src/sdl_master.cpp src/sdl_admin.cpp \
-	src/unsorted.cpp src/widgets/chat_window.cpp \
+	src/sdl_user_common.cpp src/widgets/chat_window.cpp \
 	src/widgets/sdl_animate_button.cpp src/widgets/sdl_button.cpp \
 	src/widgets/sdl_char_info.cpp src/widgets/sdl_check_button.cpp \
 	src/widgets/sdl_lin_map.cpp src/widgets/sdl_radio_button.cpp \
 	src/widgets/sdl_input_box.cpp src/widgets/sdl_plain_button.cpp \
 	src/widgets/sdl_text_button.cpp src/widgets/sdl_widget.cpp \
 	src/widgets/sdl_window.cpp src/widgets/sprite.cpp \
-	src/widgets/text_box.cpp src/resources/briefcase.cpp \
-	src/resources/files.cpp src/resources/music.cpp \
-	src/resources/pack.cpp src/resources/partial_table.cpp \
+	src/widgets/sprite_motion.cpp src/widgets/text_box.cpp \
+	src/resources/briefcase.cpp src/resources/files.cpp \
+	src/resources/music.cpp src/resources/pack.cpp \
+	src/resources/partial_table.cpp \
 	src/resources/prepared_graphics.cpp src/resources/sdl_font.cpp \
 	src/resources/reg_font.cpp src/resources/small_font.cpp \
 	src/resources/map_coord.cpp src/resources/pixel_coord.cpp \
@@ -518,9 +520,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SDLMain.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/briefcase.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/chat_window.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/client.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/client_admin.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/client_common.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/config.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/connection.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/coord.Po@am__quote@
@@ -567,16 +566,17 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sdl_radio_button.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sdl_text_button.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sdl_user.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sdl_user_common.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sdl_widget.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sdl_window.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sha256.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sha256deep.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/small_font.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sprite.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sprite_motion.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/table.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/text_box.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tile.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/unsorted.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -675,34 +675,6 @@ sha256.obj: src/encryption/sha256.c
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
-
-client_admin.o: src/client_admin.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT client_admin.o -MD -MP -MF $(DEPDIR)/client_admin.Tpo -c -o client_admin.o `test -f 'src/client_admin.cpp' || echo '$(srcdir)/'`src/client_admin.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/client_admin.Tpo $(DEPDIR)/client_admin.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/client_admin.cpp' object='client_admin.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o client_admin.o `test -f 'src/client_admin.cpp' || echo '$(srcdir)/'`src/client_admin.cpp
-
-client_admin.obj: src/client_admin.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT client_admin.obj -MD -MP -MF $(DEPDIR)/client_admin.Tpo -c -o client_admin.obj `if test -f 'src/client_admin.cpp'; then $(CYGPATH_W) 'src/client_admin.cpp'; else $(CYGPATH_W) '$(srcdir)/src/client_admin.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/client_admin.Tpo $(DEPDIR)/client_admin.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/client_admin.cpp' object='client_admin.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o client_admin.obj `if test -f 'src/client_admin.cpp'; then $(CYGPATH_W) 'src/client_admin.cpp'; else $(CYGPATH_W) '$(srcdir)/src/client_admin.cpp'; fi`
-
-client_common.o: src/client_common.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT client_common.o -MD -MP -MF $(DEPDIR)/client_common.Tpo -c -o client_common.o `test -f 'src/client_common.cpp' || echo '$(srcdir)/'`src/client_common.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/client_common.Tpo $(DEPDIR)/client_common.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/client_common.cpp' object='client_common.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o client_common.o `test -f 'src/client_common.cpp' || echo '$(srcdir)/'`src/client_common.cpp
-
-client_common.obj: src/client_common.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT client_common.obj -MD -MP -MF $(DEPDIR)/client_common.Tpo -c -o client_common.obj `if test -f 'src/client_common.cpp'; then $(CYGPATH_W) 'src/client_common.cpp'; else $(CYGPATH_W) '$(srcdir)/src/client_common.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/client_common.Tpo $(DEPDIR)/client_common.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/client_common.cpp' object='client_common.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o client_common.obj `if test -f 'src/client_common.cpp'; then $(CYGPATH_W) 'src/client_common.cpp'; else $(CYGPATH_W) '$(srcdir)/src/client_common.cpp'; fi`
 
 config.o: src/config.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT config.o -MD -MP -MF $(DEPDIR)/config.Tpo -c -o config.o `test -f 'src/config.cpp' || echo '$(srcdir)/'`src/config.cpp
@@ -844,19 +816,19 @@ sdl_admin.obj: src/sdl_admin.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o sdl_admin.obj `if test -f 'src/sdl_admin.cpp'; then $(CYGPATH_W) 'src/sdl_admin.cpp'; else $(CYGPATH_W) '$(srcdir)/src/sdl_admin.cpp'; fi`
 
-unsorted.o: src/unsorted.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT unsorted.o -MD -MP -MF $(DEPDIR)/unsorted.Tpo -c -o unsorted.o `test -f 'src/unsorted.cpp' || echo '$(srcdir)/'`src/unsorted.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/unsorted.Tpo $(DEPDIR)/unsorted.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/unsorted.cpp' object='unsorted.o' libtool=no @AMDEPBACKSLASH@
+sdl_user_common.o: src/sdl_user_common.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT sdl_user_common.o -MD -MP -MF $(DEPDIR)/sdl_user_common.Tpo -c -o sdl_user_common.o `test -f 'src/sdl_user_common.cpp' || echo '$(srcdir)/'`src/sdl_user_common.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/sdl_user_common.Tpo $(DEPDIR)/sdl_user_common.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/sdl_user_common.cpp' object='sdl_user_common.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o unsorted.o `test -f 'src/unsorted.cpp' || echo '$(srcdir)/'`src/unsorted.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o sdl_user_common.o `test -f 'src/sdl_user_common.cpp' || echo '$(srcdir)/'`src/sdl_user_common.cpp
 
-unsorted.obj: src/unsorted.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT unsorted.obj -MD -MP -MF $(DEPDIR)/unsorted.Tpo -c -o unsorted.obj `if test -f 'src/unsorted.cpp'; then $(CYGPATH_W) 'src/unsorted.cpp'; else $(CYGPATH_W) '$(srcdir)/src/unsorted.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/unsorted.Tpo $(DEPDIR)/unsorted.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/unsorted.cpp' object='unsorted.obj' libtool=no @AMDEPBACKSLASH@
+sdl_user_common.obj: src/sdl_user_common.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT sdl_user_common.obj -MD -MP -MF $(DEPDIR)/sdl_user_common.Tpo -c -o sdl_user_common.obj `if test -f 'src/sdl_user_common.cpp'; then $(CYGPATH_W) 'src/sdl_user_common.cpp'; else $(CYGPATH_W) '$(srcdir)/src/sdl_user_common.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/sdl_user_common.Tpo $(DEPDIR)/sdl_user_common.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/sdl_user_common.cpp' object='sdl_user_common.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o unsorted.obj `if test -f 'src/unsorted.cpp'; then $(CYGPATH_W) 'src/unsorted.cpp'; else $(CYGPATH_W) '$(srcdir)/src/unsorted.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o sdl_user_common.obj `if test -f 'src/sdl_user_common.cpp'; then $(CYGPATH_W) 'src/sdl_user_common.cpp'; else $(CYGPATH_W) '$(srcdir)/src/sdl_user_common.cpp'; fi`
 
 chat_window.o: src/widgets/chat_window.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT chat_window.o -MD -MP -MF $(DEPDIR)/chat_window.Tpo -c -o chat_window.o `test -f 'src/widgets/chat_window.cpp' || echo '$(srcdir)/'`src/widgets/chat_window.cpp
@@ -1039,6 +1011,20 @@ sprite.obj: src/widgets/sprite.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/widgets/sprite.cpp' object='sprite.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o sprite.obj `if test -f 'src/widgets/sprite.cpp'; then $(CYGPATH_W) 'src/widgets/sprite.cpp'; else $(CYGPATH_W) '$(srcdir)/src/widgets/sprite.cpp'; fi`
+
+sprite_motion.o: src/widgets/sprite_motion.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT sprite_motion.o -MD -MP -MF $(DEPDIR)/sprite_motion.Tpo -c -o sprite_motion.o `test -f 'src/widgets/sprite_motion.cpp' || echo '$(srcdir)/'`src/widgets/sprite_motion.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/sprite_motion.Tpo $(DEPDIR)/sprite_motion.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/widgets/sprite_motion.cpp' object='sprite_motion.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o sprite_motion.o `test -f 'src/widgets/sprite_motion.cpp' || echo '$(srcdir)/'`src/widgets/sprite_motion.cpp
+
+sprite_motion.obj: src/widgets/sprite_motion.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT sprite_motion.obj -MD -MP -MF $(DEPDIR)/sprite_motion.Tpo -c -o sprite_motion.obj `if test -f 'src/widgets/sprite_motion.cpp'; then $(CYGPATH_W) 'src/widgets/sprite_motion.cpp'; else $(CYGPATH_W) '$(srcdir)/src/widgets/sprite_motion.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/sprite_motion.Tpo $(DEPDIR)/sprite_motion.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/widgets/sprite_motion.cpp' object='sprite_motion.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o sprite_motion.obj `if test -f 'src/widgets/sprite_motion.cpp'; then $(CYGPATH_W) 'src/widgets/sprite_motion.cpp'; else $(CYGPATH_W) '$(srcdir)/src/widgets/sprite_motion.cpp'; fi`
 
 text_box.o: src/widgets/text_box.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT text_box.o -MD -MP -MF $(DEPDIR)/text_box.Tpo -c -o text_box.o `test -f 'src/widgets/text_box.cpp' || echo '$(srcdir)/'`src/widgets/text_box.cpp
@@ -1403,20 +1389,6 @@ draw_maint_til.obj: src/drawmode/draw_maint_til.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/drawmode/draw_maint_til.cpp' object='draw_maint_til.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o draw_maint_til.obj `if test -f 'src/drawmode/draw_maint_til.cpp'; then $(CYGPATH_W) 'src/drawmode/draw_maint_til.cpp'; else $(CYGPATH_W) '$(srcdir)/src/drawmode/draw_maint_til.cpp'; fi`
-
-client.o: src/client.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT client.o -MD -MP -MF $(DEPDIR)/client.Tpo -c -o client.o `test -f 'src/client.cpp' || echo '$(srcdir)/'`src/client.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/client.Tpo $(DEPDIR)/client.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/client.cpp' object='client.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o client.o `test -f 'src/client.cpp' || echo '$(srcdir)/'`src/client.cpp
-
-client.obj: src/client.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT client.obj -MD -MP -MF $(DEPDIR)/client.Tpo -c -o client.obj `if test -f 'src/client.cpp'; then $(CYGPATH_W) 'src/client.cpp'; else $(CYGPATH_W) '$(srcdir)/src/client.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/client.Tpo $(DEPDIR)/client.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/client.cpp' object='client.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o client.obj `if test -f 'src/client.cpp'; then $(CYGPATH_W) 'src/client.cpp'; else $(CYGPATH_W) '$(srcdir)/src/client.cpp'; fi`
 
 sdl_user.o: src/sdl_user.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT sdl_user.o -MD -MP -MF $(DEPDIR)/sdl_user.Tpo -c -o sdl_user.o `test -f 'src/sdl_user.cpp' || echo '$(srcdir)/'`src/sdl_user.cpp

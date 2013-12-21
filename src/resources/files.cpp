@@ -1,9 +1,9 @@
 #include <stdio.h>
 
-#include "client.h"
 #include "files.h"
+#include "sdl_user.h"
 
-files::files(client *who)
+files::files(sdl_user *who)
 {
 	theclient = who;
 }

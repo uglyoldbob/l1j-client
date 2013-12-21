@@ -3,8 +3,6 @@ if WINDOWS
 Lineage_LDFLAGS = -lmingw32
 endif
 Lineage_SOURCES = \
-src/client.cpp \
-src/client_common.cpp \
 src/config.cpp \
 src/connection.cpp \
 src/funcptr.cpp \
@@ -15,7 +13,7 @@ src/packet.cpp \
 src/packet_data.cpp \
 src/sdl_master.cpp \
 src/sdl_user.cpp \
-src/unsorted.cpp \
+src/sdl_user_common.cpp \
 src/widgets/chat_window.cpp \
 src/widgets/sdl_animate_button.cpp \
 src/widgets/sdl_button.cpp \
@@ -29,6 +27,7 @@ src/widgets/sdl_text_button.cpp \
 src/widgets/sdl_widget.cpp \
 src/widgets/sdl_window.cpp \
 src/widgets/sprite.cpp \
+src/widgets/sprite_motion.cpp \
 src/widgets/text_box.cpp \
 src/resources/briefcase.cpp \
 src/resources/files.cpp \
@@ -66,8 +65,6 @@ Admin_LDFLAGS = -lmingw32
 endif
 
 Admin_SOURCES = \
-src/client_admin.cpp \
-src/client_common.cpp \
 src/config.cpp \
 src/connection.cpp \
 src/funcptr.cpp \
@@ -78,7 +75,7 @@ src/packet.cpp \
 src/packet_data.cpp \
 src/sdl_master.cpp \
 src/sdl_admin.cpp \
-src/unsorted.cpp \
+src/sdl_user_common.cpp \
 src/widgets/chat_window.cpp \
 src/widgets/sdl_animate_button.cpp \
 src/widgets/sdl_button.cpp \
@@ -92,6 +89,7 @@ src/widgets/sdl_text_button.cpp \
 src/widgets/sdl_widget.cpp \
 src/widgets/sdl_window.cpp \
 src/widgets/sprite.cpp \
+src/widgets/sprite_motion.cpp \
 src/widgets/text_box.cpp \
 src/resources/briefcase.cpp \
 src/resources/files.cpp \

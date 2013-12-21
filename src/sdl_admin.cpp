@@ -2,13 +2,13 @@
 #include <SDL/SDL_image.h>
 #include <time.h>
 
-#include "client.h"
 #include "drawmode/draw_admin_main.h"
 #include "drawmode/draw_maint_img.h"
 #include "drawmode/draw_maint_map.h"
 #include "drawmode/draw_maint_sprites.h"
 #include "drawmode/draw_maint_til.h"
 #include "globals.h"
+#include "lindes.h"
 #include "resources/sdl_font.h"
 #include "sdl_user.h"
 
@@ -42,11 +42,7 @@ sdl_user::sdl_user(Uint32 flags)
 	ready = false;
 	
 	drawmode = 0;
-}
-
-void sdl_user::init_client(client *clnt)
-{
-	game = clnt;
+	common_construct();
 }
 
 void sdl_user::send_packet(packet_data &sendme)
@@ -69,6 +65,7 @@ sdl_user::~sdl_user()
 		delete [] map_tiles;
 		map_tiles = 0;
 	}
+	common_destruct();
 }
 
 int sdl_user::init_tiles()
@@ -110,16 +107,6 @@ void sdl_user::mouse_to(SDL_MouseMotionEvent *to)
 		drawmode->mouse_to(to);
 	}
 	SDL_mutexV(draw_mtx);
-}
-
-int sdl_user::add_request(client_request obj)
-{
-	return game->add_request(obj);
-}
-
-void sdl_user::cancel_request(int id)
-{
-	game->cancel_request(id);
 }
 
 void sdl_user::mouse_from(SDL_MouseMotionEvent *from)
@@ -224,15 +211,10 @@ bool sdl_user::quit_request()
 	if (temp)
 	{
 		printf("Telling the client to stop\n");
-		game->delete_requests();
-		game->stop();
+		delete_requests();
+		stop();
 	}
 	return temp;
-}
-
-client *sdl_user::get_client()
-{
-	return game;
 }
 
 /** Am I in a specific drawmode? */
@@ -272,7 +254,7 @@ void sdl_user::check_for_change_drawmode()
 		ready = false;
 		if (drawmode != 0)
 		{
-			game->delete_requests();
+			delete_requests();
 			delete drawmode;
 			drawmode = 0;
 		}
@@ -326,4 +308,62 @@ void sdl_user::draw(SDL_Surface *display)
 		}
 	}
 	SDL_mutexV(draw_mtx);
+}
+
+void sdl_user::init()
+{
+	main_config = new config("Lineage.ini");
+	if (!main_config->config_ok())
+	{
+		delete main_config;
+		main_config = 0;
+		throw "ERROR Loading configuration file.\n";
+	}
+	char *test;
+	test = (char*)getfiles->load_file("Sprite00.idx", 0, FILE_REGULAR1, 0);
+	if (test == 0)
+	{
+		throw "Lineage Data not found";
+	}
+	delete [] test;
+	test = 0;
+	lineage_font.init("Font/eng.fnt", this);
+
+	DesKeyInit("~!@#%^$<");	//TODO : move this code to a class and use an object
+	init_packs();
+	init_tiles();
+	
+	change_drawmode(DRAWMODE_ADMIN_MAIN);
+	while (!are_you_ready())
+	{
+		check_requests();
+	}
+	
+	init_codepage(0);
+	init_math_tables();
+	printf("STUB Load player config\n");
+	printf("STUB Initialize emblem cache\n");
+	init_strings();
+}
+
+void sdl_user::register_char(lin_char_info *data)
+{
+}
+
+int sdl_user::run()
+{
+	try
+	{
+		init();
+		while (1)
+		{
+			SDL_Delay(10);
+			check_requests();
+		}
+	}
+	catch (const char *error)
+	{
+		printf("FATAL ERROR: %s\n", error);
+		done = true;
+	}
 }

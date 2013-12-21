@@ -1,4 +1,3 @@
-#include "client.h"
 #include "draw_maint_map.h"
 #include "globals.h"
 #include "resources/map_coord.h"

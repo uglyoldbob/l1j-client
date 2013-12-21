@@ -1,4 +1,3 @@
-#include "client.h"
 #include "sdl_radio_button.h"
 
 sdl_radio_button::sdl_radio_button(int num, int x, int y, sdl_user *who, funcptr *stuff,

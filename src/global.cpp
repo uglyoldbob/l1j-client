@@ -1,4 +1,3 @@
-#include "client.h"
 #include "globals.h"
 #include "resources/files.h"
 #include "resources/reg_font.h"

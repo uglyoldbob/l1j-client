@@ -1,123 +1,11 @@
-#include "sdl_user.h"
-#include "client.h"
-#include "config.h"
-#include "connection.h"
-#include "drawmode/draw_char_sel.h"
-#include "drawmode/draw_game.h"
-#include "drawmode/draw_loading.h"
-#include "drawmode/sdl_drawmode.h"
+#include <ctype.h>
+#include <stdio.h>
+
 #include "globals.h"
-#include "lindes.h"
-#include "packet.h"
-#include "resources/briefcase.h"
-#include "resources/music.h"
-#include "resources/pack.h"
 #include "resources/partial_table.h"
-#include "resources/table.h"
-#include "unsorted.h"
+#include "sdl_user.h"
 
-#include <math.h>
-
-int client::pack_resources()
-{
-	return 0;
-}
-
-int client::init_packs()
-{
-	num_sprite_pack = 17;
-	textpack = new pack("Text", 1);
-	tilepack = new pack("Tile", 0);
-	spritepack = new pack*[num_sprite_pack];
-	spritepack[0] = new pack("Sprite", 0);
-	for (int i = 0; i < (num_sprite_pack-1); i++)
-	{
-		char name[10];
-		sprintf(name, "Sprite%02d", i);
-		spritepack[i+1] = new pack(name, 0);
-		//new_surf_pack and spritepack are the same thing
-		//new_icon_pack and spritepack are the same thing
-		//spriteFile is simply the first element of spritepack
-	}
-	//TODO: verify all packs were loaded successfully
-	
-	return 0;
-}
-
-void client::delete_packs()
-{
-	delete textpack;
-	textpack = 0;
-	
-	delete tilepack;
-	tilepack = 0;
-	
-	for (int i = 0; i < num_sprite_pack; i++)
-	{
-		delete spritepack[i];
-		spritepack[i] = 0;
-	}
-	num_sprite_pack = 0;
-	delete [] spritepack;
-	spritepack = 0;
-}
-
-int client::init_strings()
-{
-	int acp = -1;
-	if (acp == -1)
-	{
-//		printf("STUB GetACP()\n");
-		//acp = GetACP();
-	}
-	
-	partial_table test;
-	test.load_local("itemdesc", textpack);
-	
-	//list of filtered chat words
-	bad_words.load_local("obscene", textpack);
-	bad_words.sort();
-	
-	//list of tips for new players?
-	todays_tip.load_local("todaystip", textpack);
-//	printf("STUB Load MercenaryIconData\n");
-//	printf("STUB Load MagicDollData\n");
-	
-	//list of items
-	solvent.load_local("solvent", textpack);
-	
-	//list of pet types
-	pet.load_local("ntexpet", textpack);
-	
-	//no important items?
-	important_items.load("itemimportant.tbl", textpack);
-	
-//	printf("STUB Load BaseStatus\n");
-	
-	//unknown
-	teleport.load("telbook.tbl", textpack);
-	
-	//unknown
-	un_transaction.load("untransaction.tbl", textpack);
-	
-//	if (battleServer != 0)
-//	{
-//		table notices;
-//		notices.load("notice_bs.tbl");
-//		notices.print();
-//	}
-
-	strings.load_local("string", textpack);
-	
-	return 0;
-}
-
-void client::change_drawmode(enum drawmode chg)
-{
-	graphics->change_drawmode(chg);
-}
-
-client::client(sdl_user *stuff)
+void sdl_user::common_construct()
 {
 	requests_mtx = SDL_CreateMutex();
 	stop_thread = false;
@@ -131,7 +19,6 @@ client::client(sdl_user *stuff)
 	login_opts_used = 0;
 	login_opts_stored = 0;
 	main_config = 0;
-	graphics = stuff;
 	server = 0;
 	server_data = 0;
 	num_sprite_pack = 0;
@@ -142,7 +29,7 @@ client::client(sdl_user *stuff)
 	}
 }
 
-client::~client()
+void sdl_user::common_destruct()
 {
 	delete_requests();
 	SDL_DestroyMutex(requests_mtx);
@@ -200,9 +87,97 @@ client::~client()
 	delete_packs();
 }
 
+void sdl_user::create_chars(int used, int usable, int slots)
+{	//creates the array and makes them all blank
+	if (num_login_opts == 0)
+	{
+		num_login_opts = usable;	//the unusable slots will not be modified
+		login_opts_used = used;
+		login_opts = new lin_char_info*[slots];
+		for (int i = 0; i < slots; i++)
+		{
+			login_opts[i] = 0;
+		}
+		for (int i = num_login_opts; i < slots; i++)
+		{	
+			//possibly initialize them so they will display as not usable
+			printf("STUB: Slot %d is not usable\n", i+1);
+		}
+	}
+}
+
+void sdl_user::init_codepage(unsigned int arg)
+{
+//	printf("STUB init_codepage\n");
+//	memset(lead_table, 0, 0x100);
+//	for (int i = 0; i < 0x100; i++)
+//	{
+//		lower_table[i] = to_lower[i];
+//	}
+}
+
+void sdl_user::init_math_tables()
+{
+//	printf("STUB InitMathTables\n");	
+}
+
+int sdl_user::getNumber(char **buf)
+{
+	int is_neg = 0;
+	while ((*buf[0] != 0) && (isdigit(*buf[0]) == 0))
+	{
+		if (*buf[0] == '-')
+		{
+			is_neg = 1;
+		}
+		else if (*buf[0] != ' ')
+		{
+			is_neg = 0;
+		}
+		*buf = &buf[0][1];
+	}
+	int ret_val = 0;
+	
+	while ((*buf[0] != 0) && (isdigit(*buf[0]) != 0))
+	{
+		ret_val = ret_val*10 + *buf[0] - '0';
+		*buf = &buf[0][1];
+	}
+	if (is_neg != 0)
+	{
+		ret_val = -1 * ret_val;
+	}
+	return ret_val;
+}
+
+void sdl_user::LoadDurationTable(const char *file)
+{
+	char *table;
+	int length;
+	table = textpack->load_file(file, &length, 1);
+	char *buffer = table;
+	if (table != 0)
+	{
+		while (buffer[0] != 0)
+		{
+			getNumber(&buffer);
+			int arg1, arg2;
+			arg1 = getNumber(&buffer);
+			arg2 = getNumber(&buffer);
+			if (arg1 != 0)
+			{
+//				printf("STUB UpdateEffectInfo %d, %d\n", arg1, arg2);
+//				UpdateEffectInfo(arg1, arg2);
+			}
+		}
+		delete [] table;
+		table = 0;
+	}
+}
+
 /** This function checks to see if there are any requests that need to be filled. This includes things such as quitting, loading resources, sending packets to the server, etc. 
  */
-void client::check_requests()
+void sdl_user::check_requests()
 {
 	while (SDL_mutexP(requests_mtx) == -1) {};
 	if (stop_thread)
@@ -271,8 +246,7 @@ void client::check_requests()
 				temp->data.sload.item->load(
 					temp->data.sload.x,
 					temp->data.sload.y,
-					temp->data.sload.name,
-					this);
+					temp->data.sload.name);
 				delete [] temp->data.sload.name;
 				temp->data.sload.name = 0;
 				break;
@@ -288,7 +262,7 @@ void client::check_requests()
 	}
 }
 
-void client::free_request(client_request *temp)
+void sdl_user::free_request(client_request *temp)
 {
 	switch (temp->request)
 	{
@@ -313,7 +287,7 @@ void client::free_request(client_request *temp)
 }
 
 /** This is used to delete all requests */
-void client::delete_requests()
+void sdl_user::delete_requests()
 {
 	while (SDL_mutexP(requests_mtx) == -1) {};
 	while (request_list.size() > 0)
@@ -325,7 +299,7 @@ void client::delete_requests()
 	SDL_mutexV(requests_mtx);
 }
 
-unsigned int client::add_request(client_request rqst)
+unsigned int sdl_user::add_request(client_request rqst)
 {
 	unsigned int temp_val;
 	if (stop_thread == false)
@@ -363,7 +337,7 @@ unsigned int client::add_request(client_request rqst)
 	return temp_val;
 }
 
-void client::cancel_request(unsigned int id)
+void sdl_user::cancel_request(unsigned int id)
 {
 	while (SDL_mutexP(requests_mtx) == -1) {};
 	for (std::list<client_request*>::iterator it = request_list.begin();
@@ -400,66 +374,110 @@ void client::cancel_request(unsigned int id)
 	SDL_mutexV(requests_mtx);
 }
 
-int client::check_login_chars()
+int sdl_user::init_packs()
 {
-	return login_opts_stored;
-}
-
-void client::create_chars(int used, int usable, int slots)
-{	//creates the array and makes them all blank
-	if (num_login_opts == 0)
+	num_sprite_pack = 17;
+	textpack = new pack("Text", 1);
+	tilepack = new pack("Tile", 0);
+	spritepack = new pack*[num_sprite_pack];
+	spritepack[0] = new pack("Sprite", 0);
+	for (int i = 0; i < (num_sprite_pack-1); i++)
 	{
-		num_login_opts = usable;	//the unusable slots will not be modified
-		login_opts_used = used;
-		login_opts = new lin_char_info*[slots];
-		for (int i = 0; i < slots; i++)
-		{
-			login_opts[i] = 0;
-		}
-		for (int i = num_login_opts; i < slots; i++)
-		{	
-			//possibly initialize them so they will display as not usable
-			printf("STUB: Slot %d is not usable\n", i+1);
-		}
+		char name[10];
+		sprintf(name, "Sprite%02d", i);
+		spritepack[i+1] = new pack(name, 0);
+		//new_surf_pack and spritepack are the same thing
+		//new_icon_pack and spritepack are the same thing
+		//spriteFile is simply the first element of spritepack
 	}
+	//TODO: verify all packs were loaded successfully
+	
+	return 0;
 }
 
-config *client::get_config()
+void sdl_user::delete_packs()
 {
-	return main_config;
+	delete textpack;
+	textpack = 0;
+	
+	delete tilepack;
+	tilepack = 0;
+	
+	for (int i = 0; i < num_sprite_pack; i++)
+	{
+		delete spritepack[i];
+		spritepack[i] = 0;
+	}
+	num_sprite_pack = 0;
+	delete [] spritepack;
+	spritepack = 0;
 }
 
-lin_char_info** client::get_login_chars()
-{	//retrieves the entire array
-	return login_opts;
+int sdl_user::init_strings()
+{
+	int acp = -1;
+	if (acp == -1)
+	{
+//		printf("STUB GetACP()\n");
+		//acp = GetACP();
+	}
+	
+	partial_table test;
+	test.load_local("itemdesc", textpack);
+	
+	//list of filtered chat words
+	bad_words.load_local("obscene", textpack);
+	bad_words.sort();
+	
+	//list of tips for new players?
+	todays_tip.load_local("todaystip", textpack);
+//	printf("STUB Load MercenaryIconData\n");
+//	printf("STUB Load MagicDollData\n");
+	
+	//list of items
+	solvent.load_local("solvent", textpack);
+	
+	//list of pet types
+	pet.load_local("ntexpet", textpack);
+	
+	//no important items?
+	important_items.load("itemimportant.tbl", textpack);
+	
+//	printf("STUB Load BaseStatus\n");
+	
+	//unknown
+	teleport.load("telbook.tbl", textpack);
+	
+	//unknown
+	un_transaction.load("untransaction.tbl", textpack);
+	
+//	if (battleServer != 0)
+//	{
+//		table notices;
+//		notices.load("notice_bs.tbl");
+//		notices.print();
+//	}
+
+	strings.load_local("string", textpack);
+	
+	return 0;
 }
 
-void client::stop()
+void sdl_user::stop()
 {
 	stop_thread = true;
 }
 
-void client::user_is_done()
-{
-	wait_for_user = false;
-}
-
-void client::wait_on_user_cleanup()
-{
-	while (wait_for_user)
-	{
-	}
-}
-
 int run_client(void *moron)
 {	//the main thread for each client
-	client *game = new client((sdl_user*)moron);
 	sdl_user *temp;
 	temp = (sdl_user*)moron;
-	temp->init_client(game);
-	game->run();
-	game->wait_on_user_cleanup();
-	delete game;
-	game = 0;
+	temp->run();
 	return 0;
+}
+
+/** Return the config object from the client */
+config *sdl_user::get_config()
+{
+	return main_config;
 }

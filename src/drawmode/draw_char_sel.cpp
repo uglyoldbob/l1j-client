@@ -1,7 +1,7 @@
 #include "draw_char_sel.h"
 
-#include "client.h"
 #include "globals.h"
+#include "packet.h"
 #include "resources/prepared_graphics.h"
 #include "sdl_user.h"
 #include "widgets/sdl_animate_button.h"

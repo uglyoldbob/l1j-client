@@ -1,8 +1,8 @@
 #include <SDL/SDL.h>
 
-#include "client.h"
 #include "globals.h"
 #include "sdl_graphic.h"
+#include "sdl_user.h"
 
 sdl_graphic::sdl_graphic(int x, int y, int w, int h, int dummy)
 {
@@ -55,7 +55,7 @@ sdl_graphic::sdl_graphic(int x, int y, short *source, int type)
 	do_load(x, y, source, type);
 }
 
-sdl_graphic::sdl_graphic(char *name, int x, int y, int type, client *who)
+sdl_graphic::sdl_graphic(char *name, int x, int y, int type, sdl_user *who)
 {
 	delay_mtx = SDL_CreateMutex();
 	delay_loading = false;
@@ -64,7 +64,7 @@ sdl_graphic::sdl_graphic(char *name, int x, int y, int type, client *who)
 	do_load(name, x, y, type, who);
 }
 
-sdl_graphic::sdl_graphic(int num, int x, int y, int type, client *who)
+sdl_graphic::sdl_graphic(int num, int x, int y, int type, sdl_user *who)
 {
 	delay_mtx = SDL_CreateMutex();
 	delay_loading = false;
@@ -259,7 +259,7 @@ void sdl_graphic::do_load(int x, int y, short *source, int type)
 //	SDL_mutexV(delay_mtx);
 }
 
-void sdl_graphic::do_load(char *name, int x, int y, int type, client *who)
+void sdl_graphic::do_load(char *name, int x, int y, int type, sdl_user *who)
 {
 	while (SDL_mutexP(delay_mtx) == -1) {};
 	if (name == 0)
@@ -298,7 +298,7 @@ void sdl_graphic::do_load(char *name, int x, int y, int type, client *who)
 //	SDL_mutexV(delay_mtx);
 }
 
-void sdl_graphic::do_load(int num, int x, int y, int type, client *who)
+void sdl_graphic::do_load(int num, int x, int y, int type, sdl_user *who)
 {
 //	while (SDL_mutexP(delay_mtx) == -1) {};
 	char name[256];
@@ -381,7 +381,7 @@ void sdl_graphic::delay_load(int x, int y, SDL_RWops *source, short *palette, in
 	loader = orig;
 }
 
-void sdl_graphic::delay_load(char *name, int x, int y, int type, sdl_user *orig, client * who)
+void sdl_graphic::delay_load(char *name, int x, int y, int type, sdl_user *orig, sdl_user * who)
 {
 	client_request tmp;
 	tmp.request = CLIENT_REQUEST_LOAD_SDL_GRAPHIC;
@@ -396,7 +396,7 @@ void sdl_graphic::delay_load(char *name, int x, int y, int type, sdl_user *orig,
 	loader = orig;
 }
 
-void sdl_graphic::delay_load(int num, int x, int y, int type, sdl_user *orig, client * who)
+void sdl_graphic::delay_load(int num, int x, int y, int type, sdl_user *orig, sdl_user * who)
 {
 	client_request tmp;
 	tmp.request = CLIENT_REQUEST_LOAD_SDL_GRAPHIC;
@@ -581,7 +581,7 @@ void sdl_graphic::mod_with(SDL_Surface *display)
 	}	
 }
 
-SDL_Surface *sdl_graphic::get_img(int num, client *who)
+SDL_Surface *sdl_graphic::get_img(int num, sdl_user *who)
 {
 	SDL_Surface *image;
 	image = (SDL_Surface *)0;
@@ -672,7 +672,7 @@ void sdl_graphic::check_fix_png(char *buffer, int *size)
 	}
 }
 
-SDL_Surface *sdl_graphic::get_png_image(char *name, client *who)
+SDL_Surface *sdl_graphic::get_png_image(char *name, sdl_user *who)
 {
 	char *buffer;
 	SDL_Surface *ret;

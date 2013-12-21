@@ -2,13 +2,10 @@
 #define __SDL_WIDGET_H_
 
 #include <SDL/SDL.h>
-class client;
 
 #include "globals.h"
 #include "resources/sdl_graphic.h"
-#include "sdl_user.h"
-
-class client;
+class sdl_user;
 
 class sdl_widget
 {

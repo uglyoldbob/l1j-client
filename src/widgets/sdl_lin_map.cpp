@@ -2,7 +2,6 @@
 #include <SDL/SDL_endian.h>
 #include <stdio.h>
 
-#include "client.h"
 #include "resources/coord.h"
 #include "resources/map_coord.h"
 #include "resources/pixel_coord.h"
@@ -11,6 +10,7 @@
 #include "globals.h"
 #include "resources/pack.h"
 #include "sdl_lin_map.h"
+#include "sdl_user.h"
 #include "sdl_widget.h"
 
 sdl_lin_map::sdl_lin_map(sdl_user *who, int x, int y, int w, int h)
@@ -96,7 +96,7 @@ void sdl_lin_map::draw_info(SDL_Surface *display, int x, int y)
 	}
 }
 
-void sdl_lin_map::handle_s32(SDL_RWops *sdl_buf, lin_map_segment *ret, int mapnum, int x, int y, client *from)
+void sdl_lin_map::handle_s32(SDL_RWops *sdl_buf, lin_map_segment *ret, int mapnum, int x, int y, sdl_user *from)
 {
 	ret->mapdata = new lin_map_data;
 	
@@ -341,7 +341,7 @@ void sdl_lin_map::handle_s32(SDL_RWops *sdl_buf, lin_map_segment *ret, int mapnu
 //	printf("Took %d millis to load/draw a section\n", SDL_GetTicks() - timecheck);
 }
 
-void sdl_lin_map::handle_seg(SDL_RWops *sdl_buf, lin_map_segment *ret, int mapnum, int x, int y, client *from)
+void sdl_lin_map::handle_seg(SDL_RWops *sdl_buf, lin_map_segment *ret, int mapnum, int x, int y, sdl_user *from)
 {
 	ret->graphic = 0;
 	ret->mapdata = 0;
@@ -360,7 +360,7 @@ void sdl_lin_map::remove_character(uint32_t id)
 	SDL_mutexV(edit_mtx);
 }
 
-void sdl_lin_map::move_sprite(uint32_t id, int x, int y, int sprite_num)
+void sdl_lin_map::move_sprite(uint32_t id, int x, int y, int sprite_num, int heading)
 {
 	while (SDL_mutexP(edit_mtx) == -1) {};
 	std::map<uint32_t, sprite*>::iterator i;
@@ -368,19 +368,17 @@ void sdl_lin_map::move_sprite(uint32_t id, int x, int y, int sprite_num)
 	if (i == sprites_on_map.end())
 	{
 		sprite *temp = new sprite(x, y, myclient);
-		char tempname[50];
-		sprintf(tempname, "%d-8.spr", sprite_num);
-		temp->load(x, y, tempname, myclient->get_client());
+		temp->load(x, y, sprite_num, heading);
 		sprites_on_map[id] = temp;
 	}
 	else
 	{
-		sprites_on_map[id]->move(x, y);
+		sprites_on_map[id]->move(x, y, heading);
 	}
 	SDL_mutexV(edit_mtx);
 }
 
-lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y, client *from)
+lin_map_segment sdl_lin_map::get_map(int mapnum, int x, int y, sdl_user *from)
 {
 //	Uint32 timecheck = SDL_GetTicks();
 	lin_map_segment ret;
@@ -473,7 +471,7 @@ void sdl_lin_map::delete_segment(lin_map_segment delme)
 /** Make sure the 4 sections that are loaded actually covers the screen. 
  * Swap segments around as necessary to minimize data loading. 
  * Load map segments if required. */
-void sdl_lin_map::check_sections(client *from)
+void sdl_lin_map::check_sections(sdl_user *from)
 {
 	int width, height;
 	width = one->getw();

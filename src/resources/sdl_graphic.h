@@ -5,8 +5,6 @@
 
 class sdl_user;
 
-class client;
-
 enum SDL_GRAPH_TYPES
 {
 	GRAPH_IMG,
@@ -22,21 +20,21 @@ class sdl_graphic
 {
 	public:
 		sdl_graphic();
-		sdl_graphic(int num, int x, int y, int type, client *who);
-		sdl_graphic(char *name, int x, int y, int type, client *who = 0);
+		sdl_graphic(int num, int x, int y, int type, sdl_user *who);
+		sdl_graphic(char *name, int x, int y, int type, sdl_user *who = 0);
 		sdl_graphic(int x, int y, SDL_RWops *source, short *palette, int type);
 		sdl_graphic(int x, int y, short *source, int type);
 		sdl_graphic(int x, int y, int w, int h, int dummy);
 
 		void do_load(int x, int y, short *source, int type);
 		void do_load(int x, int y, SDL_RWops *source, short *palette, int type);
-		void do_load(char *name, int x, int y, int type, client * who = 0);
-		void do_load(int num, int x, int y, int type, client * who = 0);
+		void do_load(char *name, int x, int y, int type, sdl_user * who = 0);
+		void do_load(int num, int x, int y, int type, sdl_user * who = 0);
 
 		void delay_load(int x, int y, short *source, int type, sdl_user *orig);
 		void delay_load(int x, int y, SDL_RWops *source, short *palette, int type, sdl_user *orig);
-		void delay_load(char *name, int x, int y, int type, sdl_user *orig, client * who = 0);
-		void delay_load(int num, int x, int y, int type, sdl_user *orig, client * who = 0);
+		void delay_load(char *name, int x, int y, int type, sdl_user *orig, sdl_user * who = 0);
+		void delay_load(int num, int x, int y, int type, sdl_user *orig, sdl_user * who = 0);
 
 		void disable_clear();
 		Uint32 color(Uint8 r, Uint8 g, Uint8 b);
@@ -64,8 +62,8 @@ class sdl_graphic
 		Uint32 transp_color;
 		bool cleanup;
 
-		SDL_Surface *get_img(int num, client *who);
-		SDL_Surface *get_png_image(char *name, client *who);
+		SDL_Surface *get_img(int num, sdl_user *who);
+		SDL_Surface *get_png_image(char *name, sdl_user *who);
 		void check_fix_png(char *buffer, int *size);
 		SDL_Surface *get_image(SDL_RWops *buf);
 

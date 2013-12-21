@@ -2,13 +2,11 @@
 #include <string.h>
 #include <wchar.h>
 
-#include "client.h"
 #include "drawmode/draw_char_sel.h"
 #include "drawmode/draw_game.h"
 #include "drawmode/draw_new_char.h"
 #include "globals.h"
 #include "packet.h"
-#include "unsorted.h"
 #include "widgets/chat_window.h"
 
 static const int MAX_LENGTH = 0x13fe;
@@ -21,7 +19,7 @@ void packet::send_packet(packet_data &sendme)
 	}
 
 	//convert opcode before sending to the server
-	sendme[0] = game->convert_client_packets[sendme[0]];
+	sendme[0] = theuser->convert_client_packets[sendme[0]];
 
 	//key for changing encryption is retrieved and put back
 	unsigned char key_change[4];
@@ -67,7 +65,10 @@ packet_data &packet::get_packet(bool translate)
 				}	
 				if (translate)
 				{
-					data[0] = game->convert_server_packets[data[0]];
+					uint8_t temp = data[0];
+					data[0] = theuser->convert_server_packets[data[0]];
+					if (data[0] == 255)
+						printf("A PACKET (%d) WAS untranslated\n", temp);
 				}
 			}
 			else
@@ -160,10 +161,9 @@ void packet::decrypt(packet_data &dme)
 	}
 }
 
-packet::packet(client *clnt, connection *serve, sdl_user *blabla)
+packet::packet(connection *serve, sdl_user *blabla)
 {
 	//merely copy the existing connection so we can use it
-	game = clnt;
 	server = serve;
 	mode = 0;
 	key_initialized = 0;
@@ -472,6 +472,7 @@ void packet::move_object()
 		placeme.y = y;
 		placeme.emit_light = 0;
 		placeme.gnd_icon = 0;
+		placeme.heading = heading;
 		placeme.count = 0;
 		placeme.id = id;
 		temp->place_character(&placeme);
@@ -499,6 +500,7 @@ void packet::ground_item()
 		placeme.x = x;
 		placeme.y = y;
 		placeme.emit_light = emit_light;
+		placeme.heading = -1;
 		placeme.gnd_icon = gnd_icon;
 		placeme.count = count;
 		placeme.id = id;
@@ -631,7 +633,7 @@ void packet::char_create_result()
 			draw_new_char* temp;
 			temp = (draw_new_char*)(theuser->get_drawmode(false));
 			tempchar = temp->get_char();
-			game->register_char(tempchar);
+			theuser->register_char(tempchar);
 			tempchar = 0;
 			temp = 0;
 			theuser->done_with_drawmode();
@@ -652,8 +654,8 @@ void packet::num_char_packet()
 		max_characters = 8;
 	}
 	
-	game->create_chars(num_characters, max_characters, 8);
-	game->register_char(0);
+	theuser->create_chars(num_characters, max_characters, 8);
+	theuser->register_char(0);
 }
 
 void packet::login_char_packet()
@@ -689,7 +691,7 @@ void packet::login_char_packet()
 	temp->wis = wis;
 	temp->cha = cha;
 	temp->intl = intl;
-	game->register_char(temp);
+	theuser->register_char(temp);
 }
 
 void packet::login_check()
@@ -762,6 +764,7 @@ void packet::key_packet()
 {
 	unsigned int seed;
 	data >> seed;
+	printf("The key is 0x%x\n", seed);
 	create_key(seed);
 	data.clear();
 	//loadFile("VersionInfo", &r1_40);
@@ -806,35 +809,35 @@ void packet::server_version_packet()
 //	printf("Server id: %04x\n", serverId);
 	if (serverId == 0x012c)
 	{
-		game->LoadDurationTable("spelldur300.tbl");
+		theuser->LoadDurationTable("spelldur300.tbl");
 	}
 	else
 	{
-		game->LoadDurationTable("spelldur.tbl");
+		theuser->LoadDurationTable("spelldur.tbl");
 	}
 	if (countryCode == 3)
 	{
-		game->init_codepage(0x3b6);	//memset(lead_table, 0, 0x100); memset(lower_table, 0, 0x100); 
+		theuser->init_codepage(0x3b6);	//memset(lead_table, 0, 0x100); memset(lower_table, 0, 0x100); 
 //		serverCP = 0x3b6;
 	}
 	else if (countryCode == 4)
 	{
-		game->init_codepage(0x3a4);
+		theuser->init_codepage(0x3a4);
 //		serverCP = 0x3a4;
 	}
 	else if (countryCode == 0)
 	{
-		game->init_codepage(0x3b5);
+		theuser->init_codepage(0x3b5);
 //		serverCP = 0;
 	}
 	else if (countryCode == 5)
 	{
-		game->init_codepage(0x3a8);
+		theuser->init_codepage(0x3a8);
 //		serverCP = 0x3a8;
 	}
 	else
 	{
-		game->init_codepage(0x4e4);
+		theuser->init_codepage(0x4e4);
 //		serverCP = 0;
 	}
 //	printf("STUB AdjustExp()\n");

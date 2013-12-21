@@ -2,7 +2,6 @@
 #define __SDL_WINDOW_H_
 
 #include "sdl_widget.h"
-class client;
 
 class sdl_window : public sdl_widget
 {

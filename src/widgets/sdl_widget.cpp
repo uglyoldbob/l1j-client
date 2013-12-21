@@ -1,6 +1,5 @@
 #include <SDL/SDL.h>
 
-#include "client.h"
 #include "globals.h"
 #include "sdl_widget.h"
 

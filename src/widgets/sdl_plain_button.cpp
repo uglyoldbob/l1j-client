@@ -1,4 +1,3 @@
-#include "client.h"
 #include "resources/sdl_graphic.h"
 #include "sdl_plain_button.h"
 

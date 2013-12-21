@@ -1,7 +1,7 @@
 #include "chat_window.h"
-#include "client.h"
 #include "drawmode/draw_game.h"
 #include "globals.h"
+#include "packet.h"
 #include "widgets/sdl_input_box.h"
 #include "widgets/sdl_widget.h"
 #include "widgets/text_box.h"

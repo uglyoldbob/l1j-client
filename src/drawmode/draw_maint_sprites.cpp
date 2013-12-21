@@ -1,6 +1,5 @@
 #include "draw_maint_sprites.h"
 
-#include "client.h"
 #include "globals.h"
 #include "resources/prepared_graphics.h"
 #include "sdl_user.h"
@@ -111,11 +110,8 @@ void draw_maint_sprites::redo_sprite()
 		delete widgets[0];
 		widgets[0] = 0;
 	}
-	char new_name[50];
-	memset(new_name, 0, 50);
-	sprintf(new_name, "%d-%d.spr", x, y);
 	widgets[0] = new sprite(320, 400, owner);//new_name, owner);
-	((sprite*)(widgets[0]))->delay_load(320, 400, new_name, owner->get_client());
+	((sprite*)(widgets[0]))->load(320, 400, x, y);
 	SDL_mutexV(draw_mtx);
 }
 

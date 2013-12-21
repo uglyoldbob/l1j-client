@@ -3,8 +3,6 @@
 
 #include "sdl_widget.h"
 
-class client;
-
 class text_box : public sdl_widget
 {
 	public:

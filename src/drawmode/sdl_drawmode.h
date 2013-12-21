@@ -5,10 +5,10 @@
 #include <SDL/SDL.h>
 
 #include "resources/sdl_graphic.h"
+#include "widgets/sdl_widget.h"
 
 class graphics_data;
 class sdl_user;
-class sdl_widget;
 
 enum drawmode
 {

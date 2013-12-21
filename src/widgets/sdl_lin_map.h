@@ -67,12 +67,12 @@ class sdl_lin_map : public sdl_widget
 		tile *tile_data;	//used for reference only
 		int get_offset_x();	/**< Returns the calculated offset for this map */
 		int get_offset_y();	/**< Returns the calculated offset for this map */
-		void check_sections(client *from);	/**< Check the loaded sections whenever the map gets moved */
+		void check_sections(sdl_user *from);	/**< Check the loaded sections whenever the map gets moved */
 		void mouse_to(SDL_MouseMotionEvent *to);
 		void mouse_from(SDL_MouseMotionEvent *to);
 		void mouse_click(SDL_MouseButtonEvent *here);
 		
-		void move_sprite(uint32_t id, int x, int y, int sprite_num);	/**< Places a sprite at a given location */
+		void move_sprite(uint32_t id, int x, int y, int sprite_num, int heading);	/**< Places a sprite at a given location */
 		void remove_character(uint32_t id);
 	private:
 		SDL_mutex *edit_mtx;
@@ -87,9 +87,9 @@ class sdl_lin_map : public sdl_widget
 		bool cursor_valid;
 		void draw_cursor(int x, int y, SDL_Surface *display);
 		
-		lin_map_segment get_map(int mapnum, int x, int y, client *from);	//returns a map section
-		void handle_s32(SDL_RWops *sdl_buf, lin_map_segment *ret, int mapnum, int x, int y, client *from);
-		void handle_seg(SDL_RWops *sdl_buf, lin_map_segment *ret, int mapnum, int x, int y, client *from);
+		lin_map_segment get_map(int mapnum, int x, int y, sdl_user *from);	//returns a map section
+		void handle_s32(SDL_RWops *sdl_buf, lin_map_segment *ret, int mapnum, int x, int y, sdl_user *from);
+		void handle_seg(SDL_RWops *sdl_buf, lin_map_segment *ret, int mapnum, int x, int y, sdl_user *from);
 		void delete_segment(lin_map_segment delme);
 
 		std::map<uint32_t, sprite*>sprites_on_map;

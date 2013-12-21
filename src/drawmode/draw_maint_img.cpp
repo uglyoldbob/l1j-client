@@ -1,4 +1,3 @@
-#include "client.h"
 #include "draw_maint_img.h"
 #include "resources/prepared_graphics.h"
 #include "sdl_user.h"

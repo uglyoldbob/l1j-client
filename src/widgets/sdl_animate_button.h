@@ -2,11 +2,10 @@
 #define __SDL_ANIMATE_BUTTON_H_
 
 #include <SDL/SDL.h>
-class client;
 
+#include "sdl_widget.h"
 #include "globals.h"
 #include "sdl_plain_button.h"
-#include "sdl_widget.h"
 
 class sdl_animate_button : public sdl_plain_button
 {

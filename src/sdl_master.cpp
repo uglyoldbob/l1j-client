@@ -3,7 +3,7 @@
 #include <time.h>
 
 #include "sdl_master.h"
-#include "client.h"
+#include "sdl_user.h"
 #include "resources/pack.h"
 
 /** Initilization of the main gui object */
@@ -123,11 +123,8 @@ bool sdl_master::check_users(bool last)
 		{
 			printf("Stop sdl_user\n");
 			int bla;
-			client *tclient = clients[0]->get_client();
 			delete clients[0];
 			clients[0] = 0;
-			tclient->user_is_done();
-			tclient = 0;
 			SDL_WaitThread(game_client[0], &bla);
 			SDL_FreeSurface(cdisplay[0]);
 			cdisplay[0] = 0;

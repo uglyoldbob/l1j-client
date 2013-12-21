@@ -1,4 +1,3 @@
-#include "client.h"
 #include "draw_game.h"
 #include "resources/prepared_graphics.h"
 #include "sdl_user.h"
@@ -191,7 +190,7 @@ void draw_game::remove_character(uint32_t id)
 
 void draw_game::place_character(ground_item *info)
 {
-	themap->move_sprite(info->id, info->x, info->y, info->gnd_icon);
+	themap->move_sprite(info->id, info->x, info->y, info->gnd_icon, info->heading);
 	if (info->id == charid)
 	{
 		change_location(info->x, info->y);

@@ -1,4 +1,3 @@
-#include "client.h"
 #include "sdl_button.h"
 
 sdl_button::sdl_button(int num, int x, int y, sdl_user *who, funcptr *stuff)

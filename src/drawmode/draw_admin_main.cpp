@@ -1,6 +1,5 @@
 #include "draw_admin_main.h"
 
-#include "client.h"
 #include "globals.h"
 #include "resources/prepared_graphics.h"
 #include "sdl_user.h"

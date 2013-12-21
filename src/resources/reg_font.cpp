@@ -1,10 +1,10 @@
 #include <SDL/SDL.h>
 #include <string.h>
 
-#include "client.h"
 #include "files.h"
 #include "globals.h"
 #include "reg_font.h"
+#include "sdl_user.h"
 
 reg_font::reg_font()
 {
@@ -27,7 +27,7 @@ reg_font::~reg_font()
 	}
 }
 
-bool reg_font::init(const char *name, client *who)
+bool reg_font::init(const char *name, sdl_user *who)
 {	//eng.fnt has from 0x20 - 0x7f
 	SDL_Surface *loser;
 

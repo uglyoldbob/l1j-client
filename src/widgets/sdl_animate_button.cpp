@@ -1,4 +1,3 @@
-#include "client.h"
 #include "sdl_animate_button.h"
 
 int sdl_animate_button::frame_time = 67;

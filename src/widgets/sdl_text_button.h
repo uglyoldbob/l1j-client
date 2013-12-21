@@ -2,7 +2,6 @@
 #define __SDL_TEXT_BUTTON_H_
 
 #include <SDL/SDL.h>
-class client;
 
 #include "globals.h"
 #include "sdl_plain_button.h"
@@ -17,6 +16,7 @@ class sdl_text_button : public sdl_plain_button
 		virtual ~sdl_text_button();
 		void set_display(const char* disp);
 		virtual void draw(SDL_Surface *display);
+
 	protected:
 		int xpos, ypos;
 };

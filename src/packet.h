@@ -7,12 +7,10 @@
 #include "connection.h"
 #include "packet_data.h"
 
-class client;
-
 class packet
 {
 	public:
-		packet(client *clnt, connection *serve, sdl_user *blabla);
+		packet(connection *serve, sdl_user *blabla);
 		~packet();
 		
 		void send_packet(packet_data &sendme);
@@ -28,7 +26,6 @@ class packet
 		int mode;	//what mode is packet decoding in?
 		volatile int key_initialized;
 		connection *server;
-		client *game;
 		sdl_user *theuser;
 		packet_data data;
 

@@ -2,7 +2,6 @@
 #define __SDL_CHECK_BUTTON_H_
 
 #include <SDL/SDL.h>
-class client;
 
 #include "globals.h"
 #include "sdl_plain_button.h"

@@ -1,7 +1,6 @@
 #ifndef _SDL_INPUT_BOX_H_
 #define _SDL_INPUT_BOX_H_
 
-class client;
 #include "sdl_widget.h"
 
 #define MAX_LENGTH 100

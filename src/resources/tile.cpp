@@ -2,10 +2,10 @@
 #include <SDL/SDL_endian.h>
 #include <stdio.h>
 
-#include "client.h"
 #include "files.h"
 #include "globals.h"
 #include "pack.h"
+#include "sdl_user.h"
 #include "tile.h"
 #include "widgets/sdl_widget.h"
 
@@ -172,7 +172,7 @@ sdl_graphic *tile::get_special(int which)
 	return ret;
 }
 
-void tile::delay_load(int which, sdl_user *orig, client *who)
+void tile::delay_load(int which, sdl_user *orig)
 {
 	if (delay_loading == false)
 	{
@@ -186,7 +186,7 @@ void tile::delay_load(int which, sdl_user *orig, client *who)
 	}
 }
 
-void tile::load(int which, client *who)
+void tile::load(int which, sdl_user *who)
 {
 	while (SDL_mutexP(delay_mtx) == -1) {};
 	if (tdata == 0)

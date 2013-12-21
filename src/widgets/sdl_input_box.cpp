@@ -1,4 +1,3 @@
-#include "client.h"
 #include "sdl_input_box.h"
 
 #include "globals.h"
@@ -21,6 +20,10 @@ sdl_input_box::sdl_input_box(int num, int x, int y, bool protect, sdl_user *who)
 
 sdl_input_box::~sdl_input_box()
 {
+	if (protecting)
+	{
+		memset(field, 0, field_length);
+	}
 	delete [] field;
 	field = 0;
 	delete [] protectme;

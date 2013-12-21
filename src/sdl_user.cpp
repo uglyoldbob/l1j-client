@@ -1,31 +1,32 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
 
-#include "client.h"
 #include "drawmode/draw_char_sel.h"
 #include "drawmode/draw_game.h"
 #include "drawmode/draw_new_char.h"
 #include "drawmode/draw_loading.h"
 #include "drawmode/draw_login.h"
 #include "globals.h"
+#include "lindes.h"
+#include "packet.h"
 #include "resources/sdl_font.h"
 #include "sdl_user.h"
 
 /** signal the client thread through the client object that we are quitting */
 void sdl_user::quit_client()
 {
-	game->stop();
+	stop();
 	done = true;
 }
 
 int sdl_user::check_login_chars()
 {
-	return game->check_login_chars();
+	return login_opts_stored;
 }
 
 lin_char_info** sdl_user::get_login_chars()
-{
-	return game->get_login_chars();
+{	//retrieves the entire array
+	return login_opts;
 }
 
 /** Initiate the login into the game server 
@@ -34,7 +35,7 @@ void sdl_user::login(const char *name, const char *pass)
 {
 	packet_data sendme;
 	sendme << ((uint8_t)CLIENT_LOGIN) << name << pass;
-	game->send_packet(sendme);
+	send_packet(sendme);
 }
 
 /** Initialize ourself, create our screen, etc.. */
@@ -51,12 +52,7 @@ sdl_user::sdl_user(Uint32 flags)
 
 	drawmode = 0;
 	map_tiles = 0;
-}
-
-/** copy the reference to the client object */
-void sdl_user::init_client(client *clnt)
-{
-	game = clnt;
+	common_construct();
 }
 
 int sdl_user::init_tiles()
@@ -81,7 +77,7 @@ int sdl_user::init_tiles()
 	{
 		map_tiles = 0;
 	}
-	smallfont.init("Font/SMALL.FNT", game);
+	smallfont.init("Font/SMALL.FNT", this);
 	return 0;
 }
 
@@ -103,6 +99,7 @@ sdl_user::~sdl_user()
 		delete [] map_tiles;
 		map_tiles = 0;
 	}
+	common_destruct();
 }
 
 tile *sdl_user::get_tiles()
@@ -145,12 +142,6 @@ bool sdl_user::mouse_leave()
 	}
 	SDL_mutexV(draw_mtx);
 	return ret_val;
-}
-
-void sdl_user::send_packet(packet_data &sendme)
-{
-	if (game != 0)
-		game->send_packet(sendme);
 }
 
 void sdl_user::mouse_move(SDL_MouseMotionEvent *from, SDL_MouseMotionEvent *to)
@@ -251,8 +242,8 @@ bool sdl_user::quit_request()
 	if (temp)
 	{
 		printf("Telling the client to stop\n");
-		game->delete_requests();
-		game->stop();
+		delete_requests();
+		stop();
 	}
 	return temp;
 }
@@ -267,16 +258,6 @@ void sdl_user::change_drawmode(enum drawmode chg)
 	SDL_mutexV(draw_mtx);
 }
 
-void sdl_user::cancel_request(int id)
-{
-	game->cancel_request(id);
-}
-
-client *sdl_user::get_client()
-{
-	return game;
-}
-
 void sdl_user::check_for_change_drawmode()
 {
 	while (SDL_mutexP(draw_mtx) == -1) {};
@@ -287,7 +268,7 @@ void sdl_user::check_for_change_drawmode()
 		ready = false;
 		if (drawmode != 0)
 		{
-			game->delete_requests();
+			delete_requests();
 			delete drawmode;
 			drawmode = 0;
 		}
@@ -329,11 +310,6 @@ void sdl_user::check_for_change_drawmode()
 	SDL_mutexV(draw_mtx);
 }
 
-int sdl_user::add_request(client_request obj)
-{
-	return game->add_request(obj);
-}
-
 /** Draw the game if the current drawmode is valid and if we are ready */
 void sdl_user::draw(SDL_Surface *display)
 {
@@ -349,8 +325,257 @@ void sdl_user::draw(SDL_Surface *display)
 	SDL_mutexV(draw_mtx);
 }
 
-/** Return the config object from the client */
-config * sdl_user::get_config()
+void sdl_user::register_char(lin_char_info *data)
+{	//puts character data into the array
+	if ((num_login_opts > 0) && (data != 0))
+	{
+		int i;
+		for (i = 0; i <= num_login_opts; i++)
+		{
+			if (login_opts[i] == 0)
+				break;
+		}
+		if (i < num_login_opts)
+		{
+			login_opts[i] = data;
+			login_opts_stored++;
+		}
+	}
+	if (login_opts_stored == login_opts_used)
+	{
+		draw_char_sel *bob;
+		wait_for_mode(DRAWMODE_CHARSEL, true);
+		bob = (draw_char_sel *)get_drawmode(false);
+		bob->get_login_chars();
+		done_with_drawmode();
+	}
+}
+
+void sdl_user::init()
 {
-	return game->get_config();
+	main_config = new config("Lineage.ini");
+	if (!main_config->config_ok())
+	{
+		delete main_config;
+		main_config = 0;
+		throw "ERROR Loading configuration file.\n";
+	}
+	char *test;
+	test = (char*)getfiles->load_file("Sprite00.idx", 0, FILE_REGULAR1, 0);
+	if (test == 0)
+	{
+		throw "Lineage Data not found";
+	}
+	delete [] test;
+	lineage_font.init("Font/eng.fnt", this);	//TODO : make a client specific version of the font
+	
+	DesKeyInit("~!@#%^$<");	//TODO : move this code to a class and use an object
+	init_packs();
+	init_tiles();
+
+	change_drawmode(DRAWMODE_LOADING);
+
+	while (!are_you_ready())
+	{
+		check_requests();
+	}
+	draw_loading *load;
+	int what_server;
+	load = (draw_loading*)get_drawmode(false);
+
+	//wait for the user to pick a server
+	do
+	{
+		what_server = load->get_server_pick();
+		check_requests();
+	} while (what_server == -1);
+	
+	server_name = new char[strlen(main_config->get_name(what_server)) + 1];
+	strcpy(server_name, main_config->get_name(what_server));
+
+	server = new connection(main_config, what_server);
+	proc = new packet(server, this);
+	if (get_updates(server, load) > 0)
+	{
+	}
+
+	//check for custom opcodes
+	unsigned char *copcodes;
+	copcodes = (unsigned char*)getfiles->load_file("opcodes.txt", 0, FILE_REGULAR3, 0);
+	if (copcodes != 0)
+	{	//there are custom opcodes for this server
+		printf("This server has custom opcodes\n");
+		int offset;
+		char *data = (char*)copcodes;
+		for (int i = 0; i < 256; i++)
+		{
+			char *p;
+			p = strtok(data, "\n");
+			if (data != NULL)
+				data = NULL;
+			int temp;
+			sscanf(p, "%d", &temp);
+			convert_client_packets[i] = (unsigned char)temp; 
+		}
+		for (int i = 0; i < 256; i++)
+		{
+			char *p;
+			p = strtok(data, "\n");
+			if (data != NULL)
+				data = NULL;
+			int temp;
+			sscanf(p, "%d", &temp);
+			convert_server_packets[i] = (unsigned char)temp;
+		}
+		delete [] copcodes;
+		copcodes = 0;
+	}
+
+	//begin game portion of client
+//	if (server->connection_ok() == 1)
+	{
+		if (server->change() != 1)
+		{
+			throw "Failed to connect to game server\n";
+		}
+	}
+
+	init_codepage(0);
+	init_math_tables();
+//	printf("STUB Load player config\n");
+//	printf("STUB Initialize emblem cache\n");
+	init_strings();
+	load->load_done();
+}
+
+int sdl_user::get_updates(connection* server, draw_loading *scrn)
+{
+	unsigned char temp;
+	unsigned short temp2;
+	unsigned int num_files;
+	int status;	//> 0 means update occurred
+	char hash[65];	//the hash is 64 bytes plus a null terminator
+	char display[256];	//the string for displaying stuff
+	status = 0;
+	try
+	{
+		if (server->connection_ok() == 1)
+		{
+			server_data = new briefcase(server_name);
+			strcpy(hash, server_data->get_hash());
+			temp2 = 0x4400;	//68 bytes of packet data
+			server->snd_var(&temp2, 2);
+			temp = 1;
+			server->snd_var(&temp, 1);
+			printf("The hash is: %s\n", hash);
+			server->snd_var(hash, 65);
+			//proc->reset();
+			packet_data temp_packet = proc->get_packet(false);
+			temp_packet >> temp >> num_files;
+			if ((temp == 2) || 
+				(strcmp(hash, "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855") == 0) )
+			{
+				printf("Creating new briefcase\n");
+				server_data->new_data();
+				if (temp == 2)
+				{
+					//proc->reset();
+					temp_packet = proc->get_packet(false);
+					temp_packet >> temp >> num_files;
+				}
+			}
+			else
+			{
+				printf("Adding to existing briefcase\n");
+				server_data->add_data();
+			}
+			for (unsigned int i = 0; i < num_files; i++)
+			{
+				unsigned char file_buffer[TRANSFER_AMOUNT];	//buffer space
+				char *file;
+				unsigned int offset = 0;
+				unsigned int filesize, orig_filesize;
+				char *filename;
+				//proc->reset();
+				packet_data temp_packet = proc->get_packet(false);
+				temp_packet >> temp >> filename >> filesize;
+				orig_filesize = filesize;
+				file = new char[filesize];
+				sprintf(display, "Receiving %s size %d (%d of %d)", filename, filesize, i+1, num_files);
+				scrn->add_text(display);
+				printf("%s\n", display);
+				while (filesize > 0)
+				{
+					if (filesize > TRANSFER_AMOUNT)
+					{
+						server->rcv(file_buffer, TRANSFER_AMOUNT);
+						memcpy(&file[offset], file_buffer, TRANSFER_AMOUNT);
+						offset += TRANSFER_AMOUNT;
+						filesize -= TRANSFER_AMOUNT;
+					}
+					else
+					{
+						server->rcv(file_buffer, filesize);
+						memcpy(&file[offset], file_buffer, filesize);
+						offset += filesize;
+						filesize = 0;
+					}
+				}
+				server_data->write_file(filename, file, orig_filesize);
+				delete [] file;
+				file = 0;
+				delete [] filename;
+				filename = 0;
+			}
+			server_data->finish_briefcase();
+			delete server_data;
+			server_data = new briefcase(server_name);
+			status = num_files;
+		}
+	}
+	catch(int e)
+	{
+		printf("An error occurred %d\n", e);
+		status = -1;
+	}
+	return status;
+}
+
+void sdl_user::change_map(int map_num)
+{
+	if (is_in_mode(DRAWMODE_GAME, true))
+	{
+		draw_game *dg = (draw_game*)get_drawmode(false);
+		dg->change_map(map_num);
+		done_with_drawmode();
+	}
+}
+
+int sdl_user::process_packet()
+{
+	proc->get_packet(true);
+	return proc->process_packet();
+}
+
+void sdl_user::send_packet(packet_data &sendme)
+{
+	proc->send_packet(sendme);
+}
+
+int sdl_user::run()
+{
+	try
+	{
+		init();
+		while (process_packet() == 0)
+		{
+			check_requests();
+		}
+	}
+	catch (const char *error)
+	{
+		printf("FATAL ERROR: %s\n", error);
+	}
+	done = true;
+	return 0;
 }

@@ -1,6 +1,5 @@
 #include "draw_loading.h"
 
-#include "client.h"
 #include "globals.h"
 #include "resources/prepared_graphics.h"
 #include "sdl_user.h"
@@ -89,9 +88,13 @@ void draw_loading::server_picked(int i)
 {
 	while (SDL_mutexP(spick_mtx) == -1) {};
 	//hide buttons, add text to the textbox
-	for (int ij = 0; ij < num_servers; ij++)
+	for (int ij = 1; ij <= num_servers; ij++)
+	{
 		widgets[ij]->hide(false);
+		widgets[ij]->set_key_focus(false);
+	}
 	((text_box*)widgets[0])->add_line("Checking for updates");
+	widgets[0]->cursor_on();
 	server_pick = i;
 	SDL_mutexV(spick_mtx);
 }
