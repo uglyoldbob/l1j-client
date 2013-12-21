@@ -203,13 +203,16 @@ int connection::rcv_varg(void *buf, int len)
 		temp = (char*)buf;
 		temp = &temp[recvd];
 		trans = recv(sock, temp, len-recvd, 0);
-		if (trans > 0)
+		if (trans >= 0)
 		{
 			recvd += trans;
 		}
 		else
 		{
-			return 0;
+			if (recvd == 0)
+			{
+				return 0;
+			}
 		}
 	}
 	

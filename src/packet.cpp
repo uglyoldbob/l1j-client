@@ -66,7 +66,7 @@ packet_data &packet::get_packet(bool translate)
 				if (translate)
 				{
 					uint8_t temp = data[0];
-					data[0] = theuser->convert_server_packets[data[0]];
+					data[0] = theuser->convert_server_packets[temp];
 					if (data[0] == 255)
 						printf("A PACKET (%d) WAS untranslated\n", temp);
 				}
