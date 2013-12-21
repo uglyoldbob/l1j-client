@@ -165,11 +165,6 @@ void sdl_graphic::do_load(int x, int y, short *source, int type)
 			img = SDL_CreateRGBSurface(SDL_SWSURFACE, 24, 24, 16,
 				0x7C00, 0x03E0, 0x001F, 0);
 			short *manip = (short*) &data[data_offset];
-			/** \todo find the actual size of the data */
-			//for (int i = 0; i <= width * height / 2; i++)
-			//{
-			//	manip[i] = SWAP16(manip[i]);
-			//}
 			cleanup = false;
 			pos = make_sdl_rect(x, y, width, height);
 			mask = make_sdl_rect(0, 0, width, height);
@@ -189,6 +184,10 @@ void sdl_graphic::do_load(int x, int y, short *source, int type)
 					row_temp = &row_temp[skip];
 		//			printf("\t\tSkip %d, print %d\n", skip, seg_width);
 					memcpy(row_temp, &data[data_offset], seg_width * 2);
+					for (int asdf = 0; asdf < seg_width; asdf++)
+					{
+						row_temp[asdf] = SWAP16(row_temp[asdf]);
+					}
 					data_offset += (seg_width * 2);
 					row_temp = &row_temp[seg_width];
 				}

@@ -121,7 +121,10 @@ void sdl_lin_map::handle_s32(SDL_RWops *sdl_buf, lin_map_segment *ret, int mapnu
 	{	//7d068
 		unsigned char *waste = new unsigned char[ret->mapdata->num_unknown2 * 6];
 		SDL_RWread(sdl_buf, waste, 6, ret->mapdata->num_unknown2);
-		//TODO : SWAP16 all the values in the array
+		for (int i = 0; i < ret->mapdata->num_unknown2; i++)
+		{
+			waste[i] = SWAP16(waste[i]);
+		}
 		delete [] waste;
 		waste = 0;
 	}	
@@ -175,6 +178,7 @@ void sdl_lin_map::handle_s32(SDL_RWops *sdl_buf, lin_map_segment *ret, int mapnu
 				char h;
 				SDL_RWread(sdl_buf, &h, 1, 1);
 				SDL_RWread(sdl_buf, &dummy, 1, 4);
+				dummy = SWAP32(dummy);
 				ret->mapdata->objs[i].tiles[j].x = b;
 				ret->mapdata->objs[i].tiles[j].y = c;
 				ret->mapdata->objs[i].tiles[j].h = h;
