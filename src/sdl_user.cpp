@@ -574,6 +574,7 @@ int sdl_user::run()
 	}
 	catch (const char *error)
 	{
+		ready = true;
 		printf("FATAL ERROR: %s\n", error);
 	}
 	done = true;
