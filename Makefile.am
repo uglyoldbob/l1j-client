@@ -190,18 +190,18 @@ mac_test: Admin$(EXEEXT)
 		echo mkdir client.app/Contents/Resources;\
 		mkdir client.app/Contents/Resources;\
 	fi
-	@if [ ! -d release_client.app/Contents/Frameworks ]; then\
-		echo mkdir release_client.app/Contents/Frameworks;\
-		mkdir release_client.app/Contents/Frameworks;\
+	@if [ ! -d client.app/Contents/Frameworks ]; then\
+		echo mkdir client.app/Contents/Frameworks;\
+		mkdir client.app/Contents/Frameworks;\
 	fi
 	@echo "Copying files to package folder"
 	cp -f ${top_srcdir}/src/LineageMac.ini ./client.app/Contents/Resources/Lineage.ini
 	install_name_tool -change @rpath/SDL.framework/Versions/A/SDL @executable_path/../Frameworks/SDL.framework/Versions/A/SDL Lineage${EXEEXT}
 	install_name_tool -change @rpath/SDL.framework/Versions/A/SDL @executable_path/../Frameworks/SDL.framework/Versions/A/SDL Admin${EXEEXT}
-	install_name_tool -change @rpath/SDL_mixer.framework/Versions/A/SDL @executable_path/../Frameworks/SDL_mixer.framework/Versions/A/SDL Lineage${EXEEXT}
-	install_name_tool -change @rpath/SDL_mixer.framework/Versions/A/SDL @executable_path/../Frameworks/SDL._mixerframework/Versions/A/SDL Admin${EXEEXT}
-	install_name_tool -change @rpath/SDL_image.framework/Versions/A/SDL @executable_path/../Frameworks/SDL_image.framework/Versions/A/SDL Lineage${EXEEXT}
-	install_name_tool -change @rpath/SDL_image.framework/Versions/A/SDL @executable_path/../Frameworks/SDL_image.framework/Versions/A/SDL Admin${EXEEXT}
+	install_name_tool -change @rpath/SDL_mixer.framework/Versions/A/SDL_mixer @executable_path/../Frameworks/SDL_mixer.framework/Versions/A/SDL_mixer Lineage${EXEEXT}
+	install_name_tool -change @rpath/SDL_mixer.framework/Versions/A/SDL_mixer @executable_path/../Frameworks/SDL._mixerframework/Versions/A/SDL_mixer Admin${EXEEXT}
+	install_name_tool -change @rpath/SDL_image.framework/Versions/A/SDL_image @executable_path/../Frameworks/SDL_image.framework/Versions/A/SDL_image Lineage${EXEEXT}
+	install_name_tool -change @rpath/SDL_image.framework/Versions/A/SDL_image @executable_path/../Frameworks/SDL_image.framework/Versions/A/SDL_image Admin${EXEEXT}
 	cp -f Lineage ./client.app/Contents/MacOS
 	cp -fr ${top_srcdir}/libs/SDL.framework ./client.app/Contents/Frameworks/
 	cp -fr ${top_srcdir}/libs/SDL_mixer.framework ./client.app/Contents/Frameworks/
@@ -234,16 +234,16 @@ mac_installer:
 	fi
 	@echo "Copying files to package folder"
 	cp -f ${top_srcdir}/src/LineageMac.ini ./release_client.app/Contents/Resources/Lineage.ini
-	cp -fr ${top_srcdir}/libs/SDL.framework ./client.app/Contents/Frameworks/
-	cp -fr ${top_srcdir}/libs/SDL_mixer.framework ./client.app/Contents/Frameworks/
-	cp -fr ${top_srcdir}/libs/SDL_image.framework ./client.app/Contents/Frameworks/
+	cp -fr ${top_srcdir}/libs/SDL.framework ./release_client.app/Contents/Frameworks/
+	cp -fr ${top_srcdir}/libs/SDL_mixer.framework ./release_client.app/Contents/Frameworks/
+	cp -fr ${top_srcdir}/libs/SDL_image.framework ./release_client.app/Contents/Frameworks/
 	install_name_tool -change @rpath/SDL.framework/Versions/A/SDL @executable_path/../Frameworks/SDL.framework/Versions/A/SDL Lineage${EXEEXT}
 	install_name_tool -change @rpath/SDL.framework/Versions/A/SDL @executable_path/../Frameworks/SDL.framework/Versions/A/SDL Admin${EXEEXT}
-	install_name_tool -change @rpath/SDL_mixer.framework/Versions/A/SDL @executable_path/../Frameworks/SDL_mixer.framework/Versions/A/SDL Lineage${EXEEXT}
-	install_name_tool -change @rpath/SDL_mixer.framework/Versions/A/SDL @executable_path/../Frameworks/SDL._mixerframework/Versions/A/SDL Admin${EXEEXT}
-	install_name_tool -change @rpath/SDL_image.framework/Versions/A/SDL @executable_path/../Frameworks/SDL_image.framework/Versions/A/SDL Lineage${EXEEXT}
-	install_name_tool -change @rpath/SDL_image.framework/Versions/A/SDL @executable_path/../Frameworks/SDL_image.framework/Versions/A/SDL Admin${EXEEXT}
-	cp -f Lineage${EXEEXT} ./release_client.app/Contents/MacOS
+	install_name_tool -change @rpath/SDL_mixer.framework/Versions/A/SDL_mixer @executable_path/../Frameworks/SDL_mixer.framework/Versions/A/SDL_mixer Lineage${EXEEXT}
+	install_name_tool -change @rpath/SDL_mixer.framework/Versions/A/SDL_mixer @executable_path/../Frameworks/SDL._mixerframework/Versions/A/SDL_mixer Admin${EXEEXT}
+	install_name_tool -change @rpath/SDL_image.framework/Versions/A/SDL_image @executable_path/../Frameworks/SDL_image.framework/Versions/A/SDL_image Lineage${EXEEXT}
+	install_name_tool -change @rpath/SDL_image.framework/Versions/A/SDL_image @executable_path/../Frameworks/SDL_image.framework/Versions/A/SDL_image Admin${EXEEXT}
+	cp -f Lineage ./release_client.app/Contents/MacOS
 	$(STRIP) -S ./release_client.app/Contents/MacOS/Lineage${EXEEXT}
 	cp -f ${top_srcdir}/src/Info.PList ./release_client.app/Contents
 	cp -f ${top_srcdir}/src/PkgInfo ./release_client.app/Contents
