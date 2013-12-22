@@ -1888,9 +1888,18 @@ mac_test: Admin$(EXEEXT)
 		echo mkdir client.app/Contents/Resources;\
 		mkdir client.app/Contents/Resources;\
 	fi
+	@if [ ! -d release_client.app/Contents/Frameworks ]; then\
+		echo mkdir release_client.app/Contents/Frameworks;\
+		mkdir release_client.app/Contents/Frameworks;\
+	fi
 	@echo "Copying files to package folder"
 	cp -f ${top_srcdir}/src/LineageMac.ini ./client.app/Contents/Resources/Lineage.ini
+	install_name_tool -change @rpath/SDL.framework/Versions/A/SDL @executable_path/../Frameworks/SDL.framework/Versions/A/SDL Lineage${EXEEXT}
+	install_name_tool -change @rpath/SDL.framework/Versions/A/SDL @executable_path/../Frameworks/SDL.framework/Versions/A/SDL Admin${EXEEXT}
 	cp -f Lineage ./client.app/Contents/MacOS
+	cp -fr ${top_srcdir}/libs/SDL.framework ./client.app/Contents/Frameworks/
+	cp -fr ${top_srcdir}/libs/SDL_mixer.framework ./client.app/Contents/Frameworks/
+	cp -fr ${top_srcdir}/libs/SDL_image.framework ./client.app/Contents/Frameworks/
 	cp -f ${top_srcdir}/src/Info.PList ./client.app/Contents
 	cp -f ${top_srcdir}/src/PkgInfo ./client.app/Contents
 	cp -f Admin ./client.app/Contents/MacOS
@@ -1913,14 +1922,23 @@ mac_installer:
 		echo mkdir release_client.app/Contents/Resources;\
 		mkdir release_client.app/Contents/Resources;\
 	fi
+	@if [ ! -d release_client.app/Contents/Frameworks ]; then\
+		echo mkdir release_client.app/Contents/Frameworks;\
+		mkdir release_client.app/Contents/Frameworks;\
+	fi
 	@echo "Copying files to package folder"
 	cp -f ${top_srcdir}/src/LineageMac.ini ./release_client.app/Contents/Resources/Lineage.ini
-	cp -f Lineage ./release_client.app/Contents/MacOS
+	cp -fr ${top_srcdir}/libs/SDL.framework ./client.app/Contents/Frameworks/
+	cp -fr ${top_srcdir}/libs/SDL_mixer.framework ./client.app/Contents/Frameworks/
+	cp -fr ${top_srcdir}/libs/SDL_image.framework ./client.app/Contents/Frameworks/
+	install_name_tool -change @rpath/SDL.framework/Versions/A/SDL @executable_path/../Frameworks/SDL.framework/Versions/A/SDL Lineage${EXEEXT}
+	install_name_tool -change @rpath/SDL.framework/Versions/A/SDL @executable_path/../Frameworks/SDL.framework/Versions/A/SDL Admin${EXEEXT}
+	cp -f Lineage${EXEEXT} ./release_client.app/Contents/MacOS
 	$(STRIP) -S ./release_client.app/Contents/MacOS/Lineage${EXEEXT}
 	cp -f ${top_srcdir}/src/Info.PList ./release_client.app/Contents
 	cp -f ${top_srcdir}/src/PkgInfo ./release_client.app/Contents
 	cp -f Admin ./release_client.app/Contents/MacOS
-	$(STRIP) -S ./release_client.app/Contents/MacOS/Lineage${EXEEXT}
+	$(STRIP) -S ./release_client.app/Contents/MacOS/Admin${EXEEXT}
 	tar -zcvf release.tar.gz release_client.app
 
 win_test: Admin$(EXEEXT)
