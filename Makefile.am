@@ -139,7 +139,10 @@ INSTALLER_DEP = win_installer
 PACKAGE_FILES = Lineage${EXEEXT} ${top_srcdir}/src/README.txt \
 ${top_srcdir}/libs/SDL.dll \
 ${top_srcdir}/libs/SDL_image.dll \
-${top_srcdir}/libs/SDL_mixer.dll
+${top_srcdir}/libs/SDL_mixer.dll \
+${top_srcdir}/libs/zlib1.dll \
+${top_srcdir}/libs/libpng*.dll \
+${top_srcdir}/libs/smpeg.dll
 else
 
 if MAC
@@ -253,7 +256,14 @@ mac_installer:
 
 win_test: Admin$(EXEEXT)
 	echo "Making test folder for windows"
-	false
+	@if [ ! -d test ]; then\
+		echo mkdir test;\
+		mkdir test;\
+	fi
+	@echo "Copying files to test folder"
+	cp -f ${top_srcdir}/src/LineageWindows.ini ./test/Lineage.ini
+	cp -f $(PACKAGE_FILES) ./test/
+	cp -f Admin$(EXEEXT) ./test/Admin$(EXEEXT)
 
 win_installer:
 	echo "Making installer for windows"
@@ -265,7 +275,6 @@ win_installer:
 	cp -f ${top_srcdir}/src/LineageWindows.ini ./installer/Lineage.ini
 	cp -f $(PACKAGE_FILES) ./installer/
 	$(STRIP) -s ./installer/Lineage${EXEEXT}
-	
 	tar -zcvf release.tar.gz ./installer
 
 linux_installer:

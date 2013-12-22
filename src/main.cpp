@@ -40,6 +40,14 @@ void change_working_directory()
 int main(int argc, char* argv[])
 {
 	change_working_directory();
+	#ifdef WINDOWS
+	WSADATA wsaData;
+	if (WSAStartup(MAKEWORD(2,2), &wsaData) != 0)
+	{
+		printf("WSAStartup failed!\n");
+		//perror("WSAStartup failed!\n");
+	}
+	#endif
 	if (SDL_Init(SDL_INIT_EVERYTHING) == -1)
 	{
 		printf("Failed to start SDL\n");

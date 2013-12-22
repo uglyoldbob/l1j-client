@@ -35,6 +35,11 @@ case $build_os in
 	BUILD_FROM="LINUX"
 	AC_MSG_NOTICE("Building on linux")
 	;;
+  cygwin* )
+    #windows
+	BUILD_FROM="WINDOWS"
+	AC_MSG_NOTICE("Building from windows")
+	;;
   * )
 	#unknown (probably broken)
 	BUILD_FROM="BROKEN"

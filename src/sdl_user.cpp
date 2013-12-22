@@ -576,6 +576,7 @@ int sdl_user::run()
 	{
 		ready = true;
 		printf("FATAL ERROR: %s\n", error);
+		ready = true;
 	}
 	done = true;
 	return 0;
