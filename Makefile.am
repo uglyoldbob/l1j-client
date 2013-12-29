@@ -175,6 +175,10 @@ clean-local:
 	rm -rf installer
 endif
 
+mac_strip: Admin$(EXEEXT) Lineage$(EXEEXT)
+	strip -S Lineage$(EXEEXT)
+	strip -S Admin $(EXEEXT)	
+
 mac_universal: Admin$(EXEEXT) Lineage$(EXEEXT)
 	install_name_tool -change @rpath/SDL.framework/Versions/A/SDL @executable_path/../Frameworks/SDL.framework/Versions/A/SDL Lineage${EXEEXT}
 	install_name_tool -change @rpath/SDL.framework/Versions/A/SDL @executable_path/../Frameworks/SDL.framework/Versions/A/SDL Admin${EXEEXT}
@@ -216,7 +220,7 @@ mac_test: mac_universal
 	cp -f ${top_srcdir}/src/PkgInfo ./client.app/Contents
 	cp -f Admin ./client.app/Contents/MacOS
 
-mac_installer: mac_universal
+mac_installer: mac_universal mac_strip
 	echo "Making app folder for mac"
 	@if [ ! -d release_client.app ]; then\
 		echo mkdir release_client.app;\
@@ -244,11 +248,9 @@ mac_installer: mac_universal
 	cp -fr ${top_srcdir}/libs/SDL_mixer.framework ./release_client.app/Contents/Frameworks/
 	cp -fr ${top_srcdir}/libs/SDL_image.framework ./release_client.app/Contents/Frameworks/
 	cp -f Lineage ./release_client.app/Contents/MacOS
-	$(STRIP) -S ./release_client.app/Contents/MacOS/Lineage${EXEEXT}
 	cp -f ${top_srcdir}/src/Info.PList ./release_client.app/Contents
 	cp -f ${top_srcdir}/src/PkgInfo ./release_client.app/Contents
 	cp -f Admin ./release_client.app/Contents/MacOS
-	$(STRIP) -S ./release_client.app/Contents/MacOS/Admin${EXEEXT}
 	tar -zcvf release.tar.gz release_client.app
 
 win_test: Admin$(EXEEXT)

@@ -10,21 +10,21 @@ mkdir -p buildppc
 cd buildppc
 ../configure --host=powerpc-apple-darwin OBJCFLAGS="-arch ppc" CFLAGS="-F../libs -arch ppc" CXXFLAGS="-F../libs -arch ppc" LDFLAGS="-arch ppc"
 make clean
-make Admin Lineage
+make mac_universal mac_strip
 cd ..
 
 mkdir -p buildi386
 cd buildi386
 ../configure --host=i386-apple-darwin OBJCFLAGS="-arch i386" CFLAGS="-F../libs -arch i386" CXXFLAGS="-F../libs -arch i386" LDFLAGS="-arch i386"
 make clean
-make Admin Lineage
+make mac_universal mac_strip
 cd ..
 
 mkdir -p buildx86_64
 cd buildx86_64
 ../configure --host=x86_64-apple-darwin OBJCFLAGS="-arch x86_64" CFLAGS="-F../libs -arch x86_64" CXXFLAGS="-F../libs -arch x86_64" LDFLAGS="-arch x86_64"
 make clean
-make Admin Lineage installer
+make mac_universal mac_strip installer
 cd ..
 
 mkdir -p builduniv
