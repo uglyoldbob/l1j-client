@@ -175,7 +175,16 @@ clean-local:
 	rm -rf installer
 endif
 
-mac_test: Admin$(EXEEXT)
+mac_universal: Admin$(EXEEXT) Lineage$(EXEEXT)
+	install_name_tool -change @rpath/SDL.framework/Versions/A/SDL @executable_path/../Frameworks/SDL.framework/Versions/A/SDL Lineage${EXEEXT}
+	install_name_tool -change @rpath/SDL.framework/Versions/A/SDL @executable_path/../Frameworks/SDL.framework/Versions/A/SDL Admin${EXEEXT}
+	install_name_tool -change @rpath/SDL_mixer.framework/Versions/A/SDL_mixer @executable_path/../Frameworks/SDL_mixer.framework/Versions/A/SDL_mixer Lineage${EXEEXT}
+	install_name_tool -change @rpath/SDL_mixer.framework/Versions/A/SDL_mixer @executable_path/../Frameworks/SDL._mixerframework/Versions/A/SDL_mixer Admin${EXEEXT}
+	install_name_tool -change @rpath/SDL_image.framework/Versions/A/SDL_image @executable_path/../Frameworks/SDL_image.framework/Versions/A/SDL_image Lineage${EXEEXT}
+	install_name_tool -change @rpath/SDL_image.framework/Versions/A/SDL_image @executable_path/../Frameworks/SDL_image.framework/Versions/A/SDL_image Admin${EXEEXT}
+
+
+mac_test: mac_universal
 	echo "Making test folder for mac"
 	@if [ ! -d client.app ]; then\
 		echo mkdir client.app;\
@@ -199,12 +208,6 @@ mac_test: Admin$(EXEEXT)
 	fi
 	@echo "Copying files to package folder"
 	cp -f ${top_srcdir}/src/LineageMac.ini ./client.app/Contents/Resources/Lineage.ini
-	install_name_tool -change @rpath/SDL.framework/Versions/A/SDL @executable_path/../Frameworks/SDL.framework/Versions/A/SDL Lineage${EXEEXT}
-	install_name_tool -change @rpath/SDL.framework/Versions/A/SDL @executable_path/../Frameworks/SDL.framework/Versions/A/SDL Admin${EXEEXT}
-	install_name_tool -change @rpath/SDL_mixer.framework/Versions/A/SDL_mixer @executable_path/../Frameworks/SDL_mixer.framework/Versions/A/SDL_mixer Lineage${EXEEXT}
-	install_name_tool -change @rpath/SDL_mixer.framework/Versions/A/SDL_mixer @executable_path/../Frameworks/SDL._mixerframework/Versions/A/SDL_mixer Admin${EXEEXT}
-	install_name_tool -change @rpath/SDL_image.framework/Versions/A/SDL_image @executable_path/../Frameworks/SDL_image.framework/Versions/A/SDL_image Lineage${EXEEXT}
-	install_name_tool -change @rpath/SDL_image.framework/Versions/A/SDL_image @executable_path/../Frameworks/SDL_image.framework/Versions/A/SDL_image Admin${EXEEXT}
 	cp -f Lineage ./client.app/Contents/MacOS
 	cp -fr ${top_srcdir}/libs/SDL.framework ./client.app/Contents/Frameworks/
 	cp -fr ${top_srcdir}/libs/SDL_mixer.framework ./client.app/Contents/Frameworks/
@@ -213,7 +216,7 @@ mac_test: Admin$(EXEEXT)
 	cp -f ${top_srcdir}/src/PkgInfo ./client.app/Contents
 	cp -f Admin ./client.app/Contents/MacOS
 
-mac_installer:
+mac_installer: mac_universal
 	echo "Making app folder for mac"
 	@if [ ! -d release_client.app ]; then\
 		echo mkdir release_client.app;\
@@ -240,12 +243,6 @@ mac_installer:
 	cp -fr ${top_srcdir}/libs/SDL.framework ./release_client.app/Contents/Frameworks/
 	cp -fr ${top_srcdir}/libs/SDL_mixer.framework ./release_client.app/Contents/Frameworks/
 	cp -fr ${top_srcdir}/libs/SDL_image.framework ./release_client.app/Contents/Frameworks/
-	install_name_tool -change @rpath/SDL.framework/Versions/A/SDL @executable_path/../Frameworks/SDL.framework/Versions/A/SDL Lineage${EXEEXT}
-	install_name_tool -change @rpath/SDL.framework/Versions/A/SDL @executable_path/../Frameworks/SDL.framework/Versions/A/SDL Admin${EXEEXT}
-	install_name_tool -change @rpath/SDL_mixer.framework/Versions/A/SDL_mixer @executable_path/../Frameworks/SDL_mixer.framework/Versions/A/SDL_mixer Lineage${EXEEXT}
-	install_name_tool -change @rpath/SDL_mixer.framework/Versions/A/SDL_mixer @executable_path/../Frameworks/SDL._mixerframework/Versions/A/SDL_mixer Admin${EXEEXT}
-	install_name_tool -change @rpath/SDL_image.framework/Versions/A/SDL_image @executable_path/../Frameworks/SDL_image.framework/Versions/A/SDL_image Lineage${EXEEXT}
-	install_name_tool -change @rpath/SDL_image.framework/Versions/A/SDL_image @executable_path/../Frameworks/SDL_image.framework/Versions/A/SDL_image Admin${EXEEXT}
 	cp -f Lineage ./release_client.app/Contents/MacOS
 	$(STRIP) -S ./release_client.app/Contents/MacOS/Lineage${EXEEXT}
 	cp -f ${top_srcdir}/src/Info.PList ./release_client.app/Contents
