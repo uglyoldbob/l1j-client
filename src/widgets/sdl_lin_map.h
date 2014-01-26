@@ -73,6 +73,7 @@ class sdl_lin_map : public sdl_widget
 		void mouse_click(SDL_MouseButtonEvent *here);
 		
 		void move_sprite(uint32_t id, int x, int y, int sprite_num, int heading);	/**< Places a sprite at a given location */
+		void change_heading(uint32_t id, uint8_t heading);
 		void remove_character(uint32_t id);
 	private:
 		SDL_mutex *edit_mtx;

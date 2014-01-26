@@ -81,6 +81,7 @@ SPRITE PACK
 	*.img
 	*.png
 	*.spr
+	*.tbt (initImage function opens these)
 
 *.fnt
 	fully interpreted

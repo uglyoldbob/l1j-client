@@ -49,7 +49,6 @@ TILE PACK
 	*.xml
 	
 SPRITE PACK
-	*.tbt
 	itemextra.tbl (a bunch of numbers) same as the one in TEXT PACK
 	crown.raw
 	vssver.scc	*

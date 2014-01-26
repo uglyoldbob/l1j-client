@@ -14,11 +14,13 @@ class sprite : public sdl_widget
 		~sprite();
 		void load(int x, int y, int sprnum, int mot_num);
 		void move(int x, int y, int heading);
+		void change_heading(uint8_t heading);
 		void set_motion(int motion);
 		screen_coord get_screen();
 	private:
 		std::vector<sprite_motion *> motions;
 		int cur_motion;
+		int posx, posy;
 		int sprite_num;
 
 		SDL_mutex *delay_mtx;

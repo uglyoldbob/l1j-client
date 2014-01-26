@@ -364,6 +364,11 @@ void sdl_lin_map::remove_character(uint32_t id)
 	SDL_mutexV(edit_mtx);
 }
 
+void sdl_lin_map::change_heading(uint32_t id, uint8_t heading)
+{
+	sprites_on_map[id]->change_heading(heading);
+}
+
 void sdl_lin_map::move_sprite(uint32_t id, int x, int y, int sprite_num, int heading)
 {
 	while (SDL_mutexP(edit_mtx) == -1) {};

@@ -3,6 +3,7 @@
 #include <time.h>
 
 #include "drawmode/draw_admin_main.h"
+#include "drawmode/draw_maint_icons.h"
 #include "drawmode/draw_maint_img.h"
 #include "drawmode/draw_maint_map.h"
 #include "drawmode/draw_maint_sprites.h"
@@ -262,6 +263,11 @@ void sdl_user::check_for_change_drawmode()
 		{
 			case DRAWMODE_ADMIN_MAIN:
 				drawmode = new draw_admin_main(this);
+				draw_mode = chg;
+				ready = true;
+				break;
+			case DRAWMODE_MAINT_ICONS:
+				drawmode = new draw_maint_icons(this);
 				draw_mode = chg;
 				ready = true;
 				break;

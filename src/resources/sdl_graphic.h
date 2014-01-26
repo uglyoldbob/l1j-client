@@ -11,7 +11,8 @@ enum SDL_GRAPH_TYPES
 	GRAPH_PNG,
 	GRAPH_STIL,
 	GRAPH_LTIL,
-	GRAPH_RTIL
+	GRAPH_RTIL,
+	GRAPH_ICON
 };
 
 class graphics_data;

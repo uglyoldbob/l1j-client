@@ -79,7 +79,9 @@ am__Admin_SOURCES_DIST = src/config.cpp src/connection.cpp \
 	src/resources/tile.cpp src/drawmode/sdl_drawmode.cpp \
 	src/drawmode/draw_admin_main.cpp \
 	src/drawmode/draw_char_sel.cpp src/drawmode/draw_game.cpp \
-	src/drawmode/draw_new_char.cpp src/drawmode/draw_maint_img.cpp \
+	src/drawmode/draw_new_char.cpp \
+	src/drawmode/draw_maint_icons.cpp \
+	src/drawmode/draw_maint_img.cpp \
 	src/drawmode/draw_maint_map.cpp \
 	src/drawmode/draw_maint_sprites.cpp \
 	src/drawmode/draw_maint_til.cpp src/encryption/mains.c \
@@ -105,11 +107,11 @@ am_Admin_OBJECTS = config.$(OBJEXT) connection.$(OBJEXT) \
 	sdl_graphic.$(OBJEXT) table.$(OBJEXT) tile.$(OBJEXT) \
 	sdl_drawmode.$(OBJEXT) draw_admin_main.$(OBJEXT) \
 	draw_char_sel.$(OBJEXT) draw_game.$(OBJEXT) \
-	draw_new_char.$(OBJEXT) draw_maint_img.$(OBJEXT) \
-	draw_maint_map.$(OBJEXT) draw_maint_sprites.$(OBJEXT) \
-	draw_maint_til.$(OBJEXT) mains.$(OBJEXT) sha256deep.$(OBJEXT) \
-	hash.$(OBJEXT) helpers.$(OBJEXT) sha256.$(OBJEXT) \
-	$(am__objects_1)
+	draw_new_char.$(OBJEXT) draw_maint_icons.$(OBJEXT) \
+	draw_maint_img.$(OBJEXT) draw_maint_map.$(OBJEXT) \
+	draw_maint_sprites.$(OBJEXT) draw_maint_til.$(OBJEXT) \
+	mains.$(OBJEXT) sha256deep.$(OBJEXT) hash.$(OBJEXT) \
+	helpers.$(OBJEXT) sha256.$(OBJEXT) $(am__objects_1)
 Admin_OBJECTS = $(am_Admin_OBJECTS)
 Admin_LDADD = $(LDADD)
 Admin_LINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(Admin_LDFLAGS) \
@@ -388,7 +390,9 @@ Admin_SOURCES = src/config.cpp src/connection.cpp src/funcptr.cpp \
 	src/resources/tile.cpp src/drawmode/sdl_drawmode.cpp \
 	src/drawmode/draw_admin_main.cpp \
 	src/drawmode/draw_char_sel.cpp src/drawmode/draw_game.cpp \
-	src/drawmode/draw_new_char.cpp src/drawmode/draw_maint_img.cpp \
+	src/drawmode/draw_new_char.cpp \
+	src/drawmode/draw_maint_icons.cpp \
+	src/drawmode/draw_maint_img.cpp \
 	src/drawmode/draw_maint_map.cpp \
 	src/drawmode/draw_maint_sprites.cpp \
 	src/drawmode/draw_maint_til.cpp src/encryption/mains.c \
@@ -533,6 +537,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/draw_game.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/draw_loading.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/draw_login.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/draw_maint_icons.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/draw_maint_img.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/draw_maint_map.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/draw_maint_sprites.Po@am__quote@
@@ -1338,6 +1343,20 @@ draw_new_char.obj: src/drawmode/draw_new_char.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/drawmode/draw_new_char.cpp' object='draw_new_char.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o draw_new_char.obj `if test -f 'src/drawmode/draw_new_char.cpp'; then $(CYGPATH_W) 'src/drawmode/draw_new_char.cpp'; else $(CYGPATH_W) '$(srcdir)/src/drawmode/draw_new_char.cpp'; fi`
+
+draw_maint_icons.o: src/drawmode/draw_maint_icons.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT draw_maint_icons.o -MD -MP -MF $(DEPDIR)/draw_maint_icons.Tpo -c -o draw_maint_icons.o `test -f 'src/drawmode/draw_maint_icons.cpp' || echo '$(srcdir)/'`src/drawmode/draw_maint_icons.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/draw_maint_icons.Tpo $(DEPDIR)/draw_maint_icons.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/drawmode/draw_maint_icons.cpp' object='draw_maint_icons.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o draw_maint_icons.o `test -f 'src/drawmode/draw_maint_icons.cpp' || echo '$(srcdir)/'`src/drawmode/draw_maint_icons.cpp
+
+draw_maint_icons.obj: src/drawmode/draw_maint_icons.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT draw_maint_icons.obj -MD -MP -MF $(DEPDIR)/draw_maint_icons.Tpo -c -o draw_maint_icons.obj `if test -f 'src/drawmode/draw_maint_icons.cpp'; then $(CYGPATH_W) 'src/drawmode/draw_maint_icons.cpp'; else $(CYGPATH_W) '$(srcdir)/src/drawmode/draw_maint_icons.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/draw_maint_icons.Tpo $(DEPDIR)/draw_maint_icons.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/drawmode/draw_maint_icons.cpp' object='draw_maint_icons.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o draw_maint_icons.obj `if test -f 'src/drawmode/draw_maint_icons.cpp'; then $(CYGPATH_W) 'src/drawmode/draw_maint_icons.cpp'; else $(CYGPATH_W) '$(srcdir)/src/drawmode/draw_maint_icons.cpp'; fi`
 
 draw_maint_img.o: src/drawmode/draw_maint_img.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT draw_maint_img.o -MD -MP -MF $(DEPDIR)/draw_maint_img.Tpo -c -o draw_maint_img.o `test -f 'src/drawmode/draw_maint_img.cpp' || echo '$(srcdir)/'`src/drawmode/draw_maint_img.cpp

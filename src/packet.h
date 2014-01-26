@@ -41,6 +41,7 @@ class packet
 		void char_title();
 		void dex_update();
 		void move_object();
+		void change_heading();
 		void remove_object();
 		void str_update();
 		void set_map();

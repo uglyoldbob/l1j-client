@@ -201,6 +201,7 @@ int packet::process_packet()
 		case SERVER_MESSAGE: server_message(); break;
 		case SERVER_CHANGE_SPMR: change_spmr(); break;
 		case SERVER_MOVE_OBJECT: move_object(); break;
+		case SERVER_CHANGE_HEADING: change_heading(); break;
 		case SERVER_REMOVE_OBJECT: remove_object(); break;
 		case SERVER_ENTERGAME:
 		case SERVER_CHAR_DELETE:
@@ -456,6 +457,22 @@ void packet::remove_object()
 	}
 }
 
+void packet::change_heading()
+{
+	uint32_t id;
+	uint8_t heading;
+	data >> id >> heading;
+	if (theuser->is_in_mode(DRAWMODE_GAME, true))
+	{
+		draw_game *temp;
+		struct ground_item placeme;
+		temp = (draw_game*)(theuser->get_drawmode(false));
+		temp->change_heading(id, heading);
+		temp = 0;
+		theuser->done_with_drawmode();
+	}
+}
+
 void packet::move_object()
 {
 	uint32_t id;
@@ -500,7 +517,7 @@ void packet::ground_item()
 		placeme.x = x;
 		placeme.y = y;
 		placeme.emit_light = emit_light;
-		placeme.heading = -1;
+		placeme.heading = d2;
 		placeme.gnd_icon = gnd_icon;
 		placeme.count = count;
 		placeme.id = id;

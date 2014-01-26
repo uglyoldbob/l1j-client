@@ -32,8 +32,7 @@ void sprite_motion::delay_load(int x, int y, char *filename)
 void sprite_motion::load(int x, int y, char *filename)
 {
 	while (SDL_mutexP(delay_mtx) == -1) {};
-	printf("Opening sprite_motion %s\n", filename);
-	
+
 	bool tiles_loaded = false;
 	short *palette = 0;
 	int size;
@@ -198,7 +197,6 @@ void sprite_motion::load(int x, int y, char *filename)
 	data = 0;
 
 	frame_num = 0;
-	printf("Reached end of sprite_motion loading\n");
 	visible = true;
 	SDL_mutexV(delay_mtx);
 }

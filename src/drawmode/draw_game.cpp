@@ -30,7 +30,7 @@ draw_game::draw_game(sdl_user *self)
 	food_str = new char[20];
 	strcpy(food_str, "0%");
 	
-	num_widgets = 6;
+	num_widgets = 7;
 
 	themap = new sdl_lin_map(owner, 0, 0, 640, 380);
 	mapnum = 4;
@@ -47,13 +47,12 @@ draw_game::draw_game(sdl_user *self)
 	widget_key_focus = 1;
 	
 	widgets[2] = new sdl_widget(1028, 0, 368, self);
-		//new sdl_widget(1019, 485, 366, self);
-		//new sdl_widget(1028, 0, 368, self);
+	widgets[3] = new sdl_widget(1019, 485, 366, self);
 		//new sdl_widget(1042, 124, 363, self);
 		
-	widgets[3] = new sdl_widget(1029, 3, 386, self);
-	widgets[4] = new sdl_widget(1030, 3, 402, self);
-	widgets[5] = new sdl_widget(1031, 3, 423, self);
+	widgets[4] = new sdl_widget(1029, 3, 386, self);
+	widgets[5] = new sdl_widget(1030, 3, 402, self);
+	widgets[6] = new sdl_widget(1031, 3, 423, self);
 	//1029 is the exp bar
 	//1030 is the regular hp bar
 	//1031 is mp bar
@@ -186,6 +185,11 @@ void draw_game::set_underwater(int underwater)
 void draw_game::remove_character(uint32_t id)
 {
 	themap->remove_character(id);
+}
+
+void draw_game::change_heading(uint32_t id, uint8_t heading)
+{
+	themap->change_heading(id, heading);
 }
 
 void draw_game::place_character(ground_item *info)

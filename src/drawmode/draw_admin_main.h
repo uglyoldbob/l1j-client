@@ -28,6 +28,7 @@ class draw_admin_main : public sdl_drawmode
 		virtual void draw(SDL_Surface *display);
 	private:
 		bool quitting;
+		table sprites_table;
 };
 
 #endif

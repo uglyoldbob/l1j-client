@@ -78,6 +78,7 @@ void sdl_graphic::do_load(int x, int y, SDL_RWops *source, short *palette, int t
 //	while (SDL_mutexP(delay_mtx) == -1) {};
 	switch(type)
 	{
+		case GRAPH_ICON:
 		case GRAPH_STIL:
 		{	//	printf("TranspTile %d\n", which);
 			int x = 0, y = 0;
@@ -125,9 +126,19 @@ void sdl_graphic::do_load(int x, int y, SDL_RWops *source, short *palette, int t
 					for (int k = 0; k < seg_width; k++)
 					{
 						char pal_color= 0;
-						SDL_RWread(source, &pal_color, 1, 1);
-						read++;
-						row_temp[k] = palette[pal_color&0xFF];
+						short color = 0;
+						if (palette == 0)
+						{
+							SDL_RWread(source, &color, 2, 1);
+							read += 2;
+							row_temp[k] = color;
+						}
+						else
+						{
+							SDL_RWread(source, &pal_color, 1, 1);
+							read++;
+							row_temp[k] = palette[pal_color&0xFF];
+						}
 //						printf("%02x ", pal_color&0xFF);
 					}
 //					row_temp[0] = 0x0000;

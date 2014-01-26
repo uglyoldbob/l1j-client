@@ -7,6 +7,7 @@ sprite::sprite(int x, int y, sdl_user *who)
 	delay_mtx = SDL_CreateMutex();
 	delay_loading = false;
 	cur_motion = -1;
+	expand_motion(1);
 }
 
 void sprite::set_motion(int motion)
@@ -21,7 +22,7 @@ void sprite::load(int x, int y, int sprnum, int mot_num)
 	sprite_num = sprnum;
 	if (mot_num == -1)
 	{
-		work_me = 8;
+		work_me = 0;
 	}
 	else
 	{
@@ -36,6 +37,8 @@ void sprite::load(int x, int y, int sprnum, int mot_num)
 		sprintf(temp, "%d-%d.spr", sprnum, work_me);
 		motions[work_me]->delay_load(x, y, temp);
 		motions[work_me]->move(x, y);
+		posx = x;
+		posy = y;
 	}
 	SDL_mutexV(delay_mtx);
 }
@@ -71,21 +74,45 @@ void sprite::draw(SDL_Surface *display)
 	drawat(400, 300, display);
 }
 
+void sprite::change_heading(uint8_t heading)
+{
+	if (heading >= 0)
+	{
+		if (heading != cur_motion)
+		{
+			expand_motion(heading);
+			cur_motion = heading;
+			motions[cur_motion] = new sprite_motion(posx, posy, myclient);
+			char temp[25];
+			sprintf(temp, "%d-%d.spr", sprite_num, cur_motion);
+			motions[cur_motion]->delay_load(posx, posy, temp);
+			motions[cur_motion]->move(posx, posy);
+		}
+	}
+}
+
 void sprite::move(int x, int y, int heading)
 {
-	if (heading != cur_motion)
+	if (heading >= 0)
 	{
-		expand_motion(heading);
-		cur_motion = heading;
-		motions[cur_motion] = new sprite_motion(x, y, myclient);
-		char temp[25];
-		sprintf(temp, "%d-%d.spr", sprite_num, cur_motion);
-		motions[cur_motion]->delay_load(x, y, temp);
-		motions[cur_motion]->move(x, y);
+		if (heading != cur_motion)
+		{
+			expand_motion(heading);
+			cur_motion = heading;
+			motions[cur_motion] = new sprite_motion(x, y, myclient);
+			char temp[25];
+			sprintf(temp, "%d-%d.spr", sprite_num, cur_motion);
+			motions[cur_motion]->delay_load(x, y, temp);
+			motions[cur_motion]->move(x, y);
+			posx = x;
+			posy = y;
+		}
 	}
 	if (motions[cur_motion] != 0)
 	{
 		motions[cur_motion]->move(x, y);
+		posx = x;
+		posy = y;
 	}
 }
 
