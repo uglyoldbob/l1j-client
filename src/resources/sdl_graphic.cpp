@@ -96,8 +96,8 @@ void sdl_graphic::do_load(int x, int y, SDL_RWops *source, short *palette, int t
 			img = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 16,
 				0x7C00, 0x03E0, 0x001F, 0);
 			cleanup = false;
-			pos = make_sdl_rect(x, y, width, height);
-			mask = make_sdl_rect(x, y, width, height);
+			pos = make_sdl_rect(x, y, x+width, y+height);
+			mask = make_sdl_rect(0, 0, x+width, y+height);
 			SDL_SetColorKey(img, SDL_SRCCOLORKEY, SDL_MapRGB(img->format, 255,255,0) );
 			transp_color = SDL_MapRGB(img->format, 255,255,0);
 			SDL_FillRect(img, NULL, SDL_MapRGB(img->format, 255,255,0));
