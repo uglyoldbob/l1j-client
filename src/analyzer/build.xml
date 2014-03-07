@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="analyzer" default="all" basedir=".">
+    <description>
+        This is a description
+    </description>
+
+    <!-- Set Property -->
+    <property name="src.dir" value="src" />
+    <property name="lib.dir" value="lib" />
+    <property name="build.dir" value="build" />
+    <property name="jarfile" value="analyzer.jar" />
+
+    <path id="classpath">
+        <fileset dir="${lib.dir}">
+        	<include name="log4j-1.2.16.jar" />
+        </fileset>
+    </path>
+
+    <!-- Set DefaultTarget -->
+    <target name="all" depends="clean,compile,jar,clean2" />
+
+    <!-- clean Target -->
+    <target name="clean">
+        <delete dir="${build.dir}" />
+    </target>
+
+    <!-- Compile Target -->
+    <target name="compile">
+        <mkdir dir="${build.dir}" />
+        <javac destdir="${build.dir}"
+               optimize="on"
+               encoding="UTF-8">
+            <src path="${src.dir}" />
+            <classpath refid="classpath" />
+        </javac>
+    </target>
+
+    <!-- jar Target -->
+    <target name="jar">
+        <jar manifest="${src.dir}/META-INF/MANIFEST.MF" basedir="${build.dir}" jarfile="${jarfile}" />
+    </target>
+
+    <!-- clean Target -->
+    <target name="clean2">
+        <delete dir="${build.dir}" />
+    </target>
+
+</project>
