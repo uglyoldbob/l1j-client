@@ -1,1 +1,4 @@
-This is the source code for the lineage1 client.
+This is the source code for the lineage1 client. This branch contains the stable and working codebase. There should be ideally no bugs in this branch.
+The unstable branch is for the latest and greatest of the testing which is where all the code is at the moment. Once there are enough features, the unstable branch will be on a feature freeze for fixing bugs and then merged into this branch to form the first release.
+
+This project is currently in pre-release status. Go look at the unstable branch.
