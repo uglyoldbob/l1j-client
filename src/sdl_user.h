@@ -9,7 +9,6 @@
 #include "globals.h"
 #include "drawmode/sdl_drawmode.h"
 #include "packet.h"
-#include "resources/briefcase.h"
 #include "resources/files.h"
 #include "resources/music.h"
 #include "resources/small_font.h"
@@ -161,9 +160,6 @@ class sdl_user
 		void change_drawmode(enum drawmode chg);	/**< Change the current drawmode */
 
 		files *getfiles;	/**< The object responsible for retrieving all file based game resources */
-		briefcase *server_data;	/**< used to hold all server specific data */
-		//these two variables are used to translate packets
-			//for servers using different opcodes
 		
 		config *get_config();	/**< Used to retrieve the configuration object used by this server */
 	private:

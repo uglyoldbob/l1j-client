@@ -2,12 +2,6 @@
 #include "resources/files.h"
 #include "resources/reg_font.h"
 
-pack *textpack;
-pack *tilepack;
-pack **spritepack;
-int num_sprite_pack;
-
-
 reg_font lineage_font;
 char *lineage_dir;
 

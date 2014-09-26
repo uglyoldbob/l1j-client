@@ -29,8 +29,9 @@ src/widgets/sdl_window.cpp \
 src/widgets/sprite.cpp \
 src/widgets/sprite_motion.cpp \
 src/widgets/text_box.cpp \
-src/resources/briefcase.cpp \
 src/resources/files.cpp \
+src/resources/global_files.cpp \
+src/resources/global_resource_template.cpp \
 src/resources/music.cpp \
 src/resources/pack.cpp \
 src/resources/partial_table.cpp \
@@ -91,8 +92,9 @@ src/widgets/sdl_window.cpp \
 src/widgets/sprite.cpp \
 src/widgets/sprite_motion.cpp \
 src/widgets/text_box.cpp \
-src/resources/briefcase.cpp \
 src/resources/files.cpp \
+src/resources/global_files.cpp \
+src/resources/global_resource_template.cpp \
 src/resources/music.cpp \
 src/resources/pack.cpp \
 src/resources/partial_table.cpp \

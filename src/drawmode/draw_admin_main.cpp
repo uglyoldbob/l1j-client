@@ -59,7 +59,7 @@ draw_admin_main::draw_admin_main(sdl_user *self)
 	widgets[6] = new sdl_text_button("Exit", x, y+(15*6), owner, (funcptr*)new quit_ptr(this));
 	widgets[6]->set_key_focus(true);
 	
-	sprites_table.load("list.spr", textpack);
+	sprites_table.load("list.spr", owner->getfiles, FILE_TEXTPACK);
 	printf("list.spr loaded\n");
 }
 

@@ -76,7 +76,7 @@ int sdl_user::init_tiles()
 	{
 		char fname[100];
 		sprintf(fname, "%d.til", i);
-		if (tilepack->check_file(fname) != -1)
+		if (getfiles->check_file(fname, FILE_TILEPACK) != -1) // tilepack->check_file(fname) != -1)
 		{	//the tileset is good
 			if (i > last_good)
 				last_good = i;

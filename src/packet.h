@@ -39,6 +39,7 @@ class packet
 		void ac_and_elemental_update();
 		void char_status();
 		void char_title();
+		void char_alignment();
 		void dex_update();
 		void move_object();
 		void change_heading();
@@ -60,6 +61,7 @@ class packet
 		void change_spmr();
 		void weather();
 		void add_inv_items();
+		void item_bless_status();
 		void server_message();
 };
 

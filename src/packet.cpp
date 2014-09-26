@@ -191,6 +191,7 @@ int packet::process_packet()
 		case SERVER_VERSIONS: server_version_packet(); break;
 		case SERVER_DISCONNECT: return -1; break;
 		case SERVER_CHAR_STAT: char_status(); break;
+		case SERVER_CHAR_ALIGNMENT: char_alignment(); break;
 		case SERVER_TIME: game_time(); break;
 		case SERVER_MPVALS: update_mp(); break;
 		case SERVER_HPVALS: update_hp(); break;
@@ -198,6 +199,7 @@ int packet::process_packet()
 		case SERVER_LIGHT: place_light(); break;
 		case SERVER_WEATHER: weather(); break;
 		case SERVER_INV_ITEMS: add_inv_items(); break;
+		case SERVER_ITEM_BLESS_STATUS: item_bless_status(); break;
 		case SERVER_MESSAGE: server_message(); break;
 		case SERVER_CHANGE_SPMR: change_spmr(); break;
 		case SERVER_MOVE_OBJECT: move_object(); break;
@@ -277,6 +279,15 @@ void packet::char_title()
 	printf("%d has a title of \"%s\"\n", id, name);
 	delete [] name;
 	name = 0;
+}
+
+void packet::char_alignment()
+{
+	unsigned char align;
+	uint32_t id;
+	
+	data >> id >> align;
+	printf("[0x%x] Char alignment is:%d\n", id, align);
 }
 
 void packet::server_message()
@@ -410,6 +421,14 @@ void packet::handle_chat(unsigned char opcode)
 	}
 }
 
+void packet::item_bless_status()
+{
+	unsigned char bless;
+	uint32_t id;
+	data >> id >> bless;
+	printf("Item [0x%x] is blessed %d\n", id, bless);
+}
+
 void packet::add_inv_items()
 {
 	unsigned char num_items;
@@ -496,7 +515,7 @@ void packet::move_object()
 		temp = 0;
 		theuser->done_with_drawmode();
 	}
-}
+}\
 
 void packet::ground_item()
 {

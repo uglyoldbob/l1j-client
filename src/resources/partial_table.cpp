@@ -5,11 +5,11 @@
 
 #include "partial_table.h"
 
-void partial_table::load(const char *real_name, pack *from)
+void partial_table::load(const char *real_name, files *place, file_locations location)
 {
 	char *buffer;
 	int size;
-	buffer = from->load_file(real_name, &size, 1);
+	buffer = (char*)place->load_file(real_name, &size, location, 1);
 
 	int i = 0;
 	char* temp_entry;

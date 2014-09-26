@@ -62,12 +62,13 @@ int sdl_user::init_tiles()
 	{
 		char fname[100];
 		sprintf(fname, "%d.til", i);
-		if (tilepack->check_file(fname) != -1)
+		if (getfiles->check_file(fname, FILE_TILEPACK) != -1) // tilepack->check_file(fname) != -1)
 		{	//the tileset is good
 			if (i > last_good)
 				last_good = i;
 		}
 	}
+	printf("There are %d map tiles\n", last_good); 
 	number_map_tiles = last_good;
 	if (number_map_tiles > 0)
 	{
@@ -369,6 +370,105 @@ void sdl_user::init()
 	delete [] test;
 	lineage_font.init("Font/eng.fnt", this);	//TODO : make a client specific version of the font
 	
+	unsigned char *sprite_data;
+	int sprite_dlength;
+	sprite_data = (unsigned char*)getfiles->load_file("sprite_table.txt", &sprite_dlength, FILE_REGULAR2, 0);
+	if (sprite_data == 0)
+	{
+		printf("sprite_table.txt not found\n");
+	}
+	else
+	{
+		int offset = 1;
+		int sprnum = 0;
+		printf("The first number is %d\n", atoi((char*)&sprite_data[offset]));
+		while (isdigit(sprite_data[offset])) { offset++; }
+		if (sprite_data[offset] == '=')
+		{
+			offset += 1;
+			int alias = atoi((char*)&sprite_data[offset]);
+			printf("Alias of %d found\n", alias);
+			while (isdigit(sprite_data[offset])) { offset++; }
+			while (!isdigit(sprite_data[offset])) { offset++; }
+		}
+		char value = atoi((char*)&sprite_data[offset]);
+		while (isdigit(sprite_data[offset])) { offset++; }
+		int temp;
+		switch (value)
+		{
+			case 100:	//switches
+				//read a value, then read 4 times that many values
+				temp = atoi((char*)&sprite_data[offset]);
+				while (isdigit(sprite_data[offset])) { offset++; }
+				for (int i = 0; i < temp; i++)
+				{
+					atoi((char*)&sprite_data[offset]);
+					while (isdigit(sprite_data[offset])) { offset++; }
+					atoi((char*)&sprite_data[offset]);
+					while (isdigit(sprite_data[offset])) { offset++; }
+					atoi((char*)&sprite_data[offset]);
+					while (isdigit(sprite_data[offset])) { offset++; }
+					atoi((char*)&sprite_data[offset]);
+					while (isdigit(sprite_data[offset])) { offset++; }
+				}
+				break;
+			case 101: //shadow
+				//read one value
+				break;
+			case 102: //objType
+				//read one value
+				break;
+			case 103: //altAttack
+				//read one value
+				break;
+			case 104: //attr
+				//read one value
+				break;
+			case 105: //clothing
+				//read a value
+				//read 0 or that value of numbers, whichever is higher
+				break;
+			case 106: //weapons
+				//?
+				break;
+			case 107: //size
+				//read 2 numbers
+				break;
+			case 108: //flyingType
+				//read one number
+				break;
+			case 109: //immaterial
+				//read two numbers
+				break;
+			case 110: 
+				//read a number and modify the stack with it
+				break;
+			case 111: //stride
+				//read one number
+				break;
+			case 112: //furniture
+				//read one number
+				break;
+			case 113: //morphEffect
+				//read one number
+				break;
+			case 114: //furnitureSize
+				//read one number
+				break;
+			default:
+				printf("?(%d)\n", value);
+				break;
+		}
+		
+		
+		
+		while (offset < sprite_dlength)
+		{
+			
+			offset++;
+		}
+	}
+	
 	DesKeyInit("~!@#%^$<");	//TODO : move this code to a class and use an object
 	init_packs();
 	init_tiles();
@@ -461,8 +561,8 @@ int sdl_user::get_updates(connection* server, draw_loading *scrn)
 	{
 		if (server->connection_ok() == 1)
 		{
-			server_data = new briefcase(server_name);
-			strcpy(hash, server_data->get_hash());
+			getfiles->init(server_name);
+			strcpy(hash, getfiles->get_hash());
 			temp2 = 0x4400;	//68 bytes of packet data
 			server->snd_var(&temp2, 2);
 			temp = 1;
@@ -476,7 +576,7 @@ int sdl_user::get_updates(connection* server, draw_loading *scrn)
 				(strcmp(hash, "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855") == 0) )
 			{
 				printf("Creating new briefcase\n");
-				server_data->new_data();
+				getfiles->new_data();
 				if (temp == 2)
 				{
 					//proc->reset();
@@ -487,7 +587,7 @@ int sdl_user::get_updates(connection* server, draw_loading *scrn)
 			else
 			{
 				printf("Adding to existing briefcase\n");
-				server_data->add_data();
+				getfiles->add_data();
 			}
 			for (unsigned int i = 0; i < num_files; i++)
 			{
@@ -521,15 +621,15 @@ int sdl_user::get_updates(connection* server, draw_loading *scrn)
 						filesize = 0;
 					}
 				}
-				server_data->write_file(filename, file, orig_filesize);
+				getfiles->write_file(filename, file, orig_filesize);
 				delete [] file;
 				file = 0;
 				delete [] filename;
 				filename = 0;
 			}
-			server_data->finish_briefcase();
-			delete server_data;
-			server_data = new briefcase(server_name);
+			getfiles->finish_briefcase();
+			//delete server_data;
+			//server_data = new briefcase(server_name);
 			status = num_files;
 		}
 	}

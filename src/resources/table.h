@@ -1,7 +1,7 @@
 #ifndef __TABLE_H_
 #define __TABLE_H_
 
-#include "pack.h"
+#include "files.h"
 
 class table
 {
@@ -11,8 +11,8 @@ class table
 		
 		const char *operator[](int);
 						
-		void load_local(const char *name, pack* from);
-		virtual void load(const char *real_name, pack* from);
+		void load_local(const char *name, files *place, file_locations location);
+		virtual void load(const char *real_name, files *place, file_locations location);
 		int get_num_entries();
 		void sort();
 		static int compare(const void *a, const void *b);

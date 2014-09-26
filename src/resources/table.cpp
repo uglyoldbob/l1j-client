@@ -77,11 +77,11 @@ void table::print()
 	printf("\n");
 }
 
-void table::load(const char *real_name, pack *from)
+void table::load(const char *real_name, files *place, file_locations location)
 {
 	char *buffer;
 	int size;
-	buffer = from->load_file(real_name, &size, 1);
+	buffer = (char*)place->load_file(real_name, &size, location, 1);
 
 	char* temp_entry;
 	char delimiters[] = {0x0d, 0x0a, 0};
@@ -126,12 +126,12 @@ void table::load(const char *real_name, pack *from)
 	buffer = 0;
 }
 
-void table::load_local(const char *name, pack* from)
+void table::load_local(const char *name, files *place, file_locations location)
 {
 	char *real_name;
 	real_name = new char[strlen(name) + 7];
 	sprintf(real_name, "%s-%c.tbl", name, get_lang_char());
-	load(real_name, from);
+	load(real_name, place, location);
 	delete [] real_name;
 	real_name = 0;
 }

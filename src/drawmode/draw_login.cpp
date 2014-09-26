@@ -63,7 +63,7 @@ draw_login::draw_login(sdl_user *self)
 	widgets[6] = new sdl_plain_button(57, 0x213, 0x1c2, owner, (funcptr*)new quit_ptr(this));
 	widgets[6]->set_key_focus(true);
 	
-	intro.load("intro-e.tbl", textpack);
+	intro.load("intro-e.tbl", owner->getfiles, FILE_TEXTPACK);
 	widgets[7] = new text_box(34, 59, 6*57, intro.get_num_entries()*12, owner);
 	text_box *temp;
 	temp = (text_box*)(widgets[7]);

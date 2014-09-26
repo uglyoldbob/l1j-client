@@ -68,7 +68,8 @@ am__Admin_SOURCES_DIST = src/config.cpp src/connection.cpp \
 	src/widgets/sdl_text_button.cpp src/widgets/sdl_widget.cpp \
 	src/widgets/sdl_window.cpp src/widgets/sprite.cpp \
 	src/widgets/sprite_motion.cpp src/widgets/text_box.cpp \
-	src/resources/briefcase.cpp src/resources/files.cpp \
+	src/resources/files.cpp src/resources/global_files.cpp \
+	src/resources/global_resource_template.cpp \
 	src/resources/music.cpp src/resources/pack.cpp \
 	src/resources/partial_table.cpp \
 	src/resources/prepared_graphics.cpp src/resources/sdl_font.cpp \
@@ -99,8 +100,9 @@ am_Admin_OBJECTS = config.$(OBJEXT) connection.$(OBJEXT) \
 	sdl_input_box.$(OBJEXT) sdl_plain_button.$(OBJEXT) \
 	sdl_text_button.$(OBJEXT) sdl_widget.$(OBJEXT) \
 	sdl_window.$(OBJEXT) sprite.$(OBJEXT) sprite_motion.$(OBJEXT) \
-	text_box.$(OBJEXT) briefcase.$(OBJEXT) files.$(OBJEXT) \
-	music.$(OBJEXT) pack.$(OBJEXT) partial_table.$(OBJEXT) \
+	text_box.$(OBJEXT) files.$(OBJEXT) global_files.$(OBJEXT) \
+	global_resource_template.$(OBJEXT) music.$(OBJEXT) \
+	pack.$(OBJEXT) partial_table.$(OBJEXT) \
 	prepared_graphics.$(OBJEXT) sdl_font.$(OBJEXT) \
 	reg_font.$(OBJEXT) small_font.$(OBJEXT) map_coord.$(OBJEXT) \
 	pixel_coord.$(OBJEXT) coord.$(OBJEXT) screen_coord.$(OBJEXT) \
@@ -128,7 +130,8 @@ am__Lineage_SOURCES_DIST = src/config.cpp src/connection.cpp \
 	src/widgets/sdl_text_button.cpp src/widgets/sdl_widget.cpp \
 	src/widgets/sdl_window.cpp src/widgets/sprite.cpp \
 	src/widgets/sprite_motion.cpp src/widgets/text_box.cpp \
-	src/resources/briefcase.cpp src/resources/files.cpp \
+	src/resources/files.cpp src/resources/global_files.cpp \
+	src/resources/global_resource_template.cpp \
 	src/resources/music.cpp src/resources/pack.cpp \
 	src/resources/partial_table.cpp \
 	src/resources/prepared_graphics.cpp src/resources/sdl_font.cpp \
@@ -153,8 +156,9 @@ am_Lineage_OBJECTS = config.$(OBJEXT) connection.$(OBJEXT) \
 	sdl_input_box.$(OBJEXT) sdl_plain_button.$(OBJEXT) \
 	sdl_text_button.$(OBJEXT) sdl_widget.$(OBJEXT) \
 	sdl_window.$(OBJEXT) sprite.$(OBJEXT) sprite_motion.$(OBJEXT) \
-	text_box.$(OBJEXT) briefcase.$(OBJEXT) files.$(OBJEXT) \
-	music.$(OBJEXT) pack.$(OBJEXT) partial_table.$(OBJEXT) \
+	text_box.$(OBJEXT) files.$(OBJEXT) global_files.$(OBJEXT) \
+	global_resource_template.$(OBJEXT) music.$(OBJEXT) \
+	pack.$(OBJEXT) partial_table.$(OBJEXT) \
 	prepared_graphics.$(OBJEXT) sdl_font.$(OBJEXT) \
 	reg_font.$(OBJEXT) small_font.$(OBJEXT) map_coord.$(OBJEXT) \
 	pixel_coord.$(OBJEXT) coord.$(OBJEXT) screen_coord.$(OBJEXT) \
@@ -352,7 +356,8 @@ Lineage_SOURCES = src/config.cpp src/connection.cpp src/funcptr.cpp \
 	src/widgets/sdl_text_button.cpp src/widgets/sdl_widget.cpp \
 	src/widgets/sdl_window.cpp src/widgets/sprite.cpp \
 	src/widgets/sprite_motion.cpp src/widgets/text_box.cpp \
-	src/resources/briefcase.cpp src/resources/files.cpp \
+	src/resources/files.cpp src/resources/global_files.cpp \
+	src/resources/global_resource_template.cpp \
 	src/resources/music.cpp src/resources/pack.cpp \
 	src/resources/partial_table.cpp \
 	src/resources/prepared_graphics.cpp src/resources/sdl_font.cpp \
@@ -379,7 +384,8 @@ Admin_SOURCES = src/config.cpp src/connection.cpp src/funcptr.cpp \
 	src/widgets/sdl_text_button.cpp src/widgets/sdl_widget.cpp \
 	src/widgets/sdl_window.cpp src/widgets/sprite.cpp \
 	src/widgets/sprite_motion.cpp src/widgets/text_box.cpp \
-	src/resources/briefcase.cpp src/resources/files.cpp \
+	src/resources/files.cpp src/resources/global_files.cpp \
+	src/resources/global_resource_template.cpp \
 	src/resources/music.cpp src/resources/pack.cpp \
 	src/resources/partial_table.cpp \
 	src/resources/prepared_graphics.cpp src/resources/sdl_font.cpp \
@@ -527,7 +533,6 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SDLMain.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/briefcase.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/chat_window.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/config.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/connection.Po@am__quote@
@@ -546,6 +551,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/files.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/funcptr.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/global.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/global_files.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/global_resource_template.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hash.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/helpers.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lindes.Po@am__quote@
@@ -1050,20 +1057,6 @@ text_box.obj: src/widgets/text_box.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o text_box.obj `if test -f 'src/widgets/text_box.cpp'; then $(CYGPATH_W) 'src/widgets/text_box.cpp'; else $(CYGPATH_W) '$(srcdir)/src/widgets/text_box.cpp'; fi`
 
-briefcase.o: src/resources/briefcase.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT briefcase.o -MD -MP -MF $(DEPDIR)/briefcase.Tpo -c -o briefcase.o `test -f 'src/resources/briefcase.cpp' || echo '$(srcdir)/'`src/resources/briefcase.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/briefcase.Tpo $(DEPDIR)/briefcase.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/resources/briefcase.cpp' object='briefcase.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o briefcase.o `test -f 'src/resources/briefcase.cpp' || echo '$(srcdir)/'`src/resources/briefcase.cpp
-
-briefcase.obj: src/resources/briefcase.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT briefcase.obj -MD -MP -MF $(DEPDIR)/briefcase.Tpo -c -o briefcase.obj `if test -f 'src/resources/briefcase.cpp'; then $(CYGPATH_W) 'src/resources/briefcase.cpp'; else $(CYGPATH_W) '$(srcdir)/src/resources/briefcase.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/briefcase.Tpo $(DEPDIR)/briefcase.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/resources/briefcase.cpp' object='briefcase.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o briefcase.obj `if test -f 'src/resources/briefcase.cpp'; then $(CYGPATH_W) 'src/resources/briefcase.cpp'; else $(CYGPATH_W) '$(srcdir)/src/resources/briefcase.cpp'; fi`
-
 files.o: src/resources/files.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT files.o -MD -MP -MF $(DEPDIR)/files.Tpo -c -o files.o `test -f 'src/resources/files.cpp' || echo '$(srcdir)/'`src/resources/files.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/files.Tpo $(DEPDIR)/files.Po
@@ -1077,6 +1070,34 @@ files.obj: src/resources/files.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/resources/files.cpp' object='files.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o files.obj `if test -f 'src/resources/files.cpp'; then $(CYGPATH_W) 'src/resources/files.cpp'; else $(CYGPATH_W) '$(srcdir)/src/resources/files.cpp'; fi`
+
+global_files.o: src/resources/global_files.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT global_files.o -MD -MP -MF $(DEPDIR)/global_files.Tpo -c -o global_files.o `test -f 'src/resources/global_files.cpp' || echo '$(srcdir)/'`src/resources/global_files.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/global_files.Tpo $(DEPDIR)/global_files.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/resources/global_files.cpp' object='global_files.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o global_files.o `test -f 'src/resources/global_files.cpp' || echo '$(srcdir)/'`src/resources/global_files.cpp
+
+global_files.obj: src/resources/global_files.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT global_files.obj -MD -MP -MF $(DEPDIR)/global_files.Tpo -c -o global_files.obj `if test -f 'src/resources/global_files.cpp'; then $(CYGPATH_W) 'src/resources/global_files.cpp'; else $(CYGPATH_W) '$(srcdir)/src/resources/global_files.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/global_files.Tpo $(DEPDIR)/global_files.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/resources/global_files.cpp' object='global_files.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o global_files.obj `if test -f 'src/resources/global_files.cpp'; then $(CYGPATH_W) 'src/resources/global_files.cpp'; else $(CYGPATH_W) '$(srcdir)/src/resources/global_files.cpp'; fi`
+
+global_resource_template.o: src/resources/global_resource_template.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT global_resource_template.o -MD -MP -MF $(DEPDIR)/global_resource_template.Tpo -c -o global_resource_template.o `test -f 'src/resources/global_resource_template.cpp' || echo '$(srcdir)/'`src/resources/global_resource_template.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/global_resource_template.Tpo $(DEPDIR)/global_resource_template.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/resources/global_resource_template.cpp' object='global_resource_template.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o global_resource_template.o `test -f 'src/resources/global_resource_template.cpp' || echo '$(srcdir)/'`src/resources/global_resource_template.cpp
+
+global_resource_template.obj: src/resources/global_resource_template.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT global_resource_template.obj -MD -MP -MF $(DEPDIR)/global_resource_template.Tpo -c -o global_resource_template.obj `if test -f 'src/resources/global_resource_template.cpp'; then $(CYGPATH_W) 'src/resources/global_resource_template.cpp'; else $(CYGPATH_W) '$(srcdir)/src/resources/global_resource_template.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/global_resource_template.Tpo $(DEPDIR)/global_resource_template.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/resources/global_resource_template.cpp' object='global_resource_template.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o global_resource_template.obj `if test -f 'src/resources/global_resource_template.cpp'; then $(CYGPATH_W) 'src/resources/global_resource_template.cpp'; else $(CYGPATH_W) '$(srcdir)/src/resources/global_resource_template.cpp'; fi`
 
 music.o: src/resources/music.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT music.o -MD -MP -MF $(DEPDIR)/music.Tpo -c -o music.o `test -f 'src/resources/music.cpp' || echo '$(srcdir)/'`src/resources/music.cpp

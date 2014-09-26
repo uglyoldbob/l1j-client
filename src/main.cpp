@@ -8,6 +8,7 @@
 #include "CoreFoundation/CoreFoundation.h"
 #endif
 
+#include "resources/global_files.h"
 #include "resources/music.h"
 #include "sdl_master.h"
 #include <SDL/SDL_mixer.h>
@@ -57,8 +58,10 @@ int main(int argc, char* argv[])
 	SDL_EnableUNICODE(1);
 	
 	sdl_master graphics;
+	global_files *all_files = new global_files();
 	graphics.create_client();
 	graphics.process_events();
+	delete all_files;
 	SDL_VideoQuit();
 	SDL_Quit();
 	printf("Exiting now\n");

@@ -13,15 +13,13 @@ void sdl_user::common_construct()
 	request_id = 0;
 	wait_for_user = true;
 	proc = 0;
-	getfiles = new files(this);
+	getfiles = new files();
 	login_opts = 0;
 	num_login_opts = 0;
 	login_opts_used = 0;
 	login_opts_stored = 0;
 	main_config = 0;
 	server = 0;
-	server_data = 0;
-	num_sprite_pack = 0;
 	for (int i = 0; i < 256; i++)
 	{	//this loop sets up a no translation scheme for default
 		convert_client_packets[i] = i;
@@ -54,11 +52,6 @@ void sdl_user::common_destruct()
 	{
 		delete main_config;
 		main_config = 0;
-	}
-	if (server_data != 0)
-	{
-		delete server_data;
-		server_data = 0;
 	}
 	if (num_login_opts > 0)
 	{
@@ -154,7 +147,7 @@ void sdl_user::LoadDurationTable(const char *file)
 {
 	char *table;
 	int length;
-	table = textpack->load_file(file, &length, 1);
+	table = (char*)getfiles->load_file(file, &length, FILE_TEXTPACK, 1);
 	char *buffer = table;
 	if (table != 0)
 	{
@@ -376,41 +369,13 @@ void sdl_user::cancel_request(unsigned int id)
 
 int sdl_user::init_packs()
 {
-	num_sprite_pack = 17;
-	textpack = new pack("Text", 1);
-	tilepack = new pack("Tile", 0);
-	spritepack = new pack*[num_sprite_pack];
-	spritepack[0] = new pack("Sprite", 0);
-	for (int i = 0; i < (num_sprite_pack-1); i++)
-	{
-		char name[10];
-		sprintf(name, "Sprite%02d", i);
-		spritepack[i+1] = new pack(name, 0);
-		//new_surf_pack and spritepack are the same thing
-		//new_icon_pack and spritepack are the same thing
-		//spriteFile is simply the first element of spritepack
-	}
-	//TODO: verify all packs were loaded successfully
-	
+	global_files::init();
 	return 0;
 }
 
 void sdl_user::delete_packs()
 {
-	delete textpack;
-	textpack = 0;
-	
-	delete tilepack;
-	tilepack = 0;
-	
-	for (int i = 0; i < num_sprite_pack; i++)
-	{
-		delete spritepack[i];
-		spritepack[i] = 0;
-	}
-	num_sprite_pack = 0;
-	delete [] spritepack;
-	spritepack = 0;
+	global_files::killpacks();
 }
 
 int sdl_user::init_strings()
@@ -423,33 +388,33 @@ int sdl_user::init_strings()
 	}
 	
 	partial_table test;
-	test.load_local("itemdesc", textpack);
+	test.load_local("itemdesc", getfiles, FILE_TEXTPACK);
 	
 	//list of filtered chat words
-	bad_words.load_local("obscene", textpack);
+	bad_words.load_local("obscene", getfiles, FILE_TEXTPACK);
 	bad_words.sort();
 	
 	//list of tips for new players?
-	todays_tip.load_local("todaystip", textpack);
+	todays_tip.load_local("todaystip", getfiles, FILE_TEXTPACK);
 //	printf("STUB Load MercenaryIconData\n");
 //	printf("STUB Load MagicDollData\n");
 	
 	//list of items
-	solvent.load_local("solvent", textpack);
+	solvent.load_local("solvent", getfiles, FILE_TEXTPACK);
 	
 	//list of pet types
-	pet.load_local("ntexpet", textpack);
+	pet.load_local("ntexpet", getfiles, FILE_TEXTPACK);
 	
 	//no important items?
-	important_items.load("itemimportant.tbl", textpack);
+	important_items.load("itemimportant.tbl", getfiles, FILE_TEXTPACK);
 	
 //	printf("STUB Load BaseStatus\n");
 	
 	//unknown
-	teleport.load("telbook.tbl", textpack);
+	teleport.load("telbook.tbl", getfiles, FILE_TEXTPACK);
 	
 	//unknown
-	un_transaction.load("untransaction.tbl", textpack);
+	un_transaction.load("untransaction.tbl", getfiles, FILE_TEXTPACK);
 	
 //	if (battleServer != 0)
 //	{
@@ -458,7 +423,7 @@ int sdl_user::init_strings()
 //		notices.print();
 //	}
 
-	strings.load_local("string", textpack);
+	strings.load_local("string", getfiles, FILE_TEXTPACK);
 	
 	return 0;
 }
