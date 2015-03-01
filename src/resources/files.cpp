@@ -14,6 +14,7 @@ files::files()
 
 	data_buf = 0;
 	file_data = 0;
+	data_file = 0;
 }
 
 void files::init(char *name)
@@ -37,8 +38,11 @@ void files::init(char *name)
 files::~files()
 {
 	delete_files();
-	delete [] data_file;
-	data_file = 0;
+	if (data_file != 0)
+	{
+		delete [] data_file;
+		data_file = 0;
+	}
 }
 
 /** loads a file of the given name, returns the size unless size is a null pointer, and optionally decrypts it */

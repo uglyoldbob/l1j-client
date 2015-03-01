@@ -59,6 +59,7 @@ int main(int argc, char* argv[])
 	
 	sdl_master graphics;
 	global_files *all_files = new global_files();
+	sprite::load_generic_sprite_data();
 	graphics.create_client();
 	graphics.process_events();
 	delete all_files;

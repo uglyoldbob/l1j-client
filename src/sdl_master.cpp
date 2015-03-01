@@ -40,7 +40,8 @@ sdl_master::sdl_master(Uint32 flags)
 	}
 }
 
-/** Create a game instance, a thread for it, and wait for it to be ready */
+/** Create a game instance, a thread for it, and wait for it to be ready 
+render thread */
 void sdl_master::create_client()
 {	
 	if (game_client[0] == 0)
@@ -56,6 +57,7 @@ void sdl_master::create_client()
 
 /** Process gui events and deliver them as required. 
  \todo This should probably limit how frequently it calls draw 
+ render thread
  */
 void sdl_master::process_events()
 {
@@ -114,7 +116,8 @@ void sdl_master::process_events()
 }
 
 /** Check to see if any game instances are done and remove them 
- \todo support more than one instance */
+ \todo support more than one instance 
+ render thread */
 bool sdl_master::check_users(bool last)
 {
 	if (clients[0] != 0)
@@ -136,6 +139,7 @@ bool sdl_master::check_users(bool last)
 	return last;
 }
 
+/** render thread */
 Uint32 sdl_master_draw(Uint32 interval, void *parm)
 {
 	SDL_Event event;
@@ -150,6 +154,7 @@ Uint32 sdl_master_draw(Uint32 interval, void *parm)
 	return interval;
 }
 
+/** render thread */
 void sdl_master::add_draw_timer(int ms)
 {
 	do
@@ -159,7 +164,8 @@ void sdl_master::add_draw_timer(int ms)
 }
 
 /** Draw all the game instances to the screen 
-* \todo Support more than one client here */
+* \todo Support more than one client here 
+  render thread */
 void sdl_master::draw()
 {
 	SDL_Rect rect;

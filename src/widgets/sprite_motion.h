@@ -21,15 +21,18 @@ struct sprite_frame
 	sprite_tile *tiles;	/**< The array of tiles for the frame */
 };
 
-class sprite_motion : public sdl_widget
+class sprite_motion
 {
 	public:
-		sprite_motion(int x, int y, sdl_user *who);
-		virtual void draw(SDL_Surface *display);
-		virtual void drawat(int x, int y, SDL_Surface *display);
+		sprite_motion();
+		sprite_motion(const sprite_motion &ref);
+		sprite_motion(int x, int y);
+		void draw(int frame, SDL_Surface *display) const;
+		void drawat(int x, int y, int frame, SDL_Surface *display) const;
 		~sprite_motion();
-		void load(int x, int y, char *filename);
-		void delay_load(int x, int y, char *filename);
+		char is_loaded() const;
+		void load(int x, int y, char *filename, sdl_user *loader);
+		void delay_load(int x, int y, char *filename, sdl_user *loader);
 		void move(int x, int y);
 		screen_coord get_screen();
 	private:
@@ -43,8 +46,9 @@ class sprite_motion : public sdl_widget
 		int frame_num;
 		
 		int loc_x, loc_y;
-		Uint32 time_change;
 
+		char loaded;
+		
 		SDL_mutex *delay_mtx;
 		bool delay_loading;
 		int delay_load_id;

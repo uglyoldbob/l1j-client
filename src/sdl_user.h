@@ -160,10 +160,14 @@ class sdl_user
 		void change_drawmode(enum drawmode chg);	/**< Change the current drawmode */
 
 		files *getfiles;	/**< The object responsible for retrieving all file based game resources */
+		server_resource<sprite_definition> sprite_data;
 		
 		config *get_config();	/**< Used to retrieve the configuration object used by this server */
 	private:
-		config *main_config;	/**< The configuration used by the server */
+		config *main_config;	/**< The configuration used by the server, not necessary to be unique to each client thread */
+		tile *map_tiles;	/**< The array of all possible tiles a map can use, not all of them are loaded though */
+		int number_map_tiles;	/**< The number of map tiles covered by the map_tiles object */
+		
 		connection *server;	/**< The connection to the server */
 		packet *proc; /**< The object used to communicate with the server */
 
@@ -172,8 +176,6 @@ class sdl_user
 		enum drawmode change_draw;
 
 		sdl_drawmode *drawmode;	/**< the object that draws everything for me */
-		tile *map_tiles;	/**< The array of all possible tiles a map can use, not all of them are loaded though */
-		int number_map_tiles;	/**< The number of map tiles covered by the map_tiles object */
 
 		void init_math_tables();	/**< Unimportant function */
 		int getNumber(char **buf);	/**< I dont remember what this does */

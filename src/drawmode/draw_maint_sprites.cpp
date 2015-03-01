@@ -23,7 +23,7 @@ void load_ptr::go()
 draw_maint_sprites::draw_maint_sprites(sdl_user *self)
 	: sdl_drawmode(self)
 {
-	owner->game_music.change_music("sound/music0.mp3");
+//	owner->game_music.change_music("sound/music0.mp3");
 
 	num_gfx = 0;
 	gfx = 0;
@@ -34,9 +34,9 @@ draw_maint_sprites::draw_maint_sprites(sdl_user *self)
 	
 	widget_key_focus = 0;
 	
-	x = 2786;	//dark elf is 2786
+	x = 37;	//dark elf is 2786
 	//2778 is a good blob sprite
-	y = 8;
+	y = 69;
 
 	widgets[0] = 0;
 	widgets[1] = new sdl_text_button("Return", 310, 420, owner, 
@@ -103,15 +103,20 @@ void draw_maint_sprites::redo_sprite()
 	while (SDL_mutexP(draw_mtx) == -1) {};
 	if (x < 0)
 		x = 0;
+	if (x > 8660)
+		x = 8660;
 	if (y < 0)
 		y = 0;
+	if (y > 71)
+		y= 71;
 	if (widgets[0] != 0)
 	{
 		delete widgets[0];
 		widgets[0] = 0;
 	}
 	widgets[0] = new sprite(320, 400, owner);//new_name, owner);
-	((sprite*)(widgets[0]))->load(320, 400, x, y);
+	((sprite*)(widgets[0]))->load(320, 400, x);
+	((sprite*)(widgets[0]))->move(320, 400, y);
 	SDL_mutexV(draw_mtx);
 }
 

@@ -169,7 +169,8 @@ void sdl_user::LoadDurationTable(const char *file)
 }
 
 /** This function checks to see if there are any requests that need to be filled. This includes things such as quitting, loading resources, sending packets to the server, etc. 
- */
+runs in client threads only
+*/
 void sdl_user::check_requests()
 {
 	while (SDL_mutexP(requests_mtx) == -1) {};
@@ -239,7 +240,8 @@ void sdl_user::check_requests()
 				temp->data.sload.item->load(
 					temp->data.sload.x,
 					temp->data.sload.y,
-					temp->data.sload.name);
+					temp->data.sload.name,
+					this);
 				delete [] temp->data.sload.name;
 				temp->data.sload.name = 0;
 				break;

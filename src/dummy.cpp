@@ -7,6 +7,7 @@ int main(int argc, char *argv[])
 	FILE *spr;
 	spr = fopen("sprite_table.txt", "r");
 	unsigned char *sprite_data;
+	int spr_num = 0;
 	int sprite_dlength;
 	fseek(spr, 0, SEEK_END);
 	sprite_dlength = ftell(spr);
@@ -46,7 +47,6 @@ int main(int argc, char *argv[])
 		if (sprite_data[offset] == 0) 
 		{
 			offset++;
-			static int spr_num = 0;
 			spr_num++;
 			//printf("'%.15s' ", &sprite_data[offset]);
 			printf("The number is %d (sprite number %d)\n", atoi((char*)&sprite_data[offset]), spr_num);
@@ -281,7 +281,7 @@ int main(int argc, char *argv[])
 		}
 		}
 	}
-
+	printf("There were %d sprites total.\n", spr_num);
 	free(sprite_data);
 
 	return 0;

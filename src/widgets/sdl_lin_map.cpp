@@ -377,7 +377,7 @@ void sdl_lin_map::move_sprite(uint32_t id, int x, int y, int sprite_num, int hea
 	if (i == sprites_on_map.end())
 	{
 		sprite *temp = new sprite(x, y, myclient);
-		temp->load(x, y, sprite_num, heading);
+		temp->load(x, y, sprite_num);
 		sprites_on_map[id] = temp;
 	}
 	else

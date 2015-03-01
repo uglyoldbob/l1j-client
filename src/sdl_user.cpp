@@ -249,7 +249,8 @@ bool sdl_user::quit_request()
 	return temp;
 }
 
-/** change the current drawmode */
+/** change the current drawmode 
+used in client thread, render thread */
 void sdl_user::change_drawmode(enum drawmode chg)
 {
 	while (SDL_mutexP(draw_mtx) == -1) {};
@@ -259,6 +260,7 @@ void sdl_user::change_drawmode(enum drawmode chg)
 	SDL_mutexV(draw_mtx);
 }
 
+/** used in render thread, client thread */
 void sdl_user::check_for_change_drawmode()
 {
 	while (SDL_mutexP(draw_mtx) == -1) {};
@@ -311,7 +313,8 @@ void sdl_user::check_for_change_drawmode()
 	SDL_mutexV(draw_mtx);
 }
 
-/** Draw the game if the current drawmode is valid and if we are ready */
+/** Draw the game if the current drawmode is valid and if we are ready 
+used in render thread */
 void sdl_user::draw(SDL_Surface *display)
 {
 	check_for_change_drawmode();
@@ -326,6 +329,7 @@ void sdl_user::draw(SDL_Surface *display)
 	SDL_mutexV(draw_mtx);
 }
 
+/** used in client thread */
 void sdl_user::register_char(lin_char_info *data)
 {	//puts character data into the array
 	if ((num_login_opts > 0) && (data != 0))
@@ -352,6 +356,7 @@ void sdl_user::register_char(lin_char_info *data)
 	}
 }
 
+/** used in client thread */
 void sdl_user::init()
 {
 	main_config = new config("Lineage.ini");
@@ -548,6 +553,7 @@ void sdl_user::init()
 	load->load_done();
 }
 
+/** used in client thread */
 int sdl_user::get_updates(connection* server, draw_loading *scrn)
 {
 	unsigned char temp;
@@ -641,6 +647,7 @@ int sdl_user::get_updates(connection* server, draw_loading *scrn)
 	return status;
 }
 
+/** used in client thread */
 void sdl_user::change_map(int map_num)
 {
 	if (is_in_mode(DRAWMODE_GAME, true))
@@ -651,17 +658,20 @@ void sdl_user::change_map(int map_num)
 	}
 }
 
+/** used in client thread */
 int sdl_user::process_packet()
 {
 	proc->get_packet(true);
 	return proc->process_packet();
 }
 
+/** used in client and render thread */
 void sdl_user::send_packet(packet_data &sendme)
 {
 	proc->send_packet(sendme);
 }
 
+/** used in client thread */
 int sdl_user::run()
 {
 	try

@@ -20,7 +20,7 @@ void quit_ptr::go()
 draw_admin_main::draw_admin_main(sdl_user *self)
 	: sdl_drawmode(self)
 {
-	owner->game_music.change_music("sound/music1.mp3");
+//	owner->game_music.change_music("sound/music1.mp3");
 	quitting = false;
 	
 	int index;
