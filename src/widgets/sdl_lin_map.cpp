@@ -82,12 +82,14 @@ void sdl_lin_map::draw_info(SDL_Surface *display, int x, int y)
 	{
 		sprintf(buffer, "%5d, %5d", x, y);
 		lineage_font.draw(display, startx, starty, buffer, 0xFFFE);
+		sprintf(buffer, "%4d, %4d", mouse_x, mouse_y);
+		lineage_font.draw(display, startx, starty+10, buffer, 0xFFFE);
 		sprintf(buffer, "%4d, %3d", segs[i].mapdata->floor[x-segs[i].x][2*(y-segs[i].y)]>>8, 
 				segs[i].mapdata->floor[x-segs[i].x][2*(y-segs[i].y)] & 0xFF);
-		lineage_font.draw(display, startx, starty+10, buffer, 0xFFFE);
+		lineage_font.draw(display, startx, starty+20, buffer, 0xFFFE);
 		sprintf(buffer, "%4d, %3d", segs[i].mapdata->floor[x-segs[i].x][2*(y-segs[i].y)+1]>>8, 
 				segs[i].mapdata->floor[x-segs[i].x][2*(y-segs[i].y)+1] & 0xFF);
-		lineage_font.draw(display, startx, starty+20, buffer, 0xFFFE);
+		lineage_font.draw(display, startx, starty+30, buffer, 0xFFFE);
 	}
 	else
 	{
@@ -377,11 +379,14 @@ void sdl_lin_map::move_sprite(uint32_t id, int x, int y, int sprite_num, int hea
 	if (i == sprites_on_map.end())
 	{
 		sprite *temp = new sprite(x, y, myclient);
+		printf("Place sprite 0x%x at %d, %d\n", id, x, y);
 		temp->load(x, y, sprite_num);
+		temp->move(x, y, heading);
 		sprites_on_map[id] = temp;
 	}
 	else
 	{
+		printf("Move sprite 0x%x to %d, %d\n", id, x, y);
 		sprites_on_map[id]->move(x, y, heading);
 	}
 	SDL_mutexV(edit_mtx);
@@ -612,26 +617,26 @@ void sdl_lin_map::draw(SDL_Surface *display)
 		{
 			temp_offx = master_offsetx - segs[i].offsetx;
 			temp_offy = master_offsety - segs[i].offsety;
-		
 			segs[i].graphic->drawat(temp_offx, temp_offy, one->get_surf());
-		}
-	}
-	if (sprites_on_map.size() > 0)
-	{
-		for (std::map<uint32_t, sprite*>::iterator i = sprites_on_map.begin(); i != sprites_on_map.end(); i++)
-		{
-			int dx, dy;
-			screen_coord thescreen = i->second->get_screen();
-			dx = thescreen.get_x() + master_offsetx;
-			dy = thescreen.get_y() + master_offsety;
-			i->second->drawat(dx, dy, one->get_surf());
 		}
 	}
 	if (cursor_valid)
 		draw_cursor(cursor_x, cursor_y, one->get_surf());
 
 	//draws the full map onto display
+	if (sprites_on_map.size() > 0)
+	{
+		for (std::map<uint32_t, sprite*>::iterator i = sprites_on_map.begin(); i != sprites_on_map.end(); i++)
+		{
+			int dx, dy;
+			screen_coord thescreen = i->second->get_screen();
+			dx = master_offsetx + thescreen.get_x();
+			dy = master_offsety + thescreen.get_y();
+			i->second->drawat(dx+24, dy-36, one->get_surf());
+		}
+	}
 	sdl_widget::draw(display);
+	
 	SDL_mutexV(edit_mtx);
 }
 
@@ -679,6 +684,8 @@ void sdl_lin_map::mouse_to(SDL_MouseMotionEvent *to)
 	int mx, my;
 	mx = to->x - one->getx();
 	my = to->y - one->gety() - 12;
+	mouse_x = to->x;
+	mouse_y = to->y;
 
 	screen_coord onscreen(mx - master_offsetx, my - master_offsety);
 	map_coord onmap = onscreen.get_map();

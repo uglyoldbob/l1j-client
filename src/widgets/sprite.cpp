@@ -10,6 +10,7 @@ sprite::sprite(int x, int y, sdl_user *who)
 	delay_mtx = SDL_CreateMutex();
 	delay_loading = false;
 	cur_action = -1;
+	change_time = SDL_GetTicks();
 }
 
 void sprite::load_sprite_gfx(unsigned int id)
@@ -47,10 +48,10 @@ void sprite::load_generic_sprite_data()
 	else
 	{
 		int offset = 1;
-		int sprnum = 0;
 		while (isspace(sprite_data[offset])) { offset++; }
 		//this number is the number of sequences for the sprite
 		ani_num = atoi((char*)&sprite_data[offset]);
+		ani_num = spr_num;
 		//printf("The number is %d (sprite number 0)\n", ani_num);
 		while (isdigit(sprite_data[offset])) { offset++; }
 		if (sprite_data[offset] == '=')
@@ -70,8 +71,11 @@ void sprite::load_generic_sprite_data()
 		{
 			offset++;
 			spr_num++;
+			(*sprite_defs)[spr_num].shadow = -1;
+			//printf("File offset for sprite %d is %d 0x%x\n", spr_num, offset, offset);
 			//printf("'%.15s' ", &sprite_data[offset]);
 			ani_num = atoi((char*)&sprite_data[offset]);
+			ani_num = spr_num;
 			//printf("The number is %d (sprite number %d)\n", ani_num, spr_num);
 			while (isdigit(sprite_data[offset])) { offset++; }
 			if (sprite_data[offset] == '=')
@@ -84,232 +88,239 @@ void sprite::load_generic_sprite_data()
 				while (!isdigit(sprite_data[offset])) { offset++; }
 			}
 		}
-		while (isspace(sprite_data[offset])) { offset++; }
+		while (sprite_data[offset] == ' ') 
+		{
+			offset++;
+		}
 		if (sprite_data[offset] == 0xd2)
 		{
 			offset++;
 		}
 		else
 		{
-		//printf("\t'%.10s' ", &sprite_data[offset]);
-		int value = atoi((char*)&sprite_data[offset]);
-		while (isdigit(sprite_data[offset])) { offset++; }
-		int temp;
-		//printf("\tmode=%d\n", value);
-		switch (value)
-		{
-			case 100:	//switches
-				//read a value, then read 4 times that many values
-				while (isspace(sprite_data[offset])) { offset++; }
-				temp = atoi((char*)&sprite_data[offset]);
-				while (isdigit(sprite_data[offset])) { offset++; }
-				for (int i = 0; i < temp; i++)
-				{
-					while (isspace(sprite_data[offset])) { offset++; }
-					atoi((char*)&sprite_data[offset]);
-					if (sprite_data[offset]=='-'){offset++;}
-					while (isdigit(sprite_data[offset])) { offset++; }
-					while (isspace(sprite_data[offset])) { offset++; }
-					atoi((char*)&sprite_data[offset]);
-					if (sprite_data[offset]=='-'){offset++;}
-					while (isdigit(sprite_data[offset])) { offset++; }
-					while (isspace(sprite_data[offset])) { offset++; }
-					atoi((char*)&sprite_data[offset]);
-					if (sprite_data[offset]=='-'){offset++;}
-					while (isdigit(sprite_data[offset])) { offset++; }
-					while (isspace(sprite_data[offset])) { offset++; }
-					atoi((char*)&sprite_data[offset]);
-					if (sprite_data[offset]=='-'){offset++;}
-					while (isdigit(sprite_data[offset])) { offset++; }
-				}
-				break;
-			case 101: //shadow
-				//read one value
-				while (isspace(sprite_data[offset])) { offset++; }
-				temp = atoi((char*)&sprite_data[offset]);
-				while (isdigit(sprite_data[offset])) { offset++; }
-//				printf("\t\t%d\n",temp);
-				break;
-			case 102: //objType
-				//read one value
-				while (isspace(sprite_data[offset])) { offset++; }
-				temp = atoi((char*)&sprite_data[offset]);
-				while (isdigit(sprite_data[offset])) { offset++; }
-//				printf("\t\t%d\n",temp);
-				break;
-			case 103: //altAttack
-				//read one value
-				while (isspace(sprite_data[offset])) { offset++; }
-				temp = atoi((char*)&sprite_data[offset]);
-				while (isdigit(sprite_data[offset])) { offset++; }
-//				printf("\t\t%d\n",temp);
-				break;
-			case 104: //attr
-				//read one value
-				while (isspace(sprite_data[offset])) { offset++; }
-				temp = atoi((char*)&sprite_data[offset]);
-				while (isdigit(sprite_data[offset])) { offset++; }
-//				printf("\t\t%d\n",temp);
-				break;
-			case 105: //clothing
-				//read a value
-				//read 0 or that value of numbers, whichever is higher
-				while (isspace(sprite_data[offset])) { offset++; }
-				temp = atoi((char*)&sprite_data[offset]);
-				while (isdigit(sprite_data[offset])) { offset++; }
-//				printf("\t\t%d\n",temp);
-				for (int i = 0; i < temp; i++)
-				{
-					while (isspace(sprite_data[offset])) { offset++; }
-					int temp2 =atoi((char*)&sprite_data[offset]);
-					while (isdigit(sprite_data[offset])) { offset++; }
-//					printf("\t\t\t%d\n",temp2);
-				}
-				break;
-			case 106: //weapons
-				//?
-				break;
-			case 107: //size
-				//read 2 numbers
-				while (isspace(sprite_data[offset])) { offset++; }
-				temp = atoi((char*)&sprite_data[offset]);
-				if (sprite_data[offset]=='-'){offset++;}
-				while (isdigit(sprite_data[offset])) { offset++; }
-//				printf("\t\t%d\n",temp);
-				while (isspace(sprite_data[offset])) { offset++; }
-				temp = atoi((char*)&sprite_data[offset]);
-				if (sprite_data[offset]=='-'){offset++;}
-				while (isdigit(sprite_data[offset])) { offset++; }
-//				printf("\t\t%d\n",temp);
-				break;
-			case 108: //flyingType
-				//read one number
-				while (isspace(sprite_data[offset])) { offset++; }
-				temp = atoi((char*)&sprite_data[offset]);
-				while (isdigit(sprite_data[offset])) { offset++; }
-//				printf("\t\t%d\n",temp);
-				break;
-			case 109: //immaterial
-				//read two numbers
-				while (isspace(sprite_data[offset])) { offset++; }
-				temp = atoi((char*)&sprite_data[offset]);
-				if (sprite_data[offset]=='-'){offset++;}
-				while (isdigit(sprite_data[offset])) { offset++; }
-//				printf("\t\t%d\n",temp);
-				while (isspace(sprite_data[offset])) { offset++; }
-				temp = atoi((char*)&sprite_data[offset]);
-				if (sprite_data[offset]=='-'){offset++;}
-				while (isdigit(sprite_data[offset])) { offset++; }
-//				printf("\t\t%d\n",temp);
-				break;
-			case 110: 
-				//read a number and modify the stack with it
-				while (isspace(sprite_data[offset])) { offset++; }
-				temp = atoi((char*)&sprite_data[offset]);
-				while (isdigit(sprite_data[offset])) { offset++; }
-//				printf("\t\t%d\n",temp);
-				break;
-			case 111: //stride
-				//read one number
-				while (isspace(sprite_data[offset])) { offset++; }
-				temp = atoi((char*)&sprite_data[offset]);
-				while (isdigit(sprite_data[offset])) { offset++; }
-//				printf("\t\t%d\n",temp);
-				break;
-			case 112: //furniture
-				//read one number
-				while (isspace(sprite_data[offset])) { offset++; }
-				temp = atoi((char*)&sprite_data[offset]);
-				while (isdigit(sprite_data[offset])) { offset++; }
-//				printf("\t\t%d\n",temp);
-				break;
-			case 113: //morphEffect
-				//read one number
-				while (isspace(sprite_data[offset])) { offset++; }
-				temp = atoi((char*)&sprite_data[offset]);
-				while (isdigit(sprite_data[offset])) { offset++; }
-//				printf("\t\t%d\n",temp);
-				break;
-			case 114: //furnitureSize
-				//read one number
-				while (isspace(sprite_data[offset])) { offset++; }
-				temp = atoi((char*)&sprite_data[offset]);
-				while (isdigit(sprite_data[offset])) { offset++; }
-//				printf("\t\t%d\n",temp);
-				break;
-			default:
+			if (sprite_data[offset] != 0)
 			{
-				int a,b,c,d,e,f;
-				a = value;
-				if (sprite_data[offset] == '=')
-				{
-					offset++;
-//					printf("Mystery: %d\n", atoi((char*)&sprite_data[offset]));
-					while (isdigit(sprite_data[offset])) { offset++; }
-				}
-				else
-				{
+			//printf("\t'%.10s' ", &sprite_data[offset]);
+			int value = atoi((char*)&sprite_data[offset]);
+			while (isdigit(sprite_data[offset])) { offset++; }
+			int temp;
+			//printf("\tmode=%d\n", value);
+			switch (value)
+			{
+				case 100:	//switches
+					//read a value, then read 4 times that many values
 					while (isspace(sprite_data[offset])) { offset++; }
-					b = atoi((char*)&sprite_data[offset]);
-					while (isspace(sprite_data[offset])) { offset++; }
+					temp = atoi((char*)&sprite_data[offset]);
 					while (isdigit(sprite_data[offset])) { offset++; }
-					while (!isdigit(sprite_data[offset])) { offset++; }
-					c = atoi((char*)&sprite_data[offset]);
-					while (isdigit(sprite_data[offset])) { offset++; }
-					while (!isdigit(sprite_data[offset])) { offset++; }
-					//b is an unknown value (usually 1, but sometimes 0,2,3,4,5,6,7)
-					(*sprite_defs)[spr_num].actions[a].num_frames = c;
-					(*sprite_defs)[spr_num].actions[a].frames = new sprite_action_frame[c];
-					for (int i = 0; i < c; i++)
+					for (int i = 0; i < temp; i++)
 					{
 						while (isspace(sprite_data[offset])) { offset++; }
-					//	printf("\t\t'%.10s' ", &sprite_data[offset]);
-						d = atoi((char*)&sprite_data[offset]);
+						atoi((char*)&sprite_data[offset]);
+						if (sprite_data[offset]=='-'){offset++;}
+						while (isdigit(sprite_data[offset])) { offset++; }
+						while (isspace(sprite_data[offset])) { offset++; }
+						atoi((char*)&sprite_data[offset]);
+						if (sprite_data[offset]=='-'){offset++;}
+						while (isdigit(sprite_data[offset])) { offset++; }
+						while (isspace(sprite_data[offset])) { offset++; }
+						atoi((char*)&sprite_data[offset]);
+						if (sprite_data[offset]=='-'){offset++;}
+						while (isdigit(sprite_data[offset])) { offset++; }
+						while (isspace(sprite_data[offset])) { offset++; }
+						atoi((char*)&sprite_data[offset]);
+						if (sprite_data[offset]=='-'){offset++;}
+						while (isdigit(sprite_data[offset])) { offset++; }
+					}
+					break;
+				case 101: //shadow
+					//read one value
+					while (isspace(sprite_data[offset])) { offset++; }
+					temp = atoi((char*)&sprite_data[offset]);
+					(*sprite_defs)[spr_num].shadow = temp;
+					while (isdigit(sprite_data[offset])) { offset++; }
+					printf("sprite %d shadow %d (offset %d 0x%x)\n",spr_num, temp, offset, offset);
+					break;
+				case 102: //objType
+					//read one value
+					while (isspace(sprite_data[offset])) { offset++; }
+					temp = atoi((char*)&sprite_data[offset]);
+					while (isdigit(sprite_data[offset])) { offset++; }
+	//				printf("\t\t%d\n",temp);
+					break;
+				case 103: //altAttack
+					//read one value
+					while (isspace(sprite_data[offset])) { offset++; }
+					temp = atoi((char*)&sprite_data[offset]);
+					while (isdigit(sprite_data[offset])) { offset++; }
+	//				printf("\t\t%d\n",temp);
+					break;
+				case 104: //attr
+					//read one value
+					while (isspace(sprite_data[offset])) { offset++; }
+					temp = atoi((char*)&sprite_data[offset]);
+					while (isdigit(sprite_data[offset])) { offset++; }
+	//				printf("\t\t%d\n",temp);
+					break;
+				case 105: //clothing
+					//read a value
+					//read 0 or that value of numbers, whichever is higher
+					while (isspace(sprite_data[offset])) { offset++; }
+					temp = atoi((char*)&sprite_data[offset]);
+					while (isdigit(sprite_data[offset])) { offset++; }
+	//				printf("\t\t%d\n",temp);
+					for (int i = 0; i < temp; i++)
+					{
+						while (isspace(sprite_data[offset])) { offset++; }
+						int temp2 =atoi((char*)&sprite_data[offset]);
+						while (isdigit(sprite_data[offset])) { offset++; }
+	//					printf("\t\t\t%d\n",temp2);
+					}
+					break;
+				case 106: //weapons
+					//?
+					break;
+				case 107: //size
+					//read 2 numbers
+					while (isspace(sprite_data[offset])) { offset++; }
+					temp = atoi((char*)&sprite_data[offset]);
+					if (sprite_data[offset]=='-'){offset++;}
+					while (isdigit(sprite_data[offset])) { offset++; }
+	//				printf("\t\t%d\n",temp);
+					while (isspace(sprite_data[offset])) { offset++; }
+					temp = atoi((char*)&sprite_data[offset]);
+					if (sprite_data[offset]=='-'){offset++;}
+					while (isdigit(sprite_data[offset])) { offset++; }
+	//				printf("\t\t%d\n",temp);
+					break;
+				case 108: //flyingType
+					//read one number
+					while (isspace(sprite_data[offset])) { offset++; }
+					temp = atoi((char*)&sprite_data[offset]);
+					while (isdigit(sprite_data[offset])) { offset++; }
+	//				printf("\t\t%d\n",temp);
+					break;
+				case 109: //immaterial
+					//read two numbers
+					while (isspace(sprite_data[offset])) { offset++; }
+					temp = atoi((char*)&sprite_data[offset]);
+					if (sprite_data[offset]=='-'){offset++;}
+					while (isdigit(sprite_data[offset])) { offset++; }
+	//				printf("\t\t%d\n",temp);
+					while (isspace(sprite_data[offset])) { offset++; }
+					temp = atoi((char*)&sprite_data[offset]);
+					if (sprite_data[offset]=='-'){offset++;}
+					while (isdigit(sprite_data[offset])) { offset++; }
+	//				printf("\t\t%d\n",temp);
+					break;
+				case 110: 
+					//read a number and modify the stack with it
+					while (isspace(sprite_data[offset])) { offset++; }
+					temp = atoi((char*)&sprite_data[offset]);
+					while (isdigit(sprite_data[offset])) { offset++; }
+	//				printf("\t\t%d\n",temp);
+					break;
+				case 111: //stride
+					//read one number
+					while (isspace(sprite_data[offset])) { offset++; }
+					temp = atoi((char*)&sprite_data[offset]);
+					while (isdigit(sprite_data[offset])) { offset++; }
+	//				printf("\t\t%d\n",temp);
+					break;
+				case 112: //furniture
+					//read one number
+					while (isspace(sprite_data[offset])) { offset++; }
+					temp = atoi((char*)&sprite_data[offset]);
+					while (isdigit(sprite_data[offset])) { offset++; }
+	//				printf("\t\t%d\n",temp);
+					break;
+				case 113: //morphEffect
+					//read one number
+					while (isspace(sprite_data[offset])) { offset++; }
+					temp = atoi((char*)&sprite_data[offset]);
+					while (isdigit(sprite_data[offset])) { offset++; }
+	//				printf("\t\t%d\n",temp);
+					break;
+				case 114: //furnitureSize
+					//read one number
+					while (isspace(sprite_data[offset])) { offset++; }
+					temp = atoi((char*)&sprite_data[offset]);
+					while (isdigit(sprite_data[offset])) { offset++; }
+	//				printf("\t\t%d\n",temp);
+					break;
+				default:
+				{
+					int a,b,c,d,e,f;
+					a = value;
+					if (sprite_data[offset] == '=')
+					{
+						offset++;
+	//					printf("Mystery: %d\n", atoi((char*)&sprite_data[offset]));
+						while (isdigit(sprite_data[offset])) { offset++; }
+					}
+					else
+					{
+						while (isspace(sprite_data[offset])) { offset++; }
+						b = atoi((char*)&sprite_data[offset]);
+						while (isspace(sprite_data[offset])) { offset++; }
 						while (isdigit(sprite_data[offset])) { offset++; }
 						while (!isdigit(sprite_data[offset])) { offset++; }
-						while (isspace(sprite_data[offset])) { offset++; }
-						e = atoi((char*)&sprite_data[offset]);
+						c = atoi((char*)&sprite_data[offset]);
 						while (isdigit(sprite_data[offset])) { offset++; }
 						while (!isdigit(sprite_data[offset])) { offset++; }
-						while (isspace(sprite_data[offset])) { offset++; }
-						f = atoi((char*)&sprite_data[offset]);
-						while (isdigit(sprite_data[offset])) { offset++; }
-						switch (sprite_data[offset])
+						//b is an unknown value (usually 1, but sometimes 0,2,3,4,5,6,7)
+						(*sprite_defs)[spr_num].actions[a].num_frames = c;
+						(*sprite_defs)[spr_num].actions[a].frames = new sprite_action_frame[c];
+						for (int i = 0; i < c; i++)
 						{
-							int g;
-							case '!':
-								//printf("Found a character: %c, ", sprite_data[offset]);
-								offset++;
-								break;
-							//play audio clip?
-							case '<':
-							case '[':
-							case '^':
-							case ']':
-							case '{':
-							case '>':
-								//printf("Found a character: %c, ", sprite_data[offset]);
-								offset++;
-								g = atoi((char*)&sprite_data[offset]);
-								while (isdigit(sprite_data[offset])) { offset++; }
-								//printf("%d\n", g);
-								break;
-							default:
-								break;
+							while (isspace(sprite_data[offset])) { offset++; }
+						//	printf("\t\t'%.10s' ", &sprite_data[offset]);
+							d = atoi((char*)&sprite_data[offset]);
+							while (isdigit(sprite_data[offset])) { offset++; }
+							while (!isdigit(sprite_data[offset])) { offset++; }
+							while (isspace(sprite_data[offset])) { offset++; }
+							e = atoi((char*)&sprite_data[offset]);
+							while (isdigit(sprite_data[offset])) { offset++; }
+							while (!isdigit(sprite_data[offset])) { offset++; }
+							while (isspace(sprite_data[offset])) { offset++; }
+							f = atoi((char*)&sprite_data[offset]);
+							while (isdigit(sprite_data[offset])) { offset++; }
+							switch (sprite_data[offset])
+							{
+								int g;
+								case '!':
+									//printf("Found a character: %c, ", sprite_data[offset]);
+									offset++;
+									break;
+								//play audio clip?
+								case '<':
+								case '[':
+								case '^':
+								case ']':
+								case '{':
+								case '>':
+									//printf("Found a character: %c, ", sprite_data[offset]);
+									offset++;
+									g = atoi((char*)&sprite_data[offset]);
+									while (isdigit(sprite_data[offset])) { offset++; }
+									//printf("%d\n", g);
+									break;
+								default:
+									break;
+							}
+							while (!isspace(sprite_data[offset])) { offset++; }
+							(*sprite_defs)[spr_num].actions[a].frames[i].sprite = ani_num;
+							(*sprite_defs)[spr_num].actions[a].frames[i].sub_sprite = d;
+							(*sprite_defs)[spr_num].actions[a].frames[i].sub_frame = e;
+							(*sprite_defs)[spr_num].actions[a].frames[i].length = f;
+							(*sprite_defs)[spr_num].actions[a].frames[i].audio = -1;
+		//					printf("\t\t\t(sprite %d, anim %d, action %d, sub-anim %d, frame %d, d=%d e=%d f=%d\n",
+		//						spr_num, ani_num, a, d, e, d,e,f);
 						}
-						while (!isspace(sprite_data[offset])) { offset++; }
-						(*sprite_defs)[spr_num].actions[a].frames[i].sprite = ani_num;
-						(*sprite_defs)[spr_num].actions[a].frames[i].sub_sprite = d;
-						(*sprite_defs)[spr_num].actions[a].frames[i].sub_frame = e;
-						(*sprite_defs)[spr_num].actions[a].frames[i].length = f;
-						(*sprite_defs)[spr_num].actions[a].frames[i].audio = -1;
-						//printf("\t\t\t(sprite %d, anim %d, action %d, sub-anim %d, frame %d, d=%d e=%d f=%d\n",
-						//	spr_num, ani_num, a, d, e, d,e,f);
 					}
 				}
+					break;
 			}
-				break;
-		}
+			}
 		}
 		}
 	}
@@ -320,22 +331,65 @@ void sprite::load_generic_sprite_data()
 
 void sprite::set_action(int action)
 {
-	
+	cur_action = action;
 }
 
 void sprite::load(int x, int y, int sprnum)
 {
 	while (SDL_mutexP(delay_mtx) == -1) {};
+	//printf("Placing the sprite at %d, %d\n", x, y);
+	posx = x;
+	posy = y;
 	//check to see that all the proper sprite_motions are loaded
-	cur_action = 1;
+	cur_action = 3;
 	sprite_num = sprnum;
 	for (int i = 0; i < 72; i++)
 	{
 		int j;
+		if (myclient->sprite_data[sprnum].shadow != -1)
+		{
+			for (j = 0; j < myclient->sprite_data[sprnum].actions[i].num_frames; j++)
+			{
+				sprite::load_sprite_gfx(myclient->sprite_data[sprnum].shadow<<16 |
+					myclient->sprite_data[sprnum].actions[i].frames[j].sub_sprite);
+				sprite::load_sprite_gfx(myclient->sprite_data[sprnum].shadow<<16 |
+					myclient->sprite_data[sprnum].actions[i].frames[j].sub_sprite+1);
+				sprite::load_sprite_gfx(myclient->sprite_data[sprnum].shadow<<16 |
+					myclient->sprite_data[sprnum].actions[i].frames[j].sub_sprite+2);
+				sprite::load_sprite_gfx(myclient->sprite_data[sprnum].shadow<<16 |
+					myclient->sprite_data[sprnum].actions[i].frames[j].sub_sprite+3);
+				sprite::load_sprite_gfx(myclient->sprite_data[sprnum].shadow<<16 |
+					myclient->sprite_data[sprnum].actions[i].frames[j].sub_sprite+4);
+				sprite::load_sprite_gfx(myclient->sprite_data[sprnum].shadow<<16 |
+					myclient->sprite_data[sprnum].actions[i].frames[j].sub_sprite+5);
+				sprite::load_sprite_gfx(myclient->sprite_data[sprnum].shadow<<16 |
+					myclient->sprite_data[sprnum].actions[i].frames[j].sub_sprite+6);
+				sprite::load_sprite_gfx(myclient->sprite_data[sprnum].shadow<<16 |
+					myclient->sprite_data[sprnum].actions[i].frames[j].sub_sprite+7);
+	//			printf("Checking for %d-%d.spr frame %d\n", 
+	//				myclient->sprite_data[sprnum].actions[i].frames[j].sprite,
+	//				myclient->sprite_data[sprnum].actions[i].frames[j].sub_sprite,
+	//				myclient->sprite_data[sprnum].actions[i].frames[j].sub_frame);
+			}
+		}
 		for (j = 0; j < myclient->sprite_data[sprnum].actions[i].num_frames; j++)
 		{
 			sprite::load_sprite_gfx(myclient->sprite_data[sprnum].actions[i].frames[j].sprite<<16 |
 				myclient->sprite_data[sprnum].actions[i].frames[j].sub_sprite);
+			sprite::load_sprite_gfx(myclient->sprite_data[sprnum].actions[i].frames[j].sprite<<16 |
+				myclient->sprite_data[sprnum].actions[i].frames[j].sub_sprite+1);
+			sprite::load_sprite_gfx(myclient->sprite_data[sprnum].actions[i].frames[j].sprite<<16 |
+				myclient->sprite_data[sprnum].actions[i].frames[j].sub_sprite+2);
+			sprite::load_sprite_gfx(myclient->sprite_data[sprnum].actions[i].frames[j].sprite<<16 |
+				myclient->sprite_data[sprnum].actions[i].frames[j].sub_sprite+3);
+			sprite::load_sprite_gfx(myclient->sprite_data[sprnum].actions[i].frames[j].sprite<<16 |
+				myclient->sprite_data[sprnum].actions[i].frames[j].sub_sprite+4);
+			sprite::load_sprite_gfx(myclient->sprite_data[sprnum].actions[i].frames[j].sprite<<16 |
+				myclient->sprite_data[sprnum].actions[i].frames[j].sub_sprite+5);
+			sprite::load_sprite_gfx(myclient->sprite_data[sprnum].actions[i].frames[j].sprite<<16 |
+				myclient->sprite_data[sprnum].actions[i].frames[j].sub_sprite+6);
+			sprite::load_sprite_gfx(myclient->sprite_data[sprnum].actions[i].frames[j].sprite<<16 |
+				myclient->sprite_data[sprnum].actions[i].frames[j].sub_sprite+7);
 //			printf("Checking for %d-%d.spr frame %d\n", 
 //				myclient->sprite_data[sprnum].actions[i].frames[j].sprite,
 //				myclient->sprite_data[sprnum].actions[i].frames[j].sub_sprite,
@@ -356,18 +410,13 @@ void sprite::load(int x, int y, int sprnum)
 
 screen_coord sprite::get_screen()
 {
-	map_coord temp(0, 0);
+	map_coord temp(posx, posy);
+	//printf("Convert position %d, %d to screen coordinates\n", posx, posy);
 	return temp.get_screen();//sprite::sprite_gfx[cur_action].get_screen();
 }
 
-#define OPTIONA
-//#undef OPTIONA
-#define OPTIONB
-#undef OPTIONB
-
 void sprite::draw(SDL_Surface *display)
 {
-#ifdef OPTIONA
 	//check time
 	//advance frame if enough time has passed
 	static Uint32 change_time = SDL_GetTicks();
@@ -375,60 +424,35 @@ void sprite::draw(SDL_Surface *display)
 	{
 		cur_frame++;
 		change_time = SDL_GetTicks() + 200;
-		if (cur_frame >= myclient->sprite_data[sprite_num].actions[cur_action].num_frames)
-			cur_frame = 0;
+		//printf("Drawing the sprite at %d, %d (map coord %d, %d)\n", 400, 300, posx, posy);
+		//printf("\tsprite %d, action %d, frame %d, heading %d\n", sprite_num, cur_action, cur_frame, cur_heading);
 	}
+	if (cur_frame < 0)
+		cur_frame = 0;
+	if (cur_frame >= myclient->sprite_data[sprite_num].actions[cur_action].num_frames)
+		cur_frame = 0;
 	if (myclient->sprite_data[sprite_num].actions[cur_action].num_frames > 0)
 	{
 		const sprite_motion &temp = sprite_gfx[
 			myclient->sprite_data[sprite_num].actions[cur_action].frames[cur_frame].sprite<<16 |
-			myclient->sprite_data[sprite_num].actions[cur_action].frames[cur_frame].sub_sprite];
+			myclient->sprite_data[sprite_num].actions[cur_action].frames[cur_frame].sub_sprite + cur_heading];
 		//printf("Frame %d\n", myclient->sprite_data[sprite_num].actions[0].frames[0].sub_frame + cur_heading);
+		if (myclient->sprite_data[sprite_num].shadow != -1)
+		{
+			const sprite_motion &shadow = sprite_gfx[
+			myclient->sprite_data[sprite_num].shadow<<16 |
+			myclient->sprite_data[sprite_num].actions[cur_action].frames[cur_frame].sub_sprite + cur_heading];
+			shadow.drawat(400, 300, myclient->sprite_data[sprite_num].actions[cur_action].frames[cur_frame].sub_frame, display);
+		}
 		temp.drawat(400, 300, 
 			myclient->sprite_data[sprite_num].actions[cur_action].frames[cur_frame].sub_frame, 
 			display);
 	}
-#endif
-#ifdef OPTIONB
-	//check time
-	//advance frame if enough time has passed
-	static Uint32 change_time = SDL_GetTicks();
-	if (change_time <= SDL_GetTicks())
-	{
-		cur_frame++;
-		change_time = SDL_GetTicks() + 200;
-		if (cur_frame >= myclient->sprite_data[sprite_num].actions[cur_action].num_frames)
-			cur_frame = 0;
-	}
-	if (myclient->sprite_data[sprite_num].actions[cur_action].num_frames > 0)
-	{
-		const sprite_motion &temp = sprite_gfx[
-			myclient->sprite_data[sprite_num].actions[cur_action].frames[cur_frame].sprite<<16 |
-			myclient->sprite_data[sprite_num].actions[cur_action].frames[cur_frame].sub_sprite];
-		//printf("Frame %d\n", myclient->sprite_data[sprite_num].actions[0].frames[0].sub_frame + cur_heading);
-		temp.drawat(400, 300, 
-			myclient->sprite_data[sprite_num].actions[cur_action].frames[cur_frame].sub_frame, 
-			display);
-	}
-#endif
-//	drawat(400, 300, display);
 }
 
 void sprite::change_heading(uint8_t heading)
 {
-	if (heading >= 0)
-	{
-		if (heading != cur_action)
-		{
-	/*		expand_motion(heading);
-			cur_action = heading;
-			motions[cur_action] = new sprite_motion(posx, posy, myclient);
-			char temp[25];
-			sprintf(temp, "%d-%d.spr", sprite_num, cur_action);
-			motions[cur_action]->delay_load(posx, posy, temp);
-			motions[cur_action]->move(posx, posy);*/
-		}
-	}
+	cur_heading = heading;
 }
 
 void sprite::print_actions()
@@ -456,7 +480,6 @@ void sprite::print_actions()
 
 void sprite::move(int x, int y, int heading)
 {
-	cur_action = heading;
 	if (heading >= 0)
 	{
 		if (heading != cur_action)
@@ -473,6 +496,7 @@ void sprite::move(int x, int y, int heading)
 		}
 	}
 	//sprite::sprite_gfx[cur_action].move(x, y);
+	//printf("Moving the sprite to %d, %d (heading %d)\n", x, y, heading);
 	posx = x;
 	posy = y;
 	cur_heading = heading; 
@@ -480,19 +504,50 @@ void sprite::move(int x, int y, int heading)
 
 void sprite::drawat(int x, int y, SDL_Surface *display)
 {
-	while (SDL_mutexP(delay_mtx) == -1) {};
-	if (myclient->sprite_data[sprite_num].actions[0].num_frames > 0)
+	if (change_time <= SDL_GetTicks())
 	{
-		const sprite_motion &temp = sprite_gfx[myclient->sprite_data[sprite_num].actions[0].frames[0].sprite<<16 |
-					myclient->sprite_data[sprite_num].actions[0].frames[0].sub_sprite];
-		printf("Frame %d\n", myclient->sprite_data[sprite_num].actions[0].frames[0].sub_frame + cur_heading);
-		temp.drawat(x, y, myclient->sprite_data[sprite_num].actions[0].frames[0].sub_frame + cur_heading, display);
+		cur_frame++;
+		change_time = SDL_GetTicks() + 200;
+		//printf("Drawing the sprite at %d, %d (map coord %d, %d)\n", x, y, posx, posy);
+		//printf("\tsprite %d, action %d, frame %d, heading %d\n", sprite_num, cur_action, cur_frame, cur_heading);
+	}
+	if (cur_frame < 0)
+		cur_frame = 0;
+	if (cur_frame >= myclient->sprite_data[sprite_num].actions[cur_action].num_frames)
+		cur_frame = 0;
+
+	while (SDL_mutexP(delay_mtx) == -1) {};
+	if (myclient->sprite_data[sprite_num].actions[cur_action].num_frames > 0)
+	{
+		const sprite_motion &temp = sprite_gfx[
+			myclient->sprite_data[sprite_num].actions[cur_action].frames[cur_frame].sprite<<16 |
+			myclient->sprite_data[sprite_num].actions[cur_action].frames[cur_frame].sub_sprite + cur_heading];
+		//printf("Frame %d\n", myclient->sprite_data[sprite_num].actions[cur_action].frames[cur_frame].sub_frame + cur_heading);
+		if (myclient->sprite_data[sprite_num].shadow != -1)
+		{
+			const sprite_motion &shadow = sprite_gfx[
+			myclient->sprite_data[sprite_num].shadow<<16 |
+			myclient->sprite_data[sprite_num].actions[cur_action].frames[cur_frame].sub_sprite + cur_heading];
+			shadow.drawat(x, y, myclient->sprite_data[sprite_num].actions[cur_action].frames[cur_frame].sub_frame, display);
+		}
+		temp.drawat(x, y, myclient->sprite_data[sprite_num].actions[cur_action].frames[cur_frame].sub_frame, display);
 		if (cur_action != -1)
 		{
 			//sprite::sprite_gfx[cur_action]->drawat(x, y, display);
 		}
 	}
 	SDL_mutexV(delay_mtx);
+}
+
+void sprite::valid_actions(char *data)
+{
+	for (int i = 0; i < 72; i++)
+	{
+		if (myclient->sprite_data[sprite_num].actions[i].num_frames > 0)
+		{
+			sprintf(data, "%s,%d", data, i); 
+		}
+	}
 }
 
 sprite::~sprite()

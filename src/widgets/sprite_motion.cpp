@@ -316,9 +316,8 @@ void sprite_motion::drawat(int x, int y, int frame, SDL_Surface *display) const
 		{
 			tile_location.y += 12;
 		}
-
-		tile_location.x += master_x + tiles[frames[frame].tiles[i].tile]->getx() + x;
-		tile_location.y += master_y + tiles[frames[frame].tiles[i].tile]->gety() + y;
+		tile_location.x += master_x + tiles[frames[frame].tiles[i].tile]->getx() + x - frames[frame].x1;
+		tile_location.y += master_y + tiles[frames[frame].tiles[i].tile]->gety() + y - frames[frame].y1;
 
 		tile_location.w = 0;
 		tile_location.h = 0;

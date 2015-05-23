@@ -85,6 +85,7 @@ class sdl_lin_map : public sdl_widget
 		int master_offsety;
 		
 		int cursor_x, cursor_y;
+		int mouse_x, mouse_y;
 		bool cursor_valid;
 		void draw_cursor(int x, int y, SDL_Surface *display);
 		

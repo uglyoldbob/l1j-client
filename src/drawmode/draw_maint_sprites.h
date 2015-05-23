@@ -29,7 +29,7 @@ class draw_maint_sprites : public sdl_drawmode
 		virtual void draw(SDL_Surface *display);
 	private:
 		int x, y;
-		
+		int cur_heading;
 		void redo_sprite();
 };
 
