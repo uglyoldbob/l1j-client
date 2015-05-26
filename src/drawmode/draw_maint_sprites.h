@@ -30,6 +30,7 @@ class draw_maint_sprites : public sdl_drawmode
 	private:
 		int x, y;
 		int cur_heading;
+		char wpn;
 		void redo_sprite();
 };
 

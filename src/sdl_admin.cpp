@@ -6,6 +6,7 @@
 #include "drawmode/draw_maint_icons.h"
 #include "drawmode/draw_maint_img.h"
 #include "drawmode/draw_maint_map.h"
+#include "drawmode/draw_maint_sfx.h"
 #include "drawmode/draw_maint_sprites.h"
 #include "drawmode/draw_maint_til.h"
 #include "globals.h"
@@ -288,6 +289,11 @@ void sdl_user::check_for_change_drawmode()
 				break;
 			case DRAWMODE_MAINT_SPRITES:
 				drawmode = new draw_maint_sprites(this);
+				draw_mode = chg;
+				ready = true;
+				break;
+			case DRAWMODE_MAINT_SFX:
+				drawmode = new draw_maint_sfx(this);
 				draw_mode = chg;
 				ready = true;
 				break;

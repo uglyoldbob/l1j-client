@@ -84,6 +84,7 @@ am__Admin_SOURCES_DIST = src/config.cpp src/connection.cpp \
 	src/drawmode/draw_maint_icons.cpp \
 	src/drawmode/draw_maint_img.cpp \
 	src/drawmode/draw_maint_map.cpp \
+	src/drawmode/draw_maint_sfx.cpp \
 	src/drawmode/draw_maint_sprites.cpp \
 	src/drawmode/draw_maint_til.cpp src/encryption/mains.c \
 	src/encryption/sha256deep.c src/encryption/hash.c \
@@ -111,9 +112,10 @@ am_Admin_OBJECTS = config.$(OBJEXT) connection.$(OBJEXT) \
 	draw_char_sel.$(OBJEXT) draw_game.$(OBJEXT) \
 	draw_new_char.$(OBJEXT) draw_maint_icons.$(OBJEXT) \
 	draw_maint_img.$(OBJEXT) draw_maint_map.$(OBJEXT) \
-	draw_maint_sprites.$(OBJEXT) draw_maint_til.$(OBJEXT) \
-	mains.$(OBJEXT) sha256deep.$(OBJEXT) hash.$(OBJEXT) \
-	helpers.$(OBJEXT) sha256.$(OBJEXT) $(am__objects_1)
+	draw_maint_sfx.$(OBJEXT) draw_maint_sprites.$(OBJEXT) \
+	draw_maint_til.$(OBJEXT) mains.$(OBJEXT) sha256deep.$(OBJEXT) \
+	hash.$(OBJEXT) helpers.$(OBJEXT) sha256.$(OBJEXT) \
+	$(am__objects_1)
 Admin_OBJECTS = $(am_Admin_OBJECTS)
 Admin_LDADD = $(LDADD)
 Admin_LINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(Admin_LDFLAGS) \
@@ -400,6 +402,7 @@ Admin_SOURCES = src/config.cpp src/connection.cpp src/funcptr.cpp \
 	src/drawmode/draw_maint_icons.cpp \
 	src/drawmode/draw_maint_img.cpp \
 	src/drawmode/draw_maint_map.cpp \
+	src/drawmode/draw_maint_sfx.cpp \
 	src/drawmode/draw_maint_sprites.cpp \
 	src/drawmode/draw_maint_til.cpp src/encryption/mains.c \
 	src/encryption/sha256deep.c src/encryption/hash.c \
@@ -545,6 +548,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/draw_maint_icons.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/draw_maint_img.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/draw_maint_map.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/draw_maint_sfx.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/draw_maint_sprites.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/draw_maint_til.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/draw_new_char.Po@am__quote@
@@ -1406,6 +1410,20 @@ draw_maint_map.obj: src/drawmode/draw_maint_map.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/drawmode/draw_maint_map.cpp' object='draw_maint_map.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o draw_maint_map.obj `if test -f 'src/drawmode/draw_maint_map.cpp'; then $(CYGPATH_W) 'src/drawmode/draw_maint_map.cpp'; else $(CYGPATH_W) '$(srcdir)/src/drawmode/draw_maint_map.cpp'; fi`
+
+draw_maint_sfx.o: src/drawmode/draw_maint_sfx.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT draw_maint_sfx.o -MD -MP -MF $(DEPDIR)/draw_maint_sfx.Tpo -c -o draw_maint_sfx.o `test -f 'src/drawmode/draw_maint_sfx.cpp' || echo '$(srcdir)/'`src/drawmode/draw_maint_sfx.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/draw_maint_sfx.Tpo $(DEPDIR)/draw_maint_sfx.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/drawmode/draw_maint_sfx.cpp' object='draw_maint_sfx.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o draw_maint_sfx.o `test -f 'src/drawmode/draw_maint_sfx.cpp' || echo '$(srcdir)/'`src/drawmode/draw_maint_sfx.cpp
+
+draw_maint_sfx.obj: src/drawmode/draw_maint_sfx.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT draw_maint_sfx.obj -MD -MP -MF $(DEPDIR)/draw_maint_sfx.Tpo -c -o draw_maint_sfx.obj `if test -f 'src/drawmode/draw_maint_sfx.cpp'; then $(CYGPATH_W) 'src/drawmode/draw_maint_sfx.cpp'; else $(CYGPATH_W) '$(srcdir)/src/drawmode/draw_maint_sfx.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/draw_maint_sfx.Tpo $(DEPDIR)/draw_maint_sfx.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/drawmode/draw_maint_sfx.cpp' object='draw_maint_sfx.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o draw_maint_sfx.obj `if test -f 'src/drawmode/draw_maint_sfx.cpp'; then $(CYGPATH_W) 'src/drawmode/draw_maint_sfx.cpp'; else $(CYGPATH_W) '$(srcdir)/src/drawmode/draw_maint_sfx.cpp'; fi`
 
 draw_maint_sprites.o: src/drawmode/draw_maint_sprites.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT draw_maint_sprites.o -MD -MP -MF $(DEPDIR)/draw_maint_sprites.Tpo -c -o draw_maint_sprites.o `test -f 'src/drawmode/draw_maint_sprites.cpp' || echo '$(srcdir)/'`src/drawmode/draw_maint_sprites.cpp

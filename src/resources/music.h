@@ -3,6 +3,7 @@
 
 #include <SDL/SDL.h>
 #include <SDL/SDL_mixer.h>
+class sdl_user;
 
 class music
 {
@@ -12,6 +13,9 @@ class music
 		bool init();
 		
 		void change_music(const char *name);
+		void load_sfx(int i);
+		int play_sfx(int i, sdl_user *user);
+		void stop_sfx(int channel);
 	private:
 		Mix_Music *cur_music;
 		char *cur_music_name;

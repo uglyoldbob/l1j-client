@@ -32,7 +32,7 @@ draw_admin_main::draw_admin_main(sdl_user *self)
 	gfx[0]->delay_load(811, 0, 0, GRAPH_PNG, owner);
 //	gfx[0]->disable_clear();
 	
-	num_widgets = 7;
+	num_widgets = 8;
 	widgets = new sdl_widget*[num_widgets];
 	
 	int x = 200;
@@ -56,9 +56,12 @@ draw_admin_main::draw_admin_main(sdl_user *self)
 	widgets[5] = new sdl_text_button("ICONS", x, y+(15*5), owner, 
 		(funcptr*)new dam_ptr(owner, DRAWMODE_MAINT_ICONS));
 	widgets[5]->set_key_focus(true);
-	widgets[6] = new sdl_text_button("Exit", x, y+(15*6), owner, (funcptr*)new quit_ptr(this));
+	widgets[6] = new sdl_text_button("Sound Effects", x, y+(15*6), owner, 
+		(funcptr*)new dam_ptr(owner, DRAWMODE_MAINT_SFX));
 	widgets[6]->set_key_focus(true);
-	
+	widgets[7] = new sdl_text_button("Exit", x, y+(15*7), owner, (funcptr*)new quit_ptr(this));
+	widgets[7]->set_key_focus(true);
+
 	sprites_table.load("list.spr", owner->getfiles, FILE_TEXTPACK);
 	printf("list.spr loaded\n");
 }

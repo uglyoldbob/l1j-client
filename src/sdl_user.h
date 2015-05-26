@@ -161,6 +161,7 @@ class sdl_user
 
 		files *getfiles;	/**< The object responsible for retrieving all file based game resources */
 		server_resource<sprite_definition> sprite_data;
+		server_resource<Mix_Chunk *> sfx_data;
 		
 		config *get_config();	/**< Used to retrieve the configuration object used by this server */
 	private:

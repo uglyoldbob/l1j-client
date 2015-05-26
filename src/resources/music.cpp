@@ -2,6 +2,8 @@
 
 #include "globals.h"
 #include "music.h"
+#include "resources/global_resource_template.h"
+#include "sdl_user.h"
 
 bool music::initialized = false;
 
@@ -49,13 +51,47 @@ bool music::init()
 	}
 	
 	//Mix_QuerySpec(&audio_rate, &audio_format, &audio_channels);
-	cur_music = 0;
 	
+	Mix_AllocateChannels(100);
+	cur_music = 0;
+
 	cur_music_name = 0;
 	cur_music_name = new char[5];
 	strcpy(cur_music_name, "");
 
 	return true;
+}
+
+void music::load_sfx(int i)
+{
+	base_resource<Mix_Chunk *> generic_sfx;
+	if (generic_sfx[i] == NULL)
+	{
+		char *filename;
+		filename = new char[5+strlen(lineage_dir) + 6];	
+		sprintf(filename, "%ssound/%d.wav", lineage_dir, i);
+		generic_sfx[i] = Mix_LoadWAV(filename);
+		delete [] filename;
+	}
+}
+
+int music::play_sfx(int i, sdl_user *user)
+{
+	if (user->sfx_data[i] == 0)
+	{
+		//load_sfx(i);
+		return -1;
+	}
+	else
+	{
+		Mix_VolumeChunk(user->sfx_data[i], 128);
+		return Mix_PlayChannel(-1, user->sfx_data[i], 0);
+	}
+}
+
+void music::stop_sfx(int channel)
+{
+	Mix_HaltChannel(channel);
 }
 
 void music::change_music(const char *name)

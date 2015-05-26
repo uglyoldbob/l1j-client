@@ -10,6 +10,7 @@ sprite::sprite(int x, int y, sdl_user *who)
 	delay_mtx = SDL_CreateMutex();
 	delay_loading = false;
 	cur_action = -1;
+	wpn_stat = 0;
 	change_time = SDL_GetTicks();
 }
 
@@ -72,6 +73,9 @@ void sprite::load_generic_sprite_data()
 			offset++;
 			spr_num++;
 			(*sprite_defs)[spr_num].shadow = -1;
+			(*sprite_defs)[spr_num].type = -1;
+			(*sprite_defs)[spr_num].attr = -1;
+			(*sprite_defs)[spr_num].mspf = 1000 / 25;
 			//printf("File offset for sprite %d is %d 0x%x\n", spr_num, offset, offset);
 			//printf("'%.15s' ", &sprite_data[offset]);
 			ani_num = atoi((char*)&sprite_data[offset]);
@@ -138,19 +142,19 @@ void sprite::load_generic_sprite_data()
 					temp = atoi((char*)&sprite_data[offset]);
 					(*sprite_defs)[spr_num].shadow = temp;
 					while (isdigit(sprite_data[offset])) { offset++; }
-					printf("sprite %d shadow %d (offset %d 0x%x)\n",spr_num, temp, offset, offset);
 					break;
 				case 102: //objType
 					//read one value
 					while (isspace(sprite_data[offset])) { offset++; }
 					temp = atoi((char*)&sprite_data[offset]);
+					(*sprite_defs)[spr_num].type = temp;
 					while (isdigit(sprite_data[offset])) { offset++; }
-	//				printf("\t\t%d\n",temp);
 					break;
-				case 103: //altAttack
+				case 103: //altAttack is apparently unused
 					//read one value
 					while (isspace(sprite_data[offset])) { offset++; }
 					temp = atoi((char*)&sprite_data[offset]);
+					printf("Sprite %d has altAttack %d\n", spr_num, temp);
 					while (isdigit(sprite_data[offset])) { offset++; }
 	//				printf("\t\t%d\n",temp);
 					break;
@@ -158,8 +162,8 @@ void sprite::load_generic_sprite_data()
 					//read one value
 					while (isspace(sprite_data[offset])) { offset++; }
 					temp = atoi((char*)&sprite_data[offset]);
+					(*sprite_defs)[spr_num].attr = temp;
 					while (isdigit(sprite_data[offset])) { offset++; }
-	//				printf("\t\t%d\n",temp);
 					break;
 				case 105: //clothing
 					//read a value
@@ -176,8 +180,9 @@ void sprite::load_generic_sprite_data()
 	//					printf("\t\t\t%d\n",temp2);
 					}
 					break;
-				case 106: //weapons
+				case 106: //weapons apparently unused
 					//?
+					printf("Weapon on sprite %d?\n", spr_num);
 					break;
 				case 107: //size
 					//read 2 numbers
@@ -217,7 +222,10 @@ void sprite::load_generic_sprite_data()
 					while (isspace(sprite_data[offset])) { offset++; }
 					temp = atoi((char*)&sprite_data[offset]);
 					while (isdigit(sprite_data[offset])) { offset++; }
-	//				printf("\t\t%d\n",temp);
+					if (temp == 0)
+						temp = 25;
+					(*sprite_defs)[spr_num].mspf = 1000/temp;
+					printf("mspdf for sprite %d is %d\n",spr_num, temp);
 					break;
 				case 111: //stride
 					//read one number
@@ -250,6 +258,7 @@ void sprite::load_generic_sprite_data()
 				default:
 				{
 					int a,b,c,d,e,f;
+					int aud = -1;
 					a = value;
 					if (sprite_data[offset] == '=')
 					{
@@ -287,22 +296,53 @@ void sprite::load_generic_sprite_data()
 							switch (sprite_data[offset])
 							{
 								int g;
-								case '!':
-									//printf("Found a character: %c, ", sprite_data[offset]);
+								case '!':	//when a specific action happens such as an attack or spell made
+									//adds priority?
+								//	if (spr_num < 2001)
+								//		printf("Found a character: %c sprite %d, action %d, frame %d \n", sprite_data[offset], spr_num, a, i);
 									offset++;
 									break;
-								//play audio clip?
-								case '<':
-								case '[':
-								case '^':
-								case ']':
-								case '{':
-								case '>':
-									//printf("Found a character: %c, ", sprite_data[offset]);
+								case '[':	//sound effects
+								//	printf("Sprite %d, Found a character: %c, ", spr_num, sprite_data[offset]);
 									offset++;
 									g = atoi((char*)&sprite_data[offset]);
 									while (isdigit(sprite_data[offset])) { offset++; }
-									//printf("%d\n", g);
+								//	printf("%d (action %d, frame %d)\n", g, a, i);
+									aud = g;
+									break;
+								case '<':	//environmental sounds
+								//	printf("Sprite %d, Found a character: %c, ", spr_num, sprite_data[offset]);
+									offset++;
+									g = atoi((char*)&sprite_data[offset]);
+									while (isdigit(sprite_data[offset])) { offset++; }
+								//	printf("%d (action %d, frame %d)\n", g, a, i);
+									aud = g;
+									break;
+								case ']':		//add more graphics?
+								case '^':		//add more graphics?
+								//	if (spr_num < 2002)
+								//		printf("Sprite %d, Found a character: %c, ", spr_num, sprite_data[offset]);
+									offset++;
+									g = atoi((char*)&sprite_data[offset]);
+									while (isdigit(sprite_data[offset])) { offset++; }
+								//	if (spr_num < 2002)
+								//		printf("%d (action %d frame %d)\n", g, a, i);
+									break;
+								case '>':	//possibly a delay of some sort?
+								//	if (spr_num < 2002)
+								//		printf("Sprite %d, Found a character: %c, ", spr_num, sprite_data[offset]);
+									offset++;
+									g = atoi((char*)&sprite_data[offset]);
+									while (isdigit(sprite_data[offset])) { offset++; }
+								//	if (spr_num < 2002)
+								//		printf("%d (action %d frame %d)\n", g, a, i);
+									break;
+								case '{':	//unused
+									printf("Sprite %d, Found a character: %c, ", spr_num, sprite_data[offset]);
+									offset++;
+									g = atoi((char*)&sprite_data[offset]);
+									while (isdigit(sprite_data[offset])) { offset++; }
+									printf("%d (action %d frame %d)\n", g, a, i);
 									break;
 								default:
 									break;
@@ -312,7 +352,8 @@ void sprite::load_generic_sprite_data()
 							(*sprite_defs)[spr_num].actions[a].frames[i].sub_sprite = d;
 							(*sprite_defs)[spr_num].actions[a].frames[i].sub_frame = e;
 							(*sprite_defs)[spr_num].actions[a].frames[i].length = f;
-							(*sprite_defs)[spr_num].actions[a].frames[i].audio = -1;
+							(*sprite_defs)[spr_num].actions[a].frames[i].audio = aud;
+							aud = -1;
 		//					printf("\t\t\t(sprite %d, anim %d, action %d, sub-anim %d, frame %d, d=%d e=%d f=%d\n",
 		//						spr_num, ani_num, a, d, e, d,e,f);
 						}
@@ -332,6 +373,12 @@ void sprite::load_generic_sprite_data()
 void sprite::set_action(int action)
 {
 	cur_action = action;
+	cur_frame = 0;
+}
+
+void sprite::reset_frame()
+{
+	cur_frame = 0;
 }
 
 void sprite::load(int x, int y, int sprnum)
@@ -417,37 +464,7 @@ screen_coord sprite::get_screen()
 
 void sprite::draw(SDL_Surface *display)
 {
-	//check time
-	//advance frame if enough time has passed
-	static Uint32 change_time = SDL_GetTicks();
-	if (change_time <= SDL_GetTicks())
-	{
-		cur_frame++;
-		change_time = SDL_GetTicks() + 200;
-		//printf("Drawing the sprite at %d, %d (map coord %d, %d)\n", 400, 300, posx, posy);
-		//printf("\tsprite %d, action %d, frame %d, heading %d\n", sprite_num, cur_action, cur_frame, cur_heading);
-	}
-	if (cur_frame < 0)
-		cur_frame = 0;
-	if (cur_frame >= myclient->sprite_data[sprite_num].actions[cur_action].num_frames)
-		cur_frame = 0;
-	if (myclient->sprite_data[sprite_num].actions[cur_action].num_frames > 0)
-	{
-		const sprite_motion &temp = sprite_gfx[
-			myclient->sprite_data[sprite_num].actions[cur_action].frames[cur_frame].sprite<<16 |
-			myclient->sprite_data[sprite_num].actions[cur_action].frames[cur_frame].sub_sprite + cur_heading];
-		//printf("Frame %d\n", myclient->sprite_data[sprite_num].actions[0].frames[0].sub_frame + cur_heading);
-		if (myclient->sprite_data[sprite_num].shadow != -1)
-		{
-			const sprite_motion &shadow = sprite_gfx[
-			myclient->sprite_data[sprite_num].shadow<<16 |
-			myclient->sprite_data[sprite_num].actions[cur_action].frames[cur_frame].sub_sprite + cur_heading];
-			shadow.drawat(400, 300, myclient->sprite_data[sprite_num].actions[cur_action].frames[cur_frame].sub_frame, display);
-		}
-		temp.drawat(400, 300, 
-			myclient->sprite_data[sprite_num].actions[cur_action].frames[cur_frame].sub_frame, 
-			display);
-	}
+	drawat(400, 300, display);
 }
 
 void sprite::change_heading(uint8_t heading)
@@ -502,27 +519,175 @@ void sprite::move(int x, int y, int heading)
 	cur_heading = heading; 
 }
 
+void sprite::kill()
+{
+	cur_frame = 0;
+	cur_action = 8;
+}
+
+void sprite::stand()
+{
+	switch (wpn_stat)
+	{
+	case 0:
+		cur_frame = 0;
+		cur_action = 3;
+		break;
+	case 1:
+		cur_frame = 0;
+		cur_action = 7;
+		break;
+	case 2:
+		cur_frame = 0;
+		cur_action = 14;
+		break;
+	case 3:
+		cur_frame = 0;
+		cur_action = 23;
+		break;
+	case 4:
+		cur_frame = 0;
+		cur_action = 27;
+		break;
+	case 5:
+		cur_frame = 0;
+		cur_action = 43;
+		break;
+	case 6:
+		cur_frame = 0;
+		cur_action = 49;
+		break;
+	case 7:
+		cur_frame = 0;
+		cur_action = 53;
+		break;
+	case 8:
+		cur_frame = 0;
+		cur_action = 57;
+		break;
+	case 9:
+		cur_frame = 0;
+		cur_action = 61;
+		break;
+	default:
+		break;
+	}
+}
+
+void sprite::set_weapon(char wpn)
+{
+	wpn_stat = wpn;
+}
+
+void sprite::attack()
+{
+	switch (wpn_stat)
+	{
+	case 0:
+		cur_frame = 0;
+		cur_action = 1;
+		break;
+	case 1:
+		cur_frame = 0;
+		cur_action = 5;
+		break;
+	case 2:
+		cur_frame = 0;
+		cur_action = 12;
+		break;
+	case 3:
+		cur_frame = 0;
+		cur_action = 21;
+		break;
+	case 4:
+		cur_frame = 0;
+		cur_action = 25;
+		break;
+	case 5:
+		cur_frame = 0;
+		cur_action = 41;
+		break;
+	case 6:
+		cur_frame = 0;
+		cur_action = 47;
+		break;
+	case 7:
+		cur_frame = 0;
+		cur_action = 51;
+		break;
+	case 8:
+		cur_frame = 0;
+		cur_action = 55;
+		break;
+	case 9:
+		cur_frame = 0;
+		cur_action = 59;
+		break;
+	default:
+		break;
+	}
+}
+
 void sprite::drawat(int x, int y, SDL_Surface *display)
 {
+	//check time
+	//advance frame if enough time has passed
 	if (change_time <= SDL_GetTicks())
 	{
 		cur_frame++;
-		change_time = SDL_GetTicks() + 200;
-		//printf("Drawing the sprite at %d, %d (map coord %d, %d)\n", x, y, posx, posy);
+		//printf("Drawing the sprite at %d, %d (map coord %d, %d)\n", 400, 300, posx, posy);
 		//printf("\tsprite %d, action %d, frame %d, heading %d\n", sprite_num, cur_action, cur_frame, cur_heading);
+		if (cur_frame < 0)
+			cur_frame = 0;
+		if (cur_frame >= myclient->sprite_data[sprite_num].actions[cur_action].num_frames)
+		{	//indicate action change
+			switch (cur_action)
+			{
+				case 8:	//dying
+						cur_frame = myclient->sprite_data[sprite_num].actions[cur_action].num_frames - 1;
+						break;
+				default:
+						stand();
+						break;
+			}
+		}
+		if (myclient->sprite_data[sprite_num].actions[cur_action].num_frames != 0)
+		{
+			if (myclient->sprite_data[sprite_num].actions[cur_action].frames[cur_frame].length != 0)
+			{
+				change_time = SDL_GetTicks() + 
+					(myclient->sprite_data[sprite_num].mspf) / myclient->sprite_data[sprite_num].actions[cur_action].frames[cur_frame].length;
+			}
+			else
+			{
+				change_time = SDL_GetTicks() + 100;
+			}
+		}
+		else
+		{
+			change_time = SDL_GetTicks() + 200;
+		}
+		if (myclient->sprite_data[sprite_num].actions[cur_action].num_frames != 0)
+		{
+			if (myclient->sprite_data[sprite_num].actions[cur_action].frames[cur_frame].audio != -1)
+			{
+				myclient->game_music.load_sfx(
+					myclient->sprite_data[sprite_num].actions[cur_action].frames[cur_frame].audio);
+				myclient->game_music.play_sfx(
+					myclient->sprite_data[sprite_num].actions[cur_action].frames[cur_frame].audio, myclient);
+			}
+		}
 	}
 	if (cur_frame < 0)
 		cur_frame = 0;
 	if (cur_frame >= myclient->sprite_data[sprite_num].actions[cur_action].num_frames)
 		cur_frame = 0;
-
-	while (SDL_mutexP(delay_mtx) == -1) {};
 	if (myclient->sprite_data[sprite_num].actions[cur_action].num_frames > 0)
 	{
 		const sprite_motion &temp = sprite_gfx[
 			myclient->sprite_data[sprite_num].actions[cur_action].frames[cur_frame].sprite<<16 |
 			myclient->sprite_data[sprite_num].actions[cur_action].frames[cur_frame].sub_sprite + cur_heading];
-		//printf("Frame %d\n", myclient->sprite_data[sprite_num].actions[cur_action].frames[cur_frame].sub_frame + cur_heading);
+		//printf("Frame %d\n", myclient->sprite_data[sprite_num].actions[0].frames[0].sub_frame + cur_heading);
 		if (myclient->sprite_data[sprite_num].shadow != -1)
 		{
 			const sprite_motion &shadow = sprite_gfx[
@@ -530,13 +695,10 @@ void sprite::drawat(int x, int y, SDL_Surface *display)
 			myclient->sprite_data[sprite_num].actions[cur_action].frames[cur_frame].sub_sprite + cur_heading];
 			shadow.drawat(x, y, myclient->sprite_data[sprite_num].actions[cur_action].frames[cur_frame].sub_frame, display);
 		}
-		temp.drawat(x, y, myclient->sprite_data[sprite_num].actions[cur_action].frames[cur_frame].sub_frame, display);
-		if (cur_action != -1)
-		{
-			//sprite::sprite_gfx[cur_action]->drawat(x, y, display);
-		}
+		temp.drawat(x, y, 
+			myclient->sprite_data[sprite_num].actions[cur_action].frames[cur_frame].sub_frame, 
+			display);
 	}
-	SDL_mutexV(delay_mtx);
 }
 
 void sprite::valid_actions(char *data)

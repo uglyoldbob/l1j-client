@@ -27,6 +27,7 @@ draw_maint_sprites::draw_maint_sprites(sdl_user *self)
 
 	num_gfx = 0;
 	gfx = 0;
+	wpn = 0;
 	
 	num_widgets = 2;
 
@@ -34,7 +35,7 @@ draw_maint_sprites::draw_maint_sprites(sdl_user *self)
 	
 	widget_key_focus = 0;
 	
-	x = 2001;
+	x = 0;
 	//dark elf is 2786
 	//valakas is 2001
 	//2778 is a good blob sprite
@@ -63,14 +64,6 @@ void draw_maint_sprites::key_press(SDL_KeyboardEvent *button)
 	{
 		switch(button->keysym.sym)
 		{
-			case SDLK_LEFT:
-				y--;
-				redo_sprite();
-				break;
-			case SDLK_RIGHT:
-				y++;
-				redo_sprite();
-				break;
 			case SDLK_UP:
 				x++;
 				redo_sprite();
@@ -89,16 +82,37 @@ void draw_maint_sprites::key_press(SDL_KeyboardEvent *button)
 					x = 0;
 				redo_sprite();
 				break;
+			case SDLK_w:
+				wpn++;
+				if (wpn > 9)
+					wpn = 0;
+				((sprite*)(widgets[0]))->set_weapon(wpn);
+				break;
+			case SDLK_s:
+				wpn++;
+				if (wpn < 0)
+					wpn = 9;
+				((sprite*)(widgets[0]))->set_weapon(wpn);
+				break;
+			case SDLK_r:
+				((sprite*)(widgets[0]))->reset_frame();
+				break;
+			case SDLK_k:
+				((sprite*)(widgets[0]))->kill();
+				break;
+			case SDLK_l:
+				((sprite*)(widgets[0]))->attack();
+				break;
 			case SDLK_q:
 				if (cur_heading < 7)
 				{
 					cur_heading++;
-					redo_sprite();
+					((sprite*)(widgets[0]))->change_heading(cur_heading);
 				}
 				else if  (cur_heading == 7)
 				{
 					cur_heading = 0;
-					redo_sprite();
+					((sprite*)(widgets[0]))->change_heading(cur_heading);
 				}
 				break;
 			case SDLK_a:
