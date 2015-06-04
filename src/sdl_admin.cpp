@@ -6,6 +6,7 @@
 #include "drawmode/draw_maint_icons.h"
 #include "drawmode/draw_maint_img.h"
 #include "drawmode/draw_maint_map.h"
+#include "drawmode/draw_maint_png.h"
 #include "drawmode/draw_maint_sfx.h"
 #include "drawmode/draw_maint_sprites.h"
 #include "drawmode/draw_maint_til.h"
@@ -274,6 +275,11 @@ void sdl_user::check_for_change_drawmode()
 				break;
 			case DRAWMODE_MAINT_IMG:
 				drawmode = new draw_maint_img(this);
+				draw_mode = chg;
+				ready = true;
+				break;
+			case DRAWMODE_MAINT_PNG:
+				drawmode = new draw_maint_png(this);
 				draw_mode = chg;
 				ready = true;
 				break;

@@ -37,17 +37,17 @@ void sprite::load_generic_sprite_data()
 	int ani_num;
 	int sprite_dlength;
 	sprite_data = (unsigned char*)getfiles->load_file("sprite_table.txt", &sprite_dlength, FILE_REGULAR2, 0);
-	for (int i = 0; i < sprite_dlength;i++)
-	{
-		if (sprite_data[i] == 0xd)
-			sprite_data[i] = ' ';
-	}
 	if (sprite_data == 0)
 	{
 		printf("sprite_table.txt not found\n");
 	}
 	else
 	{
+		for (int i = 0; i < sprite_dlength;i++)
+		{
+			if (sprite_data[i] == 0xd)
+				sprite_data[i] = ' ';
+		}
 		int offset = 1;
 		while (isspace(sprite_data[offset])) { offset++; }
 		//this number is the number of sequences for the sprite

@@ -1,13 +1,13 @@
-#ifndef __DRAW_MAINT_IMG_H_
-#define __DRAW_MAINT_IMG_H_
+#ifndef __DRAW_MAINT_PNG_H_
+#define __DRAW_MAINT_PNG_H_
 
 #include "sdl_drawmode.h"
 
-class draw_maint_img : public sdl_drawmode
+class draw_maint_png : public sdl_drawmode
 {
 	public:
-		draw_maint_img(sdl_user *self);
-		~draw_maint_img();
+		draw_maint_png(sdl_user *self);
+		~draw_maint_png();
 		
 		virtual void key_press(SDL_KeyboardEvent *button);
 		
