@@ -73,6 +73,14 @@ sdl_graphic::sdl_graphic(int num, int x, int y, int type, sdl_user *who)
 	do_load(num, x, y, type, who);
 }
 
+bool sdl_graphic::valid()
+{
+	if (img == 0)
+		return false;
+	else
+		return true;
+}
+
 void sdl_graphic::do_load(int x, int y, SDL_RWops *source, short *palette, int type)
 {
 //	while (SDL_mutexP(delay_mtx) == -1) {};
@@ -421,7 +429,6 @@ void sdl_graphic::delay_load(int num, int x, int y, int type, sdl_user *orig, sd
 	delay_loading = true;
 	loader = orig;
 }
-
 
 void sdl_graphic::make_bmp(char *name)
 {

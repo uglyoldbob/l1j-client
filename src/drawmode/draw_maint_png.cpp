@@ -1,30 +1,28 @@
-#include "draw_maint_img.h"
+#include "draw_maint_png.h"
 #include "resources/prepared_graphics.h"
 #include "sdl_user.h"
 #include "widgets/sdl_text_button.h"
 #include "widgets/sdl_widget.h"
 
-draw_maint_img::draw_maint_img(sdl_user *self)
+draw_maint_png::draw_maint_png(sdl_user *self)
 	: sdl_drawmode(self)
 {
 	background = 0;
 	draw_mtx = SDL_CreateMutex();
 	owner->game_music.change_music("sound/music0.mp3");
 
-	num_gfx = 0;
-	gfx = 0;
+	num_gfx = 1;
+	gfx = new sdl_graphic*[num_gfx];
+	gfx[0] = new sdl_graphic(background, 0, 0, GRAPH_PNG, owner);
 
-	num_widgets = 2;
-
+	num_widgets = 1;
 	widgets = new sdl_widget*[num_widgets];
-	widgets[0] = new sdl_widget(background, 0, 0, owner);
-	widgets[1] = new sdl_text_button("Return", 320, 255, owner, 
+	widgets[0] = new sdl_text_button("Return", 320, 255, owner, 
 		(funcptr*)new dam_ptr(owner, DRAWMODE_ADMIN_MAIN));
-	widgets[1]->set_key_focus(true);
 	extracting = false;
 }
 
-void draw_maint_img::key_press(SDL_KeyboardEvent *button)
+void draw_maint_png::key_press(SDL_KeyboardEvent *button)
 {
 	sdl_drawmode::key_press(button);
 	if (button->type == SDL_KEYDOWN)
@@ -41,33 +39,33 @@ void draw_maint_img::key_press(SDL_KeyboardEvent *button)
 					extracting = true;
 				}
 				background = 0;
-				if (widgets[0] != 0)
+				if (gfx[0] != 0)
 				{
-					delete widgets[0];
-					widgets[0] = 0;
+					delete gfx[0];
+					gfx[0] = 0;
 				}
-				widgets[0] = new sdl_widget(background, 0, 0, owner);
+				gfx[0] = new sdl_graphic(background, 0, 0, GRAPH_PNG, owner);
 				break;
 			case SDLK_LEFT:
 				if (background > 0)
 				{
 					background--;
-					if (widgets[0] != 0)
+					if (gfx[0] != 0)
 					{
-						delete widgets[0];
-						widgets[0] = 0;
+						delete gfx[0];
+						gfx[0] = 0;
 					}
-					widgets[0] = new sdl_widget(background, 0, 0, owner);
+					gfx[0] = new sdl_graphic(background, 0, 0, GRAPH_PNG, owner);
 				}
 				break;
 			case SDLK_RIGHT:
 				background++;
-				if (widgets[0] != 0)
+				if (gfx[0] != 0)
 				{
-					delete widgets[0];
-					widgets[0] = 0;
+					delete gfx[0];
+					gfx[0] = 0;
 				}
-				widgets[0] = new sdl_widget(background, 0, 0, owner);
+				gfx[0] = new sdl_graphic(background, 0, 0, GRAPH_PNG, owner);
 				break;
 			default:
 				break;
@@ -75,56 +73,55 @@ void draw_maint_img::key_press(SDL_KeyboardEvent *button)
 	}
 }
 
-bool draw_maint_img::mouse_leave()
+bool draw_maint_png::mouse_leave()
 {
 	return false;
 }
 
-draw_maint_img::~draw_maint_img()
+draw_maint_png::~draw_maint_png()
 {
 }
 
-bool draw_maint_img::quit_request()
+bool draw_maint_png::quit_request()
 {
 	//owner->stop_thread = true;
 	return true;
 }
 
-void draw_maint_img::draw(SDL_Surface *display)
+void draw_maint_png::draw(SDL_Surface *display)
 {
 	while (SDL_mutexP(draw_mtx) == -1) {};
 	SDL_FillRect(display, NULL, 0);
 	sdl_drawmode::draw(display);
 	char temp[27];
-	sprintf(temp, "Displaying %d.img", background);
+	sprintf(temp, "Displaying %d.png", background);
 	lineage_font.draw(display, 320, 240, temp, 0x7392);
 	if (extracting && (background < 65535))
 	{
 		char name[500];
-		sdl_graphic *temp = widgets[0]->get_graphic();
-		sprintf(name, "img/%d.bmp", background);
-		if (temp->valid())
-			temp->make_bmp(name);
+		sprintf(name, "png/%d.bmp", background);
+		if (gfx[0]->valid())
+			gfx[0]->make_bmp(name);
 		
 		background++;
 		
-		if (widgets[0] != 0)
+		if (gfx[0] != 0)
 		{
-			delete widgets[0];
-			widgets[0] = 0;
+			delete gfx[0];
+			gfx[0] = 0;
 		}
-		widgets[0] = new sdl_widget(background, 0, 0, owner);
+		gfx[0] = new sdl_graphic(background, 0, 0, GRAPH_PNG, owner);
 	}
 	else if (extracting && (background == 65535))
 	{
 		extracting = false;
 		background = 0;
-		if (widgets[0] != 0)
+		if (gfx[0] != 0)
 		{
-			delete widgets[0];
-			widgets[0] = 0;
+			delete gfx[0];
+			gfx[0] = 0;
 		}
-		widgets[0] = new sdl_widget(background, 0, 0, owner);
+		gfx[0] = new sdl_graphic(background, 0, 0, GRAPH_PNG, owner);
 	}
 	SDL_mutexV(draw_mtx);
 }

@@ -118,6 +118,7 @@ src/drawmode/draw_new_char.cpp \
 src/drawmode/draw_maint_icons.cpp \
 src/drawmode/draw_maint_img.cpp \
 src/drawmode/draw_maint_map.cpp \
+src/drawmode/draw_maint_png.cpp \
 src/drawmode/draw_maint_sfx.cpp \
 src/drawmode/draw_maint_sprites.cpp \
 src/drawmode/draw_maint_til.cpp \
