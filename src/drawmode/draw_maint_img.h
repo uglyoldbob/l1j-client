@@ -17,7 +17,7 @@ class draw_maint_img : public sdl_drawmode
 		virtual bool quit_request();
 	private:
 		SDL_mutex *draw_mtx;
-		bool extracting;
+		
 		int background;
 };
 

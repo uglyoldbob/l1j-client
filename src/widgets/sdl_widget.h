@@ -37,7 +37,6 @@ class sdl_widget
 		virtual void mouse_to(SDL_MouseMotionEvent *to);
 		virtual void mouse_from(SDL_MouseMotionEvent *from);
 		virtual void mouse_move(SDL_MouseMotionEvent *from, SDL_MouseMotionEvent *to);
-		sdl_graphic *get_graphic();
 	protected:
 		bool visible;	//determines if the widget should be drawn
 		bool key_focus;	//does the widget have keyboard focus?

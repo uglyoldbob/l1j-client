@@ -21,7 +21,6 @@ draw_maint_img::draw_maint_img(sdl_user *self)
 	widgets[1] = new sdl_text_button("Return", 320, 255, owner, 
 		(funcptr*)new dam_ptr(owner, DRAWMODE_ADMIN_MAIN));
 	widgets[1]->set_key_focus(true);
-	extracting = false;
 }
 
 void draw_maint_img::key_press(SDL_KeyboardEvent *button)
@@ -31,23 +30,6 @@ void draw_maint_img::key_press(SDL_KeyboardEvent *button)
 	{
 		switch(button->keysym.sym)
 		{
-			case SDLK_x:
-				if (extracting)
-				{
-					extracting = false;
-				}
-				else
-				{
-					extracting = true;
-				}
-				background = 0;
-				if (widgets[0] != 0)
-				{
-					delete widgets[0];
-					widgets[0] = 0;
-				}
-				widgets[0] = new sdl_widget(background, 0, 0, owner);
-				break;
 			case SDLK_LEFT:
 				if (background > 0)
 				{
@@ -98,33 +80,5 @@ void draw_maint_img::draw(SDL_Surface *display)
 	char temp[27];
 	sprintf(temp, "Displaying %d.img", background);
 	lineage_font.draw(display, 320, 240, temp, 0x7392);
-	if (extracting && (background < 65535))
-	{
-		char name[500];
-		sdl_graphic *temp = widgets[0]->get_graphic();
-		sprintf(name, "img/%d.bmp", background);
-		if (temp->valid())
-			temp->make_bmp(name);
-		
-		background++;
-		
-		if (widgets[0] != 0)
-		{
-			delete widgets[0];
-			widgets[0] = 0;
-		}
-		widgets[0] = new sdl_widget(background, 0, 0, owner);
-	}
-	else if (extracting && (background == 65535))
-	{
-		extracting = false;
-		background = 0;
-		if (widgets[0] != 0)
-		{
-			delete widgets[0];
-			widgets[0] = 0;
-		}
-		widgets[0] = new sdl_widget(background, 0, 0, owner);
-	}
 	SDL_mutexV(draw_mtx);
 }
