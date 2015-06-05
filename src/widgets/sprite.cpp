@@ -37,17 +37,17 @@ void sprite::load_generic_sprite_data()
 	int ani_num;
 	int sprite_dlength;
 	sprite_data = (unsigned char*)getfiles->load_file("sprite_table.txt", &sprite_dlength, FILE_REGULAR2, 0);
-	for (int i = 0; i < sprite_dlength;i++)
-	{
-		if (sprite_data[i] == 0xd)
-			sprite_data[i] = ' ';
-	}
 	if (sprite_data == 0)
 	{
 		printf("sprite_table.txt not found\n");
 	}
 	else
 	{
+		for (int i = 0; i < sprite_dlength;i++)
+		{
+			if (sprite_data[i] == 0xd)
+				sprite_data[i] = ' ';
+		}
 		int offset = 1;
 		while (isspace(sprite_data[offset])) { offset++; }
 		//this number is the number of sequences for the sprite
@@ -76,6 +76,8 @@ void sprite::load_generic_sprite_data()
 			(*sprite_defs)[spr_num].type = -1;
 			(*sprite_defs)[spr_num].attr = -1;
 			(*sprite_defs)[spr_num].mspf = 1000 / 25;
+			(*sprite_defs)[spr_num].num_clothing = 0;
+			(*sprite_defs)[spr_num].clothing = 0;
 			//printf("File offset for sprite %d is %d 0x%x\n", spr_num, offset, offset);
 			//printf("'%.15s' ", &sprite_data[offset]);
 			ani_num = atoi((char*)&sprite_data[offset]);
@@ -171,13 +173,13 @@ void sprite::load_generic_sprite_data()
 					while (isspace(sprite_data[offset])) { offset++; }
 					temp = atoi((char*)&sprite_data[offset]);
 					while (isdigit(sprite_data[offset])) { offset++; }
-	//				printf("\t\t%d\n",temp);
+					printf("Sprite %d has %d pieces of clothing\n",spr_num, temp);
 					for (int i = 0; i < temp; i++)
 					{
 						while (isspace(sprite_data[offset])) { offset++; }
 						int temp2 =atoi((char*)&sprite_data[offset]);
 						while (isdigit(sprite_data[offset])) { offset++; }
-	//					printf("\t\t\t%d\n",temp2);
+						printf("\t%d\n",temp2);
 					}
 					break;
 				case 106: //weapons apparently unused
@@ -577,6 +579,55 @@ void sprite::stand()
 void sprite::set_weapon(char wpn)
 {
 	wpn_stat = wpn;
+}
+
+void sprite::hit()
+{
+	switch (wpn_stat)
+	{
+	case 0:
+		cur_frame = 0;
+		cur_action = 2;
+		break;
+	case 1:
+		cur_frame = 0;
+		cur_action = 6;
+		break;
+	case 2:
+		cur_frame = 0;
+		cur_action = 13;
+		break;
+	case 3:
+		cur_frame = 0;
+		cur_action = 22;
+		break;
+	case 4:
+		cur_frame = 0;
+		cur_action = 26;
+		break;
+	case 5:
+		cur_frame = 0;
+		cur_action = 42;
+		break;
+	case 6:
+		cur_frame = 0;
+		cur_action = 48;
+		break;
+	case 7:
+		cur_frame = 0;
+		cur_action = 52;
+		break;
+	case 8:
+		cur_frame = 0;
+		cur_action = 56;
+		break;
+	case 9:
+		cur_frame = 0;
+		cur_action = 60;
+		break;
+	default:
+		break;
+	}
 }
 
 void sprite::attack()

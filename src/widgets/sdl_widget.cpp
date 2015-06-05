@@ -37,6 +37,11 @@ sdl_widget::sdl_widget(int num, int x, int y, sdl_user *who)
 	myclient = who;
 }
 
+sdl_graphic *sdl_widget::get_graphic()
+{
+	return one;
+}
+
 void sdl_widget::set_key_focus(bool arg)
 {
 	allow_key_focus = arg;

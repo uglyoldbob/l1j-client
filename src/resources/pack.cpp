@@ -27,6 +27,16 @@ int getHashIndex(const char *name)
 	return j&0xF;
 }
 
+void pack::list_files()
+{
+	printf("Listing files\n---------------------------\n");
+	for (int i = 0; i < num_files; i++)
+	{
+		printf("File %d: %s\n", i, files[i].name);
+	}
+	printf("---------------------------\nDone listing files\n");
+}
+
 void pack::sort()
 {
 	if (sorted == 0)

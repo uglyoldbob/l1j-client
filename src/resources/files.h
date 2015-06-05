@@ -40,6 +40,7 @@ class files : public global_files
 		void add_data();	/**< Opens an existing briefcase */
 		void write_file(char *name, char *data, int size);	/**< Adds a file to the briefcase */
 		void finish_briefcase();	/**< Finalizes the briefcase by writing all changes to disc */
+		void list_files(file_locations location);
 	private:
 		char* data_file;	/**< Name of the briefcase file */
 		FILE* data_buf;	/**< FILE pointer to the file */

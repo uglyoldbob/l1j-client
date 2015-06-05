@@ -94,6 +94,9 @@ void draw_maint_sprites::key_press(SDL_KeyboardEvent *button)
 					wpn = 9;
 				((sprite*)(widgets[0]))->set_weapon(wpn);
 				break;
+			case SDLK_h:
+				((sprite*)(widgets[0]))->hit();
+				break;
 			case SDLK_r:
 				((sprite*)(widgets[0]))->reset_frame();
 				break;

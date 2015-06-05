@@ -28,6 +28,8 @@ struct sprite_definition
 	short shadow;
 	short type;
 	short attr;
+	short num_clothing;
+	short *clothing;
 };
 
 class sprite : public sdl_widget
@@ -41,6 +43,7 @@ class sprite : public sdl_widget
 		void move(int x, int y, int heading);
 		void change_heading(uint8_t heading);
 		void kill();
+		void hit();
 		void attack();
 		void stand();
 		void set_action(int action);

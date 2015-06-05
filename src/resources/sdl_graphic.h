@@ -55,6 +55,7 @@ class sdl_graphic
 		void setmx(int nmx);
 		void setmy(int nmy);
 		
+		bool valid();
 		void make_bmp(char *name);
 	private:
 		SDL_Surface *img;

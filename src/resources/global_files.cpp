@@ -28,6 +28,35 @@ void global_files::init()
 	//TODO: verify all packs were loaded successfully
 }
 
+void global_files::list_files(file_locations location)
+{
+	switch (location)
+	{
+		case FILE_TILEPACK:
+			tilepack->list_files();
+			break;
+		case FILE_SPRITEPACK:
+			spritepack[0]->list_files();
+			break;
+		case FILE_SPRITESPACK:
+			for (int i = 0; i < 16; i++)
+			{
+				spritepack[i]->list_files();
+			}
+			break;
+		case FILE_TEXTPACK:
+			textpack->list_files();
+			break;
+		case FILE_REGULAR1:
+		case FILE_REGULAR2:
+		case FILE_LAUNCHER:
+		case FILE_LAUNCHERU:
+		case FILE_NOTHING:
+		default:
+			break;
+	}
+}
+
 void global_files::killpacks()
 {
 	delete textpack;
