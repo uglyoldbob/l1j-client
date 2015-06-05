@@ -30,6 +30,7 @@ class pack
 		int check_file(const char *name);
 		void sort();
 		static int compare(const void *a, const void *b);
+		void list_files();
 		~pack();
 	private:
 		char* data_file;

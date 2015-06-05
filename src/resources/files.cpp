@@ -45,6 +45,11 @@ files::~files()
 	}
 }
 
+void files::list_files(file_locations location)
+{
+	global_files::list_files(location);
+}
+
 /** loads a file of the given name, returns the size unless size is a null pointer, and optionally decrypts it */
 unsigned char* files::load_file(const char *name, int *size, file_locations location, int decrypting)
 {

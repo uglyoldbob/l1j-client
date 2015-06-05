@@ -9,6 +9,7 @@
 #include "drawmode/draw_maint_sfx.h"
 #include "drawmode/draw_maint_sprites.h"
 #include "drawmode/draw_maint_til.h"
+#include "encryption/aes.h"
 #include "globals.h"
 #include "lindes.h"
 #include "resources/sdl_font.h"
@@ -322,6 +323,22 @@ void sdl_user::draw(SDL_Surface *display)
 	SDL_mutexV(draw_mtx);
 }
 
+unsigned char *aes_decrypt(unsigned char *data, int length)
+{
+	unsigned char iv[]  = {0x3e, 0x09, 0x78, 0xaa, 0xc4, 0xd5, 0x30, 0x63, 
+				   0x30, 0x0c, 0x5f, 0x9a, 0x80, 0x7f, 0x22, 0x46};
+	unsigned char key[] = {0xdc, 0x84, 0x01, 0x21, 0x2a, 0x40, 0x20, 0x0a,
+				   0xdd, 0x25, 0xb9, 0xa7, 0x0d, 0xb9, 0xc9, 0x4e,
+				   0xcd, 0x99, 0x0a, 0x26, 0xb9, 0xbe, 0x22, 0x89,
+				   0xce, 0x00, 0x1a, 0xad, 0x7f, 0xd8, 0x11, 0x84};
+	unsigned char *ret = new unsigned char[length+20];
+	//constants should be accurate
+	aes_context context;
+	aes_setkey_dec(&context, key, 0x80);
+	aes_crypt_cbc(&context, AES_DECRYPT, length, iv, data, ret);
+	return ret;
+}
+
 void sdl_user::init()
 {
 	main_config = new config("Lineage.ini");
@@ -339,11 +356,48 @@ void sdl_user::init()
 	}
 	delete [] test;
 	test = 0;
+	
 	lineage_font.init("Font/eng.fnt", this);
 
 	DesKeyInit("~!@#%^$<");	//TODO : move this code to a class and use an object
 	init_packs();
 	init_tiles();
+
+	int test_size;
+	test = (char*)getfiles->load_file("uistatus.xml", &test_size, FILE_TILEPACK, 0);
+	if (test != 0)
+	{
+		unsigned char *decrypted = aes_decrypt((unsigned char*)&test[4], test_size-4);
+		SDL_RWops *out = SDL_RWFromFile("uistatus-e.xml", "wb");
+		if (out != 0)
+		{
+			int code = 	SDL_RWwrite(out, test, 1, test_size);
+			printf("Code:%d\n", code);
+			SDL_RWclose(out);
+		}
+		else
+		{
+			printf("Failed to open output file\n");
+		}
+		printf("Writing to output %d bytes\n", test_size);
+		out = SDL_RWFromFile("uistatus-d.xml", "wb");
+		if (out != 0)
+		{
+			int code = 	SDL_RWwrite(out, decrypted, 1, test_size-4);
+			printf("Code:%d\n", code);
+			SDL_RWclose(out);
+		}
+		else
+		{
+			printf("Failed to open output file\n");
+		}
+		delete [] decrypted;
+	}
+	else
+	{
+		printf("Failed to open file\n");
+		getfiles->list_files(FILE_TILEPACK);
+	}
 	
 	change_drawmode(DRAWMODE_ADMIN_MAIN);
 	while (!are_you_ready())

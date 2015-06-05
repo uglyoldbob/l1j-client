@@ -56,7 +56,8 @@ src/encryption/mains.c \
 src/encryption/sha256deep.c \
 src/encryption/hash.c \
 src/encryption/helpers.c \
-src/encryption/sha256.c
+src/encryption/sha256.c \
+src/encryption/aes.c
 if MAC
 Lineage_SOURCES += src/SDLMain.m
 endif
@@ -124,7 +125,8 @@ src/encryption/mains.c \
 src/encryption/sha256deep.c \
 src/encryption/hash.c \
 src/encryption/helpers.c \
-src/encryption/sha256.c
+src/encryption/sha256.c \
+src/encryption/aes.c
 if MAC
 Admin_SOURCES += src/SDLMain.m
 endif

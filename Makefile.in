@@ -88,7 +88,8 @@ am__Admin_SOURCES_DIST = src/config.cpp src/connection.cpp \
 	src/drawmode/draw_maint_sprites.cpp \
 	src/drawmode/draw_maint_til.cpp src/encryption/mains.c \
 	src/encryption/sha256deep.c src/encryption/hash.c \
-	src/encryption/helpers.c src/encryption/sha256.c src/SDLMain.m
+	src/encryption/helpers.c src/encryption/sha256.c \
+	src/encryption/aes.c src/SDLMain.m
 @MAC_TRUE@am__objects_1 = SDLMain.$(OBJEXT)
 am_Admin_OBJECTS = config.$(OBJEXT) connection.$(OBJEXT) \
 	funcptr.$(OBJEXT) global.$(OBJEXT) lindes.$(OBJEXT) \
@@ -115,7 +116,7 @@ am_Admin_OBJECTS = config.$(OBJEXT) connection.$(OBJEXT) \
 	draw_maint_sfx.$(OBJEXT) draw_maint_sprites.$(OBJEXT) \
 	draw_maint_til.$(OBJEXT) mains.$(OBJEXT) sha256deep.$(OBJEXT) \
 	hash.$(OBJEXT) helpers.$(OBJEXT) sha256.$(OBJEXT) \
-	$(am__objects_1)
+	aes.$(OBJEXT) $(am__objects_1)
 Admin_OBJECTS = $(am_Admin_OBJECTS)
 Admin_LDADD = $(LDADD)
 Admin_LINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(Admin_LDFLAGS) \
@@ -146,7 +147,8 @@ am__Lineage_SOURCES_DIST = src/config.cpp src/connection.cpp \
 	src/drawmode/draw_loading.cpp src/drawmode/draw_char_sel.cpp \
 	src/drawmode/draw_new_char.cpp src/encryption/mains.c \
 	src/encryption/sha256deep.c src/encryption/hash.c \
-	src/encryption/helpers.c src/encryption/sha256.c src/SDLMain.m
+	src/encryption/helpers.c src/encryption/sha256.c \
+	src/encryption/aes.c src/SDLMain.m
 am_Lineage_OBJECTS = config.$(OBJEXT) connection.$(OBJEXT) \
 	funcptr.$(OBJEXT) global.$(OBJEXT) lindes.$(OBJEXT) \
 	main.$(OBJEXT) packet.$(OBJEXT) packet_data.$(OBJEXT) \
@@ -169,7 +171,8 @@ am_Lineage_OBJECTS = config.$(OBJEXT) connection.$(OBJEXT) \
 	draw_login.$(OBJEXT) draw_loading.$(OBJEXT) \
 	draw_char_sel.$(OBJEXT) draw_new_char.$(OBJEXT) \
 	mains.$(OBJEXT) sha256deep.$(OBJEXT) hash.$(OBJEXT) \
-	helpers.$(OBJEXT) sha256.$(OBJEXT) $(am__objects_1)
+	helpers.$(OBJEXT) sha256.$(OBJEXT) aes.$(OBJEXT) \
+	$(am__objects_1)
 Lineage_OBJECTS = $(am_Lineage_OBJECTS)
 Lineage_LDADD = $(LDADD)
 Lineage_LINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(Lineage_LDFLAGS) \
@@ -373,7 +376,7 @@ Lineage_SOURCES = src/config.cpp src/connection.cpp src/funcptr.cpp \
 	src/drawmode/draw_new_char.cpp src/encryption/mains.c \
 	src/encryption/sha256deep.c src/encryption/hash.c \
 	src/encryption/helpers.c src/encryption/sha256.c \
-	$(am__append_1)
+	src/encryption/aes.c $(am__append_1)
 @WINDOWS_TRUE@Admin_LDFLAGS = -lmingw32
 Admin_SOURCES = src/config.cpp src/connection.cpp src/funcptr.cpp \
 	src/global.cpp src/lindes.cpp src/main.cpp src/packet.cpp \
@@ -407,7 +410,7 @@ Admin_SOURCES = src/config.cpp src/connection.cpp src/funcptr.cpp \
 	src/drawmode/draw_maint_til.cpp src/encryption/mains.c \
 	src/encryption/sha256deep.c src/encryption/hash.c \
 	src/encryption/helpers.c src/encryption/sha256.c \
-	$(am__append_2)
+	src/encryption/aes.c $(am__append_2)
 AM_CPPFLAGS = -I${top_srcdir}/src -I${top_srcdir}/include
 @LINUX_FALSE@@MAC_TRUE@@WINDOWS_FALSE@TEST_DEP = mac_test
 @LINUX_FALSE@@WINDOWS_TRUE@TEST_DEP = win_test
@@ -536,6 +539,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SDLMain.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/aes.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/chat_window.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/config.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/connection.Po@am__quote@
@@ -682,6 +686,20 @@ sha256.obj: src/encryption/sha256.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='src/encryption/sha256.c' object='sha256.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sha256.obj `if test -f 'src/encryption/sha256.c'; then $(CYGPATH_W) 'src/encryption/sha256.c'; else $(CYGPATH_W) '$(srcdir)/src/encryption/sha256.c'; fi`
+
+aes.o: src/encryption/aes.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT aes.o -MD -MP -MF $(DEPDIR)/aes.Tpo -c -o aes.o `test -f 'src/encryption/aes.c' || echo '$(srcdir)/'`src/encryption/aes.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/aes.Tpo $(DEPDIR)/aes.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='src/encryption/aes.c' object='aes.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o aes.o `test -f 'src/encryption/aes.c' || echo '$(srcdir)/'`src/encryption/aes.c
+
+aes.obj: src/encryption/aes.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT aes.obj -MD -MP -MF $(DEPDIR)/aes.Tpo -c -o aes.obj `if test -f 'src/encryption/aes.c'; then $(CYGPATH_W) 'src/encryption/aes.c'; else $(CYGPATH_W) '$(srcdir)/src/encryption/aes.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/aes.Tpo $(DEPDIR)/aes.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='src/encryption/aes.c' object='aes.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o aes.obj `if test -f 'src/encryption/aes.c'; then $(CYGPATH_W) 'src/encryption/aes.c'; else $(CYGPATH_W) '$(srcdir)/src/encryption/aes.c'; fi`
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<

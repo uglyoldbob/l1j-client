@@ -24,6 +24,7 @@ class global_files
 		global_files();
 		unsigned char* load_file(const char *name, int *size, file_locations location, int decrypting);
 		int check_file(const char *name, file_locations location);
+		void list_files(file_locations location);
 		static void init();
 		static void killpacks();
 	private:
