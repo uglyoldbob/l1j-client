@@ -334,8 +334,30 @@ unsigned char *aes_decrypt(unsigned char *data, int length)
 	unsigned char *ret = new unsigned char[length+20];
 	//constants should be accurate
 	aes_context context;
+	int newlen = length - ((length-4)%16);
 	aes_setkey_dec(&context, key, 0x80);
-	aes_crypt_cbc(&context, AES_DECRYPT, length, iv, data, ret);
+	aes_crypt_cbc(&context, AES_DECRYPT, newlen, iv, &data[4], &ret[4]);
+	ret[0] = '<';
+	ret[1] = data[1];
+	ret[2] = data[2];
+	ret[3] = data[3];
+	printf("IV:");
+	for (int j = 0; j < 16; j++)
+	{
+		printf("0x%x ", iv[j]);
+	}
+	printf("\n");
+	printf("data:");
+	for (int j = 0; j < 16; j++)
+	{
+		printf("0x%x ", data[j+newlen]);
+	}
+	printf("\n");
+	for (int i = 0; i < (length-newlen); i++)
+	{
+		ret[i+newlen] = data[i+newlen] ^ iv[i];
+	}
+	
 	return ret;
 }
 
@@ -367,7 +389,8 @@ void sdl_user::init()
 	test = (char*)getfiles->load_file("uistatus.xml", &test_size, FILE_TILEPACK, 0);
 	if (test != 0)
 	{
-		unsigned char *decrypted = aes_decrypt((unsigned char*)&test[4], test_size-4);
+		printf("Decrypting size 0x%x\n", test_size);
+		unsigned char *decrypted = aes_decrypt((unsigned char*)test, test_size);
 		SDL_RWops *out = SDL_RWFromFile("uistatus-e.xml", "wb");
 		if (out != 0)
 		{
@@ -383,8 +406,7 @@ void sdl_user::init()
 		out = SDL_RWFromFile("uistatus-d.xml", "wb");
 		if (out != 0)
 		{
-			int code = 	SDL_RWwrite(out, decrypted, 1, test_size-4);
-			printf("Code:%d\n", code);
+			SDL_RWwrite(out, decrypted, 1, test_size);
 			SDL_RWclose(out);
 		}
 		else
