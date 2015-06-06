@@ -118,6 +118,7 @@ src/drawmode/draw_new_char.cpp \
 src/drawmode/draw_maint_icons.cpp \
 src/drawmode/draw_maint_img.cpp \
 src/drawmode/draw_maint_map.cpp \
+src/drawmode/draw_maint_png.cpp \
 src/drawmode/draw_maint_sfx.cpp \
 src/drawmode/draw_maint_sprites.cpp \
 src/drawmode/draw_maint_til.cpp \
@@ -218,6 +219,7 @@ mac_test: mac_universal
 	fi
 	@echo "Copying files to package folder"
 	cp -f ${top_srcdir}/src/LineageMac.ini ./client.app/Contents/Resources/Lineage.ini
+	cp -f ${top_srcdir}/src/sprite_table.txt ./client.app/Contents/Resources/sprite_table.txt
 	cp -f Lineage ./client.app/Contents/MacOS
 	cp -fr ${top_srcdir}/libs/SDL.framework ./client.app/Contents/Frameworks/
 	cp -fr ${top_srcdir}/libs/SDL_mixer.framework ./client.app/Contents/Frameworks/
@@ -250,6 +252,7 @@ mac_installer: mac_universal mac_strip
 	fi
 	@echo "Copying files to package folder"
 	cp -f ${top_srcdir}/src/LineageMac.ini ./release_client.app/Contents/Resources/Lineage.ini
+	cp -f ${top_srcdir}/src/sprite_table.txt ./release_client.app/Contents/Resources/sprite_table.txt
 	cp -fr ${top_srcdir}/libs/SDL.framework ./release_client.app/Contents/Frameworks/
 	cp -fr ${top_srcdir}/libs/SDL_mixer.framework ./release_client.app/Contents/Frameworks/
 	cp -fr ${top_srcdir}/libs/SDL_image.framework ./release_client.app/Contents/Frameworks/
@@ -267,6 +270,7 @@ win_test: Admin$(EXEEXT)
 	fi
 	@echo "Copying files to test folder"
 	cp -f ${top_srcdir}/src/LineageWindows.ini ./test/Lineage.ini
+	cp -f ${top_srcdir}/src/sprite_table.txt ./test/sprite_table.txt
 	cp -f $(PACKAGE_FILES) ./test/
 	cp -f Admin$(EXEEXT) ./test/Admin$(EXEEXT)
 
@@ -278,6 +282,7 @@ win_installer:
 	fi
 	@echo "Copying files to installer folder"
 	cp -f ${top_srcdir}/src/LineageWindows.ini ./installer/Lineage.ini
+	cp -f ${top_srcdir}/src/sprite_table.txt ./installer/sprite_table.txt
 	cp -f $(PACKAGE_FILES) ./installer/
 	$(STRIP) -s ./installer/Lineage${EXEEXT}
 	tar -zcvf release.tar.gz ./installer
@@ -290,6 +295,7 @@ linux_installer:
 	fi
 	@echo "Copying files to installer folder"
 	cp -f ${top_srcdir}/src/LineageLinux.ini ./installer/Lineage.ini
+	cp -f ${top_srcdir}/src/sprite_table.txt ./installer/sprite_table.txt
 	cp -f $(PACKAGE_FILES) ./installer/
 	$(STRIP) -s ./installer/Lineage${EXEEXT}
 	tar -zcvf release.tar.gz ./installer
@@ -302,6 +308,7 @@ linux_test: Admin$(EXEEXT)
 	fi
 	@echo "Copying files to test folder"
 	cp -f ${top_srcdir}/src/LineageLinux.ini ./client/Lineage.ini
+	cp -f ${top_srcdir}/src/sprite_table.txt ./client/sprite_table.txt
 	cp Admin$(EXEEXT) ./client/Admin$(EXEEXT)
 	cp -f $(PACKAGE_FILES) ./client/
 
