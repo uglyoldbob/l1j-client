@@ -759,7 +759,7 @@ void aes_crypt_cbc( aes_context *ctx,
 
     if( mode == AES_DECRYPT )
     {
-        while( length > 0 )
+        while( length >= 16 )
         {
             memcpy( temp, input, 16 );
             aes_crypt_ecb( ctx, mode, input, output );
@@ -776,7 +776,7 @@ void aes_crypt_cbc( aes_context *ctx,
     }
     else
     {
-        while( length > 0 )
+        while( length >= 16 )
         {
             for( i = 0; i < 16; i++ )
                 output[i] = (unsigned char)( input[i] ^ iv[i] );
