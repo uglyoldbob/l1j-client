@@ -1,4 +1,5 @@
-This is the source code for the lineage1 client.
+This is the source code for the lineage1 client. These directions assume a build directory is being used.
+A cygwin installation is recommended for compiling on windows
 
 Compiling:
 	Windows:
