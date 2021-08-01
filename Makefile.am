@@ -14,6 +14,7 @@ src/packet_data.cpp \
 src/sdl_master.cpp \
 src/sdl_user.cpp \
 src/sdl_user_common.cpp \
+src/ecs/thing.cpp \
 src/widgets/chat_window.cpp \
 src/widgets/sdl_animate_button.cpp \
 src/widgets/sdl_button.cpp \
@@ -78,6 +79,7 @@ src/packet_data.cpp \
 src/sdl_master.cpp \
 src/sdl_admin.cpp \
 src/sdl_user_common.cpp \
+src/ecs/thing.cpp \
 src/widgets/chat_window.cpp \
 src/widgets/sdl_animate_button.cpp \
 src/widgets/sdl_button.cpp \

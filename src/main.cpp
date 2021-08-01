@@ -13,6 +13,8 @@
 #include "sdl_master.h"
 #include <SDL/SDL_mixer.h>
 
+#include "ecs/thing.h"
+
 /**
 This function is an osx specific function that changes the current directory
 to the resources folder within the .app folder structure
@@ -40,6 +42,8 @@ void change_working_directory()
 */
 int main(int argc, char* argv[])
 {
+	ThingAdministrator all_the_things;
+	Thing t = all_the_things.spawn();
 	change_working_directory();
 	#ifdef WINDOWS
 	WSADATA wsaData;
