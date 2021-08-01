@@ -4,6 +4,8 @@
 #include "hashmap.h"
 #include <cstdint>
 
+
+
 /*! \brief The entity of an entity component system design
 
 The thing class is for identifying entities in an entity component system design
@@ -17,7 +19,7 @@ private:
 	uint32_t i;
 };
 
-/*! \brief entity\Thing administration class. Responsible for creating and destroying Things */
+/*! \brief entity/Thing administration class. Responsible for creating and destroying Things */
 class ThingAdministrator
 {
 public:
