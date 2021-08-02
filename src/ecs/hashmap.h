@@ -26,9 +26,11 @@ public:
 	HashMap(uint8_t size);
 	uint32_t size(); ///< Returns the number of elements currently stored in the hashmap.
 	V* lookup(K key); ///< Lookup the value in the table corresponding to the given key. Return nullptr if not found.
+	void replace(K key, V value); ///< Insert or replace an existing value in the hashmap with the value specified.
+	void remove(K key); ///< Remove whatever value for the given key exists.
 private:
 	std::vector<item> elements; ///< The list of elements that make up the actual hashmap
-	std::vector<uint32_t*> hashes; ///< The list of hashes for each element.
+	std::vector<uint32_t> hashes; ///< The hash for each element.
 	#if CALCULATE_DISTANCES==0
 	std::vector<uint32_t> distances; ///< The distance away from ideal for each element.
 	#endif
@@ -38,11 +40,15 @@ private:
 	uint8_t num_bits; ///< The number of bits of size for the hash table. This implies a power of two size.
 	uint32_t mask; ///< The mask to use when masking out bits not valid for the size of the table
 	uint32_t map_function(uint32_t); ///< This implements the fibonacci hashing part
-	uint32_t hash_function(K key); ///< The function that creates the first value from a key
+	uint32_t hash_function(const K& key); ///< The function that creates the first value from a key
 
+	uint32_t lookup_index(K key); ///< Lookup the index for the specified key. A return value of 0xFFFFFFFF indicates it does not exist.
+	void drop_key(K key); ///< Drop the given key from the hash table. It is assumed that the key exists in the hash table already.
 	void insert(K key, V value); ///< Insert a record into the hash table. This function assumes that the record does not already exist. This is why it is a private function.
 	void insert_qualified(uint32_t hash, K key, V value); ///< Inserts an hask, key, value pair into the table. This function assumes the record does not already exist.
+	#if CALCULATE_DISTANCES==1
 	uint32_t get_distance(uint32_t hash, uint32_t position); ///< Returns the distance from ideal position of the given hash and the specified position
+	#endif
 };
 
 template <class K, class V>
@@ -102,6 +108,8 @@ void HashMap<K, V>::insert_qualified(uint32_t hash, K key, V value)
 		}
 		#if CALCULATE_DISTANCES == 0
 		else if (distances[position] < position)
+		#else
+		else if (get_distance(hash, position) < position)
 		#endif
 		{	//if the current position is closer to perfect position, then
 			//swap that element with the one we are currently inserting
@@ -128,14 +136,74 @@ void HashMap<K, V>::insert_qualified(uint32_t hash, K key, V value)
 }
 
 template <class K, class V>
+uint32_t HashMap<K, V>::lookup_index(K key)
+{
+	uint32_t hash = hash_function(key);
+	uint32_t position = map_function(hash);
+	uint32_t distance = 0;
+	bool done = false;
+	while (!done)
+	{
+		if (	(hashes[position] == 0) ||
+			(distance > distances[position]) )
+		{	//the element is not present
+			position = 0xFFFFFFFF;
+			done = true;
+			break;
+		}
+		else if ((hashes[position] == hash) &&
+			(elements[position].key == key) )
+		{
+			done = true;
+			break;
+		}
+		position = (position+1) & mask;
+		distance++;
+	}
+	
+	return position;
+}
+
+template <class K, class V>
 V* HashMap<K, V>::lookup(K key)
 {
-	uint32_t position = map_function(hash_function(key));
-	uint32_t position = 0;
 	V* found = nullptr;
-	// /todo actually search
+	uint32_t index = lookup_index(key);
+	if (index != 0xFFFFFFFF)
+	{
+		found = &elements[index].value;
+	}
 	
 	return found;
+}
+
+template <class K, class V>
+void HashMap<K, V>::replace(K key, V value)
+{
+	V* look = lookup(key);
+	if (look != nullptr)
+	{
+		*look = value;
+	}
+	else
+	{
+		insert(key, value);
+	}
+}
+
+template <class K, class V>
+void HashMap<K, V>::remove(K key)
+{
+	V* look = lookup(key);
+	if (look != nullptr)
+	{
+		drop_key(key);
+	}
+}
+
+template <class K, class V>
+void HashMap<K, V>::drop_key(K key)
+{
 }
 
 #endif

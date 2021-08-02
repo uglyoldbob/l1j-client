@@ -14,10 +14,15 @@ class Thing
 {
 public:
 	Thing(uint32_t s); ///< Create a thing with the given id value.
-	inline uint32_t id() { return i; }
+	inline uint32_t id() const { return i; }
 private:
 	uint32_t i;
 };
+
+inline bool operator==(const Thing& lhs, const Thing& rhs)
+{
+	return lhs.id() == rhs.id();
+}
 
 /*! \brief entity/Thing administration class. Responsible for creating and destroying Things */
 class ThingAdministrator
