@@ -67,7 +67,7 @@ template <class K, class V>
 uint32_t HashMap<K, V>::map_function(uint32_t h)
 {
 	//The value is 1<<32 / the golden ratio
-	uint32_t calc = (h * 2654435769) >> (32-num_bits);
+	uint32_t calc = ((uint32_t)(h * 2654435769))>> (32-num_bits);
 	//a hash of 0 indicates that a sot is unused, so ensure that the hash never returns that value
 	//otherwise a filled slot might accidentally be considered as unused.
 	calc |= (calc == 0); //this changes a 0 to a 1
