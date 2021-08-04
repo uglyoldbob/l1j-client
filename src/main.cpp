@@ -44,6 +44,10 @@ int main(int argc, char* argv[])
 {
 	ThingAdministrator all_the_things;
 	Thing t = all_the_things.spawn();
+	for (int i = 0; i < 8; i++)
+	{
+		all_the_things.spawn();
+	}
 	change_working_directory();
 	#ifdef WINDOWS
 	WSADATA wsaData;

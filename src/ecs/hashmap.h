@@ -14,22 +14,17 @@
 template <class K, class V>
 class HashMap
 {
-private:
-	struct item
-	{
-		K key;
-		V value;
-	};
 
 public:
 	/*! Build a hashmap that starts with the specified number of bits. */
-	HashMap(uint8_t size);
+	HashMap(uint8_t size, K val);
 	uint32_t size(); ///< Returns the number of elements currently stored in the hashmap.
 	V* lookup(K key); ///< Lookup the value in the table corresponding to the given key. Return nullptr if not found.
 	void replace(K key, V value); ///< Insert or replace an existing value in the hashmap with the value specified.
 	void remove(K key); ///< Remove whatever value for the given key exists.
 private:
-	std::vector<item> elements; ///< The list of elements that make up the actual hashmap
+	std::vector<K> keys; ///< The list of keys for the hashmap
+	std::vector<V> values; ///< The list of values for the hashmap
 	std::vector<uint32_t> hashes; ///< The hash for each element.
 	#if CALCULATE_DISTANCES==0
 	std::vector<uint32_t> distances; ///< The distance away from ideal for each element.
@@ -46,21 +41,26 @@ private:
 	void drop_key(K key); ///< Drop the given key from the hash table. It is assumed that the key exists in the hash table already.
 	void insert(K key, V value); ///< Insert a record into the hash table. This function assumes that the record does not already exist. This is why it is a private function.
 	void insert_qualified(uint32_t hash, K key, V value); ///< Inserts an hask, key, value pair into the table. This function assumes the record does not already exist.
+	void full_insert(uint32_t hash, uint32_t position, uint32_t distance, K key, V value); ///< The fully specified form for inserting an item into the hash table.
 	#if CALCULATE_DISTANCES==1
 	uint32_t get_distance(uint32_t hash, uint32_t position); ///< Returns the distance from ideal position of the given hash and the specified position
 	#endif
 };
 
 template <class K, class V>
-HashMap<K,V>::HashMap(uint8_t size)
+HashMap<K,V>::HashMap(uint8_t size, K val)
 {
 	num_things = 0;
-	// /todo set num_bits
-	// /todo set mask
-	// /todo set resize_threshold
-	// /todo set size of elements
-	// /todo set size of hashes
-	// /todo set size of distances
+	keys.resize(1<<size, val);
+	values.resize(1<<size);
+	hashes.resize(1<<size);
+	#if CALCULATE_DISTANCES==0
+	distances.resize(1<<size);
+	#endif
+	num_bits = size;
+	hash_size = (1<<size);
+	mask = (1<<size)-1;
+	resize_threshold = (1<<size) * 0.9;
 }
 
 template <class K, class V>
@@ -87,14 +87,13 @@ void HashMap<K, V>::insert(K key, V value)
 	{
 		//\todo increase size of the hash map
 	}
-	insert_qualified(map_function(hash_function(key)), key, value);
+	insert_qualified(hash_function(key), key, value);
 }
 
 template <class K, class V>
 void HashMap<K, V>::insert_qualified(uint32_t hash, K key, V value)
 {
-	// /todo everything
-	uint32_t position = hash; // The position being considered for the key and value
+	uint32_t position = map_function(hash); // The position being considered for the key and value
 	uint32_t distance = 0; // The distance from perfect of where it is being considered for placement
 	bool done = false;
 	while (!done)
@@ -102,7 +101,10 @@ void HashMap<K, V>::insert_qualified(uint32_t hash, K key, V value)
 		// if the current slot is empty, fill it
 		if (hashes[position] == 0)
 		{
-			// /todo fill the slot
+			values[position] = value;
+			keys[position] = key;
+			hashes[position] = hash;
+			distances[position] = distance;
 			done = true;
 			break;
 		}
@@ -118,12 +120,12 @@ void HashMap<K, V>::insert_qualified(uint32_t hash, K key, V value)
 			hashes[position] = hash;
 			hash = temp_hash;
 
-			K temp_key(elements[position].key);
-			elements[position].key = key;
+			K temp_key(keys[position]);
+			keys[position] = key;
 			key = temp_key;
 
-			V temp_val(elements[position].value);
-			elements[position].value = value;
+			V temp_val(values[position]);
+			values[position] = value;
 			value = temp_val;
 			
 			uint32_t temp_distance = distances[position];
@@ -152,7 +154,7 @@ uint32_t HashMap<K, V>::lookup_index(K key)
 			break;
 		}
 		else if ((hashes[position] == hash) &&
-			(elements[position].key == key) )
+			(keys[position] == key) )
 		{
 			done = true;
 			break;
@@ -171,7 +173,7 @@ V* HashMap<K, V>::lookup(K key)
 	uint32_t index = lookup_index(key);
 	if (index != 0xFFFFFFFF)
 	{
-		found = &elements[index].value;
+		found = &values[index];
 	}
 	
 	return found;
@@ -204,6 +206,7 @@ void HashMap<K, V>::remove(K key)
 template <class K, class V>
 void HashMap<K, V>::drop_key(K key)
 {
+	// /todo implement the backward shift deletion
 }
 
 #endif
