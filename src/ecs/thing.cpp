@@ -34,4 +34,5 @@ Thing ThingAdministrator::spawn()
 
 void ThingAdministrator::destroy(Thing t)
 {
+	current_things.remove(t);
 }

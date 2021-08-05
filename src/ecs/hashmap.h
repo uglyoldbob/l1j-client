@@ -38,7 +38,7 @@ private:
 	uint32_t hash_function(const K& key); ///< The function that creates the first value from a key
 
 	uint32_t lookup_index(K key); ///< Lookup the index for the specified key. A return value of 0xFFFFFFFF indicates it does not exist.
-	void drop_key(K key); ///< Drop the given key from the hash table. It is assumed that the key exists in the hash table already.
+	void drop_key(uint32_t position); ///< Drop the given position from the hash table. It is assumed that the index exists and has been correlated to the key to delete already.
 	void insert(K key, V value); ///< Insert a record into the hash table. This function assumes that the record does not already exist. This is why it is a private function.
 	void insert_qualified(uint32_t hash, K key, V value); ///< Inserts an hask, key, value pair into the table. This function assumes the record does not already exist.
 	void increase_size(uint32_t bits); ///< Increase the size to accomodate (1<<bits) amount elements
@@ -233,17 +233,46 @@ void HashMap<K, V>::replace(K key, V value)
 template <class K, class V>
 void HashMap<K, V>::remove(K key)
 {
-	V* look = lookup(key);
-	if (look != nullptr)
+	uint32_t look = lookup_index(key);
+	if (look != 0xFFFFFFFF)
 	{
-		drop_key(key);
+		drop_key(look);
 	}
 }
 
 template <class K, class V>
-void HashMap<K, V>::drop_key(K key)
+void HashMap<K, V>::drop_key(uint32_t position)
 {
-	// /todo implement the backward shift deletion
+	num_things--;
+	values[position] = V();
+	keys[position] = K();
+	hashes[position] = 0;
+	distances[position] = 0;
+	uint32_t new_position;
+	bool done = false;
+	do
+	{	//update the position to look at
+		new_position = (position+1) & mask;
+
+		//stop if the hash is 0, or if the distance is 0
+		if ((hashes[new_position] == 0) ||
+			(distances[position] == 0))
+		{
+			done = true;
+			break;
+		}
+		values[position] = values[new_position];
+		keys[position] = keys[new_position];
+		hashes[position] = hashes[new_position];
+		distances[position] = distances[new_position];
+
+		//advance the current position
+		position = new_position;
+		values[position] = V();
+		keys[position] = K();
+		hashes[position] = 0;
+		distances[position] = 0;
+	} while (!done);
 }
 
 #endif
