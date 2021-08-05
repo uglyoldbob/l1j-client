@@ -13,6 +13,7 @@ The thing class is for identifying entities in an entity component system design
 class Thing
 {
 public:
+	Thing(); ///< Create an invalid thing
 	Thing(uint32_t s); ///< Create a thing with the given id value.
 	inline uint32_t id() const { return i; }
 private:

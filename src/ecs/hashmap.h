@@ -17,7 +17,7 @@ class HashMap
 
 public:
 	/*! Build a hashmap that starts with the specified number of bits. */
-	HashMap(uint8_t size, K val);
+	HashMap(uint8_t size);
 	uint32_t size(); ///< Returns the number of elements currently stored in the hashmap.
 	V* lookup(K key); ///< Lookup the value in the table corresponding to the given key. Return nullptr if not found.
 	void replace(K key, V value); ///< Insert or replace an existing value in the hashmap with the value specified.
@@ -41,6 +41,7 @@ private:
 	void drop_key(K key); ///< Drop the given key from the hash table. It is assumed that the key exists in the hash table already.
 	void insert(K key, V value); ///< Insert a record into the hash table. This function assumes that the record does not already exist. This is why it is a private function.
 	void insert_qualified(uint32_t hash, K key, V value); ///< Inserts an hask, key, value pair into the table. This function assumes the record does not already exist.
+	void increase_size(uint32_t bits); ///< Increase the size to accomodate (1<<bits) amount elements
 	void full_insert(uint32_t hash, uint32_t position, uint32_t distance, K key, V value); ///< The fully specified form for inserting an item into the hash table.
 	#if CALCULATE_DISTANCES==1
 	uint32_t get_distance(uint32_t hash, uint32_t position); ///< Returns the distance from ideal position of the given hash and the specified position
@@ -48,10 +49,10 @@ private:
 };
 
 template <class K, class V>
-HashMap<K,V>::HashMap(uint8_t size, K val)
+HashMap<K,V>::HashMap(uint8_t size)
 {
 	num_things = 0;
-	keys.resize(1<<size, val);
+	keys.resize(1<<size);
 	values.resize(1<<size);
 	hashes.resize(1<<size);
 	#if CALCULATE_DISTANCES==0
@@ -81,11 +82,46 @@ uint32_t HashMap<K, V>::size()
 }
 
 template <class K, class V>
+void HashMap<K, V>::increase_size(uint32_t bits)
+{
+	if (bits > num_bits)
+	{	//only if it is actually bigger though
+		std::vector<K> old_keys = keys;
+		std::vector<V> old_values = values;
+		std::vector<uint32_t> old_hashes = hashes;
+	
+		num_things = 0;
+		num_bits = bits;
+		keys = std::vector<K>();
+		keys.resize(1<<num_bits);
+		values = std::vector<V>();
+		values.resize(1<<num_bits);
+		hashes = std::vector<uint32_t>();
+		hashes.resize(1<<num_bits);
+		#if CALCULATE_DISTANCES==0
+		distances = std::vector<uint32_t>();
+		distances.resize(1<<num_bits);
+		#endif
+		hash_size = (1<<num_bits);
+		mask = (1<<num_bits)-1;
+		resize_threshold = (1<<num_bits) * 0.9;
+		
+		for (int i = 0; i < old_hashes.size(); i++)
+		{
+			if (old_hashes[i] != 0)
+			{
+				insert_qualified(old_hashes[i], old_keys[i], old_values[i]);
+			}
+		}
+	}
+}
+
+template <class K, class V>
 void HashMap<K, V>::insert(K key, V value)
 {
-	if (++num_things >= resize_threshold)
+	if (num_things >= resize_threshold)
 	{
-		//\todo increase size of the hash map
+		increase_size(num_bits+1);
 	}
 	insert_qualified(hash_function(key), key, value);
 }
@@ -95,6 +131,7 @@ void HashMap<K, V>::insert_qualified(uint32_t hash, K key, V value)
 {
 	uint32_t position = map_function(hash); // The position being considered for the key and value
 	uint32_t distance = 0; // The distance from perfect of where it is being considered for placement
+	num_things++;
 	bool done = false;
 	while (!done)
 	{
