@@ -15,6 +15,8 @@ src/sdl_master.cpp \
 src/sdl_user.cpp \
 src/sdl_user_common.cpp \
 src/ecs/thing.cpp \
+src/ecs/element.cpp \
+src/ecs/system.cpp \
 src/widgets/chat_window.cpp \
 src/widgets/sdl_animate_button.cpp \
 src/widgets/sdl_button.cpp \
@@ -80,6 +82,8 @@ src/sdl_master.cpp \
 src/sdl_admin.cpp \
 src/sdl_user_common.cpp \
 src/ecs/thing.cpp \
+src/ecs/element.cpp \
+src/ecs/system.cpp \
 src/widgets/chat_window.cpp \
 src/widgets/sdl_animate_button.cpp \
 src/widgets/sdl_button.cpp \
@@ -172,7 +176,7 @@ dist_man_MANS = $(directory)/man_page_1.3 $(directory)/man_page_2.3
 $(directory)/man_page_1.3: doxyfile.stamp
 $(directory)/man_page_2.3: doxyfile.stamp
 
-doxyfile.stamp: Lineage Admin
+doxyfile.stamp: Lineage Admin src/main.m Doxyfile.in Doxyfile
 	$(DOXYGEN) Doxyfile
 	echo Timestamp > doxyfile.stamp
 

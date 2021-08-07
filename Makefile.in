@@ -111,6 +111,7 @@ am__Admin_SOURCES_DIST = src/config.cpp src/connection.cpp \
 	src/funcptr.cpp src/global.cpp src/lindes.cpp src/main.cpp \
 	src/packet.cpp src/packet_data.cpp src/sdl_master.cpp \
 	src/sdl_admin.cpp src/sdl_user_common.cpp src/ecs/thing.cpp \
+	src/ecs/element.cpp src/ecs/system.cpp \
 	src/widgets/chat_window.cpp src/widgets/sdl_animate_button.cpp \
 	src/widgets/sdl_button.cpp src/widgets/sdl_char_info.cpp \
 	src/widgets/sdl_check_button.cpp src/widgets/sdl_lin_map.cpp \
@@ -147,16 +148,17 @@ am_Admin_OBJECTS = config.$(OBJEXT) connection.$(OBJEXT) \
 	funcptr.$(OBJEXT) global.$(OBJEXT) lindes.$(OBJEXT) \
 	main.$(OBJEXT) packet.$(OBJEXT) packet_data.$(OBJEXT) \
 	sdl_master.$(OBJEXT) sdl_admin.$(OBJEXT) \
-	sdl_user_common.$(OBJEXT) thing.$(OBJEXT) \
-	chat_window.$(OBJEXT) sdl_animate_button.$(OBJEXT) \
-	sdl_button.$(OBJEXT) sdl_char_info.$(OBJEXT) \
-	sdl_check_button.$(OBJEXT) sdl_lin_map.$(OBJEXT) \
-	sdl_radio_button.$(OBJEXT) sdl_input_box.$(OBJEXT) \
-	sdl_plain_button.$(OBJEXT) sdl_text_button.$(OBJEXT) \
-	sdl_widget.$(OBJEXT) sdl_window.$(OBJEXT) sprite.$(OBJEXT) \
-	sprite_motion.$(OBJEXT) text_box.$(OBJEXT) files.$(OBJEXT) \
-	global_files.$(OBJEXT) global_resource_template.$(OBJEXT) \
-	music.$(OBJEXT) pack.$(OBJEXT) partial_table.$(OBJEXT) \
+	sdl_user_common.$(OBJEXT) thing.$(OBJEXT) element.$(OBJEXT) \
+	system.$(OBJEXT) chat_window.$(OBJEXT) \
+	sdl_animate_button.$(OBJEXT) sdl_button.$(OBJEXT) \
+	sdl_char_info.$(OBJEXT) sdl_check_button.$(OBJEXT) \
+	sdl_lin_map.$(OBJEXT) sdl_radio_button.$(OBJEXT) \
+	sdl_input_box.$(OBJEXT) sdl_plain_button.$(OBJEXT) \
+	sdl_text_button.$(OBJEXT) sdl_widget.$(OBJEXT) \
+	sdl_window.$(OBJEXT) sprite.$(OBJEXT) sprite_motion.$(OBJEXT) \
+	text_box.$(OBJEXT) files.$(OBJEXT) global_files.$(OBJEXT) \
+	global_resource_template.$(OBJEXT) music.$(OBJEXT) \
+	pack.$(OBJEXT) partial_table.$(OBJEXT) \
 	prepared_graphics.$(OBJEXT) sdl_font.$(OBJEXT) \
 	reg_font.$(OBJEXT) small_font.$(OBJEXT) map_coord.$(OBJEXT) \
 	pixel_coord.$(OBJEXT) coord.$(OBJEXT) screen_coord.$(OBJEXT) \
@@ -178,6 +180,7 @@ am__Lineage_SOURCES_DIST = src/config.cpp src/connection.cpp \
 	src/funcptr.cpp src/global.cpp src/lindes.cpp src/main.cpp \
 	src/packet.cpp src/packet_data.cpp src/sdl_master.cpp \
 	src/sdl_user.cpp src/sdl_user_common.cpp src/ecs/thing.cpp \
+	src/ecs/element.cpp src/ecs/system.cpp \
 	src/widgets/chat_window.cpp src/widgets/sdl_animate_button.cpp \
 	src/widgets/sdl_button.cpp src/widgets/sdl_char_info.cpp \
 	src/widgets/sdl_check_button.cpp src/widgets/sdl_lin_map.cpp \
@@ -206,16 +209,17 @@ am_Lineage_OBJECTS = config.$(OBJEXT) connection.$(OBJEXT) \
 	funcptr.$(OBJEXT) global.$(OBJEXT) lindes.$(OBJEXT) \
 	main.$(OBJEXT) packet.$(OBJEXT) packet_data.$(OBJEXT) \
 	sdl_master.$(OBJEXT) sdl_user.$(OBJEXT) \
-	sdl_user_common.$(OBJEXT) thing.$(OBJEXT) \
-	chat_window.$(OBJEXT) sdl_animate_button.$(OBJEXT) \
-	sdl_button.$(OBJEXT) sdl_char_info.$(OBJEXT) \
-	sdl_check_button.$(OBJEXT) sdl_lin_map.$(OBJEXT) \
-	sdl_radio_button.$(OBJEXT) sdl_input_box.$(OBJEXT) \
-	sdl_plain_button.$(OBJEXT) sdl_text_button.$(OBJEXT) \
-	sdl_widget.$(OBJEXT) sdl_window.$(OBJEXT) sprite.$(OBJEXT) \
-	sprite_motion.$(OBJEXT) text_box.$(OBJEXT) files.$(OBJEXT) \
-	global_files.$(OBJEXT) global_resource_template.$(OBJEXT) \
-	music.$(OBJEXT) pack.$(OBJEXT) partial_table.$(OBJEXT) \
+	sdl_user_common.$(OBJEXT) thing.$(OBJEXT) element.$(OBJEXT) \
+	system.$(OBJEXT) chat_window.$(OBJEXT) \
+	sdl_animate_button.$(OBJEXT) sdl_button.$(OBJEXT) \
+	sdl_char_info.$(OBJEXT) sdl_check_button.$(OBJEXT) \
+	sdl_lin_map.$(OBJEXT) sdl_radio_button.$(OBJEXT) \
+	sdl_input_box.$(OBJEXT) sdl_plain_button.$(OBJEXT) \
+	sdl_text_button.$(OBJEXT) sdl_widget.$(OBJEXT) \
+	sdl_window.$(OBJEXT) sprite.$(OBJEXT) sprite_motion.$(OBJEXT) \
+	text_box.$(OBJEXT) files.$(OBJEXT) global_files.$(OBJEXT) \
+	global_resource_template.$(OBJEXT) music.$(OBJEXT) \
+	pack.$(OBJEXT) partial_table.$(OBJEXT) \
 	prepared_graphics.$(OBJEXT) sdl_font.$(OBJEXT) \
 	reg_font.$(OBJEXT) small_font.$(OBJEXT) map_coord.$(OBJEXT) \
 	pixel_coord.$(OBJEXT) coord.$(OBJEXT) screen_coord.$(OBJEXT) \
@@ -255,8 +259,9 @@ am__depfiles_remade = ./$(DEPDIR)/SDLMain.Po ./$(DEPDIR)/aes.Po \
 	./$(DEPDIR)/draw_maint_png.Po ./$(DEPDIR)/draw_maint_sfx.Po \
 	./$(DEPDIR)/draw_maint_sprites.Po \
 	./$(DEPDIR)/draw_maint_til.Po ./$(DEPDIR)/draw_new_char.Po \
-	./$(DEPDIR)/files.Po ./$(DEPDIR)/funcptr.Po \
-	./$(DEPDIR)/global.Po ./$(DEPDIR)/global_files.Po \
+	./$(DEPDIR)/element.Po ./$(DEPDIR)/files.Po \
+	./$(DEPDIR)/funcptr.Po ./$(DEPDIR)/global.Po \
+	./$(DEPDIR)/global_files.Po \
 	./$(DEPDIR)/global_resource_template.Po ./$(DEPDIR)/hash.Po \
 	./$(DEPDIR)/helpers.Po ./$(DEPDIR)/lindes.Po \
 	./$(DEPDIR)/main.Po ./$(DEPDIR)/mains.Po \
@@ -276,9 +281,9 @@ am__depfiles_remade = ./$(DEPDIR)/SDLMain.Po ./$(DEPDIR)/aes.Po \
 	./$(DEPDIR)/sdl_widget.Po ./$(DEPDIR)/sdl_window.Po \
 	./$(DEPDIR)/sha256.Po ./$(DEPDIR)/sha256deep.Po \
 	./$(DEPDIR)/small_font.Po ./$(DEPDIR)/sprite.Po \
-	./$(DEPDIR)/sprite_motion.Po ./$(DEPDIR)/table.Po \
-	./$(DEPDIR)/text_box.Po ./$(DEPDIR)/thing.Po \
-	./$(DEPDIR)/tile.Po
+	./$(DEPDIR)/sprite_motion.Po ./$(DEPDIR)/system.Po \
+	./$(DEPDIR)/table.Po ./$(DEPDIR)/text_box.Po \
+	./$(DEPDIR)/thing.Po ./$(DEPDIR)/tile.Po
 am__mv = mv -f
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -513,12 +518,12 @@ top_srcdir = @top_srcdir@
 Lineage_SOURCES = src/config.cpp src/connection.cpp src/funcptr.cpp \
 	src/global.cpp src/lindes.cpp src/main.cpp src/packet.cpp \
 	src/packet_data.cpp src/sdl_master.cpp src/sdl_user.cpp \
-	src/sdl_user_common.cpp src/ecs/thing.cpp \
-	src/widgets/chat_window.cpp src/widgets/sdl_animate_button.cpp \
-	src/widgets/sdl_button.cpp src/widgets/sdl_char_info.cpp \
-	src/widgets/sdl_check_button.cpp src/widgets/sdl_lin_map.cpp \
-	src/widgets/sdl_radio_button.cpp src/widgets/sdl_input_box.cpp \
-	src/widgets/sdl_plain_button.cpp \
+	src/sdl_user_common.cpp src/ecs/thing.cpp src/ecs/element.cpp \
+	src/ecs/system.cpp src/widgets/chat_window.cpp \
+	src/widgets/sdl_animate_button.cpp src/widgets/sdl_button.cpp \
+	src/widgets/sdl_char_info.cpp src/widgets/sdl_check_button.cpp \
+	src/widgets/sdl_lin_map.cpp src/widgets/sdl_radio_button.cpp \
+	src/widgets/sdl_input_box.cpp src/widgets/sdl_plain_button.cpp \
 	src/widgets/sdl_text_button.cpp src/widgets/sdl_widget.cpp \
 	src/widgets/sdl_window.cpp src/widgets/sprite.cpp \
 	src/widgets/sprite_motion.cpp src/widgets/text_box.cpp \
@@ -542,12 +547,12 @@ Lineage_SOURCES = src/config.cpp src/connection.cpp src/funcptr.cpp \
 Admin_SOURCES = src/config.cpp src/connection.cpp src/funcptr.cpp \
 	src/global.cpp src/lindes.cpp src/main.cpp src/packet.cpp \
 	src/packet_data.cpp src/sdl_master.cpp src/sdl_admin.cpp \
-	src/sdl_user_common.cpp src/ecs/thing.cpp \
-	src/widgets/chat_window.cpp src/widgets/sdl_animate_button.cpp \
-	src/widgets/sdl_button.cpp src/widgets/sdl_char_info.cpp \
-	src/widgets/sdl_check_button.cpp src/widgets/sdl_lin_map.cpp \
-	src/widgets/sdl_radio_button.cpp src/widgets/sdl_input_box.cpp \
-	src/widgets/sdl_plain_button.cpp \
+	src/sdl_user_common.cpp src/ecs/thing.cpp src/ecs/element.cpp \
+	src/ecs/system.cpp src/widgets/chat_window.cpp \
+	src/widgets/sdl_animate_button.cpp src/widgets/sdl_button.cpp \
+	src/widgets/sdl_char_info.cpp src/widgets/sdl_check_button.cpp \
+	src/widgets/sdl_lin_map.cpp src/widgets/sdl_radio_button.cpp \
+	src/widgets/sdl_input_box.cpp src/widgets/sdl_plain_button.cpp \
 	src/widgets/sdl_text_button.cpp src/widgets/sdl_widget.cpp \
 	src/widgets/sdl_window.cpp src/widgets/sprite.cpp \
 	src/widgets/sprite_motion.cpp src/widgets/text_box.cpp \
@@ -726,6 +731,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/draw_maint_sprites.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/draw_maint_til.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/draw_new_char.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/element.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/files.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/funcptr.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/global.Po@am__quote@ # am--include-marker
@@ -769,6 +775,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/small_font.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sprite.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sprite_motion.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/system.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/table.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/text_box.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/thing.Po@am__quote@ # am--include-marker
@@ -1059,6 +1066,34 @@ thing.obj: src/ecs/thing.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='src/ecs/thing.cpp' object='thing.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o thing.obj `if test -f 'src/ecs/thing.cpp'; then $(CYGPATH_W) 'src/ecs/thing.cpp'; else $(CYGPATH_W) '$(srcdir)/src/ecs/thing.cpp'; fi`
+
+element.o: src/ecs/element.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT element.o -MD -MP -MF $(DEPDIR)/element.Tpo -c -o element.o `test -f 'src/ecs/element.cpp' || echo '$(srcdir)/'`src/ecs/element.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/element.Tpo $(DEPDIR)/element.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='src/ecs/element.cpp' object='element.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o element.o `test -f 'src/ecs/element.cpp' || echo '$(srcdir)/'`src/ecs/element.cpp
+
+element.obj: src/ecs/element.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT element.obj -MD -MP -MF $(DEPDIR)/element.Tpo -c -o element.obj `if test -f 'src/ecs/element.cpp'; then $(CYGPATH_W) 'src/ecs/element.cpp'; else $(CYGPATH_W) '$(srcdir)/src/ecs/element.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/element.Tpo $(DEPDIR)/element.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='src/ecs/element.cpp' object='element.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o element.obj `if test -f 'src/ecs/element.cpp'; then $(CYGPATH_W) 'src/ecs/element.cpp'; else $(CYGPATH_W) '$(srcdir)/src/ecs/element.cpp'; fi`
+
+system.o: src/ecs/system.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT system.o -MD -MP -MF $(DEPDIR)/system.Tpo -c -o system.o `test -f 'src/ecs/system.cpp' || echo '$(srcdir)/'`src/ecs/system.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/system.Tpo $(DEPDIR)/system.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='src/ecs/system.cpp' object='system.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o system.o `test -f 'src/ecs/system.cpp' || echo '$(srcdir)/'`src/ecs/system.cpp
+
+system.obj: src/ecs/system.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT system.obj -MD -MP -MF $(DEPDIR)/system.Tpo -c -o system.obj `if test -f 'src/ecs/system.cpp'; then $(CYGPATH_W) 'src/ecs/system.cpp'; else $(CYGPATH_W) '$(srcdir)/src/ecs/system.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/system.Tpo $(DEPDIR)/system.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='src/ecs/system.cpp' object='system.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o system.obj `if test -f 'src/ecs/system.cpp'; then $(CYGPATH_W) 'src/ecs/system.cpp'; else $(CYGPATH_W) '$(srcdir)/src/ecs/system.cpp'; fi`
 
 chat_window.o: src/widgets/chat_window.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT chat_window.o -MD -MP -MF $(DEPDIR)/chat_window.Tpo -c -o chat_window.o `test -f 'src/widgets/chat_window.cpp' || echo '$(srcdir)/'`src/widgets/chat_window.cpp
@@ -2079,6 +2114,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/draw_maint_sprites.Po
 	-rm -f ./$(DEPDIR)/draw_maint_til.Po
 	-rm -f ./$(DEPDIR)/draw_new_char.Po
+	-rm -f ./$(DEPDIR)/element.Po
 	-rm -f ./$(DEPDIR)/files.Po
 	-rm -f ./$(DEPDIR)/funcptr.Po
 	-rm -f ./$(DEPDIR)/global.Po
@@ -2122,6 +2158,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/small_font.Po
 	-rm -f ./$(DEPDIR)/sprite.Po
 	-rm -f ./$(DEPDIR)/sprite_motion.Po
+	-rm -f ./$(DEPDIR)/system.Po
 	-rm -f ./$(DEPDIR)/table.Po
 	-rm -f ./$(DEPDIR)/text_box.Po
 	-rm -f ./$(DEPDIR)/thing.Po
@@ -2192,6 +2229,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/draw_maint_sprites.Po
 	-rm -f ./$(DEPDIR)/draw_maint_til.Po
 	-rm -f ./$(DEPDIR)/draw_new_char.Po
+	-rm -f ./$(DEPDIR)/element.Po
 	-rm -f ./$(DEPDIR)/files.Po
 	-rm -f ./$(DEPDIR)/funcptr.Po
 	-rm -f ./$(DEPDIR)/global.Po
@@ -2235,6 +2273,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/small_font.Po
 	-rm -f ./$(DEPDIR)/sprite.Po
 	-rm -f ./$(DEPDIR)/sprite_motion.Po
+	-rm -f ./$(DEPDIR)/system.Po
 	-rm -f ./$(DEPDIR)/table.Po
 	-rm -f ./$(DEPDIR)/text_box.Po
 	-rm -f ./$(DEPDIR)/thing.Po
@@ -2283,7 +2322,7 @@ uninstall-man: uninstall-man3
 @HAVE_DOXYGEN_TRUE@$(directory)/man_page_1.3: doxyfile.stamp
 @HAVE_DOXYGEN_TRUE@$(directory)/man_page_2.3: doxyfile.stamp
 
-@HAVE_DOXYGEN_TRUE@doxyfile.stamp: Lineage Admin
+@HAVE_DOXYGEN_TRUE@doxyfile.stamp: Lineage Admin src/main.m Doxyfile.in Doxyfile
 @HAVE_DOXYGEN_TRUE@	$(DOXYGEN) Doxyfile
 @HAVE_DOXYGEN_TRUE@	echo Timestamp > doxyfile.stamp
 

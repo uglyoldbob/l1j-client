@@ -43,12 +43,6 @@ void change_working_directory()
 int main(int argc, char* argv[])
 {
 	ThingAdministrator all_the_things;
-	Thing t = all_the_things.spawn();
-	all_the_things.destroy(t);
-	for (int i = 0; i < 80; i++)
-	{
-		all_the_things.spawn();
-	}
 	change_working_directory();
 	#ifdef WINDOWS
 	WSADATA wsaData;
