@@ -17,6 +17,8 @@ src/sdl_user_common.cpp \
 src/ecs/thing.cpp \
 src/ecs/element.cpp \
 src/ecs/system.cpp \
+src/components/canvasbox.cpp \
+src/systems/game.cpp \
 src/widgets/chat_window.cpp \
 src/widgets/sdl_animate_button.cpp \
 src/widgets/sdl_button.cpp \
@@ -84,6 +86,8 @@ src/sdl_user_common.cpp \
 src/ecs/thing.cpp \
 src/ecs/element.cpp \
 src/ecs/system.cpp \
+src/components/canvasbox.cpp \
+src/systems/game.cpp \
 src/widgets/chat_window.cpp \
 src/widgets/sdl_animate_button.cpp \
 src/widgets/sdl_button.cpp \

@@ -5,6 +5,9 @@
 reg_font lineage_font;
 char *lineage_dir;
 
+ThingAdministrator all_the_things;
+Game games;
+
 lin_char_info *make_lin_char_info(int char_type, int gender)
 {
 	lin_char_info *ret;

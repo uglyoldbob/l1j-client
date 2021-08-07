@@ -14,6 +14,12 @@
 #include "resources/table.h"
 class sdl_user;
 
+#include "ecs/thing.h"
+extern ThingAdministrator all_the_things;
+
+#include "systems/game.h"
+extern Game games;
+
 extern char *lineage_dir;	//string to hold the absolute path to the lineage directory
 extern reg_font lineage_font;
 

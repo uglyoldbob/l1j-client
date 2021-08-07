@@ -8,6 +8,7 @@
 #include "CoreFoundation/CoreFoundation.h"
 #endif
 
+#include "globals.h"
 #include "resources/global_files.h"
 #include "resources/music.h"
 #include "sdl_master.h"
@@ -42,7 +43,6 @@ void change_working_directory()
 */
 int main(int argc, char* argv[])
 {
-	ThingAdministrator all_the_things;
 	change_working_directory();
 	#ifdef WINDOWS
 	WSADATA wsaData;
@@ -59,6 +59,10 @@ int main(int argc, char* argv[])
 	}
 	
 	SDL_EnableUNICODE(1);
+	
+	Thing g = all_the_things.spawn();
+	games.make_new_game(g);
+	
 	
 	sdl_master graphics;
 	global_files *all_files = new global_files();

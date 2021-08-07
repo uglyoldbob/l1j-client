@@ -112,6 +112,7 @@ am__Admin_SOURCES_DIST = src/config.cpp src/connection.cpp \
 	src/packet.cpp src/packet_data.cpp src/sdl_master.cpp \
 	src/sdl_admin.cpp src/sdl_user_common.cpp src/ecs/thing.cpp \
 	src/ecs/element.cpp src/ecs/system.cpp \
+	src/components/canvasbox.cpp src/systems/game.cpp \
 	src/widgets/chat_window.cpp src/widgets/sdl_animate_button.cpp \
 	src/widgets/sdl_button.cpp src/widgets/sdl_char_info.cpp \
 	src/widgets/sdl_check_button.cpp src/widgets/sdl_lin_map.cpp \
@@ -149,16 +150,16 @@ am_Admin_OBJECTS = config.$(OBJEXT) connection.$(OBJEXT) \
 	main.$(OBJEXT) packet.$(OBJEXT) packet_data.$(OBJEXT) \
 	sdl_master.$(OBJEXT) sdl_admin.$(OBJEXT) \
 	sdl_user_common.$(OBJEXT) thing.$(OBJEXT) element.$(OBJEXT) \
-	system.$(OBJEXT) chat_window.$(OBJEXT) \
-	sdl_animate_button.$(OBJEXT) sdl_button.$(OBJEXT) \
-	sdl_char_info.$(OBJEXT) sdl_check_button.$(OBJEXT) \
-	sdl_lin_map.$(OBJEXT) sdl_radio_button.$(OBJEXT) \
-	sdl_input_box.$(OBJEXT) sdl_plain_button.$(OBJEXT) \
-	sdl_text_button.$(OBJEXT) sdl_widget.$(OBJEXT) \
-	sdl_window.$(OBJEXT) sprite.$(OBJEXT) sprite_motion.$(OBJEXT) \
-	text_box.$(OBJEXT) files.$(OBJEXT) global_files.$(OBJEXT) \
-	global_resource_template.$(OBJEXT) music.$(OBJEXT) \
-	pack.$(OBJEXT) partial_table.$(OBJEXT) \
+	system.$(OBJEXT) canvasbox.$(OBJEXT) game.$(OBJEXT) \
+	chat_window.$(OBJEXT) sdl_animate_button.$(OBJEXT) \
+	sdl_button.$(OBJEXT) sdl_char_info.$(OBJEXT) \
+	sdl_check_button.$(OBJEXT) sdl_lin_map.$(OBJEXT) \
+	sdl_radio_button.$(OBJEXT) sdl_input_box.$(OBJEXT) \
+	sdl_plain_button.$(OBJEXT) sdl_text_button.$(OBJEXT) \
+	sdl_widget.$(OBJEXT) sdl_window.$(OBJEXT) sprite.$(OBJEXT) \
+	sprite_motion.$(OBJEXT) text_box.$(OBJEXT) files.$(OBJEXT) \
+	global_files.$(OBJEXT) global_resource_template.$(OBJEXT) \
+	music.$(OBJEXT) pack.$(OBJEXT) partial_table.$(OBJEXT) \
 	prepared_graphics.$(OBJEXT) sdl_font.$(OBJEXT) \
 	reg_font.$(OBJEXT) small_font.$(OBJEXT) map_coord.$(OBJEXT) \
 	pixel_coord.$(OBJEXT) coord.$(OBJEXT) screen_coord.$(OBJEXT) \
@@ -181,6 +182,7 @@ am__Lineage_SOURCES_DIST = src/config.cpp src/connection.cpp \
 	src/packet.cpp src/packet_data.cpp src/sdl_master.cpp \
 	src/sdl_user.cpp src/sdl_user_common.cpp src/ecs/thing.cpp \
 	src/ecs/element.cpp src/ecs/system.cpp \
+	src/components/canvasbox.cpp src/systems/game.cpp \
 	src/widgets/chat_window.cpp src/widgets/sdl_animate_button.cpp \
 	src/widgets/sdl_button.cpp src/widgets/sdl_char_info.cpp \
 	src/widgets/sdl_check_button.cpp src/widgets/sdl_lin_map.cpp \
@@ -210,16 +212,16 @@ am_Lineage_OBJECTS = config.$(OBJEXT) connection.$(OBJEXT) \
 	main.$(OBJEXT) packet.$(OBJEXT) packet_data.$(OBJEXT) \
 	sdl_master.$(OBJEXT) sdl_user.$(OBJEXT) \
 	sdl_user_common.$(OBJEXT) thing.$(OBJEXT) element.$(OBJEXT) \
-	system.$(OBJEXT) chat_window.$(OBJEXT) \
-	sdl_animate_button.$(OBJEXT) sdl_button.$(OBJEXT) \
-	sdl_char_info.$(OBJEXT) sdl_check_button.$(OBJEXT) \
-	sdl_lin_map.$(OBJEXT) sdl_radio_button.$(OBJEXT) \
-	sdl_input_box.$(OBJEXT) sdl_plain_button.$(OBJEXT) \
-	sdl_text_button.$(OBJEXT) sdl_widget.$(OBJEXT) \
-	sdl_window.$(OBJEXT) sprite.$(OBJEXT) sprite_motion.$(OBJEXT) \
-	text_box.$(OBJEXT) files.$(OBJEXT) global_files.$(OBJEXT) \
-	global_resource_template.$(OBJEXT) music.$(OBJEXT) \
-	pack.$(OBJEXT) partial_table.$(OBJEXT) \
+	system.$(OBJEXT) canvasbox.$(OBJEXT) game.$(OBJEXT) \
+	chat_window.$(OBJEXT) sdl_animate_button.$(OBJEXT) \
+	sdl_button.$(OBJEXT) sdl_char_info.$(OBJEXT) \
+	sdl_check_button.$(OBJEXT) sdl_lin_map.$(OBJEXT) \
+	sdl_radio_button.$(OBJEXT) sdl_input_box.$(OBJEXT) \
+	sdl_plain_button.$(OBJEXT) sdl_text_button.$(OBJEXT) \
+	sdl_widget.$(OBJEXT) sdl_window.$(OBJEXT) sprite.$(OBJEXT) \
+	sprite_motion.$(OBJEXT) text_box.$(OBJEXT) files.$(OBJEXT) \
+	global_files.$(OBJEXT) global_resource_template.$(OBJEXT) \
+	music.$(OBJEXT) pack.$(OBJEXT) partial_table.$(OBJEXT) \
 	prepared_graphics.$(OBJEXT) sdl_font.$(OBJEXT) \
 	reg_font.$(OBJEXT) small_font.$(OBJEXT) map_coord.$(OBJEXT) \
 	pixel_coord.$(OBJEXT) coord.$(OBJEXT) screen_coord.$(OBJEXT) \
@@ -250,18 +252,19 @@ DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ./$(DEPDIR)/SDLMain.Po ./$(DEPDIR)/aes.Po \
-	./$(DEPDIR)/chat_window.Po ./$(DEPDIR)/config.Po \
-	./$(DEPDIR)/connection.Po ./$(DEPDIR)/coord.Po \
-	./$(DEPDIR)/draw_admin_main.Po ./$(DEPDIR)/draw_char_sel.Po \
-	./$(DEPDIR)/draw_game.Po ./$(DEPDIR)/draw_loading.Po \
-	./$(DEPDIR)/draw_login.Po ./$(DEPDIR)/draw_maint_icons.Po \
-	./$(DEPDIR)/draw_maint_img.Po ./$(DEPDIR)/draw_maint_map.Po \
-	./$(DEPDIR)/draw_maint_png.Po ./$(DEPDIR)/draw_maint_sfx.Po \
+	./$(DEPDIR)/canvasbox.Po ./$(DEPDIR)/chat_window.Po \
+	./$(DEPDIR)/config.Po ./$(DEPDIR)/connection.Po \
+	./$(DEPDIR)/coord.Po ./$(DEPDIR)/draw_admin_main.Po \
+	./$(DEPDIR)/draw_char_sel.Po ./$(DEPDIR)/draw_game.Po \
+	./$(DEPDIR)/draw_loading.Po ./$(DEPDIR)/draw_login.Po \
+	./$(DEPDIR)/draw_maint_icons.Po ./$(DEPDIR)/draw_maint_img.Po \
+	./$(DEPDIR)/draw_maint_map.Po ./$(DEPDIR)/draw_maint_png.Po \
+	./$(DEPDIR)/draw_maint_sfx.Po \
 	./$(DEPDIR)/draw_maint_sprites.Po \
 	./$(DEPDIR)/draw_maint_til.Po ./$(DEPDIR)/draw_new_char.Po \
 	./$(DEPDIR)/element.Po ./$(DEPDIR)/files.Po \
-	./$(DEPDIR)/funcptr.Po ./$(DEPDIR)/global.Po \
-	./$(DEPDIR)/global_files.Po \
+	./$(DEPDIR)/funcptr.Po ./$(DEPDIR)/game.Po \
+	./$(DEPDIR)/global.Po ./$(DEPDIR)/global_files.Po \
 	./$(DEPDIR)/global_resource_template.Po ./$(DEPDIR)/hash.Po \
 	./$(DEPDIR)/helpers.Po ./$(DEPDIR)/lindes.Po \
 	./$(DEPDIR)/main.Po ./$(DEPDIR)/mains.Po \
@@ -519,7 +522,8 @@ Lineage_SOURCES = src/config.cpp src/connection.cpp src/funcptr.cpp \
 	src/global.cpp src/lindes.cpp src/main.cpp src/packet.cpp \
 	src/packet_data.cpp src/sdl_master.cpp src/sdl_user.cpp \
 	src/sdl_user_common.cpp src/ecs/thing.cpp src/ecs/element.cpp \
-	src/ecs/system.cpp src/widgets/chat_window.cpp \
+	src/ecs/system.cpp src/components/canvasbox.cpp \
+	src/systems/game.cpp src/widgets/chat_window.cpp \
 	src/widgets/sdl_animate_button.cpp src/widgets/sdl_button.cpp \
 	src/widgets/sdl_char_info.cpp src/widgets/sdl_check_button.cpp \
 	src/widgets/sdl_lin_map.cpp src/widgets/sdl_radio_button.cpp \
@@ -548,7 +552,8 @@ Admin_SOURCES = src/config.cpp src/connection.cpp src/funcptr.cpp \
 	src/global.cpp src/lindes.cpp src/main.cpp src/packet.cpp \
 	src/packet_data.cpp src/sdl_master.cpp src/sdl_admin.cpp \
 	src/sdl_user_common.cpp src/ecs/thing.cpp src/ecs/element.cpp \
-	src/ecs/system.cpp src/widgets/chat_window.cpp \
+	src/ecs/system.cpp src/components/canvasbox.cpp \
+	src/systems/game.cpp src/widgets/chat_window.cpp \
 	src/widgets/sdl_animate_button.cpp src/widgets/sdl_button.cpp \
 	src/widgets/sdl_char_info.cpp src/widgets/sdl_check_button.cpp \
 	src/widgets/sdl_lin_map.cpp src/widgets/sdl_radio_button.cpp \
@@ -714,6 +719,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SDLMain.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/aes.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/canvasbox.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/chat_window.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/config.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/connection.Po@am__quote@ # am--include-marker
@@ -734,6 +740,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/element.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/files.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/funcptr.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/game.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/global.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/global_files.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/global_resource_template.Po@am__quote@ # am--include-marker
@@ -1094,6 +1101,34 @@ system.obj: src/ecs/system.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='src/ecs/system.cpp' object='system.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o system.obj `if test -f 'src/ecs/system.cpp'; then $(CYGPATH_W) 'src/ecs/system.cpp'; else $(CYGPATH_W) '$(srcdir)/src/ecs/system.cpp'; fi`
+
+canvasbox.o: src/components/canvasbox.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT canvasbox.o -MD -MP -MF $(DEPDIR)/canvasbox.Tpo -c -o canvasbox.o `test -f 'src/components/canvasbox.cpp' || echo '$(srcdir)/'`src/components/canvasbox.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/canvasbox.Tpo $(DEPDIR)/canvasbox.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='src/components/canvasbox.cpp' object='canvasbox.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o canvasbox.o `test -f 'src/components/canvasbox.cpp' || echo '$(srcdir)/'`src/components/canvasbox.cpp
+
+canvasbox.obj: src/components/canvasbox.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT canvasbox.obj -MD -MP -MF $(DEPDIR)/canvasbox.Tpo -c -o canvasbox.obj `if test -f 'src/components/canvasbox.cpp'; then $(CYGPATH_W) 'src/components/canvasbox.cpp'; else $(CYGPATH_W) '$(srcdir)/src/components/canvasbox.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/canvasbox.Tpo $(DEPDIR)/canvasbox.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='src/components/canvasbox.cpp' object='canvasbox.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o canvasbox.obj `if test -f 'src/components/canvasbox.cpp'; then $(CYGPATH_W) 'src/components/canvasbox.cpp'; else $(CYGPATH_W) '$(srcdir)/src/components/canvasbox.cpp'; fi`
+
+game.o: src/systems/game.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT game.o -MD -MP -MF $(DEPDIR)/game.Tpo -c -o game.o `test -f 'src/systems/game.cpp' || echo '$(srcdir)/'`src/systems/game.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/game.Tpo $(DEPDIR)/game.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='src/systems/game.cpp' object='game.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o game.o `test -f 'src/systems/game.cpp' || echo '$(srcdir)/'`src/systems/game.cpp
+
+game.obj: src/systems/game.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT game.obj -MD -MP -MF $(DEPDIR)/game.Tpo -c -o game.obj `if test -f 'src/systems/game.cpp'; then $(CYGPATH_W) 'src/systems/game.cpp'; else $(CYGPATH_W) '$(srcdir)/src/systems/game.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/game.Tpo $(DEPDIR)/game.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='src/systems/game.cpp' object='game.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o game.obj `if test -f 'src/systems/game.cpp'; then $(CYGPATH_W) 'src/systems/game.cpp'; else $(CYGPATH_W) '$(srcdir)/src/systems/game.cpp'; fi`
 
 chat_window.o: src/widgets/chat_window.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT chat_window.o -MD -MP -MF $(DEPDIR)/chat_window.Tpo -c -o chat_window.o `test -f 'src/widgets/chat_window.cpp' || echo '$(srcdir)/'`src/widgets/chat_window.cpp
@@ -2097,6 +2132,7 @@ distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 		-rm -f ./$(DEPDIR)/SDLMain.Po
 	-rm -f ./$(DEPDIR)/aes.Po
+	-rm -f ./$(DEPDIR)/canvasbox.Po
 	-rm -f ./$(DEPDIR)/chat_window.Po
 	-rm -f ./$(DEPDIR)/config.Po
 	-rm -f ./$(DEPDIR)/connection.Po
@@ -2117,6 +2153,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/element.Po
 	-rm -f ./$(DEPDIR)/files.Po
 	-rm -f ./$(DEPDIR)/funcptr.Po
+	-rm -f ./$(DEPDIR)/game.Po
 	-rm -f ./$(DEPDIR)/global.Po
 	-rm -f ./$(DEPDIR)/global_files.Po
 	-rm -f ./$(DEPDIR)/global_resource_template.Po
@@ -2212,6 +2249,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -rf $(top_srcdir)/autom4te.cache
 		-rm -f ./$(DEPDIR)/SDLMain.Po
 	-rm -f ./$(DEPDIR)/aes.Po
+	-rm -f ./$(DEPDIR)/canvasbox.Po
 	-rm -f ./$(DEPDIR)/chat_window.Po
 	-rm -f ./$(DEPDIR)/config.Po
 	-rm -f ./$(DEPDIR)/connection.Po
@@ -2232,6 +2270,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/element.Po
 	-rm -f ./$(DEPDIR)/files.Po
 	-rm -f ./$(DEPDIR)/funcptr.Po
+	-rm -f ./$(DEPDIR)/game.Po
 	-rm -f ./$(DEPDIR)/global.Po
 	-rm -f ./$(DEPDIR)/global_files.Po
 	-rm -f ./$(DEPDIR)/global_resource_template.Po
