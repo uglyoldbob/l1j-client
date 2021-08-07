@@ -34,7 +34,7 @@ public:
 	void destroy(Thing t); ///< destroy the given thing
 private:
 	Thing next_thing;
-	HashMap<Thing, uint8_t> current_things;
+	HashSet<Thing> current_things;
 };
 
 #endif
