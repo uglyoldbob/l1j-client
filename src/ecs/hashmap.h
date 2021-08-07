@@ -276,6 +276,7 @@ public:
 	V* lookup(K key); ///< Lookup the value in the table corresponding to the given key. Return nullptr if not found.
 	void replace(K key, V value); ///< Insert or replace an existing value in the hashmap with the value specified.
 	void remove(K key); ///< Remove whatever value for the given key exists.
+	HashSet<K> get_set(); ///< Return a hashset of this hashmap
 private:
 	std::vector<K> keys; ///< The list of keys for the hashmap
 	std::vector<V> values; ///< The list of values for the hashmap
@@ -316,6 +317,20 @@ HashMap<K,V>::HashMap(uint8_t size)
 	hash_size = (1<<size);
 	mask = (1<<size)-1;
 	resize_threshold = (1<<size) * 0.9;
+}
+
+template <class K, class V>
+HashSet<K> HashMap<K, V>::get_set()
+{ // \todo Determine if there is a better way to do this.
+	HashSet<K> ret(num_bits);
+	for (int i = 0; i < hashes.size(); i++)
+	{
+		if (hashes[i] != 0)
+		{
+			ret.replace(hashes[i]);
+		}
+	}
+	return ret;
 }
 
 template <class K, class V>
