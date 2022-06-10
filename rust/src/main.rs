@@ -22,14 +22,14 @@ enum MessageFromAsync {
 }
 
 async fn load_resources(packs: &mut Vec<Pack>, path: String) -> Result<(), ()> {
-	let mut pack = Pack::new(format!("{}/Tile", path), false);
+	let mut pack = Pack::new(format!("{}/Text", path), true);
 	let e = pack.load().await;
 	if let Err(_a) = e {
 		return Err(());
 	}
 	packs.push(pack);
 	
-	let mut pack = Pack::new(format!("{}/Text", path), true);
+	let mut pack = Pack::new(format!("{}/Tile", path), false);
 	let e = pack.load().await;
 	if let Err(_a) = e {
 		return Err(());

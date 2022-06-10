@@ -1,3 +1,5 @@
+use des::cipher::BlockDecryptMut;
+use des::cipher::KeyInit;
 use tokio::io::AsyncReadExt;
 
 /// This structure describes a single pack file used as a container for 
@@ -26,6 +28,15 @@ impl From<std::io::Error> for Exception {
 	}
 }
 
+fn des_decrypt(key: String, data: &mut Vec<u8>) {
+	let key = generic_array::GenericArray::from_slice(key[..].as_bytes());
+	let mut key = des::Des::new(&key);
+	for chunk in data.chunks_exact_mut(8) {
+		let mut data = generic_array::GenericArray::from_mut_slice(&mut chunk[..]);
+		key.decrypt_block_mut(&mut data);
+	}
+}
+
 impl Pack {
 	pub fn new(n: String, e: bool) -> Self {
 		Self {
@@ -51,6 +62,12 @@ impl Pack {
 				println!("File size mismatch {:x} {:x} for {}", size, size2, self.name);
 				return Err(Exception::ContentError);
 			}
+			let mut index_contents = Vec::new();
+			indx.read_to_end(&mut index_contents).await?;
+			if self.encrypted {
+				des_decrypt("~!@#%^$<".to_string(), &mut index_contents);
+			}
+			let mut indx = std::io::Cursor::new(index_contents);
 			println!("There are {} files", size);
 			for i in 0..size {
 				let offset = indx.read_u32_le().await?;
@@ -62,12 +79,14 @@ impl Pack {
 					name: name,
 					size: size,
 					});
-				println!(" name {} offset {} size {}", String::from_utf8_lossy(&name[..]), offset, size);
-				if offset as u64 + size as u64 > content_size as u64{
-					println!("Invalid entry");
-				}
-				else {
-					println!("Valid");
+				if self.encrypted {
+					println!(" name {} offset {} size {}", String::from_utf8_lossy(&name[..]), offset, size);
+					if offset as u64 + size as u64 > content_size as u64{
+						println!("Invalid entry");
+					}
+					else {
+						println!("Valid");
+					}
 				}
 			}
 		}
