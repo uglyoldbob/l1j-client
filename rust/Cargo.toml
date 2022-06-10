@@ -2,7 +2,7 @@
 name="rustlin"
 version="0.0.1"
 authors=["Thomas Epperson"]
-edition="2018"
+edition="2021"
 
 [dependencies]
 configparser = "3.0.0"
