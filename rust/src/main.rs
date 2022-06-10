@@ -21,38 +21,38 @@ enum MessageFromAsync {
 	ResourceStatus(bool),
 }
 
-async fn load_resources(packs: &mut Vec<Pack>, path: String) -> Result<(), ()> {
-	let mut pack = Pack::new(format!("{}/Text", path), true);
-	let e = pack.load().await;
-	if let Err(_a) = e {
-		return Err(());
-	}
-	packs.push(pack);
-	
-	let mut pack = Pack::new(format!("{}/Tile", path), false);
-	let e = pack.load().await;
-	if let Err(_a) = e {
-		return Err(());
-	}
-	packs.push(pack);
-	
-	for i in 0..16 {
-		let mut pack = Pack::new(format!("{}/Sprite{:02}", path, i), false);
-		let e = pack.load().await;
-		if let Err(_a) = e {
-			return Err(());
+struct PackFiles {
+	tile: Pack,
+	text: Pack,
+	sprite: Pack,
+	sprites: Vec<Pack>,
+}
+
+impl PackFiles {
+	pub async fn load(path: String) -> Result<Self, ()> {
+		let mut packs: Vec<Pack> = Vec::new();
+		for i in 0..16 {
+			let mut pack = Pack::new(format!("{}/Sprite{:02}", path, i), false);
+			let e = pack.load().await;
+			if let Err(_a) = e {
+				return Err(());
+			}
+			packs.push(pack);
 		}
-		packs.push(pack);
+		Ok(Self {
+			tile: Pack::new(format!("{}/Tile", path), false),
+			text: Pack::new(format!("{}/Text", path), true),
+			sprite: Pack::new(format!("{}/Sprite", path), false),
+			sprites: packs,
+		})
 	}
-	
-	Ok(())
 }
 
 async fn async_main(mut r: tokio::sync::mpsc::Receiver<MessageToAsync>,
 	mut s: tokio::sync::mpsc::Sender<MessageFromAsync>) {
 	println!("Async main");
 	
-	let mut packs: Vec<Pack> = Vec::new();
+	let mut packs: PackFiles;
 	
 	loop {
 		let message = r.recv().await;
@@ -62,9 +62,9 @@ async fn async_main(mut r: tokio::sync::mpsc::Receiver<MessageToAsync>,
 				match msg {
 					MessageToAsync::LoadResources(path) => {
 						println!("Loading resources {}", path);
-						
-						match load_resources(&mut packs, path).await {
-							Ok(()) => {
+						match PackFiles::load(path).await {
+							Ok(p) => {
+								packs = p;
 								s.send(MessageFromAsync::ResourceStatus(true)).await;
 							}
 							Err(()) => {
