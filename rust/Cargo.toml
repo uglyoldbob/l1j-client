@@ -4,6 +4,10 @@ version="0.0.1"
 authors=["Thomas Epperson"]
 edition="2018"
 
+[dependencies]
+configparser = "3.0.0"
+des="0.8.1"
+
 [dependencies.sdl2]
 version="0.35.1"
 features=["use_mac_framework"]
