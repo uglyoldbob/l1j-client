@@ -8,6 +8,10 @@ edition="2018"
 configparser = "3.0.0"
 des="0.8.1"
 
+[dependencies.tokio]
+version="1.19.2"
+features=["full"]
+
 [dependencies.sdl2]
 version="0.35.1"
 features=["use_mac_framework"]

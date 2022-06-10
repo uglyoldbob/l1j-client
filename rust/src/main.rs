@@ -7,8 +7,34 @@ use std::fs;
 
 mod settings;
 mod sprites;
+mod pack;
 
 use crate::sprites::*;
+
+enum MessageToAsync {
+	LoadResource,
+}
+
+enum MessageFromAsync {
+	Resource,
+}
+
+async fn async_main(mut r: tokio::sync::mpsc::Receiver<MessageToAsync>,
+	mut s: tokio::sync::mpsc::Sender<MessageFromAsync>) {
+	println!("Async main");
+	loop {
+		let message = r.recv().await;
+		match message {
+			None => break,
+			Some(msg) => {
+				match msg {
+					MessageToAsync::LoadResource => {
+					}
+				}
+			}
+		}
+	}
+}
 
 pub fn main() {
 
@@ -29,6 +55,12 @@ pub fn main() {
     };
     
     let resources = settings.get("general","resources").unwrap().to_string();
+    
+    let rt = tokio::runtime::Runtime::new().unwrap();
+    let (s1, r1) = tokio::sync::mpsc::channel(100);
+    let (s2, r2) = tokio::sync::mpsc::channel(100);
+    rt.spawn(async_main(r1, s2));
+    
     println!("Loading resources from {}", resources);
     //TODO load from from Font/eng.fnt
     //TODO des key init
