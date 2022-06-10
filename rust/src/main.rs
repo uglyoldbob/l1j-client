@@ -22,11 +22,29 @@ enum MessageFromAsync {
 }
 
 async fn load_resources(packs: &mut Vec<Pack>, path: String) -> Result<(), ()> {
-	let mut pack = Pack::new(format!("{}/Text", path), false);
+	let mut pack = Pack::new(format!("{}/Tile", path), false);
 	let e = pack.load().await;
 	if let Err(_a) = e {
 		return Err(());
 	}
+	packs.push(pack);
+	
+	let mut pack = Pack::new(format!("{}/Text", path), true);
+	let e = pack.load().await;
+	if let Err(_a) = e {
+		return Err(());
+	}
+	packs.push(pack);
+	
+	for i in 0..16 {
+		let mut pack = Pack::new(format!("{}/Sprite{:02}", path, i), false);
+		let e = pack.load().await;
+		if let Err(_a) = e {
+			return Err(());
+		}
+		packs.push(pack);
+	}
+	
 	Ok(())
 }
 
@@ -107,7 +125,7 @@ pub fn main() {
 
 
 
-    let mut vid_win = video_subsystem.window("l1j-client", 650, 480);
+    let mut vid_win = video_subsystem.window("l1j-client", 640, 480);
     let mut windowb = vid_win.position_centered();
 
     if !windowed {
