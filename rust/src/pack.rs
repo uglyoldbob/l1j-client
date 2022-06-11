@@ -1,3 +1,4 @@
+use crate::Exception;
 use des::cipher::BlockDecryptMut;
 use des::cipher::KeyInit;
 use tokio::io::AsyncReadExt;
@@ -15,17 +16,6 @@ struct FileEntry {
 	offset: u32,
 	name: [u8;20],
 	size: u32,
-}
-
-pub enum Exception {
-	IoError,
-	ContentError,
-}
-
-impl From<std::io::Error> for Exception {
-	fn from(_a: std::io::Error) -> Self {
-		Exception::IoError
-	}
 }
 
 fn des_decrypt(key: String, data: &mut Vec<u8>) {
@@ -48,7 +38,6 @@ impl Pack {
 	}
 	
 	pub async fn load(&mut self) -> Result<(), Exception>{
-		println!("Opening pack {}", self.name);
 		let content = format!("{}.pak", self.name);
 		let index = format!("{}.idx", self.name);
 		let contents = tokio::fs::File::open(content).await?;
@@ -68,7 +57,6 @@ impl Pack {
 				des_decrypt("~!@#%^$<".to_string(), &mut index_contents);
 			}
 			let mut indx = std::io::Cursor::new(index_contents);
-			println!("There are {} files", size);
 			for i in 0..size {
 				let offset = indx.read_u32_le().await?;
 				let mut name: [u8; 20] = [0;20];
@@ -79,14 +67,9 @@ impl Pack {
 					name: name,
 					size: size,
 					});
-				if self.encrypted {
-					println!(" name {} offset {} size {}", String::from_utf8_lossy(&name[..]), offset, size);
-					if offset as u64 + size as u64 > content_size as u64{
-						println!("Invalid entry");
-					}
-					else {
-						println!("Valid");
-					}
+				if offset as u64 + size as u64 > content_size as u64{
+					println!("Invalid entry");
+					return Err(Exception::ContentError);
 				}
 			}
 		}

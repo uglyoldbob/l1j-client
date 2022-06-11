@@ -13,8 +13,15 @@ use crate::sprites::*;
 mod pack;
 use crate::pack::*;
 
+mod font;
+use crate::font::*;
+
+mod exception;
+use crate::exception::*;
+
 enum MessageToAsync {
 	LoadResources(String),
+	LoadFont(String),
 }
 
 enum MessageFromAsync {
@@ -52,6 +59,7 @@ async fn async_main(mut r: tokio::sync::mpsc::Receiver<MessageToAsync>,
 	mut s: tokio::sync::mpsc::Sender<MessageFromAsync>) {
 	println!("Async main");
 	
+	let mut resource_path: String = "".to_string();
 	let mut packs: PackFiles;
 	
 	loop {
@@ -61,6 +69,7 @@ async fn async_main(mut r: tokio::sync::mpsc::Receiver<MessageToAsync>,
 			Some(msg) => {
 				match msg {
 					MessageToAsync::LoadResources(path) => {
+						resource_path = path.clone();
 						println!("Loading resources {}", path);
 						match PackFiles::load(path).await {
 							Ok(p) => {
@@ -71,6 +80,11 @@ async fn async_main(mut r: tokio::sync::mpsc::Receiver<MessageToAsync>,
 								s.send(MessageFromAsync::ResourceStatus(false)).await;
 							}
 						}
+					}
+					MessageToAsync::LoadFont(file) => {
+						let path = format!("{}/{}", resource_path, file);
+						let font = Font::load(path).await;
+						
 					}
 				}
 			}
@@ -104,6 +118,7 @@ pub fn main() {
     rt.spawn(async_main(r1, s2));
     
     s1.blocking_send(MessageToAsync::LoadResources(resources.clone()));
+    s1.blocking_send(MessageToAsync::LoadFont("Font/eng.fnt".to_string()));
     
     println!("Loading resources from {}", resources);
     //TODO load from from Font/eng.fnt
@@ -139,6 +154,7 @@ pub fn main() {
     canvas.clear();
     canvas.present();
     let mut event_pump = sdl_context.event_pump().unwrap();
+    let texture_creator = canvas.texture_creator();
     let mut i = 0;
     'running: loop {
 	let mut fail = false;
