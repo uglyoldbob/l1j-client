@@ -14,6 +14,6 @@ version="1.19.2"
 features=["full"]
 
 [dependencies.sdl2]
-version="0.35.1"
+version="0.35.2"
 features=["use_mac_framework"]
 

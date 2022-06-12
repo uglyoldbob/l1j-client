@@ -1,6 +1,7 @@
 use crate::Exception;
 use sdl2::pixels::PixelFormatEnum;
 use sdl2::surface::Surface;
+use tokio::io::AsyncReadExt;
 
 pub struct Font {}
 
@@ -18,6 +19,9 @@ impl Font {
         }
 
         let surf = Surface::new(6, 12 * 95, PixelFormatEnum::RGB24).unwrap();
+        for i in 0..12*95 {
+            let data = file.
+        }
 
         Ok(Self {})
     }

@@ -22,6 +22,7 @@ use crate::exception::*;
 enum MessageToAsync {
     LoadResources(String),
     LoadFont(String),
+    LoadSpriteTable,
 }
 
 enum MessageFromAsync {
@@ -86,6 +87,10 @@ async fn async_main(
                     let path = format!("{}/{}", resource_path, file);
                     let font = Font::load(path).await;
                 }
+                MessageToAsync::LoadSpriteTable => {
+                    let data = include_bytes!("sprite_table.txt");
+
+                }
             },
         }
     }
@@ -117,6 +122,9 @@ pub fn main() {
 
     s1.blocking_send(MessageToAsync::LoadResources(resources.clone()));
     s1.blocking_send(MessageToAsync::LoadFont("Font/eng.fnt".to_string()));
+    s1.blocking_send(MessageToAsync::LoadSpriteTable);
+    //load Font/SMALL.FNT
+    
 
     println!("Loading resources from {}", resources);
     //TODO load from from Font/eng.fnt
