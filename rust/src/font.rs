@@ -18,11 +18,11 @@ impl Font {
             return Err(Exception::ContentError);
         }
 
-        let surf = Surface::new(6, 12 * 95, PixelFormatEnum::RGB24).unwrap();
-        for i in 0..12*95 {
-            let data = file.
+        for character in 0..95 {
+            for row in 0..12 {
+                let data = file.read_u8();
+            }
         }
-
         Ok(Self {})
     }
 }

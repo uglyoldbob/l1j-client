@@ -19,13 +19,16 @@ use crate::font::*;
 mod exception;
 use crate::exception::*;
 
-enum MessageToAsync {
+mod mode;
+use crate::mode::*;
+
+pub enum MessageToAsync {
     LoadResources(String),
     LoadFont(String),
     LoadSpriteTable,
 }
 
-enum MessageFromAsync {
+pub enum MessageFromAsync {
     ResourceStatus(bool),
 }
 
@@ -89,7 +92,6 @@ async fn async_main(
                 }
                 MessageToAsync::LoadSpriteTable => {
                     let data = include_bytes!("sprite_table.txt");
-
                 }
             },
         }
@@ -120,11 +122,12 @@ pub fn main() {
     let (s2, mut r2) = tokio::sync::mpsc::channel(100);
     rt.spawn(async_main(r1, s2));
 
+    let mut mode: Box<dyn GameMode> = Box::new(ExplorerMenu::new());
+
     s1.blocking_send(MessageToAsync::LoadResources(resources.clone()));
     s1.blocking_send(MessageToAsync::LoadFont("Font/eng.fnt".to_string()));
     s1.blocking_send(MessageToAsync::LoadSpriteTable);
     //load Font/SMALL.FNT
-    
 
     println!("Loading resources from {}", resources);
     //TODO load from from Font/eng.fnt
@@ -197,11 +200,13 @@ pub fn main() {
                     }
                 }
             }
+            mode.parse_message(msg);
         }
         if fail {
             break;
         };
         i = (i + 1) % 255;
+        mode.draw(&mut canvas);
         canvas.set_draw_color(Color::RGB(i, 64, 255 - i));
         canvas.clear();
         for event in event_pump.poll_iter() {
@@ -213,10 +218,12 @@ pub fn main() {
                 } => break 'running,
                 _ => {}
             }
+            mode.parse_event(event);
         }
         // The rest of the game loop goes here...
 
         canvas.present();
-        ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 20));
+        let framerate = mode.framerate() as u64;
+        ::std::thread::sleep(Duration::from_nanos(1_000_000_000u64 / framerate));
     }
 }
