@@ -17,3 +17,10 @@ features=["full"]
 version="0.35.2"
 features=["use_mac_framework"]
 
+[[bin]]
+name="game_client"
+path="src/main.rs"
+
+[[bin]]
+name="game_explorer"
+path="src/explorer.rs"
