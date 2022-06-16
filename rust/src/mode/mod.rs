@@ -1,4 +1,5 @@
 use crate::MessageFromAsync;
+use sdl2::pixels::Color;
 
 /// This trait is used to determine what mode of operation the program is in
 pub trait GameMode {
@@ -10,11 +11,13 @@ pub trait GameMode {
 }
 
 /// This is for exploring the resources of the game client
-pub struct ExplorerMenu {}
+pub struct ExplorerMenu {
+    i: u8,
+}
 
 impl ExplorerMenu {
     pub fn new() -> Self {
-        Self {}
+        Self { i: 0 }
     }
 }
 
@@ -31,7 +34,11 @@ impl GameMode for ExplorerMenu {
         }
     }
 
-    fn draw(&mut self, canvas: &mut sdl2::render::WindowCanvas) {}
+    fn draw(&mut self, canvas: &mut sdl2::render::WindowCanvas) {
+        canvas.set_draw_color(Color::RGB(self.i, 64, 255 - self.i));
+        self.i = self.i.wrapping_add(1);
+        canvas.clear();
+    }
 
     fn framerate(&self) -> u8 {
         20

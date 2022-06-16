@@ -22,81 +22,8 @@ use crate::exception::*;
 mod mode;
 use crate::mode::*;
 
-pub enum MessageToAsync {
-    LoadResources(String),
-    LoadFont(String),
-    LoadSpriteTable,
-}
-
-pub enum MessageFromAsync {
-    ResourceStatus(bool),
-}
-
-struct PackFiles {
-    tile: Pack,
-    text: Pack,
-    sprite: Pack,
-    sprites: Vec<Pack>,
-}
-
-impl PackFiles {
-    pub async fn load(path: String) -> Result<Self, ()> {
-        let mut packs: Vec<Pack> = Vec::new();
-        for i in 0..16 {
-            let mut pack = Pack::new(format!("{}/Sprite{:02}", path, i), false);
-            let e = pack.load().await;
-            if let Err(_a) = e {
-                return Err(());
-            }
-            packs.push(pack);
-        }
-        Ok(Self {
-            tile: Pack::new(format!("{}/Tile", path), false),
-            text: Pack::new(format!("{}/Text", path), true),
-            sprite: Pack::new(format!("{}/Sprite", path), false),
-            sprites: packs,
-        })
-    }
-}
-
-async fn async_main(
-    mut r: tokio::sync::mpsc::Receiver<MessageToAsync>,
-    mut s: tokio::sync::mpsc::Sender<MessageFromAsync>,
-) {
-    println!("Async main");
-
-    let mut resource_path: String = "".to_string();
-    let mut packs: PackFiles;
-
-    loop {
-        let message = r.recv().await;
-        match message {
-            None => break,
-            Some(msg) => match msg {
-                MessageToAsync::LoadResources(path) => {
-                    resource_path = path.clone();
-                    println!("Loading resources {}", path);
-                    match PackFiles::load(path).await {
-                        Ok(p) => {
-                            packs = p;
-                            s.send(MessageFromAsync::ResourceStatus(true)).await;
-                        }
-                        Err(()) => {
-                            s.send(MessageFromAsync::ResourceStatus(false)).await;
-                        }
-                    }
-                }
-                MessageToAsync::LoadFont(file) => {
-                    let path = format!("{}/{}", resource_path, file);
-                    let font = Font::load(path).await;
-                }
-                MessageToAsync::LoadSpriteTable => {
-                    let data = include_bytes!("sprite_table.txt");
-                }
-            },
-        }
-    }
-}
+mod resources;
+use crate::resources::*;
 
 pub fn main() {
     let settings_file = fs::read_to_string("./settings.ini");
@@ -158,14 +85,12 @@ pub fn main() {
 
     let mut canvas = window.into_canvas().build().unwrap();
 
-    canvas.set_draw_color(Color::RGB(0, 255, 255));
+    canvas.set_draw_color(Color::RGB(0, 0, 0));
     canvas.clear();
     canvas.present();
     let mut event_pump = sdl_context.event_pump().unwrap();
     let texture_creator = canvas.texture_creator();
-    let mut i = 0;
     'running: loop {
-        let mut fail = false;
         while let Ok(msg) = r2.try_recv() {
             match msg {
                 MessageFromAsync::ResourceStatus(b) => {
@@ -184,7 +109,7 @@ pub fn main() {
                             windowb = windowb.fullscreen();
                         }
                         let window = windowb.build().unwrap();
-                        sdl2::messagebox::show_message_box(
+                        let _e = sdl2::messagebox::show_message_box(
                             sdl2::messagebox::MessageBoxFlag::ERROR,
                             &[sdl2::messagebox::ButtonData {
                                 flags: sdl2::messagebox::MessageBoxButtonFlag::RETURNKEY_DEFAULT,
@@ -196,19 +121,12 @@ pub fn main() {
                             &window,
                             scheme,
                         );
-                        fail = true;
+                        break 'running;
                     }
                 }
             }
             mode.parse_message(msg);
         }
-        if fail {
-            break;
-        };
-        i = (i + 1) % 255;
-        mode.draw(&mut canvas);
-        canvas.set_draw_color(Color::RGB(i, 64, 255 - i));
-        canvas.clear();
         for event in event_pump.poll_iter() {
             match event {
                 Event::Quit { .. }
@@ -220,8 +138,7 @@ pub fn main() {
             }
             mode.parse_event(event);
         }
-        // The rest of the game loop goes here...
-
+        mode.draw(&mut canvas);
         canvas.present();
         let framerate = mode.framerate() as u64;
         ::std::thread::sleep(Duration::from_nanos(1_000_000_000u64 / framerate));

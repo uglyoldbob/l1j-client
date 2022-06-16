@@ -2,6 +2,7 @@ use crate::Exception;
 use des::cipher::BlockDecryptMut;
 use des::cipher::KeyInit;
 use tokio::io::AsyncReadExt;
+use tokio::io::AsyncSeekExt;
 
 /// This structure describes a single pack file used as a container for
 /// game resources in the client.
@@ -14,7 +15,7 @@ pub struct Pack {
 
 struct FileEntry {
     offset: u32,
-    name: [u8; 20],
+    name: String,
     size: u32,
 }
 
@@ -34,6 +35,47 @@ impl Pack {
             name: n,
             file_data: Vec::new(),
             contents: None,
+        }
+    }
+
+    fn get_file_index(&mut self, name: String) -> Option<usize> {
+        for (i, n) in self.file_data.iter().enumerate() {
+            if n.name == name {
+                return Some(i);
+            }
+        }
+        None
+    }
+
+    pub async fn raw_file_contents(&mut self, name: String) -> Option<Vec<u8>> {
+        let index = self.get_file_index(name);
+        if let Some(f) = &mut self.contents {
+            if let Some(i) = index {
+                let offset = self.file_data[i].offset;
+                let size = self.file_data[i].size;
+                if let Err(_e) = f.seek(std::io::SeekFrom::Start(offset as u64)).await {
+                    return None;
+                }
+                let mut buffer = Vec::with_capacity(size as usize);
+                if let Err(_e) = f.read_exact(buffer.as_mut_slice()).await {
+                    return None;
+                }
+                Some(buffer)
+            } else {
+                None
+            }
+        } else {
+            None
+        }
+    }
+
+    pub async fn decrypted_file_contents(&mut self, name: String) -> Option<Vec<u8>> {
+        let mut file = self.raw_file_contents(name).await;
+        if let Some(f) = &mut file {
+            des_decrypt("~!@#%^$<".to_string(), f);
+            Some(f.to_vec())
+        } else {
+            None
         }
     }
 
@@ -67,7 +109,7 @@ impl Pack {
                 let size = indx.read_u32_le().await?;
                 self.file_data.push(FileEntry {
                     offset: offset,
-                    name: name,
+                    name: String::from_utf8_lossy(&name[..]).into_owned(),
                     size: size,
                 });
                 if offset as u64 + size as u64 > content_size as u64 {

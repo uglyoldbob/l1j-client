@@ -18,7 +18,7 @@ version="0.35.2"
 features=["use_mac_framework"]
 
 [[bin]]
-name="game_client"
+name="rustlin"
 path="src/main.rs"
 
 [[bin]]
