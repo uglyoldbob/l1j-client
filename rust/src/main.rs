@@ -1,4 +1,5 @@
 use sdl2::event::Event;
+use sdl2::image::LoadTexture;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
 use std::time::Duration;
@@ -133,7 +134,17 @@ pub fn main() {
                 MessageFromAsync::StringTable(name, data) => {
                     println!("Loaded string table {}", name);
                 }
-                MessageFromAsync::Png(_name, _data) => {}
+                MessageFromAsync::Png(name, data) => {
+                    let png = texture_creator.load_texture_bytes(data);
+                    match png {
+                        Ok(_a) => {
+                            println!("PNG {} success", name);
+                        }
+                        Err(e) => {
+                            println!("PNG {} fail {}", name, e);
+                        }
+                    }
+                }
             }
             mode.parse_message(&msg);
         }

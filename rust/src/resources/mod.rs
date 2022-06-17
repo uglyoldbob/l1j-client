@@ -127,9 +127,10 @@ pub async fn async_main(
                 MessageToAsync::LoadPng(name) => {
                     if let Some(p) = &mut res.packs {
                         let name2 = format!("{}.png", name);
-                        let data = p.text.decrypted_file_contents(name2.clone()).await;
+                        let data = p.load_png(name2.clone()).await;
                         match data {
                             Some(d) => {
+                                println!("PNG DATA {:x?}", d);
                                 let _e = s.send(MessageFromAsync::Png(name, d.clone())).await;
                             }
                             None => {
