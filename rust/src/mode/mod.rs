@@ -24,8 +24,9 @@ impl ExplorerMenu {
 impl GameMode for ExplorerMenu {
     fn parse_message(&mut self, m: &MessageFromAsync) {
         match m {
-            MessageFromAsync::ResourceStatus(b) => {}
-            MessageFromAsync::StringTable(name, data) => {}
+            MessageFromAsync::ResourceStatus(_b) => {}
+            MessageFromAsync::StringTable(_name, _data) => {}
+            MessageFromAsync::Png(_name, _data) => {}
         }
     }
 

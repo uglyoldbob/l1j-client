@@ -55,6 +55,7 @@ pub fn main() {
     s1.blocking_send(MessageToAsync::LoadTable("obscene-e.tbl".to_string()));
     s1.blocking_send(MessageToAsync::LoadFont("Font/eng.fnt".to_string()));
     s1.blocking_send(MessageToAsync::LoadSpriteTable);
+    s1.blocking_send(MessageToAsync::LoadPng(811));
     //load Font/SMALL.FNT
 
     println!("Loading resources from {}", resources);
@@ -91,6 +92,10 @@ pub fn main() {
     canvas.present();
     let mut event_pump = sdl_context.event_pump().unwrap();
     let texture_creator = canvas.texture_creator();
+
+    let flags = sdl2::image::InitFlag::all();
+    let sdl2_image = sdl2::image::init(flags).unwrap();
+
     'running: loop {
         while let Ok(msg) = r2.try_recv() {
             match &msg {
@@ -128,6 +133,7 @@ pub fn main() {
                 MessageFromAsync::StringTable(name, data) => {
                     println!("Loaded string table {}", name);
                 }
+                MessageFromAsync::Png(_name, _data) => {}
             }
             mode.parse_message(&msg);
         }

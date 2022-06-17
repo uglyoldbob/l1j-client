@@ -9,11 +9,13 @@ pub enum MessageToAsync {
     LoadFont(String),
     LoadSpriteTable,
     LoadTable(String),
+    LoadPng(u16),
 }
 
 pub enum MessageFromAsync {
     ResourceStatus(bool),
     StringTable(String, StringTable),
+    Png(u16, Vec<u8>),
 }
 
 struct PackFiles {
@@ -24,6 +26,19 @@ struct PackFiles {
 }
 
 impl PackFiles {
+    fn get_hash_index(name: String) -> u8 {
+        let mut j: u32 = 0;
+        for c in name.chars() {
+            j = j.wrapping_add(c as u32);
+        }
+        j as u8 & 0xf
+    }
+
+    pub async fn load_png(&mut self, name: String) -> Option<Vec<u8>> {
+        let hash = PackFiles::get_hash_index(name.clone());
+        self.sprites[hash as usize].raw_file_contents(name).await
+    }
+
     pub async fn load(path: String) -> Result<Self, ()> {
         let mut packs: Vec<Pack> = Vec::new();
         for i in 0..16 {
@@ -99,11 +114,26 @@ pub async fn async_main(
                         match data {
                             Some(d) => {
                                 let table = StringTable::from(d);
-                                s.send(MessageFromAsync::StringTable(name, table.clone()))
+                                let _e = s
+                                    .send(MessageFromAsync::StringTable(name, table.clone()))
                                     .await;
                             }
                             None => {
                                 println!("{} failed to load", name);
+                            }
+                        }
+                    }
+                }
+                MessageToAsync::LoadPng(name) => {
+                    if let Some(p) = &mut res.packs {
+                        let name2 = format!("{}.png", name);
+                        let data = p.text.decrypted_file_contents(name2.clone()).await;
+                        match data {
+                            Some(d) => {
+                                let _e = s.send(MessageFromAsync::Png(name, d.clone())).await;
+                            }
+                            None => {
+                                println!("{} failed to load", name2);
                             }
                         }
                     }

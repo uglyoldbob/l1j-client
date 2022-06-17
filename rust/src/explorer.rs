@@ -127,6 +127,7 @@ pub fn main() {
                 MessageFromAsync::StringTable(name, data) => {
                     println!("Loaded string table {}", name);
                 }
+                MessageFromAsync::Png(_name, _data) => {}
             }
             mode.parse_message(&msg);
         }
