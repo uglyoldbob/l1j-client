@@ -214,6 +214,7 @@ dependencies = [
 name = "rustlin"
 version = "0.0.1"
 dependencies = [
+ "bytes",
  "configparser",
  "des",
  "generic-array",

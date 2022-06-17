@@ -52,6 +52,7 @@ pub fn main() {
     let mut mode: Box<dyn GameMode> = Box::new(ExplorerMenu::new());
 
     s1.blocking_send(MessageToAsync::LoadResources(resources.clone()));
+    s1.blocking_send(MessageToAsync::LoadTable("obscene-e.tbl".to_string()));
     s1.blocking_send(MessageToAsync::LoadFont("Font/eng.fnt".to_string()));
     s1.blocking_send(MessageToAsync::LoadSpriteTable);
     //load Font/SMALL.FNT

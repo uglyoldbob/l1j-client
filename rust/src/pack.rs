@@ -48,7 +48,7 @@ impl Pack {
     }
 
     pub async fn raw_file_contents(&mut self, name: String) -> Option<Vec<u8>> {
-        let index = self.get_file_index(name);
+        let index = self.get_file_index(name.clone());
         if let Some(f) = &mut self.contents {
             if let Some(i) = index {
                 let offset = self.file_data[i].offset;
@@ -56,11 +56,12 @@ impl Pack {
                 if let Err(_e) = f.seek(std::io::SeekFrom::Start(offset as u64)).await {
                     return None;
                 }
-                let mut buffer = Vec::with_capacity(size as usize);
-                if let Err(_e) = f.read_exact(buffer.as_mut_slice()).await {
+                let mut buffer = bytes::BytesMut::with_capacity(size as usize);
+
+                if let Err(_e) = f.read_buf(&mut buffer).await {
                     return None;
                 }
-                Some(buffer)
+                Some(buffer.to_vec())
             } else {
                 None
             }
@@ -107,9 +108,12 @@ impl Pack {
                 let mut name: [u8; 20] = [0; 20];
                 indx.read_exact(&mut name[..]).await?;
                 let size = indx.read_u32_le().await?;
+                let mut name = String::from_utf8_lossy(&name[..]).into_owned();
+                name.make_ascii_lowercase();
+                name = name.trim_matches(char::from(0)).to_string();
                 self.file_data.push(FileEntry {
                     offset: offset,
-                    name: String::from_utf8_lossy(&name[..]).into_owned(),
+                    name: name,
                     size: size,
                 });
                 if offset as u64 + size as u64 > content_size as u64 {
