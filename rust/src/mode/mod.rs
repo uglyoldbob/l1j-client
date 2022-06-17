@@ -3,7 +3,7 @@ use sdl2::pixels::Color;
 
 /// This trait is used to determine what mode of operation the program is in
 pub trait GameMode {
-    fn parse_message(&mut self, m: MessageFromAsync);
+    fn parse_message(&mut self, m: &MessageFromAsync);
     fn parse_event(&mut self, e: sdl2::event::Event);
     fn draw(&mut self, canvas: &mut sdl2::render::WindowCanvas);
     /// Framerate is specified in frames per second
@@ -22,9 +22,10 @@ impl ExplorerMenu {
 }
 
 impl GameMode for ExplorerMenu {
-    fn parse_message(&mut self, m: MessageFromAsync) {
+    fn parse_message(&mut self, m: &MessageFromAsync) {
         match m {
             MessageFromAsync::ResourceStatus(b) => {}
+            MessageFromAsync::StringTable(name, data) => {}
         }
     }
 

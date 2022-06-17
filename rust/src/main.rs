@@ -93,7 +93,7 @@ pub fn main() {
     let texture_creator = canvas.texture_creator();
     'running: loop {
         while let Ok(msg) = r2.try_recv() {
-            match msg {
+            match &msg {
                 MessageFromAsync::ResourceStatus(b) => {
                     if !b {
                         println!("Failed to load game resources");
@@ -125,8 +125,11 @@ pub fn main() {
                         break 'running;
                     }
                 }
+                MessageFromAsync::StringTable(name, data) => {
+                    println!("Loaded string table {}", name);
+                }
             }
-            mode.parse_message(msg);
+            mode.parse_message(&msg);
         }
         for event in event_pump.poll_iter() {
             match event {
